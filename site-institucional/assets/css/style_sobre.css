@@ -1,0 +1,291 @@
+@import url('https://fonts.googleapis.com/css2?family=Allerta+Stencil&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Allerta&family=Allerta+Stencil&display=swap');
+
+*{
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+:root {
+    --font-padrao: "Allerta", sans-serif;
+    --font-logo: "Allerta Stencil", sans-serif;
+    --cor-preto-default: #1E1E1E;
+    --cor-branco-default: #ffff;
+    --cor-azul-contraste: #170F38;
+    --cor-azul-contraste2: #5178F9;
+}
+
+/*header*/
+
+.navbar{
+    display: flex;
+    align-items: center;
+    justify-content: space-around;
+
+    width: 100%;
+    height: 9vh;
+
+    background-color: #0e0921;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.116);
+}
+
+.nav-logo h1{
+    font-size: 1.6rem;
+
+    font-family: var(--font-logo);
+    font-weight: 500;
+    color: var(--cor-branco-default);
+
+    border-bottom: 1px solid rgba(255, 255, 255, 0);
+    border-radius: 0.2rem;
+
+    cursor: pointer;
+    transition: 0.3s;
+}
+
+.nav-logo h1 span{
+    color: var(--cor-azul-contraste2);
+}
+
+.nav-logo h1:hover{
+    border-bottom: 1px solid rgba(255, 255, 255, 0.4);
+}
+
+.nav-links ul{
+    display: flex;
+    gap: 2.8vw;
+
+    list-style: none;
+}
+
+.nav-links ul li{
+    font-size: 1rem;
+
+    font-family: var(--font-padrao);
+    color: var(--cor-branco-default);
+
+    cursor: pointer;
+    transition: 0.3s;
+}
+
+.nav-links ul li:hover{
+    color: rgba(255, 255, 255, 0.56);
+}
+
+.nav-select{
+    border-bottom: 1px solid rgba(255, 255, 255, 0.494);
+    border-radius: 0.2rem;
+}
+
+.nav-login{
+    display: flex;
+    gap: 0.5vw;
+}
+
+.nav-login button{
+    font-family: var(--font-padrao);
+    font-size: 0.9rem;
+    color: var(--cor-branco-default);
+
+    cursor: pointer;
+    transition: 0.3s;
+}
+
+.nav-login #btn-logar{
+    padding: 0.3rem 1rem;
+
+    background-color: transparent;
+    border: 1px solid rgba(255, 255, 255, 0);
+    border-radius: 0.3rem;
+}
+
+.nav-login #btn-logar:hover{
+    border: 1px solid rgba(255, 255, 255, 0.6);
+}
+
+.nav-login #btn-cadastrar{
+    padding: 0.3rem 0.7rem;
+
+    
+    background-color: var(--cor-azul-contraste2);
+    border: 1px solid var(--cor-azul-contraste);
+    border-radius: 0.3rem;
+}
+
+.nav-login #btn-cadastrar:hover{
+    background-color: #5178f9b3;
+}
+
+/*main*/
+
+.container-main{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    height: 90vh;
+    width: 100%;
+
+    background-image: url('../midias/main-image.png');
+    background-repeat: no-repeat;
+    background-size: 100%;
+}
+
+.container-main-left{
+    display: flex;
+    align-items: flex-start;
+    justify-content: flex-start;
+    flex-direction: column;
+    gap: 6vh;
+
+    height: 50%;
+    width: 40%;
+}
+
+.main-left-title h1{
+    font-family: var(--font-logo);
+    font-weight: 500;
+    font-size: 2.5rem;
+
+    color: var(--cor-branco-default);
+}
+
+.main-left-text h2{
+    font-family: var(--font-logo);
+    font-weight: 600;
+    font-size: 2rem;
+
+    color: var(--cor-branco-default);
+}
+
+.main-left-text h2 span{
+    color: var(--cor-azul-contraste2);
+}
+
+.container-main-right{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    height: 50%;
+    width: 40%;
+
+    background-image: url('../midias/main-icon-image.png');
+    background-repeat: no-repeat;
+    background-size: 100%;
+}
+
+.mvv { 
+    display: flex;
+    justify-content: center;
+    gap: 40px;
+    width: 90%;
+    max-width: 1500px;
+    margin: 0 auto 40px auto;
+    border:white solid 6px;
+    
+}
+.card-sobre {
+    flex: 1;
+    padding: 40px 30px;
+    transition: 0.3s;
+    display: flex;
+      max-width: 450px;
+    flex-direction: column;
+    background-color: #000000;
+    border: solid rgb(26, 24, 80) 2px;
+    font-size: 30px;
+     border-radius: 20px;
+
+}
+
+.card-sobre h3 {
+    padding-left: 48px;
+    color: rgba(0, 86, 178, 1);
+    
+    margin-bottom: 10px;
+     
+}
+
+.textoSobre {
+    margin: -20px 0px 0px -25px;
+    
+}
+.imgSobre {
+    width: 400px;
+    margin: -100px 0px 0px -150px;
+}
+
+.card-sobre p {
+   color:white;
+    padding-left: 48px;
+    font-size: 17px;
+    
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    margin-top: -10px;
+      
+
+}
+.sobre {
+    display: flex;
+    
+    margin-bottom: 40px;
+}
+
+.sobre div {
+    width: 70%;
+    background: linear-gradient(135deg, rgb(216, 215, 215), rgb(199, 201, 204));
+    border-radius: 45px;
+    padding: 30px 60px;
+}
+
+.sobre-direita {
+    justify-content: flex-end;
+    padding: 20px;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+
+}
+
+.sobre-esquerda {
+    justify-content: flex-start;
+    padding: 20px;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+.membro img {
+    width: 100px;
+    height: 100px;
+    border-radius: 50%;
+    border: 3px solid rgba(0, 86, 178, 1);
+    object-fit: cover;
+    margin-bottom: 10px;
+}
+
+.membro h3 {
+    margin-bottom: 6px;
+}
+
+.membro p {
+    color: rgb(78, 78, 117);
+    font-size: 14px;
+}
+
+.equipe {
+    text-align: center;
+    padding: 30px 60px 60px;
+    background-color: #000000;
+}
+
+.equipe h2 {
+    font-size: 30px;
+    margin-bottom: 30px;
+    color: rgb(48, 48, 97);
+}
+
+.cards-equipe {
+    display: flex;
+    justify-content: center;
+    gap: 30px;
+    flex-wrap: wrap;
+}
