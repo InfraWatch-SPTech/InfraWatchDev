@@ -119,19 +119,56 @@
 
 /*main*/
 
-.container-main{
-    display: flex;
-    align-items: center;
-    justify-content: center;
-
-    height: 90vh;
-    width: 100%;
-
-    background-image: url('../midias/main-image.png');
-    background-repeat: no-repeat;
-    background-size: 100%;
+.container{
+   max-width: 100%;
+    background-color: #141028;
+   margin: 0 auto;
+  padding: 6% 3%;
 }
 
+.section{
+   margin-bottom: 7%;
+   font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+
+  
+}
+
+.text-center {
+  text-align: center;
+}
+
+.subtitle{
+    letter-spacing:-1px;
+    padding: 2%;
+    font-size: 1.6rem;
+    color:#5b6b9e;
+}
+
+.highlight-blue {
+  color: #3ba8f6;
+}
+.section {
+    color: #f8f9fa;
+}
+.badge{
+    display: inline-block;
+  color: #2cd9fc;
+  font-size: 1rem;
+  font-weight: 5rem;
+  letter-spacing: 1.7px;
+  text-transform: uppercase;
+  margin-bottom: 1%;
+}
+
+.badge-Decisao{
+    display: inline-block;
+  color: #f8f9fa;
+  font-size: 1.5rem;
+  font-weight: 800;
+  letter-spacing: 0.4px;
+  text-transform: uppercase;
+  margin-bottom: 12px;
+}
 .container-main-left{
     display: flex;
     align-items: flex-start;
@@ -163,6 +200,30 @@
     color: var(--cor-azul-contraste2);
 }
 
+
+.timeline {
+  display: flex;
+  margin-top: 3%;
+  flex-direction: column;
+
+  
+  
+}
+
+.timeline-item h3 {
+  color: #ffffff;
+}
+
+.timeline-item p {
+  font-size: 1.1rem;
+  
+}
+
+.timeline-item{
+margin-bottom: 5%;
+
+}
+
 .container-main-right{
     display: flex;
     align-items: center;
@@ -176,116 +237,123 @@
     background-size: 100%;
 }
 
-.mvv { 
+.container-quadros{
     display: flex;
     justify-content: center;
-    gap: 40px;
-    width: 90%;
-    max-width: 1500px;
-    margin: 0 auto 40px auto;
-    border:white solid 6px;
+    gap:4%;
+    align-items: center;
+    margin-top: 1rem;
     
 }
-.card-sobre {
-    flex: 1;
-    padding: 40px 30px;
-    transition: 0.3s;
-    display: flex;
-      max-width: 450px;
-    flex-direction: column;
-    background-color: #000000;
-    border: solid rgb(26, 24, 80) 2px;
-    font-size: 30px;
-     border-radius: 20px;
 
-}
 
-.card-sobre h3 {
-    padding-left: 48px;
-    color: rgba(0, 86, 178, 1);
-    
-    margin-bottom: 10px;
-     
-}
-
-.textoSobre {
-    margin: -20px 0px 0px -25px;
-    
-}
-.imgSobre {
-    width: 400px;
-    margin: -100px 0px 0px -150px;
-}
-
-.card-sobre p {
-   color:white;
-    padding-left: 48px;
-    font-size: 17px;
-    
+.quadro-decisao{
+    padding: 3% 3%;
+    background-color: #181833;
+    width: 15%;
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    margin-top: -10px;
-      
-
-}
-.sobre {
-    display: flex;
-    
-    margin-bottom: 40px;
+     color:#5b6b9e;
+    border-radius: 5%;
 }
 
-.sobre div {
-    width: 70%;
-    background: linear-gradient(135deg, rgb(216, 215, 215), rgb(199, 201, 204));
-    border-radius: 45px;
-    padding: 30px 60px;
-}
 
-.sobre-direita {
-    justify-content: flex-end;
-    padding: 20px;
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
 
-}
-
-.sobre-esquerda {
-    justify-content: flex-start;
-    padding: 20px;
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-}
-
-.membro img {
-    width: 100px;
-    height: 100px;
-    border-radius: 50%;
-    border: 3px solid rgba(0, 86, 178, 1);
-    object-fit: cover;
-    margin-bottom: 10px;
-}
-
-.membro h3 {
-    margin-bottom: 6px;
-}
-
-.membro p {
-    color: rgb(78, 78, 117);
-    font-size: 14px;
-}
 
 .equipe {
     text-align: center;
-    padding: 30px 60px 60px;
-    background-color: #000000;
+    padding: 2%;
+   margin-bottom: 3%;
+    background-color: #181833;
+    border-radius: 2%;
+   
 }
 
 .equipe h2 {
-    font-size: 30px;
-    margin-bottom: 30px;
-    color: rgb(48, 48, 97);
+    font-size: 2rem;
+    margin-bottom: 5%;
+      color: #f7f8f9;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
 }
+
 
 .cards-equipe {
     display: flex;
     justify-content: center;
-    gap: 30px;
+    gap: 40%;
     flex-wrap: wrap;
+}
+
+.form-card {
+    background-color: #111827; 
+    border: 1px solid #1f2937;
+    border-radius: 12px;
+    padding: 2.5rem;
+    max-width: 800px;
+    margin: 0 auto; /* Centraliza o card na tela */
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
+}
+
+.form-card h3 {
+    font-size: 1.5rem;
+    font-weight: 600;
+    color: #ffffff;
+    
+    margin-bottom: 4rem;
+    border-bottom: 2px solid #1f2937;
+    padding-bottom: 0.75rem;
+}
+.form-group label {
+   font-size: 0.875rem;
+    font-weight: 500;
+    color: #9ca3af; 
+    text-transform: uppercase;
+    
+    letter-spacing: 0.05em;
+    
+}
+.form-group{
+    display: flex;
+    flex-direction: column;
+    background-color: #192a62;
+    padding: 1%;
+    margin-bottom: 13px;
+    height: 60px;
+    border-radius: 40px;
+   
+}
+
+.form-row {
+    
+    
+    gap: 1.5rem; /* Espaçamento entre os campos */
+}
+
+.form-group label{
+    font-size: 2.3vh;
+    color: #ffffff;
+  margin-right: 100%;
+  font-weight: 600;
+
+}
+
+
+.btn-container {
+    grid-column: span 2; /* Ocupa a largura total abaixo dos campos */
+    display: flex;
+    justify-content: center; /* Alinha o botão à direita */
+    margin-top: 1rem;
+  
+}
+
+/* Estilização do Botão de Envio */
+.btn-submit {
+    background-color: #007bff;
+    color: #ffffff;
+    font-size: 1rem;
+    font-weight: 600;
+    border: none;
+    border-radius: 6px;
+    padding: 0.75rem 2rem;
+    cursor: pointer;
+    transition: background-color 0.2s ease, transform 0.1s ease;
 }

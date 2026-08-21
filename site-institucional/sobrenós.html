@@ -5,7 +5,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <!--Links-->
-   <link rel="stylesheet" href="assets/css/style_sobre.css">
+    <link rel="stylesheet" href="assets/css/style_sobre.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.3.1/css/all.min.css"
         integrity="sha512-QeR2VH+lsBE5LSAe1Q5EnTBbe7XTBubt8dG93Y7gidSgdMCr8nVqKcfKAMyN96SV8KDbZVTDXChatu5G2KQGzg=="
         crossorigin="anonymous" referrerpolicy="no-referrer" />
@@ -39,107 +39,138 @@
             </div>
         </div>
     </header>
-    
 
-    <main>
-        <div class="container-main">
-            <div class="container-main-left">
-                <div class="main-left-title">
-                    <h1>
-                        SOBRE INFRAWATCH
-                    </h1>
+
+    <main class="container">
+
+        <!-- Hero / Sobre Nós -->
+        <section class="section text-center">
+            <span class="badge">SOBRE NÓS</span>
+            <h1>Construímos confiança<br>em cada <span class="highlight-blue">transação<br>monitorada.</span></h1>
+            <p class="subtitle">
+                Somos uma equipe focada em observabilidade para infraestrutura de pagamentos — exatos na correlação de
+                que, em sistemas críticos como o Pix, cada segundo de degradação tem um custo real.
+            </p>
+        </section>
+        <section class="equipe">
+
+            <span class="badge">NOSSA MISSÃO</span>
+
+            <h2>Visibilidade contínua, antes que o<br>problema chegue ao cliente.</h2>
+            <p class="subtitle">
+                Ofereceremos visibilidade contínua e proativa sobre a saúde do ecossistema de processamento de
+                transações bancárias, permitindo que equipes de operações identifiquem sinais de degradação e respondam
+                a incidentes antes que impactem o cliente final.
+            </p>
+            <div class="cards-equipe">
+
+
+            </div>
+            </div>
+
+
+        </section>
+
+
+        <span class="badge-Decisao">O QUE GUIA CADA DECISÃO DE PRODUTO</span>
+        <div class="container-quadros">
+            <div class="quadro-decisao">
+                <span class="badge">PRODUTIVIDADE</span>
+                <p>Antecipar problemas em vez de apenas reagir a eles.</p>
+            </div>
+
+
+            <div class="quadro-decisao">
+                <span class="badge">CONFIABILIDADE</span>
+                <p>Dados precisos e alertas consistentes para decisões críticas.</p>
+            </div>
+            <div class="quadro-decisao">
+                <span class="badge">TRANSPARÊNCIA</span>
+                <p>Estado real da infraestrutura, visível pra toda a operação.</p>
+            </div>
+            <div class="quadro-decisao">
+                <span class="badge">SIMPLICIDADE</span>
+                <p>Interfaces claras, mesmo em momentos de incidente.</p>
+            </div>
+            <div class="quadro-decisao">
+                <span class="badge">INOVAÇÃO</span>
+                <p>Tecnologia com propósito, sem complexidade desnecessária.</p>
+            </div>
+        </div>
+        </section>
+        <br><br><br>
+
+        <section class="section text-left">
+            <div class="timeline-item">
+                <span class="badge">NOSSA TRAJETÓRIA</span>
+                <h2>De uma ideia a uma plataforma de observabilidade.</h2>
+            </div>
+            <div class="timeline">
+                <div class="timeline-item">
+                    <span class="badge">ORIGEM</span>
+                    <h2>ITIL como espinha dorsal</h2>
+                    <p>Estruturamos a solução sobre práticas reconhecidas de ITSM — Service Monitoring, Incident e
+                        Problem Management — unindo rigor técnico a um fluxo de resposta claro.
+                    </p>
                 </div>
-                <div class="main-left-text">
-                    <h2>
-                       sistema de monitoramento de infraestrutura crítica voltado para servidores responsáveis pelo processamento de transações bancárias.
+                <div class="timeline">
+                    <div class="timeline-item">
+                        <span class="badge">FUNDAMENTAÇÃO</span>
+                        <h2>Uma dor real do setor financeiro</h2>
+                        <p>Percebemos que instituições que operam com Pix e boletos careciam de visibilidade proativa
+                            sobre a saúde dos servidores de transação, aumentando o MTTR e o risco reputacional.</p>
+                    </div>
+                    <div class="timeline">
+                        <div class="timeline-item">
+                            <span class="badge">HOJE</span>
+                            <h2>Uma plataforma em evolução constante</h2>
+                            <p>Seguimos desenvolvendo dashboards, integrações (Slack, Jira) e o agente coletor, sempre
+                                com o mesmo objetivo: reduzir a distância entre o incidente e a resposta.</p>
+                        </div>
+                    </div>
+        </section>
+       
+        <section class="section text-center">
+            <h1>Vamos conversar sobre a<br> sua <span class="highlight-blue">infraestrutura?</span></h1>
+         <br><br>
+            <div class="form-card text-left">
+                <h3>Envie uma mensagem</h3>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="nome">Nome</label>
+                        <input type="text" id="nome" placeholder="Seu Nome">
+                    </div>
+                     
+                     <div class="form-group">
+                        <label for="sobrenome">Sobrenome</label>
                         
-                    </h2>
+                        <input type="text" id="sobrenome" placeholder="Seu Sobrenome">
+                    </div>
+                    <div class="form-group">
+                        <label for="">Empresa</label>
+                        <input type="text" id="empresa" placeholder="Nome da empresa">
+                    </div>
+                     <div class="form-group">
+                        <label for="email">Email </label>
+                        <input type="text" id="email" placeholder="voce@empresa.com">
+                    </div>
+                     <div class="form-group">
+                        <label for="telefone">Telefone</label>
+                        <input type="tel" id="telefone" placeholder="(11) 90000-0000">
+                    </div>
+                     <div class="form-group">
+                        <label for="mensagem">Mensagem</label>
+                        <input type="text" id="mensagem" placeholder="Conte um pouco sobre o que você precisa monitorar ...">
+                    </div>
+                    <div class="btn-container">
+                        <button type="submit" class="btn-submit">Enviar Mensagem</button>
+                    </div>
                 </div>
             </div>
-            <div class="container-main-right">
-                
-                
-            </div>
-           
-        </div>
-         <section class="equipe">
-        <h2>Nossa Equipe</h2>
-        <div class="cards-equipe">
-          
-            <div class="membro">
-                <img src="../CSS/img/Carlos.jpg">
-                <h3>Marina</h3>
-                <p>Desenvolvedor e Analista</p>
-            </div>
-            <div class="membro">
-                <img src="../CSS/img/Thiago.jpg">
-                <h3>Leonardo</h3>
-                <p> Analista e Desing</p>
-            </div>
-            <div class="membro">
-                <img src="../CSS/img/Enzo.jpg">
-                <h3>Anderson</h3>
-                <p>Desenvolvedor</p>
-            </div>
-            <div class="membro">
-                <img src="../CSS/img/Gui.jpg">
-                <h3>Kaue</h3>
-                <p>Desenvolvedor e Analista</p>
-            </div>
-            <div class="membro">
-                <img src="../CSS/img/Jacob.jpg">
-                <h3>Caio</h3>
-                <p>Desenvolvedor e Analista</p>
-            </div>
-        </div>
-    </section>
-         <div class="sobre-container">
-         <section class="mvv">
-            <div class="caixas_explicativas card-sobre">
-                <div class="imagem_seguranca"><img src="assets/midias/seguranca.png" alt="" class="imgSobre"></div>
-                <div class="textoSobre">
-                    <h3>Missão</h3>
-                    <p>Garantir controle térmico eficiente através da tecnologia.</p>
-                </div>
-            </div>
-            <div class="caixas_explicativas card-sobre">
-                <div class="imagem_seguranca"><img src="assets/midias/juridico.png" alt="" class="imgSobre"></div>
-                <div class="textoSobre">
-                    <h3>Visão</h3>
-                    <p>Ser referência em análise inteligente no Brasil.</p>
-                </div>
-            </div>
-            <div class="caixas_explicativas card-sobre">
-                <div class="imagem_seguranca"><img src="assets/midias/alerta.png" alt="" class="imgSobre"></div>
-                <div class="textoSobre">
-                    <h3>Valores</h3>
-                    <p>Inovação, qualidade, transparência e compromisso com o cliente.</p>
-                </div>
-            </div>
+
+
         </section>
 
-
-        <section class="sobre sobre-esquerda">
-            <div>
-                <h2>Quem somos</h2>
-                <p>Somos uma equipe de tecnologia que desenvolveu o InfraWatch, uma solução de monitoramento voltada para servidores responsáveis pelo processamento de transações bancárias.
-
-Nosso objetivo é utilizar monitoramento, automação e análise de dados para ajudar equipes de TI a identificar problemas rapidamente e manter os serviços bancários disponíveis e seguros.</p>
-            </div>
-        </section>
-
-        <section class="sobre sobre-direita ">
-            <div>
-                <h2>Por que existimos?</h2>
-                <p>Existimos para evitar que problemas de infraestrutura prejudiquem transações bancárias e seus usuários.
-
-O InfraWatch acompanha os servidores em tempo real, identifica comportamentos anormais e alerta a equipe antes que uma falha cause um impacto maior.</p>
-            </div>
-        </section>
-
-    </div>
-
-   
 
     </main>
 </body>
