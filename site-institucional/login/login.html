@@ -1,18 +1,87 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="icon" type="image/png" href="./assets/midias/magnific_an-image-reminiscent-of-a_kslhfRj16B.png">
     <!--Links-->
-    <link rel="stylesheet" href="./assets/css/main.css">
+    <link rel="stylesheet" href="./assets/css/login.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.3.1/css/all.min.css"
         integrity="sha512-QeR2VH+lsBE5LSAe1Q5EnTBbe7XTBubt8dG93Y7gidSgdMCr8nVqKcfKAMyN96SV8KDbZVTDXChatu5G2KQGzg=="
         crossorigin="anonymous" referrerpolicy="no-referrer" />
-
     <title>InfraWatch.Dev - Login</title>
 </head>
+
 <body>
-    
+
+    <div class="pagina-log">
+        <div class="autenticar">
+            <button type="button" class="autenticar-btn active" id="tab-entrar">
+                Entrar
+            </button>
+            <button type="button" class="autenticar-btn" id="tab-cadastrar">
+                Cadastre-se
+            </button>
+        </div>
+
+        <div class="login-card" id="contentLogin">
+            <div class="login-esquerda">
+                <div class="login-logo">
+                    <h1>Infra<span>Watch</span></h1>
+                </div>
+
+                <div class="login-esquerda-content">
+                    <div class="login-esquerda-text">
+                        <h2>
+                            Controle total dos seus
+                            sistemas,
+                            <span>antes que o
+                            cliente perceba</span>
+                        </h2>
+                    </div>
+                    <div class="login-esquerda-description">
+                        <h6>
+                            Acesse o painel para acompanhar em tempo
+                            real a saúde da sua infraestrutura
+                        </h6>
+                    </div>
+                </div>
+            </div>
+
+            <div class="login-direita">
+                <form class="formulario-login" id="form-login">
+                    <div class="formulario-login-title">
+                        <h2>Acesse sua conta</h2>
+                        <span>Entre para acompanhar seus painéis de monitoramento.</span>
+                    </div>
+
+                    <div class="inputs">
+                        <label for="input-email">E-mail corporativo</label>
+                        <input type="email" id="input-email" name="email" placeholder="voce@empresa.com" required>
+                    </div>
+
+                    <div class="inputs">
+                        <label for="input-senha">Senha</label>
+                        <input type="password" id="input-senha" name="senha" placeholder="********" required>
+                    </div>
+
+                    <a href="#" class="esqueci-a-senha">
+                        Esqueci minha senha
+                    </a>
+
+                    <button type="submit" id="btn-entrar-plataforma">
+                        Entrar na plataforma
+                    </button>
+
+                    <span class="formulario-login-footer">
+                        Ainda não tem conta? <a href="#" id="link-cadastrar">Cadastre-se</a>
+                    </span>
+                </form>
+            </div>
+        </div>
+
+    </div>
 </body>
+<script src="./assets/js/login.js"></script>
 </html>
