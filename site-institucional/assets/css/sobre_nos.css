@@ -72,12 +72,14 @@
 
 .nav-links ul li:hover {
     color: rgba(255, 255, 255, 0.56);
+     text-decoration: none;
 }
 
 .nav-select {
     border-bottom: 1px solid rgba(255, 255, 255, 0.494);
     border-radius: 0.2rem;
 }
+
 
 .nav-login {
     display: flex;
