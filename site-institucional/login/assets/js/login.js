@@ -13,7 +13,6 @@ btnCadastro.addEventListener('click', ()=>{
                 <div class="login-logo">
                     <h1>Infra<span>Watch</span></h1>
                 </div>
-
                 <div class="login-esquerda-content">
                     <div class="login-esquerda-text">
                         <h2>
@@ -39,14 +38,16 @@ btnCadastro.addEventListener('click', ()=>{
                         <span>Comece a monitorar sua insfraestrutura em poucos minutos</span>
                     </div>
 
-                    <div class="inputs">
-                        <label for="input-nome">Nome</label>
-                        <input type="nome" id="input-nome" name="nome" placeholder="Seu nome" required>
-                    </div>
+                      <div class="input-row">
+                        <div class="inputs">
+                            <label for="input-nome">Nome</label>
+                            <input type="text" id="input-nome" name="nome" placeholder="Seu nome" required>
+                        </div>
 
-                    <div class="inputs">
-                        <label for="input-sobrenome">Sobrenome</label>
-                        <input type="sobrenome" id="input-sobrenome" name="sobrenome" placeholder="Seu Sobrenome" required>
+                        <div class="inputs">
+                            <label for="input-sobrenome">Sobrenome</label>
+                            <input type="text" id="input-sobrenome" name="sobrenome" placeholder="Seu sobrenome" required>
+                        </div>
                     </div>
 
                     <div class="inputs">
@@ -59,14 +60,16 @@ btnCadastro.addEventListener('click', ()=>{
                         <input type="empresa" id="input-empresa" name="empresa" placeholder="Nome da instituição" required>
                     </div>
                     
-                    <div class="inputs">
-                        <label for="input-senha">Senha</label>
-                        <input type="password" id="input-senha" name="senha" placeholder="********" required>
-                    </div>
+                    <div class="input-row">
+                        <div class="inputs">
+                            <label for="input-senha-cad">Senha</label>
+                            <input type="password" id="input-senha-cad" name="senha" placeholder="Mínimo 8 caracteres" required minlength="8">
+                        </div>
 
-                     <div class="inputs">
-                        <label for="input-senha">Senha</label>
-                        <input type="password" id="input-senha" name="senha" placeholder="********" required>
+                        <div class="inputs">
+                            <label for="input-confirmar-senha">Confirmar senha</label>
+                            <input type="password" id="input-confirmar-senha" name="confirmar_senha" placeholder="Repita a senha" required>
+                        </div>
                     </div>
 
                     <a href="#" class="esqueci-a-senha">
