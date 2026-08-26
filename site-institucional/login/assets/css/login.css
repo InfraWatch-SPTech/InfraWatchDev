@@ -17,7 +17,6 @@
     box-sizing: border-box; 
 }
 
-
 body {
     display: flex;
     align-items: center;
@@ -30,7 +29,6 @@ body {
     background-color: #0e0921;
     gap: 1.4rem;
     
-
     font-family: var(--font-logo);
 }
  
@@ -43,8 +41,6 @@ body {
     width: 100%;
     gap: 1.4rem;
 }
- 
-/*entrar/cadastre-se*/
  
 .autenticar {
     display: flex;
@@ -72,23 +68,26 @@ body {
     border-radius: 2rem;
  
     cursor: pointer;
-    transition: 0.8s;
+    transition: all 0.3s ease;
 }
  
 .autenticar-btn:hover {
     color: var(--cor-branco-default);
+    background-color: rgba(255, 255, 255, 0.05);
+    transform: translateY(-1px);
 }
  
 .autenticar-btn.active {
     color: var(--cor-branco-default);
     background: linear-gradient(90deg, #5178F9 0%, #6FE0FF 100%);
+    box-shadow: 0 4px 15px rgba(81, 120, 249, 0.25);
 }
  
 .autenticar-btn.active:hover {
     color: var(--cor-branco-default);
+    background: linear-gradient(90deg, #5178F9 0%, #6FE0FF 100%);
+    transform: none;
 }
- 
-/*card principal*/
  
 .login-card {
     display: flex;
@@ -120,7 +119,6 @@ body {
     border-right: 1px solid rgba(255, 255, 255, 0.08);
 }
  
-/*logo*/
 .login-logo h1 {
     font-size: 1.8rem;
  
@@ -133,15 +131,12 @@ body {
     color: var(--cor-azul-contraste2);
 }
  
-/*texto lado esquerdo*/
- 
 .login-esquerda-content {
     display: flex;
     flex-direction: column;
     justify-content: center;
     flex-grow: 1;
     gap: 1.5rem;
-
 }
  
 .login-esquerda-text h2 {
@@ -151,7 +146,6 @@ body {
     line-height: 1.3;
     max-width: 70%;
     color: var(--cor-branco-default);
-
 }
  
 .login-esquerda-text h2 span {
@@ -167,9 +161,6 @@ body {
     color: var(--cor-azul-apagado);
     max-width: 70%;
 }
-
- 
-/*lado direito - formulário*/
  
 .login-direita {
     align-items: center;
@@ -223,10 +214,10 @@ body {
     width: 100%;
     gap: 0.5rem;
 }
+
 .input-row {
     display: flex;
     align-items: flex-start;
-
     width: 100%;
     gap: 0.8rem;
 }
@@ -234,9 +225,11 @@ body {
 .input-row .inputs {
     width: 50%;
 }
+
 .formulario-cadastro {
     max-width: 26rem !important;
 }
+
 .inputs label {
     font-family: var(--font-padrao);
     font-weight: 600;
@@ -300,11 +293,17 @@ body {
     border-radius: 0.5rem;
  
     cursor: pointer;
-    transition: 0.3s;
+    transition: transform 0.2s ease, filter 0.2s ease, box-shadow 0.2s ease;
 }
  
 #btn-entrar-plataforma:hover {
-    transform: scale(1.01);
+    transform: scale(1.02);
+    filter: brightness(1.12);
+    box-shadow: 0 6px 20px rgba(81, 120, 249, 0.35);
+}
+
+#btn-entrar-plataforma:active {
+    transform: scale(0.98);
 }
  
 .formulario-login-footer {
@@ -325,3 +324,11 @@ body {
     color: #8BAAFF;
 }
 
+#contentLogin {
+    transition: opacity 0.25s ease-in-out;
+    opacity: 1;
+}
+
+.fade-out {
+    opacity: 0 !important;
+}
