@@ -362,12 +362,7 @@ main {
 }
 
 .celula-componentes {
-    display: flex;
-    align-items: center;
-    justify-content: flex-start;
-    flex-wrap: wrap;
-
-    gap: 0.7vw;
+    
 }
 
 .celula-componentes img {
@@ -750,7 +745,7 @@ main {
 
 .item-checkbox {
     display: flex;
-    align-items: flex-start;
+    align-items: center;
     justify-content: flex-start;
 
     gap: 0.7vw;
