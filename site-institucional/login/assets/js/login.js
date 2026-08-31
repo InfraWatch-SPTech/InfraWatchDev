@@ -73,15 +73,12 @@ btnCadastro.addEventListener('click', ()=>{
                         </div>
                     </div>
 
-                    <a href="#" class="esqueci-a-senha">Esqueci minha senha</a>
 
                     <button type="submit" id="btn-entrar-plataforma">
                         Cadastrar na plataforma
                     </button>
 
-                    <span class="formulario-login-footer">
-                        Já tem conta? <a href="#" id="link-entrar">Acesse sua conta</a>
-                    </span>
+                   
                 </form>
             </div>
         `;
@@ -140,9 +137,7 @@ btnEntrar.addEventListener('click', ()=>{
                         Entrar na plataforma
                     </button>
 
-                    <span class="formulario-login-footer">
-                        Ainda não tem conta? <a href="#" id="link-cadastrar">Cadastre-se</a>
-                    </span>
+                    
                 </form>
             </div>
         `;
