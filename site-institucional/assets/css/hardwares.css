@@ -26,14 +26,12 @@
         font-size: 0.65rem;
 
     }
+
     .navbar .nav-logo h1{
         font-size: 0.8rem;
 
     }
-    .container-hardwares .cabecalho-hardwares .cabecalho-hardwares-direita{
-        flex-direction: column;
-        gap: 2vh;
-    }
+    
     .container-hardwares .cabecalho-hardwares .cabecalho-hardwares-direita #btn-novo-hardware{
         font-size: 0.4rem;
         width: 10vw;
@@ -41,11 +39,53 @@
 
 }
 
-@media (max-width: 1052px){
+@media (max-height: 900px){
+    .caixa-tabela-hardwares{
+        height: 55vh;
+    }
+
+    .modal-cadastro{
+        max-height: 80vh !important;
+        margin-top: 5%;
+    }
+
+    .sobreposicao-modal{
+        align-items: center !important;
+    }
+}
+
+@media (max-width: 1100px){
     .container-hardwares .cabecalho-hardwares .cabecalho-hardwares-direita #btn-novo-hardware{
         font-size: 0.7rem;
         width: 20vw;
     }
+
+    .container-hardwares .cabecalho-hardwares .cabecalho-hardwares-esquerda h2{
+        font-size: 2rem;
+    }
+
+    .container-hardwares .cabecalho-hardwares .cabecalho-hardwares-esquerda h6{
+        font-size: 0.9rem;
+        max-width: 60%;
+    }
+
+    .container-hardwares .cabecalho-hardwares .cabecalho-hardwares-direita{
+        flex-direction: column;
+        gap: 2vh;
+    }
+}
+
+@media (max-width: 1301px){
+    .container-hardwares .caixa-tabela-hardwares .tabela-hardwares tbody tr td{
+        font-size: 0.8rem;
+
+        white-space: nowrap;
+    }
+
+    .container-hardwares .caixa-tabela-hardwares .tabela-hardwares tbody tr td .celula-dispositivo .info-dispositivo strong{
+        display: inline-block;
+    }
+
 }
 
 .navbar {
