@@ -20,6 +20,34 @@
     --cor-vermelho-inativo: #FF5C5C;
 }
 
+/*600px celular*/
+@media (max-width: 600px){
+    .navbar .nav-links ul li, .navbar .nav-login button{
+        font-size: 0.65rem;
+
+    }
+    .navbar .nav-logo h1{
+        font-size: 0.8rem;
+
+    }
+    .container-hardwares .cabecalho-hardwares .cabecalho-hardwares-direita{
+        flex-direction: column;
+        gap: 2vh;
+    }
+    .container-hardwares .cabecalho-hardwares .cabecalho-hardwares-direita #btn-novo-hardware{
+        font-size: 0.4rem;
+        width: 10vw;
+    }
+
+}
+
+@media (max-width: 1052px){
+    .container-hardwares .cabecalho-hardwares .cabecalho-hardwares-direita #btn-novo-hardware{
+        font-size: 0.7rem;
+        width: 20vw;
+    }
+}
+
 .navbar {
     display: flex;
     align-items: center;
@@ -840,82 +868,3 @@ main {
 .btn-salvar:hover {
     background-color: #5178f9b3;
 }
-
-/*responsivo
-
-@media (max-width: 1024px) {
-    .busca-hardwares input {
-        width: 100%;
-    }
-}
-
-@media (max-width: 900px) {
-    .navbar {
-        justify-content: space-between;
-        padding: 0 5vw;
-    }
-
-    .nav-links {
-        display: none;
-    }
-
-    .container-hardwares {
-        gap: 3vh;
-    }
-
-    .cabecalho-hardwares {
-        align-items: flex-start;
-        flex-direction: column;
-        gap: 2.5vh;
-    }
-
-    .cabecalho-hardwares-direita {
-        width: 100%;
-    }
-
-    .busca-hardwares {
-        width: 100%;
-    }
-
-    #btn-novo-hardware {
-        width: 100%;
-    }
-
-    .corpo-modal {
-        flex-direction: column;
-    }
-
-    .coluna-modal {
-        width: 100%;
-    }
-}
-
-@media (max-width: 600px) {
-    .cabecalho-hardwares-esquerda h2 {
-        font-size: 1.6rem;
-    }
-
-    .rodape-hardwares {
-        flex-direction: column;
-        align-items: flex-start;
-        gap: 2vh;
-    }
-
-    .grade-checkbox {
-        grid-template-columns: 1fr;
-    }
-
-    .modal-cadastro {
-        width: 95%;
-    }
-
-    .rodape-modal {
-        flex-direction: column-reverse;
-    }
-
-    .btn-cancelar,
-    .btn-salvar {
-        width: 100%;
-        text-align: center;
-    } 
-}*/
