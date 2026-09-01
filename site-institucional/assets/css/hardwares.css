@@ -21,7 +21,7 @@
 }
 
 /*600px celular*/
-@media (max-width: 600px){
+@media (max-width: 650px){
     .navbar .nav-links ul li, .navbar .nav-login button{
         font-size: 0.65rem;
 
@@ -37,6 +37,28 @@
         width: 10vw;
     }
 
+    .container-hardwares .cabecalho-hardwares .cabecalho-hardwares-esquerda h2{
+        font-size: 0.8rem;
+        max-width: 60%;
+    }
+
+    .container-hardwares .cabecalho-hardwares .cabecalho-hardwares-esquerda h6{
+        font-size: 0.6rem;
+        max-width: 60%;
+    }
+
+}
+
+@media (max-width: 760px){
+    .rodape-hardwares .contagem-resultados{
+        font-size: 0.8rem;
+        max-width: 18vw;
+    }
+
+    .container-hardwares .cabecalho-hardwares .cabecalho-hardwares-direita #btn-novo-hardware{
+        font-size: 0.7rem;
+        min-width: 25vw;
+    }
 }
 
 @media (max-height: 900px){

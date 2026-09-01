@@ -17,6 +17,57 @@
     --cor-azul-apagado: #5C6288;
 }
 
+@media (max-width: 1567px){
+    .container-justificativa .content-jt{
+        max-height: 65%;
+    }
+
+    .container-experiencia .content-experiencia{
+        max-height: 70%;
+        justify-content: space-evenly;
+    }
+}
+
+@media (max-width: 1567px){
+    main .container-main{
+        height: 65vh; 
+
+    }
+
+    .container-main .container-main-left .main-left-text h2{
+        font-size: 2.6rem;
+    }
+
+    .container-main .container-main-left .main-left-description h6{
+        font-size: 1.2rem;
+    }
+
+    section .container-info .content-info .content-info-box{
+        height: 30vh;
+    }
+
+    .container-experiencia .content-experiencia .content-exp-box .exp-box-title h2{
+        font-size: 0.95rem;
+        white-space: nowrap;
+    }
+}
+
+@media (max-width: 1358px){
+    .container-main .container-main-left .main-left-text h2{
+        font-size: 2.4rem;
+    }
+
+    .container-experiencia .content-experiencia .content-exp-box .exp-box-description h6{
+        font-size: 0.6rem;
+    }
+}
+
+@media (max-width: 1254px){
+    .container-main .container-main-left .main-left-text h2{
+        font-size: 2.2rem;
+    }
+}
+
 /*header*/
 
 .navbar {
@@ -337,8 +388,10 @@
 }
 
 .content-info-box h6 {
-    text-align: justify;
+    text-align: left;
     max-width: 60%;
+
+    word-break: break-all;
 
     font-size: 1.1rem;
     font-family: var(--font-padrao);
