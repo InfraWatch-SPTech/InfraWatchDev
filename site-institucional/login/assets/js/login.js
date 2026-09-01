@@ -148,3 +148,68 @@ btnEntrar.addEventListener('click', ()=>{
         containerLogin.classList.remove('fade-out');
     }, 250);
 });
+
+function cadastrar() {
+    var nomeVar = document.getElementById('input-nome').value;
+    var sobrenomeVar = document.getElementById('input-sobrenome').value;
+    var emailVar = document.getElementById('input-email').value;
+    var senhaVar = document.getElementById('input-senha-cad').value;
+    var confirmacaoSenhaVar = document.getElementById('input-confirmar-senha').value;
+
+    var nomeCompletoVar = `${nomeVar} ${sobrenomeVar}`;
+
+    if (nomeVar == '' || sobrenomeVar == '' || emailVar == '' || senhaVar == '' || confirmacaoSenhaVar == '') {
+        alert("Preencha todos os campos!");
+        return false;
+    } else if (nomeVar.length <= 2) {
+        alert("O campo NOME deve ter mais de 2 caracteres!");
+        return false;
+    } else if (!emailVar.includes('@') || !emailVar.includes('.')) {
+        alert("O campo EMAIL deve ser um email válido! \n Com '@' e '.'!");
+        return false;
+    } else if (senhaVar.length <= 5) {
+        alert("O campo SENHA deve ter 6 ou mais caracteres!");
+        return false;
+    } else if (confirmacaoSenhaVar != senhaVar) {
+        alert("As senhas devem ser iguais!");
+        return false;
+    }
+
+    fetch("/usuarios/cadastrar", {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+            nomeServer: nomeCompletoVar,
+            emailServer: emailVar,
+            senhaServer: senhaVar
+        }),
+    })
+    .then(function (resposta) {
+        console.log("resposta: ", resposta);
+
+        if (resposta.ok) {
+            alert("Cadastro realizado com sucesso! Mudando para tela de Login...");
+            setTimeout(() => {
+                btnEntrar.click();
+            }, 2000);
+        } else {
+            return resposta.text().then(function (erroMsg) {
+                alert(`Erro no servidor: ${erroMsg}`);
+            });
+        }
+    })
+    .catch(function (resposta) {
+        console.log(`#ERRO: ${resposta}`);
+    });
+
+    return false;
+}
+
+document.addEventListener('submit', function(e) {
+    if (e.target && e.target.classList.contains('formulario-cadastro')) {
+        e.preventDefault();
+        cadastrar();
+    }
+});
