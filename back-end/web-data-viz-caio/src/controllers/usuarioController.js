@@ -21,7 +21,6 @@ function autenticar(req, res) {
                             id: resultadoAutenticar[0].id,
                             email: resultadoAutenticar[0].email,
                             nome: resultadoAutenticar[0].nome,
-                            cpf: resultadoAutenticar[0].cpf,
                             perm: resultadoAutenticar[0].perm
                         });
                     } else if (resultadoAutenticar.length == 0) {

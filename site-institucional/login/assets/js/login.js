@@ -206,10 +206,62 @@ function cadastrar() {
 
     return false;
 }
+function entrar() {
+    var emailVar = document.getElementById('input-email').value;
+    var senhaVar = document.getElementById('input-senha').value;
 
+    if (emailVar == '' || senhaVar == '') {
+        alert("Preencha todos os campos!");
+        return false;
+    } else if (!emailVar.includes('@') || !emailVar.includes('.')) {
+        alert("O campo EMAIL deve ser um email válido! \n Com '@' e '.'!");
+        return false;
+    }
+
+    fetch("/usuarios/autenticar", {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+            emailServer: emailVar,
+            senhaServer: senhaVar
+        }),
+    })
+    .then(function (resposta) {
+        console.log("resposta: ", resposta);
+
+        if (resposta.ok) {
+            return resposta.json().then(function (usuario) {
+                console.log("usuário autenticado: ", usuario);
+
+                // Guarda os dados do usuário logado para uso no restante do site
+                localStorage.setItem('usuarioLogado', JSON.stringify(usuario));
+
+                alert(`Login realizado com sucesso! Bem-vindo(a), ${usuario.nome}!`);
+                window.location.href = "/";
+            });
+        } else {
+            return resposta.text().then(function (erroMsg) {
+                alert(`Erro no login: ${erroMsg}`);
+            });
+        }
+    })
+    .catch(function (resposta) {
+        console.log(`#ERRO: ${resposta}`);
+        alert("Não foi possível conectar ao servidor. Tente novamente mais tarde.");
+    });
+
+    return false;
+}
 document.addEventListener('submit', function(e) {
-    if (e.target && e.target.classList.contains('formulario-cadastro')) {
+    if (e.target && e.target.id === 'form-login') {
         e.preventDefault();
-        cadastrar();
+
+        if (e.target.classList.contains('formulario-cadastro')) {
+            cadastrar();
+        } else {
+            entrar();
+        }
     }
 });
