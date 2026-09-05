@@ -79,7 +79,7 @@
 @media (max-width: 1100px){
     .container-hardwares .cabecalho-hardwares .cabecalho-hardwares-direita #btn-novo-hardware{
         font-size: 0.7rem;
-        width: 20vw;
+        width: 20vw;       
     }
 
     .container-hardwares .cabecalho-hardwares .cabecalho-hardwares-esquerda h2{
