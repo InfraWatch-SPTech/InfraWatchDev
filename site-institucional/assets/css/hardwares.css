@@ -17,104 +17,207 @@
     --cor-azul-apagado: #5C6288;
     --cor-verde-ativo: #3DDC84;
     --cor-amarelo-atencao: #F5C542;
-    --cor-vermelho-inativo: #FF5C5C;
+    --cor-vermelho-inativo: #FF5C5C;    
 }
 
-/*600px celular*/
-@media (max-width: 650px){
-    .navbar .nav-links ul li, .navbar .nav-login button{
-        font-size: 0.65rem;
 
-    }
-
-    .navbar .nav-logo h1{
+@media (max-width: 1301px) {
+    .container-hardwares .caixa-tabela-hardwares .tabela-hardwares tbody tr td {
         font-size: 0.8rem;
-
-    }
-    
-    .container-hardwares .cabecalho-hardwares .cabecalho-hardwares-direita #btn-novo-hardware{
-        font-size: 0.4rem;
-        width: 10vw;
+        white-space: nowrap;
     }
 
-    .container-hardwares .cabecalho-hardwares .cabecalho-hardwares-esquerda h2{
-        font-size: 0.8rem;
-        max-width: 60%;
+    .container-hardwares .caixa-tabela-hardwares .tabela-hardwares tbody tr td .celula-dispositivo .info-dispositivo strong {
+        display: inline-block;
     }
-
-    .container-hardwares .cabecalho-hardwares .cabecalho-hardwares-esquerda h6{
-        font-size: 0.6rem;
-        max-width: 60%;
-    }
-
 }
 
-@media (max-width: 760px){
-    .rodape-hardwares .contagem-resultados{
-        font-size: 0.8rem;
-        max-width: 18vw;
-    }
-
-    .container-hardwares .cabecalho-hardwares .cabecalho-hardwares-direita #btn-novo-hardware{
+@media (max-width: 1100px) {
+    .container-hardwares .cabecalho-hardwares .cabecalho-hardwares-direita #btn-novo-hardware {
         font-size: 0.7rem;
-        min-width: 25vw;
-    }
-}
-
-@media (max-height: 900px){
-    .caixa-tabela-hardwares{
-        height: 55vh;
+        width: 20vw;
     }
 
-    .modal-cadastro{
-        max-height: 80vh !important;
-        margin-top: 5%;
-    }
-
-    .sobreposicao-modal{
-        align-items: center !important;
-    }
-}
-
-@media (max-width: 1100px){
-    .container-hardwares .cabecalho-hardwares .cabecalho-hardwares-direita #btn-novo-hardware{
-        font-size: 0.7rem;
-        width: 20vw;       
-    }
-
-    .container-hardwares .cabecalho-hardwares .cabecalho-hardwares-esquerda h2{
+    .container-hardwares .cabecalho-hardwares .cabecalho-hardwares-esquerda h2 {
         font-size: 2rem;
     }
 
-    .container-hardwares .cabecalho-hardwares .cabecalho-hardwares-esquerda h6{
+    .container-hardwares .cabecalho-hardwares .cabecalho-hardwares-esquerda h6 {
         font-size: 0.9rem;
         max-width: 60%;
     }
 
-    .container-hardwares .cabecalho-hardwares .cabecalho-hardwares-direita{
+    .container-hardwares .cabecalho-hardwares .cabecalho-hardwares-direita {
         flex-direction: column;
         gap: 2vh;
     }
 }
 
-@media (max-width: 1301px){
-    .container-hardwares .caixa-tabela-hardwares .tabela-hardwares tbody tr td{
+@media (max-height: 900px) {
+    .caixa-tabela-hardwares {
+        height: 55vh;
+    }
+
+    .modal-cadastro {
+        max-height: 80vh !important;
+        margin-top: 5%;
+    }
+
+    .sobreposicao-modal {
+        align-items: center !important;
+    }
+}
+
+@media (max-width: 900px) {
+    .cabecalho-hardwares {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 2vh;
+    }
+
+    .cabecalho-hardwares-direita {
+        width: 100%;
+        flex-direction: column !important;
+        align-items: stretch;
+    }
+
+    .busca-hardwares,
+    #btn-novo-hardware {
+        width: 100% !important;
+    }
+
+    .corpo-modal {
+        flex-direction: column;
+    }
+
+    .coluna-modal {
+        width: 100%;
+    }
+}
+
+@media (max-width: 760px) {
+    .rodape-hardwares {
+        flex-direction: column;
+        gap: 1.5vh;
+        align-items: flex-start;
+    }
+
+    .rodape-hardwares .contagem-resultados {
         font-size: 0.8rem;
-
-        white-space: nowrap;
+        max-width: none;
     }
 
-    .container-hardwares .caixa-tabela-hardwares .tabela-hardwares tbody tr td .celula-dispositivo .info-dispositivo strong{
-        display: inline-block;
+    .container-hardwares .cabecalho-hardwares .cabecalho-hardwares-direita #btn-novo-hardware {
+        font-size: 0.7rem;
+        width: 100%;
     }
 
+    .paginacao {
+        flex-wrap: wrap;
+        justify-content: flex-start;
+    }
+}
+
+@media (max-width: 650px) {
+.navbar {
+    flex-direction: column;
+    flex-wrap: nowrap;
+    align-items: center;
+    justify-content: center;
+    height: auto;
+    padding: 1.2rem 1rem;
+    gap: 1rem;
+}
+
+.nav-logo h1 {
+    font-size: 1.3rem;
+}
+
+.nav-links ul {
+    gap: 1.2rem;
+    flex-wrap: wrap;
+    justify-content: center;
+    row-gap: 0.6rem;
+}
+
+.nav-links ul li {
+    font-size: 0.85rem;
+}
+
+.nav-login {
+    width: 100%;
+    justify-content: center;
+    gap: 3vw;
+}
+
+.nav-login button {
+    font-size: 0.85rem;
+}
+
+    .container-hardwares .cabecalho-hardwares .cabecalho-hardwares-direita #btn-novo-hardware {
+        font-size: 0.85rem;
+        width: 100%;
+    }
+
+    .container-hardwares .cabecalho-hardwares .cabecalho-hardwares-esquerda h2 {
+        font-size: 1.4rem;
+        max-width: 100%;
+    }
+
+    .container-hardwares .cabecalho-hardwares .cabecalho-hardwares-esquerda h6 {
+        font-size: 0.8rem;
+        max-width: 100%;
+    }
+
+    .container-hardwares {
+        width: 94%;
+        padding: 3vh 0;
+        gap: 3vh;
+    }
+
+    .grade-checkbox {
+        grid-template-columns: 1fr;
+    }
+
+    .modal-cadastro {
+        width: 96%;
+    }
+
+    .cabecalho-modal,
+    .corpo-modal,
+    .rodape-modal {
+        padding: 1rem;
+    }
+
+    .rodape-modal {
+        flex-direction: column-reverse;
+    }
+
+    .btn-cancelar,
+    .btn-salvar {
+        width: 100%;
+        text-align: center;
+    }
+}
+
+@media (max-width: 420px) {
+    .paginacao .numero-pagina,
+    .paginacao .seta-pagina {
+        width: 1.9rem;
+        height: 1.9rem;
+        font-size: 0.75rem;
+    }
+
+    .celula-dispositivo {
+        flex-wrap: wrap;
+    }
 }
 
 .navbar {
     display: flex;
     align-items: center;
-    justify-content: space-around;
-
+    justify-content: space-between;
+    padding: 0 1rem;
     position: fixed;
     z-index: 1000;
 
@@ -288,7 +391,7 @@ main {
     display: flex;
     align-items: center;
     justify-content: flex-start;
-
+    width: 100%;
     gap: 0.7vw;
 
     padding: 0.7rem 1.2rem;
@@ -304,7 +407,7 @@ main {
 }
 
 .busca-hardwares input {
-    width: 14vw;
+    width: 100%;
 
     background: transparent;
     border: none;
