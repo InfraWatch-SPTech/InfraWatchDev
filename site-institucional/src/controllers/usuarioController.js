@@ -18,10 +18,14 @@ function autenticar(req, res) {
 
                     if (resultadoAutenticar.length == 1) {
                         res.json({
-                            id: resultadoAutenticar[0].idUsuario,
+                            id: resultadoAutenticar[0].id,
                             email: resultadoAutenticar[0].email,
                             nome: resultadoAutenticar[0].nome,
-                            perm: resultadoAutenticar[0].fkPermissao
+                            perm: resultadoAutenticar[0].perm,
+                            nomePermissao: resultadoAutenticar[0].nomePermissao,
+                            descPermissao: resultadoAutenticar[0].descPermissao,
+                            idEmpresa: resultadoAutenticar[0].idEmpresa,
+                            nomeEmpresa: resultadoAutenticar[0].nomeEmpresa
                         });
                     } else if (resultadoAutenticar.length == 0) {
                         res.status(403).send("Email e/ou senha inválido(s)");
@@ -45,8 +49,9 @@ function cadastrar(req, res) {
     var nome = req.body.nomeServer;
     var email = req.body.emailServer;
     var senha = req.body.senhaServer;
+    var nomeEmpresa = req.body.empresaServer;
+    
     var fkPermissao = 2;
-    var fkEmpresa = 1;
 
     // Faça as validações dos valores
     if (nome == undefined) {
@@ -62,19 +67,46 @@ function cadastrar(req, res) {
             .then(function (resultado) {
 
                 if (resultado.length > 0) {
-                    res.status(403).send('Já existe um cadastro com esseemail ou CPF.');
+                    res.status(403).send('Já existe um cadastro com esse email.');
+                    return; 
                 }
-                else {
-                    return usuarioModel.cadastrar(nome, email, senha, fkEmpresa, fkPermissao)
-                        .then(function (cadastro) {
-                            res.json(cadastro);
-                        });
-                }
-            })
-            .catch(function (erro) {
-                console.log(erro);
-                res.status(500).json(erro);
-            });
+
+            usuarioModel.verificar_empresa_por_nome(nomeEmpresa)
+                .then(function (resultadoEmpresa) {
+
+                    if (resultadoEmpresa.length == 0) {
+                        return res.status(404).send("Empresa não encontrada!");
+                    }
+
+                    var fkEmpresa = resultadoEmpresa[0].idEmpresa;
+
+                    var fkPermissao = 2;
+
+                    usuarioModel.cadastrar(
+                        nome,
+                        email,
+                        senha,
+                        fkEmpresa,
+                        fkPermissao
+                    )
+                    .then(function (resultadoCadastro) {
+
+                        res.status(201).send("Usuário cadastrado com sucesso!");
+
+                    })
+                    .catch(function (erro) {
+                        res.status(500).json(erro);
+                    });
+
+                })
+                .catch(function (erro) {
+                    res.status(500).json(erro);
+                });
+
+        })
+        .catch(function (erro) {
+            res.status(500).json(erro);
+        });
     }
 }
 

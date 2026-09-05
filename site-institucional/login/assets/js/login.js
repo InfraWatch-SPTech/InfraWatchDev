@@ -154,6 +154,7 @@ function cadastrar() {
     var sobrenomeVar = document.getElementById('input-sobrenome').value;
     var emailVar = document.getElementById('input-email').value;
     var senhaVar = document.getElementById('input-senha-cad').value;
+    var empresaVar = document.getElementById('input-empresa').value;
     var confirmacaoSenhaVar = document.getElementById('input-confirmar-senha').value;
 
     var nomeCompletoVar = `${nomeVar} ${sobrenomeVar}`;
@@ -167,11 +168,14 @@ function cadastrar() {
     } else if (!emailVar.includes('@') || !emailVar.includes('.')) {
         alert("O campo EMAIL deve ser um email válido! \n Com '@' e '.'!");
         return false;
-    } else if (senhaVar.length <= 5) {
-        alert("O campo SENHA deve ter 6 ou mais caracteres!");
+    } else if (senhaVar.length <= 8) {
+        alert("O campo SENHA deve ter 8 ou mais caracteres!");
         return false;
     } else if (confirmacaoSenhaVar != senhaVar) {
         alert("As senhas devem ser iguais!");
+        return false;
+    } else if (empresaVar == null || empresaVar == "") {
+        alert("O campo empresa não pode estar vazio!");
         return false;
     }
 
@@ -183,12 +187,11 @@ function cadastrar() {
         body: JSON.stringify({
             nomeServer: nomeCompletoVar,
             emailServer: emailVar,
-            senhaServer: senhaVar
+            senhaServer: senhaVar,
+            empresaServer: empresaVar
         }),
     })
     .then(function (resposta) {
-        console.log("resposta: ", resposta);
-
         if (resposta.ok) {
             alert("Cadastro realizado com sucesso! Mudando para tela de Login...");
             setTimeout(() => {
