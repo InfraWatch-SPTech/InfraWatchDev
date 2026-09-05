@@ -15,10 +15,8 @@ CREATE TABLE permissao (
     descricao VARCHAR(200)
 );
 
-
-
 CREATE TABLE usuario (
-    idUsuario INT PRIMARY KEY AUTO_INCREMENT,
+    id_usuario INT PRIMARY KEY AUTO_INCREMENT,
     nome VARCHAR(100) NOT NULL,
     email VARCHAR(100) NOT NULL,
     senha VARCHAR(100) NOT NULL,
@@ -74,3 +72,9 @@ CREATE TABLE metrica (
     FOREIGN KEY (fkComponente)
         REFERENCES componente(idComponente)
 );
+
+INSERT INTO permissao (idPermissao, nome, descricao) 
+VALUES (2, 'Usuario', 'Acesso comum');
+
+INSERT INTO empresa (idEmpresa, nome, cnpj, email) 
+VALUES (1, 'Empresa Teste', '00.000.000/0001-00', 'teste@empresa.com');
