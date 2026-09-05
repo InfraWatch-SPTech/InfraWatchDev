@@ -57,8 +57,8 @@ btnCadastro.addEventListener('click', ()=>{
                     </div>
 
                     <div class="inputs">
-                        <label for="input-empresa">Empresa</label>
-                        <input type="text" id="input-empresa" name="empresa" placeholder="Nome da instituição" required>
+                        <label for="input-empresa">Código Empresa</label>
+                        <input type="text" id="input-empresa" name="empresa" placeholder="Código da instituição" required>
                     </div>
                     
                     <div class="input-row">
@@ -154,7 +154,7 @@ function cadastrar() {
     var sobrenomeVar = document.getElementById('input-sobrenome').value;
     var emailVar = document.getElementById('input-email').value;
     var senhaVar = document.getElementById('input-senha-cad').value;
-    var empresaVar = document.getElementById('input-empresa').value;
+    var codigoEmpresaVar = document.getElementById('input-empresa').value;
     var confirmacaoSenhaVar = document.getElementById('input-confirmar-senha').value;
 
     var nomeCompletoVar = `${nomeVar} ${sobrenomeVar}`;
@@ -168,13 +168,13 @@ function cadastrar() {
     } else if (!emailVar.includes('@') || !emailVar.includes('.')) {
         alert("O campo EMAIL deve ser um email válido! \n Com '@' e '.'!");
         return false;
-    } else if (senhaVar.length <= 8) {
+    } else if (senhaVar.length <= 7) {
         alert("O campo SENHA deve ter 8 ou mais caracteres!");
         return false;
     } else if (confirmacaoSenhaVar != senhaVar) {
         alert("As senhas devem ser iguais!");
         return false;
-    } else if (empresaVar == null || empresaVar == "") {
+    } else if (codigoEmpresaVar == null || codigoEmpresaVar == "") {
         alert("O campo empresa não pode estar vazio!");
         return false;
     }
@@ -188,7 +188,7 @@ function cadastrar() {
             nomeServer: nomeCompletoVar,
             emailServer: emailVar,
             senhaServer: senhaVar,
-            empresaServer: empresaVar
+            empresaServer: codigoEmpresaVar
         }),
     })
     .then(function (resposta) {
@@ -199,7 +199,7 @@ function cadastrar() {
             }, 2000);
         } else {
             return resposta.text().then(function (erroMsg) {
-                alert(`Erro no servidor: ${erroMsg}`);
+                alert(`ERRO: ${erroMsg}`);
             });
         }
     })

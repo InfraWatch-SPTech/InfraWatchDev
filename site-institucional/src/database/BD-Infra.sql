@@ -5,7 +5,8 @@ CREATE TABLE empresa (
     idEmpresa INT PRIMARY KEY AUTO_INCREMENT,
     nome VARCHAR(100) NOT NULL,
     cnpj VARCHAR(18),
-    email VARCHAR(100)
+    email VARCHAR(100),
+    codigo CHAR(8) NOT NULL
 );
 
 
@@ -30,8 +31,6 @@ CREATE TABLE usuario (
     FOREIGN KEY (fkPermissao)
         REFERENCES permissao(idPermissao)
 );
-
-
 
 CREATE TABLE equipamento (
     idEquipamento INT PRIMARY KEY AUTO_INCREMENT,
@@ -81,9 +80,9 @@ INSERT INTO permissao (idPermissao, nome, descricao) VALUES
 INSERT INTO usuario (nome, email, senha, fkEmpresa, fkPermissao) VALUES 
 ('Administrador', 'admin@infrawatch.com', 'admin123', NULL, 1);
 
-INSERT INTO empresa (idEmpresa, nome, cnpj, email) VALUES 
-(2, 'Bananinha Ltda', '12.345.678/0001-90', 'contato@techsolutions.com'),
-(3, 'Xpto Brasil', '98.765.432/0001-10', 'suporte@datacenterbrasil.com'),
-(4, 'Batata Tech', '11.222.333/0001-44', 'contato@cloudnova.com'),
-(5, 'Security SA', '55.666.777/0001-88', 'seguranca@infosecurity.com'),
-(6, 'Pro', '99.888.777/0001-66', 'network@networkpro.com');
+INSERT INTO empresa (idEmpresa, nome, cnpj, email, codigo) VALUES 
+(2, 'Bananinha Ltda', '12.345.678/0001-90', 'contato@techsolutions.com', 'X678JNSZ'),
+(3, 'Xpto Brasil', '98.765.432/0001-10', 'suporte@datacenterbrasil.com', 'K492MLQX'),
+(4, 'Batata Tech', '11.222.333/0001-44', 'contato@cloudnova.com', 'V375BWRZ'),
+(5, 'Security SA', '55.666.777/0001-88', 'seguranca@infosecurity.com', 'P254KTVW'),
+(6, 'Pro', '99.888.777/0001-66', 'network@networkpro.com', 'M931JGBC');

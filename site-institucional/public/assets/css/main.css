@@ -120,6 +120,66 @@
     background-color: #5178f9b3;
 }
 
+/*comportamento login LOGADO*/
+
+#btn-pagina-empresa{
+    padding: 0.2rem 1rem;
+    border: 1px solid rgba(255, 255, 255, 0.172);
+
+    background-color: var(--cor-azul-contraste2);
+
+    border-radius: 0.3rem;
+
+    transition: 0.3s;
+}
+
+#btn-pagina-empresa:hover{
+    background-color: #5178f9b3
+}
+
+#btn-perfil-usuario{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 1vw;
+
+    background-color: transparent;
+    border: 1px solid rgba(255, 255, 255, 0.283);
+
+    padding: 0.35rem 1.4rem;
+    border-radius: 0.3rem;
+
+    transition: 0.3s;
+}
+
+#btn-perfil-usuario:hover{
+    border-color: var(--cor-azul-contraste2);
+}
+
+.popup-perfil{
+    display: none;
+    position: absolute;
+    top: 80%;
+    right: 1.8%;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+
+    height: 15vh;
+    width: 15%;
+
+    background-color: rgb(247, 246, 243);
+    border-radius: 0.3rem;
+
+    z-index: 100000;
+}
+
+.popup-perfil.active{
+    display: flex;
+}
+
 /*main*/
 
 .container-main {

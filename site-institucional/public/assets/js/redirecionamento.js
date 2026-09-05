@@ -1,5 +1,5 @@
 function redirecionamento_login(){
-    window.location.href = "./login.html";
+    window.location.href = "../public/login.html";
 }
 
 function redirecionamento_cadastro(){
