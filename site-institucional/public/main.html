@@ -1,0 +1,351 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" type="image/png" href="../public/assets/midias/main-icon-image.png">
+    <!--Links-->
+    <link rel="stylesheet" href="../public/assets/css/main.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.3.1/css/all.min.css"
+        integrity="sha512-QeR2VH+lsBE5LSAe1Q5EnTBbe7XTBubt8dG93Y7gidSgdMCr8nVqKcfKAMyN96SV8KDbZVTDXChatu5G2KQGzg=="
+        crossorigin="anonymous" referrerpolicy="no-referrer" />
+
+    <script src="../public/assets/js/redirecionamento.js"></script>
+    <script src="../public/assets/js/sessao.js"></script>
+
+    <title>InfraWatch.Dev - Home</title>
+</head>
+
+<body onload="validarSessao()">
+
+    <header>
+        <div class="navbar">
+            <div class="nav-logo">
+                <h1>
+                    Infra<span>Watch</span>
+                </h1>
+            </div>
+            <div class="nav-links">
+                <ul>
+                    <li class="nav-select">
+                        <a href="./main.html">Home</a>
+                    </li>
+                    <li>
+                        <a href="../public/sobrenos.html">
+                            Sobre-nós
+                        </a>
+                    </li>   
+                    <li>
+                        <a href="../public/sobrenos.html#contato">
+                            Contato
+                        </a>
+                    </li>
+                </ul>
+            </div>
+            <div class="nav-login">
+                <button id="btn-logar" onclick="redirecionamento_login()">
+                    Entrar
+                </button>
+                <button id="btn-cadastrar" onclick="redirecionamento_login()">
+                    Cadastrar-se
+                </button>
+            </div>
+            <div class="popup-perfil">
+                
+            </div>
+        </div>
+    </header>
+
+    <div class="divisao-nav" style="height: 9vh; width: 100%;"></div>
+
+    <main>
+        <div class="container-main">
+            <div class="container-main-left">
+                <div class="main-left-text">
+                    <h2>
+                        Tenha total controle de
+                        seus sistemas, agindo
+                        quando preciso
+                        <span>
+                            antes que
+                            seus clientes
+                            percebam.
+                        </span>
+                    </h2>
+                </div>
+                <div class="main-left-description">
+                    <h6>
+                        O InfraWatch acompanha em tempo real a saúde
+                        dos servidores que processam suas transações -
+                        disponibilidade, latência e incidentes, tudo em um só painel
+                    </h6>
+                </div>
+                <div class="main-left-buttons">
+                    <button id="btn-especialista">
+                        Falar com um especialista
+                    </button>
+                    <button id="btn-rolar">
+                        Ver como funciona
+                    </button>
+                </div>
+            </div>
+            <div class="container-main-right">
+                <div class="box-image">
+
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <section>
+        <div class="container-info">
+            <div class="container-info-title">
+                <span>
+                    MONITORAMENTO INTELIGENTE
+                </span>
+
+                <h2>
+                    Uma plataforma, três frentes de observabilidade
+                </h2>
+            </div>
+            <div class="content-info">
+                <div class="content-info-box">
+                    <div class="info-box-title">
+                        <img src="./assets/midias/server-icon.png" alt="">
+                        <span>
+                            INFRAESTRUTURA
+                        </span>
+                    </div>
+                    <h6>
+                        Acompanhe CPU, memória, disco e disponibilidade de cada servidor monitorado, com métricas
+                        atualizadas em intervalos de segundos.
+                    </h6>
+                </div>
+                <div class="content-info-box">
+                    <div class="info-box-title">
+                        <img src="./assets/midias/check-icon.png" alt="">
+                        <span>
+                            ALTA PERFORMANCE
+                        </span>
+                    </div>
+                    <h6>
+                        Métricas de latência e throughput correlacionadas com dependências externas, como DICT e
+                        SPI, para diagnósticos mais rápidos.
+                    </h6>
+                </div>
+                <div class="content-info-box">
+                    <div class="info-box-title">
+                        <img src="./assets/midias/bell-icon.png" alt="">
+                        <span>
+                            ALERTAS INTELIGENTES
+                        </span>
+                    </div>
+                    <h6>
+                        Notificações automáticas via Slack e abertura de chamados no Jira assim que um limiar de
+                        alerta é ultrapassado.
+                    </h6>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section>
+        <div class="container-justificativa">
+            <div class="container-jt-title">
+                <span>
+                    PORQUE A <span style="color: white;">INFRA</span>WATCH
+                </span>
+
+                <h2>
+                    Porque as empresas escolhem a InfraWatch?
+                </h2>
+            </div>
+            <div class="content-jt">
+                <div class="content-jt-box">
+                    <div class="jt-box-title">
+                        <span>
+                            24/7
+                        </span>
+                    </div>
+                    <h6>
+                        RASTREAMENTO CONTÍNUO
+                    </h6>
+                </div>
+                <div class="content-jt-box">
+                    <div class="jt-box-title">
+                        <span>
+                            +250
+                        </span>
+                    </div>
+                    <h6>
+                        EMPRESAS CONOSCO
+                    </h6>
+                </div>
+                <div class="content-jt-box">
+                    <div class="jt-box-title">
+                        <span>
+                            ALTA
+                        </span>
+                    </div>
+                    <h6>
+                        PREVISÃO DE ERROS
+                    </h6>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section>
+        <div class="container-experiencia">
+            <div class="container-experiencia-title">
+                <span>
+                    COMO FUNCIONA
+                </span>
+                <h2>
+                    Do primeiro contato ao monitoramento completo.
+                </h2>
+            </div>
+            <div class="content-experiencia">
+                <div class="content-exp-box">
+                    <div class="exp-box-number">
+                        <h2>1</h2>
+                    </div>
+                    <div class="exp-box-title">
+                        <h2>Contate-nos</h2>
+                    </div>
+                    <div class="exp-box-description">
+                        <h6>
+                            Entenda com nosso time o cenário da sua infraestrutura e as integrações necessárias.
+                        </h6>
+                    </div>
+                </div>
+                <div class="content-exp-box">
+                    <div class="exp-box-number">
+                        <h2>2</h2>
+                    </div>
+                    <div class="exp-box-title">
+                        <h2>Análise Operacional</h2>
+                    </div>
+                    <div class="exp-box-description">
+                        <h6>
+                            Mapeamos os componentes críticos e definimos os limiares de alerta ideais.
+                        </h6>
+                    </div>
+                </div>
+                <div class="content-exp-box">
+                    <div class="exp-box-number">
+                        <h2>3</h2>
+                    </div>
+                    <div class="exp-box-title">
+                        <h2>Implementação</h2>
+                    </div>
+                    <div class="exp-box-description">
+                        <h6>
+                            Conectamos o agente coletor e os canais de notificação em poucos dias.
+                        </h6>
+                    </div>
+                </div>
+                <div class="content-exp-box">
+                    <div class="exp-box-number">
+                        <h2>4</h2>
+                    </div>
+                    <div class="exp-box-title">
+                        <h2>Monitoramento Completo</h2>
+                    </div>
+                    <div class="exp-box-description">
+                        <h6>
+                            Acompanhe painéis em tempo real com sua equipe de operações, 24 horas por dia.
+                        </h6>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section>
+        <div class="container-banner">
+            <div class="content-banner">
+                <div class="content-banner-left">
+                    <h2>
+                        Pronto para ter controle total
+                        de sua infraestrutura?
+                    </h2>
+                    <button>
+                        <i class="fa-regular fa-comment"></i>
+                        Falar com um especialista
+                    </button>
+                </div>
+                <div class="content-banner-right">
+                    <div class="banner-right-box">
+                        <img src="../public/assets/midias/main-banner.png" alt="box-image">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <footer>
+        <div class="container-footer">
+            <div class="content-footer">
+                <div class="content-footer-top">
+                    <div class="footer-top-title">
+                        <h2>
+                            Infra<span style="color: #5178F9;">Watch</span>
+                        </h2>
+                        <h6>
+                            Observabilidade de infraestrutura para empresas <span>que não podem parar</span>.
+                        </h6>
+                    </div>
+                    <div class="footer-top-links">
+                        <div class="f-top-links-box">
+                            <h2 class="f-link-selected">
+                                Home
+                            </h2>
+                            <ul>
+                                <li>Serviço</li>
+                                <li>Processo</li>
+                                <li>Inovação</li>
+                            </ul>
+                        </div>
+                        <div class="f-top-links-box">
+                            <h2>
+                                Sobre-nos
+                            </h2>
+                            <ul>
+                                <li>Nosso time</li>
+                                <li>Valores</li>
+                                <li>Objetivos</li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="footer-top-contato">
+                        <h2>
+                            Contate-nos
+                        </h2>
+                        <ul>
+                            <li>
+                                Dúvidas/Especialistas
+                            </li>
+                            <li>
+                                <i class="fa-brands fa-whatsapp"></i>
+                                (11) 98888-8888
+                            </li>
+                            <li>
+                                <i class="fa-regular fa-envelope"></i>
+                                infrawatch.gmail.com
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="content-footer-bottom">
+                    <h6>
+                        © 2026 Copyright: Infra<span style="color: #5178F9;">Watch</span>.com.br
+                    </h6>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+</body>
+</html>

@@ -1,0 +1,107 @@
+DROP DATABASE IF EXISTS InfraWatch;
+
+CREATE DATABASE InfraWatch;
+USE InfraWatch;
+
+CREATE TABLE empresa (
+    idEmpresa INT PRIMARY KEY AUTO_INCREMENT,
+    nome VARCHAR(100) NOT NULL,
+    cnpj VARCHAR(18),
+    email VARCHAR(100),
+    codigo CHAR(8) NOT NULL
+);
+
+
+CREATE TABLE permissao (
+    idPermissao INT PRIMARY KEY AUTO_INCREMENT,
+    nome VARCHAR(50) NOT NULL,
+    descricao VARCHAR(200)
+);
+
+CREATE TABLE usuario (
+    idUsuario INT PRIMARY KEY AUTO_INCREMENT,
+    nome VARCHAR(100) NOT NULL,
+    email VARCHAR(100) NOT NULL,
+    senha VARCHAR(100) NOT NULL,
+
+    fkEmpresa INT,
+    fkPermissao INT,
+
+    FOREIGN KEY (fkEmpresa)
+        REFERENCES empresa(idEmpresa),
+
+    FOREIGN KEY (fkPermissao)
+        REFERENCES permissao(idPermissao)
+);
+
+CREATE TABLE equipamento (
+    idEquipamento INT PRIMARY KEY AUTO_INCREMENT,
+    nome VARCHAR(100) NOT NULL,
+    tipo VARCHAR(50),
+    ip VARCHAR(15),
+    status VARCHAR(20),
+
+    fkEmpresa INT,
+
+    FOREIGN KEY (fkEmpresa)
+        REFERENCES empresa(idEmpresa)
+);
+
+
+CREATE TABLE componente (
+    idComponente INT PRIMARY KEY AUTO_INCREMENT,
+    nome VARCHAR(100) NOT NULL,
+    tipo VARCHAR(50),
+    descricao VARCHAR(200),
+
+    fkEquipamento INT,
+
+    FOREIGN KEY (fkEquipamento)
+        REFERENCES equipamento(idEquipamento)
+);
+
+
+CREATE TABLE metrica (
+    idMetrica INT PRIMARY KEY AUTO_INCREMENT,
+    nome VARCHAR(100) NOT NULL,
+    valor DECIMAL(10,2),
+    unidade VARCHAR(20),
+    dataHora DATETIME,
+
+    fkComponente INT,
+
+    FOREIGN KEY (fkComponente)
+        REFERENCES componente(idComponente)
+);
+
+INSERT INTO permissao (idPermissao, nome, descricao) VALUES 
+(1, 'Super Usuario','root'),
+(2, 'Admin', 'Administrador'),
+(3, 'Gerente', 'Gerente'),
+(4, 'Usuario','Usuario Comum');
+
+INSERT INTO empresa (idEmpresa, nome, cnpj, email, codigo) VALUES 
+(2, 'Bananinha Ltda', '12.345.678/0001-90', 'contato@techsolutions.com', 'X678JNSZ'),
+(3, 'Xpto Brasil', '98.765.432/0001-10', 'suporte@datacenterbrasil.com', 'K492MLQX'),
+(4, 'Batata Tech', '11.222.333/0001-44', 'contato@cloudnova.com', 'V375BWRZ'),
+(5, 'Security SA', '55.666.777/0001-88', 'seguranca@infosecurity.com', 'P254KTVW'),
+(6, 'Pro', '99.888.777/0001-66', 'network@networkpro.com', 'M931JGBC');
+
+INSERT INTO usuario (nome, email, senha, fkEmpresa, fkPermissao) VALUES 
+-- InfraWatch
+('root', 'admin@infrawatch.com', 'admin123', NULL, 1),
+-- Bananinha Ltda
+('Admin Bananinha', 'admin@bananinha.com', 'admin123', 2, 2),
+('Gerente Bananinha', 'gerente@bananinha.com', 'gerente123', 2, 3),
+-- Xpto Brasil
+('Admin Xpto', 'admin@xpto.com', 'admin123', 3, 2),
+('Gerente Xpto', 'gerente@xpto.com', 'gerente123', 3, 3),
+-- Batata Tech
+('Admin Batata', 'admin@batata.com', 'admin123', 4, 2),
+('Gerente Batata', 'gerente@batata.com', 'gerente123', 4, 3),
+-- Security SA
+('Admin Security', 'admin@security.com', 'admin123', 5, 2),
+('Gerente Security', 'gerente@security.com', 'gerente123', 5, 3),
+-- Pro
+('Admin Pro', 'admin@pro.com', 'admin123', 6, 2),
+('Gerente Pro', 'gerente@pro.com', 'gerente123', 6, 3);
