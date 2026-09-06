@@ -1,3 +1,5 @@
+DROP DATABASE IF EXISTS InfraWatch;
+
 CREATE DATABASE InfraWatch;
 USE InfraWatch;
 
@@ -73,12 +75,10 @@ CREATE TABLE metrica (
 );
 
 INSERT INTO permissao (idPermissao, nome, descricao) VALUES 
-(1, 'Admin','root'),
-(2, 'Usuario', 'Acesso comum');
-
-
-INSERT INTO usuario (nome, email, senha, fkEmpresa, fkPermissao) VALUES 
-('Administrador', 'admin@infrawatch.com', 'admin123', NULL, 1);
+(1, 'Super Usuario','root'),
+(2, 'Admin', 'Administrador'),
+(3, 'Gerente', 'Gerente'),
+(4, 'Usuario','Usuario Comum');
 
 INSERT INTO empresa (idEmpresa, nome, cnpj, email, codigo) VALUES 
 (2, 'Bananinha Ltda', '12.345.678/0001-90', 'contato@techsolutions.com', 'X678JNSZ'),
@@ -86,3 +86,22 @@ INSERT INTO empresa (idEmpresa, nome, cnpj, email, codigo) VALUES
 (4, 'Batata Tech', '11.222.333/0001-44', 'contato@cloudnova.com', 'V375BWRZ'),
 (5, 'Security SA', '55.666.777/0001-88', 'seguranca@infosecurity.com', 'P254KTVW'),
 (6, 'Pro', '99.888.777/0001-66', 'network@networkpro.com', 'M931JGBC');
+
+INSERT INTO usuario (nome, email, senha, fkEmpresa, fkPermissao) VALUES 
+-- InfraWatch
+('root', 'admin@infrawatch.com', 'admin123', NULL, 1),
+-- Bananinha Ltda
+('Admin Bananinha', 'admin@bananinha.com', 'admin123', 2, 2),
+('Gerente Bananinha', 'gerente@bananinha.com', 'gerente123', 2, 3),
+-- Xpto Brasil
+('Admin Xpto', 'admin@xpto.com', 'admin123', 3, 2),
+('Gerente Xpto', 'gerente@xpto.com', 'gerente123', 3, 3),
+-- Batata Tech
+('Admin Batata', 'admin@batata.com', 'admin123', 4, 2),
+('Gerente Batata', 'gerente@batata.com', 'gerente123', 4, 3),
+-- Security SA
+('Admin Security', 'admin@security.com', 'admin123', 5, 2),
+('Gerente Security', 'gerente@security.com', 'gerente123', 5, 3),
+-- Pro
+('Admin Pro', 'admin@pro.com', 'admin123', 6, 2),
+('Gerente Pro', 'gerente@pro.com', 'gerente123', 6, 3);

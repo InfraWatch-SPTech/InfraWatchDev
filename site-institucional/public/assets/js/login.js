@@ -153,8 +153,8 @@ function cadastrar() {
     var nomeVar = document.getElementById('input-nome').value;
     var sobrenomeVar = document.getElementById('input-sobrenome').value;
     var emailVar = document.getElementById('input-email').value;
-    var senhaVar = document.getElementById('input-senha-cad').value;
     var codigoEmpresaVar = document.getElementById('input-empresa').value;
+    var senhaVar = document.getElementById('input-senha-cad').value;
     var confirmacaoSenhaVar = document.getElementById('input-confirmar-senha').value;
 
     var nomeCompletoVar = `${nomeVar} ${sobrenomeVar}`;
@@ -175,7 +175,7 @@ function cadastrar() {
         alert("As senhas devem ser iguais!");
         return false;
     } else if (codigoEmpresaVar == null || codigoEmpresaVar == "") {
-        alert("O campo empresa não pode estar vazio!");
+        alert("O campo código da empresa não pode estar vazio!");
         return false;
     }
 
@@ -187,8 +187,8 @@ function cadastrar() {
         body: JSON.stringify({
             nomeServer: nomeCompletoVar,
             emailServer: emailVar,
+            empresaServer: codigoEmpresaVar,
             senhaServer: senhaVar,
-            empresaServer: codigoEmpresaVar
         }),
     })
     .then(function (resposta) {

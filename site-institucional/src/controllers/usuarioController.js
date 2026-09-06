@@ -50,8 +50,6 @@ function cadastrar(req, res) {
     var email = req.body.emailServer;
     var senha = req.body.senhaServer;
     var nomeEmpresa = req.body.empresaServer;
-    
-    var fkPermissao = 2;
 
     // Faça as validações dos valores
     if (nome == undefined) {
@@ -79,8 +77,7 @@ function cadastrar(req, res) {
                     }
 
                     var fkEmpresa = resultadoEmpresa[0].idEmpresa;
-
-                    var fkPermissao = 2;
+                    var fkPermissao = 4;
 
                     usuarioModel.cadastrar(
                         nome,

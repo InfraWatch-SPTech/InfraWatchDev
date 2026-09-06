@@ -34,12 +34,10 @@ function verificar_cadastro(email) {
     return database.executar(instrucaoSql);
 }
 
-function verificar_empresa_por_nome(nomeEmpresa){
-    var instrucaoSql = `
-        SELECT idEmpresa,nome
-        FROM empresa
-        WHERE nome = '${nomeEmpresa}';
-        `;
+function verificar_empresa_por_nome(codigoEmpresa){
+    var instrucaoSql = `SELECT idEmpresa, 
+                            nome FROM empresa 
+                        WHERE codigo = '${codigoEmpresa}';`;
 
     console.log("Executando a instrução SQL: \n" + instrucaoSql);
     
