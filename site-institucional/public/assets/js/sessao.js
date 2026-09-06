@@ -1,5 +1,6 @@
 // sessão
 function validarSessao() {
+
     // guarda qual página o usuário está
     let pagina_now = window.location.pathname;
     let paginas_com_login = [''] // páginas que o usuário não pode acessar sem login
@@ -12,20 +13,23 @@ function validarSessao() {
     }
 
     const usuarioLogado = JSON.parse(usuarioTexto);
+    console.log(usuarioLogado);
 
     // salvando infos do usuário no localStorage
 
     const nomeUsuario = usuarioLogado.nome;
     const permissaoUsuario = usuarioLogado.nomePermissao;
-    const empresaUsuario = usuarioLogado.idEmpresa;
+    const idEmpresaUsuario = usuarioLogado.idEmpresa;
+    const nomeEmpresaUsuario = usuarioLogado.nomeEmpresa;
+    const emailUsuario = usuarioLogado.email;
 
     // salvando div da navbar para adicionar comportamento
     const navLogin = document.querySelector('.nav-login');
     const popupPerfil = document.querySelector('.popup-perfil');
 
-    if(permissaoUsuario == 'Usuario'){
-        navLogin.innerHTML = 
-        `
+    if (permissaoUsuario == 'Usuario') {
+        navLogin.innerHTML =
+            `
             <button id="btn-pagina-empresa" onclick="redirecionamento_cadastroServidor()">
                 Painel Empresa
             </button>
@@ -37,21 +41,120 @@ function validarSessao() {
 
         const btnPerfil = document.getElementById('btn-perfil-usuario');
 
-        btnPerfil.addEventListener('click', () =>{
-            if(popupPerfil.classList.contains('active')){
+        btnPerfil.addEventListener('click', () => {
+            if (popupPerfil.classList.contains('active')) {
                 popupPerfil.classList.remove('active');
-            }else{
+            } else {
                 popupPerfil.classList.add('active');
 
-                popupPerfil.innerHTML = 
-                `
+                popupPerfil.innerHTML =
+                    `
+                    <i id="btn-fechar-perfil" class="fa-regular fa-circle-xmark"></i>
+                        <div class="content-perfil">
+                            <div class="content-perfil-top">
+                                <i class="fa-solid fa-user"></i>
+                                <div class="perfil-top-text">
+                                    <h5>
+                                        ${nomeUsuario}
+                                    </h5>
+                                    <h6>
+                                        ${emailUsuario}
+                                    </h6>
+                                </div>
+                            </div>
+                            <div class="content-perfil-bottom">
+                                <div class="perfil-bottom-info">
+                                    <div class="info-box-text">
+                                        <i class="fa-regular fa-building"></i>
+                                        <span class="empresa-limit">
+                                            <h6>Empresa</h6>
+                                            <h5>${nomeEmpresaUsuario}</h5>
+                                        </span>
+                                    </div>
+                                    <div class="info-box-text">
+                                        <i class="fa-regular fa-address-card"></i>
+                                        <span>
+                                            <h6>Permissão</h6>
+                                            <h5>${permissaoUsuario}</h5>
+                                        </span>
+                                    </div>
+                                </div>
+                                <div class="perfil-bottom-btn">
+                                    <button>
+                                        <i class="fa-regular fa-pen-to-square"></i>
+                                        Editar
+                                    </button>
+                                    <button onclick="limparSessao()">
+                                        <i class="fa-solid fa-right-from-bracket"></i>
+                                        Logout
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    `;
+
+                const btnClosePerfil = document.getElementById('btn-fechar-perfil');
+
+                btnClosePerfil.addEventListener('click', () => {
+                    if (popupPerfil.classList.contains('active')) {
+                        popupPerfil.classList.remove('active');
+                    } else {
+                        popupPerfil.classList.add('active');
+
+                        popupPerfil.innerHTML =
+                            `
+                                <i id="btn-fechar-perfil" class="fa-regular fa-circle-xmark"></i>
+                                <div class="content-perfil">
+                                    <div class="content-perfil-top">
+                                        <i class="fa-solid fa-user"></i>
+                                        <div class="perfil-top-text">
+                                            <h5>
+                                                ${nomeUsuario}
+                                            </h5>
+                                            <h6 style="padding-left: 0.6rem;">
+                                                ${emailUsuario}
+                                            </h6>
+                                        </div>
+                                    </div>
+                                    <div class="content-perfil-bottom">
+                                        <div class="perfil-bottom-info">
+                                            <div class="info-box-text">
+                                                <i class="fa-regular fa-building"></i>
+                                                <span>
+                                                    <h6>Empresa</h6>
+                                                    <h5>${empresaUsuario}</h5>
+                                                </span>
+                                            </div>
+                                            <div class="info-box-text">
+                                                <i class="fa-regular fa-address-card"></i>
+                                                <span>
+                                                    <h6>Permissão</h6>
+                                                    <h5>${permissaoUsuario}</h5>
+                                                </span>
+                                            </div>
+                                        </div>
+                                        <div class="perfil-bottom-btn">
+                                            <button>
+                                                <i class="fa-regular fa-pen-to-square"></i>
+                                                Editar
+                                            </button>
+                                            <button onclick="limparSessao()">
+                                                <i class="fa-solid fa-right-from-bracket"></i>
+                                                Logout
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
                     
-                `;
+                            `;
+                    }
+                })
             }
         })
-    }else if(permissaoUsuario == 'Gerente'){
-        navLogin.innerHTML = 
-        `
+
+    } else if (permissaoUsuario == 'Gerente') {
+        navLogin.innerHTML =
+            `
             <button id="btn-pagina-empresa" onclick="redirecionamento_cadastroServidor()">
                 Painel Empresa
             </button>
@@ -60,9 +163,9 @@ function validarSessao() {
                 Perfil
             </button>
         `;
-    }else if(permissaoUsuario == 'Admin'){
-        navLogin.innerHTML = 
-        `
+    } else if (permissaoUsuario == 'Admin') {
+        navLogin.innerHTML =
+            `
             <button id="btn-pagina-empresa" onclick="redirecionamento_cadastroServidor()">
                 Painel Empresa
             </button>
@@ -71,9 +174,9 @@ function validarSessao() {
                 Perfil
             </button>
         `;
-    }else if(permissaoUsuario == 'Root'){
-        navLogin.innerHTML = 
-        `
+    } else if (permissaoUsuario == 'Root') {
+        navLogin.innerHTML =
+            `
             <button id="btn-pagina-empresa" onclick="redirecionamento_cadastroServidor()">
                 Painel Empresa
             </button>
@@ -84,7 +187,7 @@ function validarSessao() {
         `;
     }
 
-    
+
 }
 
 function limparSessao() {
