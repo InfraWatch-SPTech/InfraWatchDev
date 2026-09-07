@@ -11,10 +11,13 @@
         integrity="sha512-QeR2VH+lsBE5LSAe1Q5EnTBbe7XTBubt8dG93Y7gidSgdMCr8nVqKcfKAMyN96SV8KDbZVTDXChatu5G2KQGzg=="
         crossorigin="anonymous" referrerpolicy="no-referrer" />
 
+    <script src="../public/assets/js/redirecionamento.js"></script>
+    <script src="../public/assets/js/sessao.js"></script>
+
     <title>InfraWatch.Dev - Sobre-nós</title>
 </head>
 
-<body>
+<body onload="validarSessao()">
 
     <header>
         <div class="navbar">
@@ -41,15 +44,20 @@
                 </ul>
             </div>
             <div class="nav-login">
-                <button id="btn-logar">
+                <button id="btn-logar" onclick="redirecionamento_login()">
                     Entrar
                 </button>
-                <button id="btn-cadastrar">
+                <button id="btn-cadastrar" onclick="redirecionamento_login()">
                     Cadastrar-se
                 </button>
             </div>
+            <div class="popup-perfil">
+                
+            </div>
         </div>
     </header>
+
+    <div class="divisaoa-nav" style="height: 9vh;"></div>
 
 
     <main class="container">
