@@ -105,3 +105,63 @@ INSERT INTO usuario (nome, email, senha, fkEmpresa, fkPermissao) VALUES
 -- Pro
 ('Admin Pro', 'admin@pro.com', 'admin123', 6, 2),
 ('Gerente Pro', 'gerente@pro.com', 'gerente123', 6, 3);
+
+INSERT INTO equipamento
+(nome, tipo, ip, status, fkEmpresa)
+VALUES
+('Servidor Principal', 'Servidor', '192.168.1.10', 'Online', 2),
+('Switch Central', 'Switch', '192.168.1.20', 'Online', 2),
+('Roteador Principal', 'Roteador', '192.168.1.1', 'Online', 2),
+('Servidor Web', 'Servidor', '192.168.2.10', 'Online', 3),
+('Servidor Banco de Dados', 'Servidor', '192.168.2.11', 'Online', 3),
+('Firewall', 'Firewall', '192.168.2.254', 'Online', 3),
+('Servidor Aplicação', 'Servidor', '192.168.3.10', 'Online', 4),
+('Switch Produção', 'Switch', '192.168.3.20', 'Offline', 4),
+('Roteador Principal', 'Roteador', '192.168.3.1', 'Online', 4),
+('Servidor Segurança', 'Servidor', '192.168.4.10', 'Online', 5),
+('Firewall Corporativo', 'Firewall', '192.168.4.254', 'Online', 5),
+('Servidor Backup', 'Servidor', '192.168.4.20', 'Online', 5),
+('Servidor Principal', 'Servidor', '192.168.5.10', 'Online', 6),
+('Switch Core', 'Switch', '192.168.5.20', 'Online', 6),
+('Roteador', 'Roteador', '192.168.5.1', 'Manutenção', 6);
+
+INSERT INTO componente
+(nome, tipo, descricao, fkEquipamento)
+VALUES
+('Processador', 'CPU', 'Processador do servidor', 1),
+('Memória RAM', 'RAM', 'Memória principal do servidor', 1),
+('Disco', 'Armazenamento', 'Unidade de armazenamento principal', 1),
+('CPU', 'CPU', 'Processador interno do switch', 2),
+('Memória', 'RAM', 'Memória interna do equipamento', 2),
+('CPU', 'CPU', 'Processador do roteador', 3),
+('Memória', 'RAM', 'Memória do roteador', 3),
+('Processador', 'CPU', 'Processador do servidor web', 4),
+('Memória RAM', 'RAM', 'Memória do servidor web', 4),
+('Disco', 'Armazenamento', 'Armazenamento do servidor web', 4),
+('Processador', 'CPU', 'Processador do banco de dados', 5),
+('Memória RAM', 'RAM', 'Memória do banco de dados', 5),
+('Disco', 'Armazenamento', 'Armazenamento do banco de dados', 5),
+('Processador', 'CPU', 'Processador do firewall', 6),
+('Memória', 'RAM', 'Memória do firewall', 6),
+('Processador', 'CPU', 'Processador do servidor', 7),
+('Memória RAM', 'RAM', 'Memória do servidor', 7),
+('Disco', 'Armazenamento', 'Armazenamento do servidor', 7),
+('CPU', 'CPU', 'Processador do switch', 8),
+('Memória', 'RAM', 'Memória do switch', 8),
+('CPU', 'CPU', 'Processador do roteador', 9),
+('Memória', 'RAM', 'Memória do roteador', 9),
+('Processador', 'CPU', 'Processador do servidor de segurança', 10),
+('Memória RAM', 'RAM', 'Memória do servidor', 10),
+('Disco', 'Armazenamento', 'Armazenamento do servidor', 10),
+('Processador', 'CPU', 'Processador do firewall', 11),
+('Memória', 'RAM', 'Memória do firewall', 11),
+('Processador', 'CPU', 'Processador do servidor de backup', 12),
+('Memória RAM', 'RAM', 'Memória do servidor', 12),
+('Disco', 'Armazenamento', 'Unidade de backup', 12),
+('Processador', 'CPU', 'Processador do servidor', 13),
+('Memória RAM', 'RAM', 'Memória principal', 13),
+('Disco', 'Armazenamento', 'Armazenamento principal', 13),
+('CPU', 'CPU', 'Processador do switch', 14),
+('Memória', 'RAM', 'Memória do switch', 14),
+('CPU', 'CPU', 'Processador do roteador', 15),
+('Memória', 'RAM', 'Memória do roteador', 15);

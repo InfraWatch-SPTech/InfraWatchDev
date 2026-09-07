@@ -314,6 +314,221 @@
     background-color: #5178f9b3;
 }
 
+/*comportamento login LOGADO*/
+
+#btn-pagina-empresa {
+    padding: 0.2rem 1rem;
+    border: 1px solid rgba(255, 255, 255, 0.172);
+
+    background-color: var(--cor-azul-contraste2);
+
+    border-radius: 0.3rem;
+
+    transition: 0.3s;
+}
+
+#btn-pagina-empresa:hover {
+    background-color: #5178f9b3
+}
+
+#btn-perfil-usuario {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 1vw;
+
+    background-color: transparent;
+    border: 1px solid rgba(255, 255, 255, 0.283);
+
+    padding: 0.35rem 1.4rem;
+    border-radius: 0.3rem;
+
+    transition: 0.3s;
+}
+
+#btn-perfil-usuario:hover {
+    border-color: var(--cor-azul-contraste2);
+}
+
+.popup-perfil {
+    display: none !important;
+    position: absolute;
+    top: 80%;
+    right: 2.8%;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+
+    height: 22vh;
+    width: 14%;
+
+    background-color: var(--cor-azul-contraste);
+    border-radius: 0.3rem;
+
+    z-index: 100000;
+
+    color: white;
+}
+
+.popup-perfil.active {
+    display: flex !important;
+}
+
+#btn-fechar-perfil {
+    position: absolute;
+    right: 3%;
+    top: 6%;
+
+    cursor: pointer;
+    transition: 0.3s;
+}
+
+#btn-fechar-perfil:hover {
+    color: rgba(255, 0, 0, 0.293) !important;
+}
+
+.content-perfil {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+
+    gap: 1vh;
+
+    height: 80%;
+    width: 90%;
+}
+
+.content-perfil-top {
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+
+    width: 90%;
+    height: 40%;
+
+    gap: 0.8vw;
+}
+
+.perfil-top-text {
+    display: flex;
+    justify-content: space-evenly;
+    align-items: flex-start;
+    flex-direction: column;
+
+    gap: 0.2vw;
+}
+
+.perfil-top-text h6,
+.perfil-top-text h5 {
+    text-align: left;
+    padding: 0rem 0rem;
+
+    font-family: var(--font-padrao);
+
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+
+    max-width: 80%;
+}
+
+.content-perfil-top .fa-user {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    font-size: 2rem;
+
+    height: 7vh;
+    min-width: 3.5vw;
+
+    border: 1px solid var(--cor-azul-contraste2);
+    border-radius: 50%;
+}
+
+.content-perfil-bottom {
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    flex-direction: column;
+
+    width: 90%;
+    height: 60%;
+
+    border-top: 1px solid black;
+}
+
+.perfil-bottom-info {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    height: 70%;
+    width: 90%;
+}
+
+.info-box-text {
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+
+    gap: 0.6vw;
+
+    font-family: var(--font-padrao);
+}
+
+.info-box-text span h6{
+    color: rgba(255, 255, 255, 0.692);
+}
+
+.info-box-text span h5{
+    font-weight: 400;
+}
+
+.empresa-limit h5{
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+
+    max-width: 80%;
+}
+
+.perfil-bottom-btn {
+    display: flex;
+    align-items: center;
+    justify-content: space-around;
+
+    gap: 0.6vw;
+
+    height: 30%;
+    width: 90%;
+}
+
+.content-perfil-bottom button {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    gap: 0.4vw;
+
+    padding: 0.4rem 0.9rem;
+
+    background-color: var(--cor-azul-contraste);
+    color: white;
+
+    border: 1px solid var(--cor-azul-contraste2);
+    border-radius: 0.3rem;
+
+    cursor: pointer;
+    transition: 0.3s;
+}
+
+.content-perfil-bottom button:hover {
+    background-color: #5178f9e6;
+}
 
 main {
     display: flex;
@@ -455,8 +670,10 @@ main {
 
 .caixa-tabela-hardwares {
     width: 100%;
+    max-height: 58vh;
 
     overflow-x: auto;
+    overflow-y: auto;
 
     background-color: var(--cor-azul-contraste);
     border-radius: 0.6rem;

@@ -5,19 +5,19 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="icon" type="image/png" href="../public/assets/midias/main-icon-image.png">
-    <link rel="icon" type="image/png" href="./assets/midias/magnific_an-image-reminiscent-of-a_kslhfRj16B.png">
     <link rel="stylesheet" href="../public/assets/css/hardwares.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.3.1/css/all.min.css"
         integrity="sha512-QeR2VH+lsBE5LSAe1Q5EnTBbe7XTBubt8dG93Y7gidSgdMCr8nVqKcfKAMyN96SV8KDbZVTDXChatu5G2KQGzg=="
         crossorigin="anonymous" referrerpolicy="no-referrer" />
 
-    <script src="../public/assets/js/redirecionamento.js"></script>
     <script src="../public/assets/js/sessao.js"></script>
+    <script src="../public/assets/js/hardwares.js"></script>
+    <script src="../public/assets/js/redirecionamento.js"></script>
 
     <title>InfraWatch.Dev - Hardwares</title>
 </head>
 
-<body>
+<body onload="validarSessao()">
 
     <header>
         <div class="navbar">
@@ -44,12 +44,15 @@
                 </ul>
             </div>
             <div class="nav-login">
-                <button id="btn-logar">
+                <button id="btn-logar" onclick="redirecionamento_login()">
                     Entrar
                 </button>
-                <button id="btn-cadastrar">
+                <button id="btn-cadastrar" onclick="redirecionamento_login()">
                     Cadastrar-se
                 </button>
+            </div>
+            <div class="popup-perfil">
+                
             </div>
         </div>
     </header>
@@ -112,7 +115,6 @@
                             <td>TI / Sala de Servidores</td>
                             <td>
                                 <span class="status status-ativo">
-                                    <img src="./assets/midias/circulo.svg"></i>
                                     Ativo
                                 </span>
                             </td>
@@ -126,6 +128,75 @@
                                 </button>
                             </td>
                         </tr>
+                         <tr>
+                            <td class="celula-dispositivo">
+                                <div class="icone-dispositivo">
+                                    <i class="fa-solid fa-server" style="color: rgb(255, 255, 255);"></i>
+                                </div>
+                                <div class="info-dispositivo">
+                                    <strong>SRV-01</strong>
+                                    <span>ID: HW-0001</span>
+                                </div>
+                            </td>
+                            <td>Servidor</td>
+                            <td class="celula-componentes">
+                                <i class="fa-solid fa-microchip" style="color: rgb(255, 255, 255);"></i>
+                                <i class="fa-solid fa-memory" style="color: rgb(255, 255, 255);"></i>
+                                <i class="fa-solid fa-database" style="color: rgb(255, 255, 255);"></i>
+                                <i class="fa-solid fa-temperature-quarter" style="color: rgb(255, 255, 255);"></i>
+                                <i class="fa-solid fa-wifi" style="color: rgb(255, 255, 255);"></i>
+                            </td>
+                            <td>TI / Sala de Servidores</td>
+                            <td>
+                                <span class="status status-ativo">
+                                    Ativo
+                                </span>
+                            </td>
+                            <td>27/05/2025 14:32</td>
+                            <td class="celula-acoes">
+                                <button class="btn-icone" title="Editar">
+                                    <i class="fa-solid fa-pen-to-square" style="color: rgb(255, 255, 255);"></i>
+                                </button>
+                                <button class="btn-icone btn-excluir" title="Excluir">
+                                    <i class="fa-solid fa-trash" style="color: rgb(255, 255, 255);"></i>
+                                </button>
+                            </td>
+                        </tr>
+                         <tr>
+                            <td class="celula-dispositivo">
+                                <div class="icone-dispositivo">
+                                    <i class="fa-solid fa-server" style="color: rgb(255, 255, 255);"></i>
+                                </div>
+                                <div class="info-dispositivo">
+                                    <strong>SRV-01</strong>
+                                    <span>ID: HW-0001</span>
+                                </div>
+                            </td>
+                            <td>Servidor</td>
+                            <td class="celula-componentes">
+                                <i class="fa-solid fa-microchip" style="color: rgb(255, 255, 255);"></i>
+                                <i class="fa-solid fa-memory" style="color: rgb(255, 255, 255);"></i>
+                                <i class="fa-solid fa-database" style="color: rgb(255, 255, 255);"></i>
+                                <i class="fa-solid fa-temperature-quarter" style="color: rgb(255, 255, 255);"></i>
+                                <i class="fa-solid fa-wifi" style="color: rgb(255, 255, 255);"></i>
+                            </td>
+                            <td>TI / Sala de Servidores</td>
+                            <td>
+                                <span class="status status-ativo">
+                                    Ativo
+                                </span>
+                            </td>
+                            <td>27/05/2025 14:32</td>
+                            <td class="celula-acoes">
+                                <button class="btn-icone" title="Editar">
+                                    <i class="fa-solid fa-pen-to-square" style="color: rgb(255, 255, 255);"></i>
+                                </button>
+                                <button class="btn-icone btn-excluir" title="Excluir">
+                                    <i class="fa-solid fa-trash" style="color: rgb(255, 255, 255);"></i>
+                                </button>
+                            </td>
+                        </tr>
+                        
                         <tr>
                             <td class="celula-dispositivo">
                                 <div class="icone-dispositivo">
@@ -147,7 +218,6 @@
                             <td>Financeiro</td>
                             <td>
                                 <span class="status status-ativo">
-                                    <img src="./assets/midias/circulo.svg"></i>
                                     Ativo
                                 </span>
                             </td>
@@ -181,7 +251,6 @@
                             <td>Administrativo</td>
                             <td>
                                 <span class="status status-ativo">
-                                   <img src="./assets/midias/circulo.svg">
                                     Ativo
                                 </span>
                             </td>
@@ -216,7 +285,6 @@
                             <td>TI / Banco de Dados</td>
                             <td>
                                 <span class="status status-ativo">
-                                    <img src="./assets/midias/circulo.svg">
                                     Ativo
                                 </span>
                             </td>
@@ -250,7 +318,6 @@
                             <td>Desenvolvimento</td>
                             <td>
                                 <span class="status status-atencao">
-                                    <img src="./assets/midias/circulo.svg">
                                     Atenção
                                 </span>
                             </td>
@@ -283,7 +350,6 @@
                             <td>Comercial</td>
                             <td>
                                 <span class="status status-inativo">
-                                    <img src="./assets/midias/circulo.svg">
                                     Inativo
                                 </span>
                             </td>
@@ -326,7 +392,7 @@
         <div class="modal-cadastro">
             <div class="cabecalho-modal">
                 <h2>Cadastrar Novo Hardware</h2>
-                <button class="fechar-modal"><img src="./assets/midias/x.svg"></button>
+                <button class="fechar-modal"></button>
             </div>
 
             <div class="corpo-modal">
@@ -347,7 +413,6 @@
                                 <option>Notebook</option>
                                 <option>Computador</option>
                             </select>
-                            <img src="./assets/midias/setaBaixo.svg">
                         </div>
                     </div>
 

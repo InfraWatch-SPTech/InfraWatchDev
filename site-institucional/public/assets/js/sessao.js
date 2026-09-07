@@ -195,6 +195,13 @@ function limparSessao() {
     window.location = '../public/main.html';
 }
 
+function dadosUser(){
+    const usuarioTexto = localStorage.getItem('usuarioLogado');
+    const usuarioLogado = JSON.parse(usuarioTexto);
+
+    return usuarioLogado;
+}
+
 // carregamento (loading)
 function aguardar() {
     var divAguardar = document.getElementById('div_aguardar');
