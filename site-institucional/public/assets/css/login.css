@@ -332,3 +332,201 @@ body {
 .fade-out {
     opacity: 0 !important;
 }
+
+/* ============================= */
+/* RESPONSIVIDADE */
+/* ============================= */
+
+
+/* Tablets e telas menores */
+@media (max-width: 1024px) {
+
+    .login-card {
+        max-width: 90%;
+    }
+
+    .login-esquerda,
+    .login-direita {
+        padding: 2.4rem;
+    }
+
+    .login-esquerda-text h2,
+    .login-esquerda-description h6 {
+        max-width: 90%;
+    }
+
+}
+
+
+/* Tablets */
+@media (max-width: 768px) {
+
+    body {
+        padding: 1.5rem;
+    }
+
+    .pagina-log {
+        width: 100%;
+    }
+
+    .login-card {
+        flex-direction: column;
+        max-width: 34rem;
+        width: 100%;
+        min-height: auto;
+    }
+
+    .login-esquerda,
+    .login-direita {
+        width: 100%;
+        padding: 2.5rem;
+    }
+
+    .login-esquerda {
+        border-right: none;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+        gap: 2rem;
+    }
+
+    .login-esquerda-content {
+        justify-content: center;
+    }
+
+    .login-esquerda-text h2 {
+        max-width: 100%;
+        font-size: 2rem;
+    }
+
+    .login-esquerda-description h6 {
+        max-width: 100%;
+    }
+
+    .login-direita {
+        padding-top: 3rem;
+        padding-bottom: 3rem;
+    }
+
+}
+
+@media (max-width: 480px) {
+
+    body {
+        padding: 1rem;
+        gap: 1rem;
+    }
+
+    .pagina-log {
+        gap: 1rem;
+    }
+
+
+  
+    .autenticar {
+        width: 100%;
+        max-width: 22rem;
+    }
+
+    .autenticar-btn {
+        flex: 1;
+        padding: 0.6rem 0.8rem;
+        font-size: 0.85rem;
+    }
+
+
+    
+    .login-card {
+        width: 100%;
+        border-radius: 1rem;
+    }
+
+
+    
+    .login-esquerda,
+    .login-direita {
+        padding: 2rem 1.3rem;
+    }
+
+    .login-logo h1 {
+        font-size: 1.5rem;
+    }
+
+    .login-esquerda-text h2 {
+        font-size: 1.7rem;
+        max-width: 100%;
+    }
+
+    .login-esquerda-description h6 {
+        font-size: 1rem;
+        max-width: 100%;
+        line-height: 1.5;
+    }
+
+
+    /* Formulário */
+    .formulario-login {
+        max-width: 100%;
+    }
+
+    .formulario-cadastro {
+        max-width: 100% !important;
+    }
+
+
+    
+    .input-row {
+        flex-direction: column;
+        gap: 0.5rem;
+    }
+
+    .input-row .inputs {
+        width: 100%;
+    }
+
+
+    .formulario-login-title h2 {
+        font-size: 1.3rem;
+    }
+
+    .formulario-login-title span {
+        font-size: 0.8rem;
+    }
+
+    .inputs input {
+        padding: 0.8rem;
+        font-size: 0.9rem;
+    }
+
+
+    #btn-entrar-plataforma {
+        padding: 0.85rem;
+    }
+
+}
+
+
+
+@media (max-width: 360px) {
+
+    body {
+        padding: 0.7rem;
+    }
+
+    .login-esquerda,
+    .login-direita {
+        padding: 1.5rem 1rem;
+    }
+
+    .login-esquerda-text h2 {
+        font-size: 1.5rem;
+    }
+
+    .login-logo h1 {
+        font-size: 1.3rem;
+    }
+
+    .autenticar-btn {
+        font-size: 0.75rem;
+        padding: 0.55rem 0.5rem;
+    }
+
+}
