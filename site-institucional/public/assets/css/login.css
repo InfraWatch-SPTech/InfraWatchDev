@@ -41,11 +41,11 @@ body {
     align-items: center;
     justify-content: center;
 
-    gap: 0.5vw;
-    padding: 0.3rem 2.5rem;
+    gap: 0.5rem;
+    padding: 0.5rem 1.5rem;
 
     font-family: var(--font-logo);
-    font-size: 1rem;
+    font-size: 0.95rem;
     color: white;
 
     background-color: var(--cor-azul-contraste);
@@ -55,6 +55,7 @@ body {
 
     cursor: pointer;
     transition: 0.3s;
+    z-index: 10;
 }
 
 #btn-home:hover{
@@ -392,6 +393,7 @@ body {
 
     body {
         padding: 1.5rem;
+        padding-top: 5rem;
     }
 
     .pagina-log {
@@ -435,6 +437,13 @@ body {
         padding-bottom: 3rem;
     }
 
+    #btn-home{
+        top: 1.2rem;
+        left: 1.5rem;
+        padding: 0.45rem 1.2rem;
+        font-size: 0.95rem;
+    }
+
 }
 
 @media (max-width: 480px) {
@@ -448,8 +457,16 @@ body {
         gap: 1rem;
     }
 
+    #btn-home {
+        position: relative; 
+        top: auto;
+        left: auto;
+        align-self: flex-start; 
+        margin-bottom: 2.5rem;
+        padding: 0.5rem 1rem;
+        font-size: 0.8rem;
+    }
 
-  
     .autenticar {
         width: 100%;
         max-width: 22rem;
@@ -461,15 +478,11 @@ body {
         font-size: 0.85rem;
     }
 
-
-    
     .login-card {
         width: 100%;
         border-radius: 1rem;
     }
 
-
-    
     .login-esquerda,
     .login-direita {
         padding: 2rem 1.3rem;
@@ -532,12 +545,20 @@ body {
 
 }
 
-
-
 @media (max-width: 360px) {
 
     body {
         padding: 0.7rem;
+    }
+
+    #btn-home {
+        position: relative; 
+        top: auto;
+        left: auto;
+        align-self: flex-start; 
+        margin-bottom: 1.5rem;
+        padding: 0.5rem 1rem;
+        font-size: 0.8rem;
     }
 
     .login-esquerda,
