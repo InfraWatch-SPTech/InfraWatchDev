@@ -62,8 +62,10 @@ function renderizarTabela(equipamentos) {
         }
     }
 
-    for (let idEquip in equipamentosAgrupados) {
-        corpoTabela.innerHTML += montarLinhaTabela(equipamentosAgrupados[idEquip]);
+    let quantidadeEquipamentosTela = document.getElementById('select_eqp_pagina');
+
+    for (let i in equipamentosAgrupados) {
+        corpoTabela.innerHTML += montarLinhaTabela(equipamentosAgrupados[i]);
     }
 }
 
@@ -165,7 +167,20 @@ function cadastrarHardware() {
 
 function deletarEquipamento(idEmpresa, idEquipamento) {
 
-    fetch(`/hardwares/deletarEq/${idEmpresa}/${idEquipamento}`, {
+    let btnFecharModal = document.getElementById('btn-fechar-modal-deletar');
+    let btnDeletarHardware = document.getElementById('btn-deletar-hardware');
+    let modalDeletarHardware = document.querySelector('.modal-deletar');
+
+    modalDeletarHardware.classList.add('active');
+
+    btnFecharModal.addEventListener('click', () =>{
+        modalDeletarHardware.classList.remove('active');
+    });
+
+    btnDeletarHardware.addEventListener('click', () =>{
+        modalDeletarHardware.classList.remove('active');
+
+        fetch(`/hardwares/deletarEq/${idEmpresa}/${idEquipamento}`, {
         method: 'DELETE',
         cache: 'no-store'
     })
@@ -181,6 +196,7 @@ function deletarEquipamento(idEmpresa, idEquipamento) {
             console.error(`Erro na requisição de exclusão: ${error.message}`);
         });
 
+    });
 }
 
 const modalOverlay = document.querySelector('.sobreposicao-modal');
