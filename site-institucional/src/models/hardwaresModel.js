@@ -14,7 +14,8 @@ function buscarEquipamentosEmpresa(idEmpresa) {
             eq.tipo AS tipoEquipamento,
             eq.ip AS ipEquipamento,
             eq.status AS statusEquipamento,
-            eq.localizacao AS localizacao
+            eq.localizacao AS localizacao,
+            eq.fkEmpresa AS idEmpresa
         FROM componente AS cp
             JOIN equipamento AS eq
                 ON cp.fkEquipamento = eq.idEquipamento
@@ -62,8 +63,22 @@ function cadastrarComponentes(componentes, idEquipamento) {
     return database.executar(instrucaoSql);
 }
 
+function deletarEquipamento(idEmpresa, idEquipamento) {
+    console.log("ACESSEI O USUARIO MODEL \n \n\t\t >> Se aqui der erro de 'Error: connect ECONNREFUSED',\n \t\t >> verifique suas credenciais de acesso ao banco\n \t\t >> e se o servidor de seu BD está rodando corretamente. \n\n buscarEquipamentosEmpresa(idEmpresa)", idEmpresa)
+
+    let instrucaoSql = 
+    `
+        DELETE FROM equipamento WHERE idEquipamento = ${idEquipamento};
+        
+    `;
+
+    console.log("Executando a instrução SQL: \n" + instrucaoSql);
+    return database.executar(instrucaoSql);
+}
+
 module.exports = {
     buscarEquipamentosEmpresa,
     cadastrarEquipamento,
-    cadastrarComponentes
+    cadastrarComponentes,
+    deletarEquipamento
 };

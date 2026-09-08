@@ -36,7 +36,7 @@ function montarLinhaTabela(equipamento) {
                 <button class="btn-icone" title="Editar">
                     <i class="fa-solid fa-pen-to-square" style="color: rgb(255, 255, 255);"></i>
                 </button>
-                <button class="btn-icone btn-excluir" title="Excluir">
+                <button class="btn-icone btn-excluir ${equipamento.idEquipamento}" onclick="deletarEquipamento(${equipamento.idEmpresa}, ${equipamento.idEquipamento})" title="Excluir">
                     <i class="fa-solid fa-trash" style="color: rgb(255, 255, 255);"></i>
                 </button>
             </td>
@@ -71,10 +71,20 @@ function buscarEquipamentosEmpresa(idEmpresa) {
     fetch(`/hardwares/buscarEq/${idEmpresa}`, { cache: 'no-store' })
         .then(function (response) {
             if (response.ok) {
-                response.json().then(function (equipamentos) {
-                    renderizarTabela(equipamentos);
-                });
-            } else if (response.status === 204) {
+                if (response.status === 204) {
+                    renderizarTabela([]);
+                } else {
+                    response.json().then(function (equipamentos) {
+                        if (equipamentos && equipamentos.length > 0) {
+                            renderizarTabela(equipamentos);
+                        } else {
+                            renderizarTabela([]);
+                        }
+                    }).catch(function () {
+                        renderizarTabela([]);
+                    });
+                }
+            } else {
                 renderizarTabela([]);
             }
         })
@@ -152,5 +162,58 @@ function cadastrarHardware() {
             alert('Erro ao cadastrar o hardware. Veja o console.');
         });
 }
+
+function deletarEquipamento(idEmpresa, idEquipamento) {
+
+    fetch(`/hardwares/deletarEq/${idEmpresa}/${idEquipamento}`, {
+        method: 'DELETE',
+        cache: 'no-store'
+    })
+        .then(function (response) {
+            if (response.ok) {
+                console.log("Item deletado");
+                buscarEquipamentosEmpresa(idEmpresa);
+            } else {
+                console.log("Item não deletado");
+            }
+        })
+        .catch(function (error) {
+            console.error(`Erro na requisição de exclusão: ${error.message}`);
+        });
+
+}
+
+const modalOverlay = document.querySelector('.sobreposicao-modal');
+const btnAbrir = document.getElementById('btn-novo-hardware');
+const btnFechar = document.querySelector('.fechar-modal');
+const btnCancelar = document.querySelector('.btn-cancelar');
+const btnSalvar = document.querySelector('.btn-salvar');
+
+function abrirModal() {
+    modalOverlay.classList.add('modal-aberto');
+}
+
+function fecharModal() {
+    modalOverlay.classList.remove('modal-aberto');
+}
+
+btnAbrir.addEventListener('click', abrirModal);
+btnFechar.addEventListener('click', fecharModal);
+btnCancelar.addEventListener('click', fecharModal);
+btnSalvar.addEventListener('click', cadastrarHardware);
+
+modalOverlay.addEventListener('click', function (evento) {
+    if (evento.target === modalOverlay) {
+        fecharModal();
+    }
+});
+
+document.addEventListener('keydown', function (evento) {
+    if (evento.key === 'Escape') {
+        fecharModal();
+    }
+});
+
+
 
 buscarEquipamentosEmpresa(idEmpresa);

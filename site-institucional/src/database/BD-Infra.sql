@@ -48,7 +48,7 @@ CREATE TABLE componente (
     tipo VARCHAR(50),
     descricao VARCHAR(200),
     fkEquipamento INT,
-    FOREIGN KEY (fkEquipamento) REFERENCES equipamento(idEquipamento)
+    FOREIGN KEY (fkEquipamento) REFERENCES equipamento(idEquipamento) ON DELETE CASCADE
 );
 
 
@@ -59,7 +59,7 @@ CREATE TABLE metrica (
     unidade VARCHAR(20),
     dataHora DATETIME,
     fkComponente INT,
-    FOREIGN KEY (fkComponente) REFERENCES componente(idComponente)
+    FOREIGN KEY (fkComponente) REFERENCES componente(idComponente) ON DELETE CASCADE
 );
 
 INSERT INTO permissao (idPermissao, nome, descricao) VALUES 

@@ -21,6 +21,7 @@ function buscarEquipamentosEmpresa(req, res) {
             res.status(500).json(erro.sqlMessage);
         });
 }
+
 function cadastrarEquipamento(req, res) {
 
     let nome = req.body.nome;
@@ -69,7 +70,32 @@ function cadastrarEquipamento(req, res) {
     }
 }
 
+function deletarEquipamento(req, res) {
+
+    let idEmpresa = req.params.idEmpresa;
+    let idEquipamento = req.params.idEquipamento;
+
+    hardwaresModel.deletarEquipamento(idEmpresa, idEquipamento)
+        .then(function (resultado) {
+
+            if (resultado.length > 0) {
+                res.status(200).json(resultado);
+            } else {
+                res.status(204).send("Nenhum resultado encontrado!");
+            }
+
+        })
+        .catch(function (erro) {
+
+            console.log(erro);
+            console.log("Houve um erro ao buscar os equipamentos.", erro.sqlMessage);
+
+            res.status(500).json(erro.sqlMessage);
+        });
+}
+
 module.exports = {
     cadastrarEquipamento,
-    buscarEquipamentosEmpresa
+    buscarEquipamentosEmpresa,
+    deletarEquipamento
 };

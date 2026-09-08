@@ -11,7 +11,7 @@
         crossorigin="anonymous" referrerpolicy="no-referrer" />
 
     <script src="../public/assets/js/sessao.js"></script>
-    <script src="../public/assets/js/hardwares.js"></script>
+    <script src="../public/assets/js/hardwares.js" defer></script>
     <script src="../public/assets/js/redirecionamento.js"></script>
 
     <title>InfraWatch.Dev - Hardwares</title>
@@ -52,7 +52,7 @@
                 </button>
             </div>
             <div class="popup-perfil">
-                
+
             </div>
         </div>
     </header>
@@ -100,14 +100,16 @@
             <div class="rodape-hardwares">
                 <span class="contagem-resultados">Mostrando 1 a 6 de 24 resultados</span>
                 <div class="paginacao">
-                    <button class="seta-pagina"><i class="fa-solid fa-chevron-left" style="color: rgb(255, 255, 255);"></i></button>
+                    <button class="seta-pagina"><i class="fa-solid fa-chevron-left"
+                            style="color: rgb(255, 255, 255);"></i></button>
                     <button class="numero-pagina pagina-ativa">1</button>
                     <button class="numero-pagina">2</button>
                     <button class="numero-pagina">3</button>
                     <button class="numero-pagina">4</button>
                     <span class="pontos-pagina">...</span>
                     <button class="numero-pagina">4</button>
-                    <button class="seta-pagina"><i class="fa-solid fa-chevron-right" style="color: rgb(255, 255, 255);"></i></button>
+                    <button class="seta-pagina"><i class="fa-solid fa-chevron-right"
+                            style="color: rgb(255, 255, 255);"></i></button>
                 </div>
                 <div class="por-pagina">
                     6 por página
@@ -153,13 +155,15 @@
 
                     <div class="campo-modal">
                         <label>Descrição (opcional)</label>
-                        <textarea id="input-descricao-hardware" placeholder="Informações adicionais sobre o dispositivo"></textarea>
+                        <textarea id="input-descricao-hardware"
+                            placeholder="Informações adicionais sobre o dispositivo"></textarea>
                     </div>
                 </div>
 
                 <div class="coluna-modal">
                     <span class="titulo-coluna-modal">COMPONENTES A MONITORAR</span>
-                    <p class="descricao-coluna-modal">Selecione os componentes que serão monitorados neste dispositivo.</p>
+                    <p class="descricao-coluna-modal">Selecione os componentes que serão monitorados neste dispositivo.
+                    </p>
 
                     <div class="grade-checkbox">
                         <label class="item-checkbox">
@@ -168,7 +172,8 @@
                                 <strong>CPU / Processador</strong>
                                 <span>Uso, temperatura e performance</span>
                             </div>
-                            <input type="checkbox" class="checkbox-componente" data-nome="Processador" data-tipo="CPU" data-descricao="Uso, temperatura e performance" checked>
+                            <input type="checkbox" class="checkbox-componente" data-nome="Processador" data-tipo="CPU"
+                                data-descricao="Uso, temperatura e performance" checked>
                         </label>
 
                         <label class="item-checkbox">
@@ -177,7 +182,8 @@
                                 <strong>Memória RAM</strong>
                                 <span>Uso de memória e swap</span>
                             </div>
-                            <input type="checkbox" class="checkbox-componente" data-nome="Memória RAM" data-tipo="RAM" data-descricao="Uso de memória e swap" checked>
+                            <input type="checkbox" class="checkbox-componente" data-nome="Memória RAM" data-tipo="RAM"
+                                data-descricao="Uso de memória e swap" checked>
                         </label>
 
                         <label class="item-checkbox">
@@ -186,7 +192,8 @@
                                 <strong>Disco / Armazenamento</strong>
                                 <span>Uso, espaço livre e saúde</span>
                             </div>
-                            <input type="checkbox" class="checkbox-componente" data-nome="Disco" data-tipo="Armazenamento" data-descricao="Uso, espaço livre e saúde" checked>
+                            <input type="checkbox" class="checkbox-componente" data-nome="Disco"
+                                data-tipo="Armazenamento" data-descricao="Uso, espaço livre e saúde" checked>
                         </label>
 
                         <label class="item-checkbox">
@@ -195,7 +202,8 @@
                                 <strong>Rede</strong>
                                 <span>Tráfego, banda e conexões</span>
                             </div>
-                            <input type="checkbox" class="checkbox-componente" data-nome="Rede" data-tipo="Rede" data-descricao="Tráfego, banda e conexões" checked>
+                            <input type="checkbox" class="checkbox-componente" data-nome="Rede" data-tipo="Rede"
+                                data-descricao="Tráfego, banda e conexões" checked>
                         </label>
 
                         <label class="item-checkbox">
@@ -204,7 +212,8 @@
                                 <strong>Temperatura</strong>
                                 <span>Monitoramento térmico</span>
                             </div>
-                            <input type="checkbox" class="checkbox-componente" data-nome="Temperatura" data-tipo="Temperatura" data-descricao="Monitoramento térmico" checked>
+                            <input type="checkbox" class="checkbox-componente" data-nome="Temperatura"
+                                data-tipo="Temperatura" data-descricao="Monitoramento térmico" checked>
                         </label>
 
                         <label class="item-checkbox">
@@ -213,7 +222,8 @@
                                 <strong>Energia / Fonte</strong>
                                 <span>Consumo e status</span>
                             </div>
-                            <input type="checkbox" class="checkbox-componente" data-nome="Energia" data-tipo="Energia" data-descricao="Consumo e status">
+                            <input type="checkbox" class="checkbox-componente" data-nome="Energia" data-tipo="Energia"
+                                data-descricao="Consumo e status">
                         </label>
 
                         <label class="item-checkbox">
@@ -222,7 +232,8 @@
                                 <strong>Ventoinhas</strong>
                                 <span>Velocidade e status</span>
                             </div>
-                            <input type="checkbox" class="checkbox-componente" data-nome="Ventoinhas" data-tipo="Ventoinhas" data-descricao="Velocidade e status">
+                            <input type="checkbox" class="checkbox-componente" data-nome="Ventoinhas"
+                                data-tipo="Ventoinhas" data-descricao="Velocidade e status">
                         </label>
 
                         <label class="item-checkbox">
@@ -231,7 +242,8 @@
                                 <strong>GPU / Placa de Vídeo</strong>
                                 <span>Uso, temperatura e performance</span>
                             </div>
-                            <input type="checkbox" class="checkbox-componente" data-nome="GPU" data-tipo="GPU" data-descricao="Uso, temperatura e performance">
+                            <input type="checkbox" class="checkbox-componente" data-nome="GPU" data-tipo="GPU"
+                                data-descricao="Uso, temperatura e performance">
                         </label>
 
                         <label class="item-checkbox">
@@ -240,7 +252,8 @@
                                 <strong>Serviços</strong>
                                 <span>Status de serviços</span>
                             </div>
-                            <input type="checkbox" class="checkbox-componente" data-nome="Serviços" data-tipo="Serviços" data-descricao="Status de serviços">
+                            <input type="checkbox" class="checkbox-componente" data-nome="Serviços" data-tipo="Serviços"
+                                data-descricao="Status de serviços">
                         </label>
 
                         <label class="item-checkbox">
@@ -249,7 +262,8 @@
                                 <strong>Logs do Sistema</strong>
                                 <span>Eventos e logs do sistema</span>
                             </div>
-                            <input type="checkbox" class="checkbox-componente" data-nome="Logs" data-tipo="Logs" data-descricao="Eventos e logs do sistema">
+                            <input type="checkbox" class="checkbox-componente" data-nome="Logs" data-tipo="Logs"
+                                data-descricao="Eventos e logs do sistema">
                         </label>
                     </div>
                 </div>
@@ -263,36 +277,8 @@
     </div>
 
     <script>
-        const modalOverlay = document.querySelector('.sobreposicao-modal');
-        const btnAbrir = document.getElementById('btn-novo-hardware');
-        const btnFechar = document.querySelector('.fechar-modal');
-        const btnCancelar = document.querySelector('.btn-cancelar');
-        const btnSalvar = document.querySelector('.btn-salvar');
+        
 
-        function abrirModal() {
-            modalOverlay.classList.add('modal-aberto');
-        }
-
-        function fecharModal() {
-            modalOverlay.classList.remove('modal-aberto');
-        }
-
-        btnAbrir.addEventListener('click', abrirModal);
-        btnFechar.addEventListener('click', fecharModal);
-        btnCancelar.addEventListener('click', fecharModal);
-        btnSalvar.addEventListener('click', cadastrarHardware);
-
-        modalOverlay.addEventListener('click', function (evento) {
-            if (evento.target === modalOverlay) {
-                fecharModal();
-            }
-        });
-
-        document.addEventListener('keydown', function (evento) {
-            if (evento.key === 'Escape') {
-                fecharModal();
-            }
-        });
     </script>
 
 </body>
