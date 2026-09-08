@@ -1,10 +1,14 @@
-var express = require("express");
-var router = express.Router();
+let express = require("express");
+let router = express.Router();
 
-var hardwaresController = require("../controllers/hardwaresController");
+let hardwaresController = require("../controllers/hardwaresController");
 
 router.get("/buscarEq/:idEmpresa", function (req, res) {
     hardwaresController.buscarEquipamentosEmpresa(req, res);
+});
+
+router.post("/cadastrar", function (req, res) {
+    hardwaresController.cadastrarEquipamento(req, res);
 });
 
 module.exports = router;

@@ -23,15 +23,10 @@ CREATE TABLE usuario (
     nome VARCHAR(100) NOT NULL,
     email VARCHAR(100) NOT NULL,
     senha VARCHAR(100) NOT NULL,
-
     fkEmpresa INT,
     fkPermissao INT,
-
-    FOREIGN KEY (fkEmpresa)
-        REFERENCES empresa(idEmpresa),
-
-    FOREIGN KEY (fkPermissao)
-        REFERENCES permissao(idPermissao)
+    FOREIGN KEY (fkEmpresa) REFERENCES empresa(idEmpresa),
+    FOREIGN KEY (fkPermissao) REFERENCES permissao(idPermissao)
 );
 
 CREATE TABLE equipamento (
@@ -40,11 +35,10 @@ CREATE TABLE equipamento (
     tipo VARCHAR(50),
     ip VARCHAR(15),
     status VARCHAR(20),
-
+    localizacao VARCHAR(150),
+    descricao VARCHAR(200),
     fkEmpresa INT,
-
-    FOREIGN KEY (fkEmpresa)
-        REFERENCES empresa(idEmpresa)
+    FOREIGN KEY (fkEmpresa) REFERENCES empresa(idEmpresa)
 );
 
 
@@ -53,11 +47,8 @@ CREATE TABLE componente (
     nome VARCHAR(100) NOT NULL,
     tipo VARCHAR(50),
     descricao VARCHAR(200),
-
     fkEquipamento INT,
-
-    FOREIGN KEY (fkEquipamento)
-        REFERENCES equipamento(idEquipamento)
+    FOREIGN KEY (fkEquipamento) REFERENCES equipamento(idEquipamento)
 );
 
 
@@ -67,11 +58,8 @@ CREATE TABLE metrica (
     valor DECIMAL(10,2),
     unidade VARCHAR(20),
     dataHora DATETIME,
-
     fkComponente INT,
-
-    FOREIGN KEY (fkComponente)
-        REFERENCES componente(idComponente)
+    FOREIGN KEY (fkComponente) REFERENCES componente(idComponente)
 );
 
 INSERT INTO permissao (idPermissao, nome, descricao) VALUES 
@@ -107,23 +95,23 @@ INSERT INTO usuario (nome, email, senha, fkEmpresa, fkPermissao) VALUES
 ('Gerente Pro', 'gerente@pro.com', 'gerente123', 6, 3);
 
 INSERT INTO equipamento
-(nome, tipo, ip, status, fkEmpresa)
+(nome, tipo, ip, status,localizacao, descricao, fkEmpresa)
 VALUES
-('Servidor Principal', 'Servidor', '192.168.1.10', 'Online', 2),
-('Switch Central', 'Switch', '192.168.1.20', 'Online', 2),
-('Roteador Principal', 'Roteador', '192.168.1.1', 'Online', 2),
-('Servidor Web', 'Servidor', '192.168.2.10', 'Online', 3),
-('Servidor Banco de Dados', 'Servidor', '192.168.2.11', 'Online', 3),
-('Firewall', 'Firewall', '192.168.2.254', 'Online', 3),
-('Servidor Aplicação', 'Servidor', '192.168.3.10', 'Online', 4),
-('Switch Produção', 'Switch', '192.168.3.20', 'Offline', 4),
-('Roteador Principal', 'Roteador', '192.168.3.1', 'Online', 4),
-('Servidor Segurança', 'Servidor', '192.168.4.10', 'Online', 5),
-('Firewall Corporativo', 'Firewall', '192.168.4.254', 'Online', 5),
-('Servidor Backup', 'Servidor', '192.168.4.20', 'Online', 5),
-('Servidor Principal', 'Servidor', '192.168.5.10', 'Online', 6),
-('Switch Core', 'Switch', '192.168.5.20', 'Online', 6),
-('Roteador', 'Roteador', '192.168.5.1', 'Manutenção', 6);
+('Servidor Principal', 'Servidor', '192.168.1.10', 'Online','TI','Servidor principal de TI', 2),
+('Switch Central', 'Switch', '192.168.1.20', 'Online','RH','Switch central do RH', 2),
+('Roteador Principal', 'Roteador', '192.168.1.1', 'Online','RH','Roteador principal do RH', 2),
+('Servidor Web', 'Servidor', '192.168.2.10', 'Online', 'TI','Servidor web de TI', 3),
+('Servidor Banco de Dados', 'Servidor', '192.168.2.11', 'Online','TI','Servidor do banco de dados', 3),
+('Firewall', 'Firewall', '192.168.2.254', 'Online', 'Segurança','Firewall localizado na área de segurança', 3),
+('Servidor Aplicação', 'Servidor', '192.168.3.10', 'Online','TI','Servidor de Aplicação de TI', 4),
+('Switch Produção', 'Switch', '192.168.3.20', 'Offline', 'TI', 'Switch de produção de TI',4),
+('Roteador Principal', 'Roteador', '192.168.3.1', 'Online','Segurança','Roteador principal de segurança', 4),
+('Servidor Segurança', 'Servidor', '192.168.4.10', 'Online','Segurança','Servidor de segurança', 5),
+('Firewall Corporativo', 'Firewall', '192.168.4.254', 'Online','RH','Firewall do RH', 5),
+('Servidor Backup', 'Servidor', '192.168.4.20', 'Online','TI','Servidor de roolback', 5),
+('Servidor Principal', 'Servidor', '192.168.5.10', 'Online','Financeiro', 'Servidor principal do financeiro',6),
+('Switch Core', 'Switch', '192.168.5.20', 'Online','Financeiro', 'Switch core do financeiro', 6),
+('Roteador', 'Roteador', '192.168.5.1', 'Manutenção','RH', 'Roteador do RH',6);
 
 INSERT INTO componente
 (nome, tipo, descricao, fkEquipamento)

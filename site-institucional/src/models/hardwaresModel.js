@@ -3,7 +3,7 @@ var database = require("../database/config")
 function buscarEquipamentosEmpresa(idEmpresa) {
     console.log("ACESSEI O USUARIO MODEL \n \n\t\t >> Se aqui der erro de 'Error: connect ECONNREFUSED',\n \t\t >> verifique suas credenciais de acesso ao banco\n \t\t >> e se o servidor de seu BD está rodando corretamente. \n\n buscarEquipamentosEmpresa(idEmpresa)", idEmpresa)
 
-    var instrucaoSql = 
+    let instrucaoSql = 
     `
         SELECT
             cp.nome AS nomeComponente,
@@ -13,7 +13,8 @@ function buscarEquipamentosEmpresa(idEmpresa) {
             eq.nome AS nomeEquipamento,
             eq.tipo AS tipoEquipamento,
             eq.ip AS ipEquipamento,
-            eq.status AS statusEquipamento
+            eq.status AS statusEquipamento,
+            eq.localizacao AS localizacao
         FROM componente AS cp
             JOIN equipamento AS eq
                 ON cp.fkEquipamento = eq.idEquipamento
@@ -28,6 +29,41 @@ function buscarEquipamentosEmpresa(idEmpresa) {
     return database.executar(instrucaoSql);
 }
 
+function cadastrarEquipamento(nome, tipo, localizacao, descricao, fkEmpresa) {
+    console.log("ACESSEI O HARDWARES MODEL \n \n\t\t >> Se aqui der erro de 'Error: connect ECONNREFUSED',\n \t\t >> verifique suas credenciais de acesso ao banco\n \t\t >> e se o servidor de seu BD está rodando corretamente. \n\n cadastrarEquipamento(): ", nome, tipo, localizacao, fkEmpresa);
+
+    let instrucaoSql =
+    `
+        INSERT INTO equipamento (nome, tipo, status, localizacao, descricao, fkEmpresa)
+        VALUES ('${nome}', '${tipo}', 'Ativo', '${localizacao}', '${descricao}', ${fkEmpresa});
+    `;
+
+    console.log("Executando a instrução SQL: \n" + instrucaoSql);
+    return database.executar(instrucaoSql);
+}
+
+function cadastrarComponentes(componentes, idEquipamento) {
+    console.log("ACESSEI O HARDWARES MODEL \n\n cadastrarComponentes(): ", componentes, idEquipamento);
+
+    let listaValores = [];
+    for (let i = 0; i < componentes.length; i++) {
+        let componente = componentes[i];
+        listaValores.push(`('${componente.nome}', '${componente.tipo}', '${componente.descricao}', ${idEquipamento})`);
+    }
+    let valores = listaValores.join(", ");
+
+    let instrucaoSql =
+    `
+        INSERT INTO componente (nome, tipo, descricao, fkEquipamento)
+        VALUES ${valores};
+    `;
+
+    console.log("Executando a instrução SQL: \n" + instrucaoSql);
+    return database.executar(instrucaoSql);
+}
+
 module.exports = {
-    buscarEquipamentosEmpresa
+    buscarEquipamentosEmpresa,
+    cadastrarEquipamento,
+    cadastrarComponentes
 };
