@@ -20,6 +20,15 @@
     --cor-vermelho-inativo: #FF5C5C;    
 }
 
+@media (max-width: 1547px) {
+    .container-hardwares .cabecalho-hardwares .cabecalho-hardwares-direita #btn-novo-hardware {
+        min-width: 16vw;
+    }
+
+    .container-hardwares .caixa-tabela-hardwares .tabela-hardwares tbody tr td .celula-dispositivo .info-dispositivo strong {
+        display: inline-block;
+    }
+}
 
 @media (max-width: 1301px) {
     .container-hardwares .caixa-tabela-hardwares .tabela-hardwares tbody tr td {
@@ -32,10 +41,10 @@
     }
 }
 
-@media (max-width: 1100px) {
+@media (max-width: 1145px) {
     .container-hardwares .cabecalho-hardwares .cabecalho-hardwares-direita #btn-novo-hardware {
-        font-size: 0.7rem;
-        width: 20vw;
+        font-size: 0.8rem;
+        min-width: 22vw;
     }
 
     .container-hardwares .cabecalho-hardwares .cabecalho-hardwares-esquerda h2 {
@@ -96,6 +105,18 @@
 }
 
 @media (max-width: 760px) {
+    .navbar {
+        height: auto;
+        min-height: 14vh;
+
+        padding: 1rem;
+
+        flex-direction: column;
+        justify-content: center;
+
+        gap: 1rem;
+    }
+
     .rodape-hardwares {
         flex-direction: column;
         gap: 1.5vh;
@@ -119,7 +140,7 @@
 }
 
 @media (max-width: 650px) {
-.navbar {
+/* .navbar {
     flex-direction: column;
     flex-wrap: nowrap;
     align-items: center;
@@ -152,7 +173,7 @@
 
 .nav-login button {
     font-size: 0.85rem;
-}
+} */
 
     .container-hardwares .cabecalho-hardwares .cabecalho-hardwares-direita #btn-novo-hardware {
         font-size: 0.85rem;
@@ -217,12 +238,13 @@
     display: flex;
     align-items: center;
     justify-content: space-between;
-    padding: 0 1rem;
     position: fixed;
+    top: 0;
+    left: 0;
     z-index: 1000;
-
     width: 100%;
-    height: 9vh;
+    min-height: 9vh;
+    padding: 0.8rem 5%;
 
     background-color: #0e0921;
     border-bottom: 1px solid rgba(255, 255, 255, 0.116);
@@ -646,6 +668,8 @@ main {
 
     padding: 0.75rem 1.4rem;
 
+    min-width: 12vw;
+
     font-family: var(--font-padrao);
     font-size: 0.9rem;
     font-weight: 600;
@@ -691,6 +715,7 @@ main {
 }
 
 .tabela-hardwares th {
+
     padding: 1.2rem;
     text-align: left;
     white-space: nowrap;
@@ -1166,6 +1191,28 @@ main {
 
     cursor: pointer;
     transition: 0.3s;
+}
+
+.item-checkbox.ic-disabled{
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+
+    gap: 0.7vw;
+
+    padding: 0.8rem;
+
+    background-color: #0e092140;
+    border: 1px solid rgba(108, 11, 11, 0.116);
+    border-radius: 0.3rem;
+
+    cursor: not-allowed;
+    transition: 0.3s;
+}
+
+.item-checkbox.ic-disabled strong,
+.item-checkbox.ic-disabled span{
+    color: rgba(238, 237, 235, 0.224);
 }
 
 .item-checkbox > img {

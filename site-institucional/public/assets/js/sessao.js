@@ -7,7 +7,7 @@ function validarSessao() {
 
     const usuarioTexto = localStorage.getItem('usuarioLogado'); // pega as coisas salvas no localStorage
 
-    if (usuarioTexto == null && !pagina_now.includes("main.html")) {
+    if (usuarioTexto == null && !pagina_now.includes("main.html") && !pagina_now.includes("sobrenos.html")) {
         window.location.href = "../public/main.html";
         return;
     }
