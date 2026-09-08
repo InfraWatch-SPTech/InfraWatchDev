@@ -31,6 +31,35 @@ body {
     
     font-family: var(--font-logo);
 }
+
+#btn-home{
+    position: absolute;
+    top: 2.5%;
+    left: 2.5%;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    gap: 0.5vw;
+    padding: 0.3rem 2.5rem;
+
+    font-family: var(--font-logo);
+    font-size: 1rem;
+    color: white;
+
+    background-color: var(--cor-azul-contraste);
+
+    border: 1px solid rgba(255, 255, 255, 0.200);
+    border-radius: 0.3rem;
+
+    cursor: pointer;
+    transition: 0.3s;
+}
+
+#btn-home:hover{
+    border-color: var(--cor-azul-contraste2);
+}
  
 .pagina-log {
     display: flex;
