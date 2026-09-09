@@ -11,6 +11,10 @@ router.post("/cadastrar", function (req, res) {
     hardwaresController.cadastrarEquipamento(req, res);
 });
 
+router.put("/atualizar/:idEquipamento", function (req, res) {
+    hardwaresController.atualizarEquipamento(req, res);
+});
+
 router.delete("/deletarEq/:idEmpresa/:idEquipamento", function(req, res){
     hardwaresController.deletarEquipamento(req, res);
 });

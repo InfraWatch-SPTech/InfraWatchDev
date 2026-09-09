@@ -63,7 +63,8 @@
         margin-top: 5%;
     }
 
-    .sobreposicao-modal {
+    .sobreposicao-modal,
+    .sobreposicao-modal-editar {
         align-items: center !important;
     }
 }
@@ -194,7 +195,9 @@
     }
 
     .btn-cancelar,
-    .btn-salvar {
+    .btn-cancelar-editar,
+    .btn-salvar,
+    .btn-salvar-editar {
         width: 100%;
         text-align: center;
     }
@@ -956,8 +959,8 @@ main {
     height: 0.75rem;
 }
 
-
-.sobreposicao-modal {
+.sobreposicao-modal,
+.sobreposicao-modal-editar {
     display: none;
     align-items: flex-end;
     justify-content: center;
@@ -975,7 +978,8 @@ main {
     background-color: transparent;
 }
 
-.sobreposicao-modal.modal-aberto {
+.sobreposicao-modal.modal-aberto,
+.sobreposicao-modal-editar.modal-aberto {
     display: flex;
 }
 
@@ -1015,7 +1019,9 @@ main {
     color: var(--cor-branco-default);
 }
 
-.fechar-modal {
+/* Botão de fechar no cabeçalho de cadastro e  edição */
+.fechar-modal,
+.fechar-modal-editar {
     display: flex;
     align-items: center;
     justify-content: center;
@@ -1034,7 +1040,8 @@ main {
     height: 1.1rem;
 }
 
-.fechar-modal:hover {
+.fechar-modal:hover,
+.fechar-modal-editar:hover {
     color: var(--cor-branco-default);
 }
 
@@ -1215,8 +1222,11 @@ main {
     border-top: 1px solid rgba(255, 255, 255, 0.116);
 }
 
+/* rodapé: cancelar/salvar no modal de cadastro e edição */
 .btn-cancelar,
-.btn-salvar {
+.btn-cancelar-editar,
+.btn-salvar,
+.btn-salvar-editar {
     padding: 0.7rem 1.6rem;
 
     font-family: var(--font-padrao);
@@ -1229,23 +1239,27 @@ main {
     transition: 0.3s;
 }
 
-.btn-cancelar {
+.btn-cancelar,
+.btn-cancelar-editar {
     background-color: transparent;
     color: var(--cor-branco-default);
     border: 1px solid rgba(255, 255, 255, 0.116);
 }
 
-.btn-cancelar:hover {
+.btn-cancelar:hover,
+.btn-cancelar-editar:hover {
     background-color: rgba(255, 255, 255, 0.06);
 }
 
-.btn-salvar {
+.btn-salvar,
+.btn-salvar-editar {
     background-color: var(--cor-azul-contraste2);
     border: 1px solid var(--cor-azul-contraste);
     color: var(--cor-branco-default);
 }
 
-.btn-salvar:hover {
+.btn-salvar:hover,
+.btn-salvar-editar:hover {
     background-color: #5178f9b3;
 }
 

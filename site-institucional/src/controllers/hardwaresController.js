@@ -70,6 +70,72 @@ function cadastrarEquipamento(req, res) {
     }
 }
 
+function buscarEquipamentoPorId(req, res) {
+
+    let idEquipamento = req.params.idEquipamento;
+    hardwaresModel.buscarEquipamentoPorId(idEquipamento)
+        .then(function (resultado) {
+
+            if (resultado.length > 0) {
+                res.status(200).json(resultado);
+            } else {
+                res.status(204).send("Nenhum resultado encontrado!");
+            }
+
+        })
+        .catch(function (erro) {
+
+            console.log(erro);
+            console.log("Houve um erro ao buscar o equipamento.", erro.sqlMessage);
+
+            res.status(500).json(erro.sqlMessage);
+        });
+}
+
+function atualizarEquipamento(req, res) {
+
+    let idEquipamento = req.params.idEquipamento;
+    let nome = req.body.nome;
+    let tipo = req.body.tipo;
+    let localizacao = req.body.localizacao;
+    let descricao = req.body.descricao || "";
+    let componentesSelecionados = req.body.componentes;
+
+    if (nome == undefined) {
+        res.status(400).send("O nome do dispositivo é obrigatório!");
+    } else if (tipo == undefined) {
+        res.status(400).send("O tipo de dispositivo é obrigatório!");
+    } else if (localizacao == undefined) {
+        res.status(400).send("A localização/setor é obrigatória!");
+    } else {
+        hardwaresModel.atualizarEquipamento(idEquipamento, nome, tipo, localizacao, descricao)
+            .then(function () {
+                return hardwaresModel.deletarComponentesPorEquipamento(idEquipamento);
+            })
+            .then(function () {
+                if (!componentesSelecionados || componentesSelecionados.length === 0) {
+                    res.status(200).json({ idEquipamento: idEquipamento });
+                    return;
+                }
+                hardwaresModel.cadastrarComponentes(componentesSelecionados, idEquipamento)
+                    .then(function () {
+                        res.status(200).json({ idEquipamento: idEquipamento });
+                    })
+                    .catch(function (erro) {
+                        console.log(erro);
+                        console.log("Houve um erro ao atualizar os componentes.", erro.sqlMessage);
+                        res.status(500).json(erro.sqlMessage);
+                    });
+
+            })
+            .catch(function (erro) {
+                console.log(erro);
+                console.log("Houve um erro ao atualizar o equipamento.", erro.sqlMessage);
+                res.status(500).json(erro.sqlMessage);
+            });
+    }
+}
+
 function deletarEquipamento(req, res) {
 
     let idEmpresa = req.params.idEmpresa;
@@ -97,5 +163,7 @@ function deletarEquipamento(req, res) {
 module.exports = {
     cadastrarEquipamento,
     buscarEquipamentosEmpresa,
+    buscarEquipamentoPorId,
+    atualizarEquipamento,
     deletarEquipamento
 };

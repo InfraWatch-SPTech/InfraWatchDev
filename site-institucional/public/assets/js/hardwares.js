@@ -1,5 +1,6 @@
 let dadosUsuario = dadosUser();
 let idEmpresa = dadosUsuario.idEmpresa;
+let ultimaListaEquipamentos = [];
 
 function mapearClasseStatus(status) {
     if (status === "Ativo" || status === "Online") {
@@ -33,7 +34,8 @@ function montarLinhaTabela(equipamento) {
             </td>
             <td>-</td>
             <td class="celula-acoes">
-                <button class="btn-icone" title="Editar">
+                <!-- ao clicar, abre o modal de edição já preenchido com os dados deste equipamento -->
+                <button class="btn-icone" onclick="abrirModalEditar(${equipamento.idEquipamento})" title="Editar">
                     <i class="fa-solid fa-pen-to-square" style="color: rgb(255, 255, 255);"></i>
                 </button>
                 <button class="btn-icone btn-excluir ${equipamento.idEquipamento}" onclick="deletarEquipamento(${equipamento.idEmpresa}, ${equipamento.idEquipamento})" title="Excluir">
@@ -78,8 +80,10 @@ function buscarEquipamentosEmpresa(idEmpresa) {
                 } else {
                     response.json().then(function (equipamentos) {
                         if (equipamentos && equipamentos.length > 0) {
+                            ultimaListaEquipamentos = equipamentos;
                             renderizarTabela(equipamentos);
                         } else {
+                            ultimaListaEquipamentos = [];
                             renderizarTabela([]);
                         }
                     }).catch(function () {
@@ -165,6 +169,109 @@ function cadastrarHardware() {
         });
 }
 
+function coletarComponentesSelecionadosEditar() {
+    let checkboxes = document.querySelectorAll('.checkbox-componente-editar:checked');
+    let componentes = [];
+
+    for (let i = 0; i < checkboxes.length; i++) {
+        let checkbox = checkboxes[i];
+        componentes.push({
+            nome: checkbox.dataset.nome,
+            tipo: checkbox.dataset.tipo,
+            descricao: checkbox.dataset.descricao
+        });
+    }
+
+    return componentes;
+}
+
+function abrirModalEditar(idEquipamento) {
+    let linhasDoEquipamento = ultimaListaEquipamentos.filter(function (linha) {
+        return linha.idEquipamento === idEquipamento;
+    });
+
+    if (linhasDoEquipamento.length === 0) {
+        alert('Não foi possível carregar os dados desse hardware.');
+        return;
+    }
+
+    let equipamento = linhasDoEquipamento[0];
+
+    document.getElementById('input-editar-id-hardware').value = equipamento.idEquipamento;
+    document.getElementById('input-editar-id-empresa').value = equipamento.idEmpresa;
+    document.getElementById('input-editar-nome-hardware').value = equipamento.nomeEquipamento || '';
+    document.getElementById('select-editar-tipo-hardware').value = equipamento.tipoEquipamento || '';
+    document.getElementById('input-editar-localizacao-hardware').value = equipamento.localizacao || '';
+    document.getElementById('input-editar-descricao-hardware').value = equipamento.descricaoEquipamento || '';
+
+    //lista de tipos de componente que esse equipamento já tem pra marcar os checkbox correspondentes
+    let tiposComponentesAtuais = linhasDoEquipamento
+        .map(function (linha) { return linha.tipoComponente; })
+        .filter(function (tipo) { return !!tipo; });
+
+    let checkboxesEditar = document.querySelectorAll('.checkbox-componente-editar');
+    for (let i = 0; i < checkboxesEditar.length; i++) {
+        let checkbox = checkboxesEditar[i];
+        checkbox.checked = tiposComponentesAtuais.indexOf(checkbox.dataset.tipo) !== -1;
+    }
+
+    document.querySelector('.sobreposicao-modal-editar').classList.add('modal-aberto');
+}
+
+function fecharModalEditar() {
+    document.querySelector('.sobreposicao-modal-editar').classList.remove('modal-aberto');
+}
+
+function salvarEdicaoHardware() {
+    let idEquipamento = document.getElementById('input-editar-id-hardware').value;
+    let nome = document.getElementById('input-editar-nome-hardware').value.trim();
+    let tipo = document.getElementById('select-editar-tipo-hardware').value;
+    let localizacao = document.getElementById('input-editar-localizacao-hardware').value.trim();
+    let descricao = document.getElementById('input-editar-descricao-hardware').value.trim();
+    let componentes = coletarComponentesSelecionadosEditar();
+
+    if (nome === '') {
+        alert('Preencha o nome do dispositivo.');
+        return;
+    }
+    if (tipo === '') {
+        alert('Selecione o tipo de dispositivo.');
+        return;
+    }
+    if (localizacao === '') {
+        alert('Preencha a localização/setor.');
+        return;
+    }
+
+    let corpoRequisicao = {
+        nome: nome,
+        tipo: tipo,
+        localizacao: localizacao,
+        descricao: descricao,
+        componentes: componentes
+    };
+
+    fetch(`/hardwares/atualizar/${idEquipamento}`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(corpoRequisicao)
+    })
+        .then(function (response) {
+            if (response.ok) {
+                buscarEquipamentosEmpresa(idEmpresa);
+                fecharModalEditar();
+            } else {
+                response.text().then(function (mensagemErro) {
+                    alert('Não foi possível salvar as alterações: ' + mensagemErro);
+                });
+            }
+        })
+        .catch(function (error) {
+            console.error(`Erro ao atualizar o hardware: ${error.message}`);
+            alert('Erro ao atualizar o hardware. Veja o console.');
+        });
+}
+
 function deletarEquipamento(idEmpresa, idEquipamento) {
 
     let btnFecharModal = document.getElementById('btn-fechar-modal-deletar');
@@ -227,9 +334,24 @@ modalOverlay.addEventListener('click', function (evento) {
 document.addEventListener('keydown', function (evento) {
     if (evento.key === 'Escape') {
         fecharModal();
+        fecharModalEditar();
     }
 });
 
+// Mesma lógica do modal de cadastro , só que no modal de EDIÇÃO
+const modalOverlayEditar = document.querySelector('.sobreposicao-modal-editar');
+const btnFecharEditar = document.querySelector('.fechar-modal-editar');
+const btnCancelarEditar = document.querySelector('.btn-cancelar-editar');
+const btnSalvarEditar = document.querySelector('.btn-salvar-editar');
 
+btnFecharEditar.addEventListener('click', fecharModalEditar);
+btnCancelarEditar.addEventListener('click', fecharModalEditar);
+btnSalvarEditar.addEventListener('click', salvarEdicaoHardware);
+
+modalOverlayEditar.addEventListener('click', function (evento) {
+    if (evento.target === modalOverlayEditar) {
+        fecharModalEditar();
+    }
+});
 
 buscarEquipamentosEmpresa(idEmpresa);
