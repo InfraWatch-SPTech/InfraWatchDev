@@ -310,24 +310,24 @@ function deletarEquipamento(idEmpresa, idEquipamento) {
 
         fetch(`/hardwares/deletarEq/${idEmpresa}/${idEquipamento}`, {
             method: 'DELETE',
-            signal: controller.signal, 
+            signal: controller.signal,
             cache: 'no-store'
         })
-        .then(response => {
-            if (response.ok) {
-                console.log(`Item HW-${idEquipamento} deletado com sucesso`);
-                buscarEquipamentosEmpresa(idEmpresa);
-            } else {
-                console.log("Item não deletado");
-            }
-        })
-        .catch(error => {
-            if (error.name === 'AbortError') {
-                console.log("Requisição de exclusão cancelada pelo usuário.");
-            } else {
-                console.error(`Erro na requisição de exclusão: ${error.message}`);
-            }
-        });
+            .then(response => {
+                if (response.ok) {
+                    console.log(`Item HW-${idEquipamento} deletado com sucesso`);
+                    buscarEquipamentosEmpresa(idEmpresa);
+                } else {
+                    console.log("Item não deletado");
+                }
+            })
+            .catch(error => {
+                if (error.name === 'AbortError') {
+                    console.log("Requisição de exclusão cancelada pelo usuário.");
+                } else {
+                    console.error(`Erro na requisição de exclusão: ${error.message}`);
+                }
+            });
     };
 
     lidarComFechar = () => {
@@ -410,33 +410,122 @@ function aplicarPermissoes() {
     }
 }
 
-function modalVisualizar(idEquipamento){
-   fetch(`/hardwares/buscarEqId/${idEquipamento}`, { cache: 'no-store' }).then(function (response) {
-            if (response.ok) {
-                response.json().then(function (equipamento) {
-                    console.log(equipamento)
+function modalVisualizar(idEquipamento) {
+    let jsonEquipamentos = [];
+    let jsonComponentes = [];
+
+    fetch(`/hardwares/buscarEqId/${idEquipamento}`, { cache: 'no-store' }).then(function (response) {
+        if (response.ok) {
+            response.json().then(function (equipamento) {
+                jsonEquipamentos = equipamento;
+                console.log(equipamento)
+
+                for (let i = 0; i < jsonEquipamentos.length; i++) {
+                    const nome = jsonEquipamentos[i].nomeComponente;
+
+                    // Adiciona apenas se ainda não estiver na lista e se existir
+                    if (nome && !jsonComponentes.includes(nome)) {
+                        jsonComponentes.push(nome);
+                    }
+                }
+
+                console.log(jsonComponentes)
+
+                const modalVisualizar = document.querySelector('.modal-visualizar');
+                const modalOverlay = document.querySelector('.modal-overlay-deletar')
+
+                modalOverlay.style.display = 'flex';
+                modalVisualizar.style.display = 'flex';
+
+                modalVisualizar.innerHTML =
+                `
+                <button id="btn-fechar-modal-visualizar">
+                            <i class="fa-regular fa-circle-xmark"></i>
+                        </button>
+                        <div class="modal-visualizar-title">
+                            <div class="visualizar-title-icon">
+                                <i class="fa-solid fa-display" style="color: rgb(255, 255, 255);"></i>
+                            </div>
+                            <div class="visualizar-title-text">
+                                <span>Equipamento</span>
+                                <h3>${jsonEquipamentos[0].nomeEquipamento}</h3>
+                                <h6>ID: HW-${jsonEquipamentos[0].idEquipamento}</h6>
+                            </div>
+                        </div>
+                        <div class="modal-visualizar-topic">
+                            <span>
+                                <i class="fa-solid fa-circle-info"></i>
+                                Informações
+                            </span>
+                        </div>
+                        <div class="modal-visualizar-info">
+                            <div class="visualizar-info-row">
+                                <div class="info-row-item">
+                                    <div class="info-row-item-icon">
+                                        <i class="fa-solid fa-tv"></i>
+                                    </div>
+                                    <div class="info-row-item-text border-lateral">
+                                        <span>Tipo</span>
+                                        <h3>${jsonEquipamentos[0].tipoEquipamento}</h3>
+                                    </div>
+                                </div>
+                                <div class="info-row-item">
+                                    <div class="info-row-item-icon">
+                                        <i class="fa-solid fa-location-dot"></i>
+                                    </div>
+                                    <div class="info-row-item-text">
+                                        <span>Localização</span>
+                                        <h3>${jsonEquipamentos[0].localizacao}</h3>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="visualizar-info-row">
+                                <div class="info-row-item">
+                                    <div class="info-row-item-icon">
+                                        <i class="fa-solid fa-microchip"></i>
+                                    </div>
+                                    <div class="info-row-item-text border-lateral">
+                                        <span>Componentes Monitorados</span>
+                                        <h3>${jsonComponentes.join(', ')}</h3>
+                                    </div>
+                                </div>
+                                <div class="info-row-item">
+                                    <div class="info-row-item-icon">
+                                        <i class="fa-solid fa-signal"></i>
+                                    </div>
+                                    <div class="info-row-item-text">
+                                        <span>Status</span>
+                                        <h3>${jsonEquipamentos[0].statusEquipamento}</h3>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="modal-visualizar-rowbar">
+                            <button id="fechar-modal-visualizar">
+                                Fechar
+                            </button>
+                        </div> 
+                `;
+                const btnFecharModalVisualizar = document.getElementById('btn-fechar-modal-visualizar');
+                const btn2FecharModalVisualizar = document.getElementById('fechar-modal-visualizar');
+
+                btnFecharModalVisualizar.addEventListener('click', () => {
+                    modalOverlay.style.display = 'none';
+                    modalVisualizar.style.display = 'none';
                 });
-            } else {
-                console.error('Nenhum quiz econtrado!');
-            }
-        })
-            .catch(function (error) {
-                console.error(`Erro na obtenção dos dados do Quiz ${error.message}`);
+
+                btn2FecharModalVisualizar.addEventListener('click', () => {
+                    modalOverlay.style.display = 'none';
+                    modalVisualizar.style.display = 'none';
+                });
             });
-
-    const modalVisualizar = document.querySelector('.modal-visualizar');
-    const modalOverlay = document.querySelector('.modal-overlay-deletar')
-
-    modalOverlay.style.display = 'flex';
-    modalVisualizar.style.display = 'flex';
-
-    // modalVisualizar.innerHTML = 
-    // `
-        
-    // `;
-    const btnFecharModalVisualizar = document.getElementById('btn-fechar-modal-visualizar');
-
-    btn
+        } else {
+            console.error('Nenhum quiz econtrado!');
+        }
+    })
+        .catch(function (error) {
+            console.error(`Erro na obtenção dos dados do Quiz ${error.message}`);
+        });
 }
 
 buscarEquipamentosEmpresa(idEmpresa)

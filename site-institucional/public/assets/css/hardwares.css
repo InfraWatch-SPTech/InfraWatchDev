@@ -1374,18 +1374,18 @@ main {
 
     display: none;
     align-items: center;
-    justify-content: center;
+    justify-content: space-between;
     flex-direction: column;
 
     gap: 3vh;
 
     top: 20%;
-    left: 20%;
+    left: 30%;
 
     padding: 2rem;
 
     height: 60%;
-    width: 60%;
+    width: 40%;
 
     background-color: var(--cor-azul-contraste);
     border: 1px solid var(--cor-azul-contraste2);
@@ -1395,77 +1395,207 @@ main {
     z-index: 300000;
 }
 
-.modal-visualizar-top{
+.modal-visualizar-title{
     display: flex;
     align-items: center;
-    justify-content: space-between;
+    justify-content: flex-start;
 
-    width: 90%;
+    gap: 3vw;
+
     height: 25%;
+    width: 95%;
+
+    border-bottom: 2px solid #0e0921;
 }
 
-.visualizar-top-icon{
-    display: flex;
-    align-items: center;
-    justify-content: flex-end;
-    text-align: center;
 
-    width: 10%;
-    height: 90%;
+.visualizar-title-icon{
+    padding: 1rem;
+
+    background-color: var(--cor-azul-contraste2);
+    border-radius: 10%;
 }
 
-.visualizar-top-icon i{
-    display: flex;
-    align-items: center;
-    justify-content: center;
-
-    padding: 1.5rem 2.2rem;
-
-    font-size: 1.6rem;
-
-    background-color: #5178F9;
-    border-radius: 50%;
+.visualizar-title-icon i{
+    font-size: 2rem;
 }
 
-.visualizar-top-title{
+.visualizar-title-text{
     display: flex;
     align-items: flex-start;
     justify-content: center;
-    text-align: center;
     flex-direction: column;
 
-    width: 85%;
-    height: 100%;
+    gap: 0.5vh;
 
-    gap: 0.8vh;
+    text-align: left;
 }
 
-.visualizar-top-title h1{
-    font-size: 1.2rem;
-
+.visualizar-title-text span{
     font-family: var(--font-padrao);
-    font-weight: 500;
+    font-size: 0.8rem;
+    font-weight: 400;
+
+    color: var(--cor-azul-apagado);
+}
+
+.visualizar-title-text h3{
+    font-family: var(--font-padrao);
     color: white;
 }
 
-.visualizar-top-title p{
+.visualizar-title-text h6{
     font-family: var(--font-padrao);
-    font-weight: 500;
-    color: rgba(255, 255, 255, 0.527);
+    font-size: 0.75rem;
+    font-weight: 300;
+
+    color: rgba(255, 255, 255, 0.561);
 }
 
-.modal-visualizar-bottom{
+.modal-visualizar-topic{
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+
+    gap: 1vw;
+
+    height: 2%;
+    width: 95%;
+}
+
+.modal-visualizar-topic span{
+    padding: 0.3rem;
+
+    font-family: var(--font-padrao);
+    color: white;
+
+    border-bottom: 2px solid var(--cor-azul-contraste2);
+}
+
+.modal-visualizar-info{
     display: flex;
     align-items: center;
     justify-content: center;
     flex-direction: column;
 
-    width: 95%;
-    height: 75%;
+    gap: 1vw;
 
+    height: 60%;
+    width: 95%;
+}
+
+.visualizar-info-row{
+    display: flex;
+    align-items: center;
+    justify-content: space-evenly;
+
+    width: 95%;
+    height: 45%;
+}
+
+.info-row-item{
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+
+    gap: 1vw;
+
+    width: 48%;
+    height: 100%;
+}
+
+.info-row-item-icon{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    width: 20%;
+    height: 30%;
+}
+
+.info-row-item-icon i{
+    font-size: 2rem;
+    color: white;
+}
+
+.info-row-item-text{
+    display: flex;
+    align-items: flex-start;
+    justify-content: flex-start;
+    flex-direction: column;
+
+    gap: 0.3vh;
+
+    height: 45%;
+    width: 80%
+}
+
+.border-lateral{
+    border-right: 1px solid var(--cor-preto-default);
+}
+
+.info-row-item-text span{
+    font-family: var(--font-padrao);
+    font-size: 0.8rem;
+    font-weight: 400;
+
+    color: var(--cor-azul-apagado);
+}
+
+.info-row-item-text h3{
+    font-family: var(--font-padrao);
+    font-weight: 400;
+    color: white;
+}
+
+.modal-visualizar-rowbar{
+    display: flex;
+    align-items: flex-end;
+    justify-content: flex-end;
+
+    gap: 1vw;
+
+    height: 10%;
+    width: 100%;
+
+    border-top: 2px solid #0e0921;
+}
+
+.modal-visualizar-rowbar button{
+    padding: 0.3rem 1rem;
+
+    background-color: var(--cor-azul-contraste);
     border: 1px solid white;
+
+    font-family: var(--font-padrao);
+    color: white;
+
+    border-radius: 0.3rem;
+
+    cursor: pointer;
+    transition: 0.3s;
+}
+
+.modal-visualizar-rowbar button:hover{
+    border-color: var(--cor-azul-contraste2);
 }
 
 #btn-fechar-modal-visualizar{
-    
+    position: absolute;
+    top: 3%;
+    right: 2%;
+
+    font-size: 1.4rem;
+
+    background-color: transparent;
+    border: none;
+
+    color: white;
+
+    cursor: pointer;
+    transition: 0.3s;
+}
+
+#btn-fechar-modal-visualizar:hover{
+    color: rgba(255, 0, 0, 0.415);
 }
