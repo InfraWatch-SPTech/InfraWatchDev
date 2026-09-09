@@ -362,8 +362,14 @@ function fecharModal() {
 
 btnAbrir.addEventListener('click', abrirModal);
 btnFechar.addEventListener('click', fecharModal);
-btnCancelar.addEventListener('click', fecharModal);
-btnSalvar.addEventListener('click', cadastrarHardware);
+
+if(btnCancelar){
+    btnCancelar.addEventListener('click', fecharModal);
+}
+
+if(btnSalvar){
+    btnSalvar.addEventListener('click', cadastrarHardware);
+}
 
 modalOverlay.addEventListener('click', function (evento) {
     if (evento.target === modalOverlay) {

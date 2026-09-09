@@ -7,7 +7,7 @@ function validarSessao() {
 
     const usuarioTexto = localStorage.getItem('usuarioLogado'); // pega as coisas salvas no localStorage
 
-    if (usuarioTexto == null && !pagina_now.includes("main.html")) {
+    if (usuarioTexto == null && !pagina_now.includes("main.html") && !pagina_now.includes("sobrenos.html")) {
         window.location.href = "../public/main.html";
         return;
     }
@@ -101,52 +101,50 @@ function validarSessao() {
                     } else {
                         popupPerfil.classList.add('active');
 
-                        popupPerfil.innerHTML =
-                            `
-                                <i id="btn-fechar-perfil" class="fa-regular fa-circle-xmark"></i>
-                                <div class="content-perfil">
-                                    <div class="content-perfil-top">
-                                        <i class="fa-solid fa-user"></i>
-                                        <div class="perfil-top-text">
-                                            <h5>
-                                                ${nomeUsuario}
-                                            </h5>
-                                            <h6 style="padding-left: 0.6rem;">
-                                                ${emailUsuario}
-                                            </h6>
-                                        </div>
-                                    </div>
-                                    <div class="content-perfil-bottom">
-                                        <div class="perfil-bottom-info">
-                                            <div class="info-box-text">
-                                                <i class="fa-regular fa-building"></i>
-                                                <span>
-                                                    <h6>Empresa</h6>
-                                                    <h5>${empresaUsuario}</h5>
-                                                </span>
-                                            </div>
-                                            <div class="info-box-text">
-                                                <i class="fa-regular fa-address-card"></i>
-                                                <span>
-                                                    <h6>Permissão</h6>
-                                                    <h5>${permissaoUsuario}</h5>
-                                                </span>
-                                            </div>
-                                        </div>
-                                        <div class="perfil-bottom-btn">
-                                            <button>
-                                                <i class="fa-regular fa-pen-to-square"></i>
-                                                Editar
-                                            </button>
-                                            <button onclick="limparSessao()">
-                                                <i class="fa-solid fa-right-from-bracket"></i>
-                                                Logout
-                                            </button>
-                                        </div>
-                                    </div>
-                                </div>
-                    
-                            `;
+                       popupPerfil.innerHTML = `
+    <i id="btn-fechar-perfil" class="fa-regular fa-circle-xmark"></i>
+    <div class="content-perfil">
+        <!-- Topo: Avatar, Nome e Email -->
+        <div class="content-perfil-top">
+            <i class="fa-solid fa-user icon-avatar"></i>
+            <div class="perfil-top-text">
+                <h5 class="nome-usuario">${nomeUsuario}</h5>
+                <h6 class="email-usuario">${emailUsuario}</h6>
+            </div>
+        </div>
+        
+        <!-- Conteúdo do meio: Empresa e Permissão -->
+        <div class="content-perfil-bottom">
+            <div class="perfil-bottom-info">
+                <div class="info-item">
+                    <i class="fa-regular fa-building info-icon"></i>
+                    <div class="info-text">
+                        <span class="info-label">Empresa</span>
+                        <span class="info-valor">${empresaUsuario}</span>
+                    </div>
+                </div>
+                
+                <div class="info-item">
+                    <i class="fa-regular fa-address-card info-icon"></i>
+                    <div class="info-text">
+                        <span class="info-label">Permissão</span>
+                        <span class="info-valor">${permissaoUsuario}</span>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Botões de Ação -->
+            <div class="perfil-bottom-btn">
+                <button type="button" class="btn-editar">
+                    <i class="fa-regular fa-pen-to-square"></i> Editar
+                </button>
+                <button type="button" class="btn-logout" onclick="limparSessao()">
+                    <i class="fa-solid fa-right-from-bracket"></i> Logout
+                </button>
+            </div>
+        </div>
+    </div>
+`;
                     }
                 })
             }
