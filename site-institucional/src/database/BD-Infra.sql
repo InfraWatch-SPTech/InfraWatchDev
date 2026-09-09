@@ -65,8 +65,7 @@ CREATE TABLE metrica (
 INSERT INTO permissao (idPermissao, nome, descricao) VALUES 
 (1, 'Super Usuario','root'),
 (2, 'Admin', 'Administrador'),
-(3, 'Gerente', 'Gerente'),
-(4, 'Usuario','Usuario Comum');
+(3, 'Usuario','Usuario Comum');
 
 INSERT INTO empresa (idEmpresa, nome, cnpj, email, codigo) VALUES 
 (2, 'Bananinha Ltda', '12.345.678/0001-90', 'contato@techsolutions.com', 'X678JNSZ'),
