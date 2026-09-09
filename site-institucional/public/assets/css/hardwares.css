@@ -1368,3 +1368,104 @@ main {
 #btn-deletar-hardware:hover{
     border-color: rgb(246, 244, 244);
 }
+
+.modal-visualizar{
+    position: absolute;
+
+    display: none;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+
+    gap: 3vh;
+
+    top: 20%;
+    left: 20%;
+
+    padding: 2rem;
+
+    height: 60%;
+    width: 60%;
+
+    background-color: var(--cor-azul-contraste);
+    border: 1px solid var(--cor-azul-contraste2);
+
+    border-radius: 0.3rem;
+
+    z-index: 300000;
+}
+
+.modal-visualizar-top{
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    width: 90%;
+    height: 25%;
+}
+
+.visualizar-top-icon{
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    text-align: center;
+
+    width: 10%;
+    height: 90%;
+}
+
+.visualizar-top-icon i{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    padding: 1.5rem 2.2rem;
+
+    font-size: 1.6rem;
+
+    background-color: #5178F9;
+    border-radius: 50%;
+}
+
+.visualizar-top-title{
+    display: flex;
+    align-items: flex-start;
+    justify-content: center;
+    text-align: center;
+    flex-direction: column;
+
+    width: 85%;
+    height: 100%;
+
+    gap: 0.8vh;
+}
+
+.visualizar-top-title h1{
+    font-size: 1.2rem;
+
+    font-family: var(--font-padrao);
+    font-weight: 500;
+    color: white;
+}
+
+.visualizar-top-title p{
+    font-family: var(--font-padrao);
+    font-weight: 500;
+    color: rgba(255, 255, 255, 0.527);
+}
+
+.modal-visualizar-bottom{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+
+    width: 95%;
+    height: 75%;
+
+    border: 1px solid white;
+}
+
+#btn-fechar-modal-visualizar{
+    
+}

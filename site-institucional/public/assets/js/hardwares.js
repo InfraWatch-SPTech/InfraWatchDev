@@ -42,7 +42,7 @@ function montarLinhaTabela(equipamento) {
             <td>-</td>
             <td class="celula-acoes">
                 <!-- ao clicar, abre o modal de edição já preenchido com os dados deste equipamento -->
-                <button class="btn-icone btn-visualizar" onclick="abrirModalVisualizar(${equipamento.idEquipamento})" title="Visualizar">
+                <button class="btn-icone btn-visualizar" onclick="modalVisualizar(${equipamento.idEquipamento})" title="Visualizar">
                     <i class="fa-regular fa-eye" style="color: rgb(255, 255, 255);"></i>  
                 </button>
                 <button class="btn-icone btn-editar" onclick="abrirModalEditar(${equipamento.idEquipamento})" title="Editar">
@@ -234,10 +234,6 @@ function fecharModalEditar() {
     document.querySelector('.sobreposicao-modal-editar').classList.remove('modal-aberto');
 }
 
-function abrirModalVisualizar(idEquipamento){
-
-}
-
 function salvarEdicaoHardware() {
     let idEquipamento = document.getElementById('input-editar-id-hardware').value;
     let nome = document.getElementById('input-editar-nome-hardware').value.trim();
@@ -288,46 +284,66 @@ function salvarEdicaoHardware() {
         });
 }
 
+let controller;
+let lidarComDeletar;
+let lidarComFechar;
+
 function deletarEquipamento(idEmpresa, idEquipamento) {
-
-    let btnFecharModal = document.getElementById('btn-fechar-modal-deletar');
-    let btnDeletarHardware = document.getElementById('btn-deletar-hardware');
-    let modalDeletarHardware = document.querySelector('.modal-deletar');
-    let modalOverlayDeletarHardware = document.querySelector('.modal-overlay-deletar');
-
-    modalOverlayDeletarHardware.classList.add('active');
-    modalDeletarHardware.classList.add('active');
-
+    const btnFecharModal = document.getElementById('btn-fechar-modal-deletar');
+    const btnDeletarHardware = document.getElementById('btn-deletar-hardware');
+    const modalDeletarHardware = document.querySelector('.modal-deletar');
+    const modalOverlayDeletarHardware = document.querySelector('.modal-overlay-deletar');
     const h2AvisoModal = document.getElementById('aviso-deletar');
 
-    h2AvisoModal.innerHTML += `(HW-${idEquipamento})?`;
+    btnDeletarHardware.removeEventListener('click', lidarComDeletar);
+    btnFecharModal.removeEventListener('click', lidarComFechar);
 
-    btnFecharModal.addEventListener('click', () =>{
-        modalDeletarHardware.classList.remove('active');
-        modalOverlayDeletarHardware.classList.remove('active');
-    });
+    controller = new AbortController();
 
-    btnDeletarHardware.addEventListener('click', () =>{
-        modalDeletarHardware.classList.remove('active');
-        modalOverlayDeletarHardware.classList.remove('active');
+    // Exibe a modal
+    modalOverlayDeletarHardware.classList.add('active');
+    modalDeletarHardware.classList.add('active');
+    h2AvisoModal.innerHTML = `Você tem certeza que deseja DELETAR o hardware de ID: (HW-${idEquipamento})?`;
+
+    lidarComDeletar = () => {
+        fecharModalGeral();
 
         fetch(`/hardwares/deletarEq/${idEmpresa}/${idEquipamento}`, {
-        method: 'DELETE',
-        cache: 'no-store'
-    })
-        .then(function (response) {
+            method: 'DELETE',
+            signal: controller.signal, 
+            cache: 'no-store'
+        })
+        .then(response => {
             if (response.ok) {
-                console.log("Item deletado");
+                console.log(`Item HW-${idEquipamento} deletado com sucesso`);
                 buscarEquipamentosEmpresa(idEmpresa);
             } else {
                 console.log("Item não deletado");
             }
         })
-        .catch(function (error) {
-            console.error(`Erro na requisição de exclusão: ${error.message}`);
+        .catch(error => {
+            if (error.name === 'AbortError') {
+                console.log("Requisição de exclusão cancelada pelo usuário.");
+            } else {
+                console.error(`Erro na requisição de exclusão: ${error.message}`);
+            }
         });
+    };
 
-    });
+    lidarComFechar = () => {
+        fecharModalGeral();
+        controller.abort();
+    };
+
+    function fecharModalGeral() {
+        modalDeletarHardware.classList.remove('active');
+        modalOverlayDeletarHardware.classList.remove('active');
+        btnDeletarHardware.removeEventListener('click', lidarComDeletar);
+        btnFecharModal.removeEventListener('click', lidarComFechar);
+    }
+
+    btnDeletarHardware.addEventListener('click', lidarComDeletar);
+    btnFecharModal.addEventListener('click', lidarComFechar);
 }
 
 const modalOverlay = document.querySelector('.sobreposicao-modal');
@@ -392,6 +408,35 @@ function aplicarPermissoes() {
             btnAdicionarHardware.style.display = 'none';
         }
     }
+}
+
+function modalVisualizar(idEquipamento){
+   fetch(`/hardwares/buscarEqId/${idEquipamento}`, { cache: 'no-store' }).then(function (response) {
+            if (response.ok) {
+                response.json().then(function (equipamento) {
+                    console.log(equipamento)
+                });
+            } else {
+                console.error('Nenhum quiz econtrado!');
+            }
+        })
+            .catch(function (error) {
+                console.error(`Erro na obtenção dos dados do Quiz ${error.message}`);
+            });
+
+    const modalVisualizar = document.querySelector('.modal-visualizar');
+    const modalOverlay = document.querySelector('.modal-overlay-deletar')
+
+    modalOverlay.style.display = 'flex';
+    modalVisualizar.style.display = 'flex';
+
+    // modalVisualizar.innerHTML = 
+    // `
+        
+    // `;
+    const btnFecharModalVisualizar = document.getElementById('btn-fechar-modal-visualizar');
+
+    btn
 }
 
 buscarEquipamentosEmpresa(idEmpresa)

@@ -81,7 +81,7 @@ function buscarEquipamentoPorId(idEquipamento) {
             eq.descricao AS descricaoEquipamento,
             eq.fkEmpresa AS idEmpresa
         FROM equipamento AS eq
-            LEFT JOIN componente AS cp
+            JOIN componente AS cp
                 ON cp.fkEquipamento = eq.idEquipamento
         WHERE eq.idEquipamento = ${idEquipamento};
     `;

@@ -7,6 +7,10 @@ router.get("/buscarEq/:idEmpresa", function (req, res) {
     hardwaresController.buscarEquipamentosEmpresa(req, res);
 });
 
+router.get("/buscarEqId/:idEquipamento", function (req, res) {
+    hardwaresController.buscarEquipamentoPorId(req, res);
+});
+
 router.post("/cadastrar", function (req, res) {
     hardwaresController.cadastrarEquipamento(req, res);
 });
