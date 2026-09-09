@@ -1,3 +1,10 @@
+function dadosUser() {
+    const usuarioTexto = localStorage.getItem('usuarioLogado');
+    const usuarioLogado = JSON.parse(usuarioTexto);
+
+    return usuarioLogado;
+}
+
 let dadosUsuario = dadosUser();
 let idEmpresa = dadosUsuario.idEmpresa;
 let ultimaListaEquipamentos = [];
@@ -35,7 +42,10 @@ function montarLinhaTabela(equipamento) {
             <td>-</td>
             <td class="celula-acoes">
                 <!-- ao clicar, abre o modal de edição já preenchido com os dados deste equipamento -->
-                <button class="btn-icone" onclick="abrirModalEditar(${equipamento.idEquipamento})" title="Editar">
+                <button class="btn-icone btn-visualizar" onclick="abrirModalVisualizar(${equipamento.idEquipamento})" title="Visualizar">
+                    <i class="fa-regular fa-eye" style="color: rgb(255, 255, 255);"></i>  
+                </button>
+                <button class="btn-icone btn-editar" onclick="abrirModalEditar(${equipamento.idEquipamento})" title="Editar">
                     <i class="fa-solid fa-pen-to-square" style="color: rgb(255, 255, 255);"></i>
                 </button>
                 <button class="btn-icone btn-excluir ${equipamento.idEquipamento}" onclick="deletarEquipamento(${equipamento.idEmpresa}, ${equipamento.idEquipamento})" title="Excluir">
@@ -69,6 +79,8 @@ function renderizarTabela(equipamentos) {
     for (let i in equipamentosAgrupados) {
         corpoTabela.innerHTML += montarLinhaTabela(equipamentosAgrupados[i]);
     }
+
+    aplicarPermissoes();
 }
 
 function buscarEquipamentosEmpresa(idEmpresa) {
@@ -222,6 +234,10 @@ function fecharModalEditar() {
     document.querySelector('.sobreposicao-modal-editar').classList.remove('modal-aberto');
 }
 
+function abrirModalVisualizar(idEquipamento){
+
+}
+
 function salvarEdicaoHardware() {
     let idEquipamento = document.getElementById('input-editar-id-hardware').value;
     let nome = document.getElementById('input-editar-nome-hardware').value.trim();
@@ -277,15 +293,23 @@ function deletarEquipamento(idEmpresa, idEquipamento) {
     let btnFecharModal = document.getElementById('btn-fechar-modal-deletar');
     let btnDeletarHardware = document.getElementById('btn-deletar-hardware');
     let modalDeletarHardware = document.querySelector('.modal-deletar');
+    let modalOverlayDeletarHardware = document.querySelector('.modal-overlay-deletar');
 
+    modalOverlayDeletarHardware.classList.add('active');
     modalDeletarHardware.classList.add('active');
+
+    const h2AvisoModal = document.getElementById('aviso-deletar');
+
+    h2AvisoModal.innerHTML += `(HW-${idEquipamento})?`;
 
     btnFecharModal.addEventListener('click', () =>{
         modalDeletarHardware.classList.remove('active');
+        modalOverlayDeletarHardware.classList.remove('active');
     });
 
     btnDeletarHardware.addEventListener('click', () =>{
         modalDeletarHardware.classList.remove('active');
+        modalOverlayDeletarHardware.classList.remove('active');
 
         fetch(`/hardwares/deletarEq/${idEmpresa}/${idEquipamento}`, {
         method: 'DELETE',
@@ -354,4 +378,20 @@ modalOverlayEditar.addEventListener('click', function (evento) {
     }
 });
 
-buscarEquipamentosEmpresa(idEmpresa);
+function aplicarPermissoes() {
+    const usuario = dadosUser();
+
+    if (usuario.nomePermissao === 'Usuario') {
+        document.querySelectorAll('.btn-excluir, .btn-editar').forEach(function (btn) {
+            btn.style.display = 'none';
+        });
+
+        const btnAdicionarHardware = document.getElementById('btn-novo-hardware');
+
+        if (btnAdicionarHardware) {
+            btnAdicionarHardware.style.display = 'none';
+        }
+    }
+}
+
+buscarEquipamentosEmpresa(idEmpresa)

@@ -1,437 +1,445 @@
-<!DOCTYPE html>
-<html lang="pt-br">
+    <!DOCTYPE html>
+    <html lang="pt-br">
 
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="icon" type="image/png" href="../public/assets/midias/main-icon-image.png">
-    <link rel="stylesheet" href="../public/assets/css/hardwares.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.3.1/css/all.min.css"
-        integrity="sha512-QeR2VH+lsBE5LSAe1Q5EnTBbe7XTBubt8dG93Y7gidSgdMCr8nVqKcfKAMyN96SV8KDbZVTDXChatu5G2KQGzg=="
-        crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <link rel="icon" type="image/png" href="../public/assets/midias/main-icon-image.png">
+        <link rel="stylesheet" href="../public/assets/css/hardwares.css">
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.3.1/css/all.min.css"
+            integrity="sha512-QeR2VH+lsBE5LSAe1Q5EnTBbe7XTBubt8dG93Y7gidSgdMCr8nVqKcfKAMyN96SV8KDbZVTDXChatu5G2KQGzg=="
+            crossorigin="anonymous" referrerpolicy="no-referrer" />
 
-    <script src="../public/assets/js/sessao.js"></script>
-    <script src="../public/assets/js/hardwares.js" defer></script>
-    <script src="../public/assets/js/redirecionamento.js"></script>
+        <title>InfraWatch.Dev - Hardwares</title>
+    </head>
 
-    <title>InfraWatch.Dev - Hardwares</title>
-</head>
-
-<body onload="validarSessao()">
-
-    <header>
-        <div class="navbar">
-            <div class="nav-logo">
-                <h1>
-                    Infra<span>Watch</span>
-                </h1>
-            </div>
-            <div class="nav-links">
-                <ul>
-                    <li>
-                        <a href="./main.html">Home</a>
-                    </li>
-                    <li>
-                        <a href="./sobrenos.html">
-                            Sobre-nós
-                        </a>
-                    </li>
-                    <li>
-                        <a href="./sobrenos.html#contato">
-                            Contato
-                        </a>
-                    </li>
-                </ul>
-            </div>
-            <div class="nav-login">
-                <button id="btn-logar" onclick="redirecionamento_login()">
-                    Entrar
-                </button>
-                <button id="btn-cadastrar" onclick="redirecionamento_login()">
-                    Cadastrar-se
-                </button>
-            </div>
-            <div class="popup-perfil">
-
-            </div>
-        </div>
-    </header>
-
-    <div class="divisao-nav" style="height: 9vh; width: 100%;"></div>
-
-    <main>
-        <div class="container-hardwares">
-
-            <div class="cabecalho-hardwares">
-                <div class="cabecalho-hardwares-esquerda">
-                    <span class="rotulo-hardwares">HARDWARES</span>
-                    <h2>Hardwares Cadastrados</h2>
-                    <h6>Gerencie os dispositivos de hardware monitorados na sua empresa.</h6>
+    <body onload=" validarSessao()">
+        <header>
+            <div class="navbar">
+                <div class="nav-logo">
+                    <h1>
+                        Infra<span>Watch</span>
+                    </h1>
                 </div>
-                <div class="cabecalho-hardwares-direita">
-                    <div class="busca-hardwares">
-                        <i class="fa-solid fa-magnifying-glass" style="color: rgb(255, 255, 255);"></i>
-                        <input type="text" placeholder="Buscar hardware...">
-                    </div>
-                    <button id="btn-novo-hardware">
-                        <i class="fa-solid fa-plus" style="color: rgb(255, 255, 255);"></i>
-                        Cadastrar novo
+                <div class="nav-links">
+                    <ul>
+                        <li>
+                            <a href="./main.html">Home</a>
+                        </li>
+                        <li>
+                            <a href="./sobrenos.html">
+                                Sobre-nós
+                            </a>
+                        </li>
+                        <li>
+                            <a href="./sobrenos.html#contato">
+                                Contato
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+                <div class="nav-login">
+                    <button id="btn-logar" onclick="redirecionamento_login()">
+                        Entrar
+                    </button>
+                    <button id="btn-cadastrar" onclick="redirecionamento_login()">
+                        Cadastrar-se
                     </button>
                 </div>
+                <div class="popup-perfil">
+
+                </div>
             </div>
+        </header>
 
-            <div class="caixa-tabela-hardwares">
-                <table class="tabela-hardwares">
-                    <thead>
-                        <tr>
-                            <th>NOME DO DISPOSITIVO</th>
-                            <th>TIPO</th>
-                            <th>COMPONENTES MONITORADOS</th>
-                            <th>LOCALIZAÇÃO</th>
-                            <th>STATUS</th>
-                            <th>ÚLTIMA ATUALIZAÇÃO</th>
-                            <th>AÇÕES</th>
-                        </tr>
-                    </thead>
-                    <tbody id="corpo-tabela-hardwares"></tbody>
-                </table>
-            </div>
+        <div class="divisao-nav" style="height: 9vh; width: 100%;"></div>
 
-            <div class="rodape-hardwares">
+        <main>
+            <div class="container-hardwares">
 
-            </div>
-        </div>
-    </main>
-
-    <div class="sobreposicao-modal">
-        <div class="modal-cadastro">
-            <div class="cabecalho-modal">
-                <h2>Cadastrar Novo Hardware</h2>
-                <button class="fechar-modal"></button>
-            </div>
-
-            <div class="corpo-modal">
-                <div class="coluna-modal">
-                    <span class="titulo-coluna-modal">INFORMAÇÕES GERAIS</span>
-
-                    <div class="campo-modal">
-                        <label>Nome do dispositivo <span class="obrigatorio">*</span></label>
-                        <input type="text" id="input-nome-hardware" placeholder="Ex: SRV-01">
+                <div class="cabecalho-hardwares">
+                    <div class="cabecalho-hardwares-esquerda">
+                        <span class="rotulo-hardwares">HARDWARES</span>
+                        <h2>Hardwares Cadastrados</h2>
+                        <h6>Gerencie os dispositivos de hardware monitorados na sua empresa.</h6>
                     </div>
+                    <div class="cabecalho-hardwares-direita">
+                        <div class="busca-hardwares">
+                            <i class="fa-solid fa-magnifying-glass" style="color: rgb(255, 255, 255);"></i>
+                            <input type="text" placeholder="Buscar hardware...">
+                        </div>
+                        <button id="btn-novo-hardware">
+                            <i class="fa-solid fa-plus" style="color: rgb(255, 255, 255);"></i>
+                            Cadastrar novo
+                        </button>
+                    </div>
+                </div>
 
-                    <div class="campo-modal">
-                        <label>Tipo de dispositivo <span class="obrigatorio">*</span></label>
-                        <div class="seletor-modal">
-                            <select id="select-tipo-hardware">
-                                <option value="">Selecione o tipo</option>
-                                <option value="Servidor">Servidor</option>
-                                <option value="Notebook">Notebook</option>
-                                <option value="Computador">Computador</option>
-                            </select>
+                <div class="caixa-tabela-hardwares">
+                    <table class="tabela-hardwares">
+                        <thead>
+                            <tr>
+                                <th>NOME DO DISPOSITIVO</th>
+                                <th>TIPO</th>
+                                <th>COMPONENTES MONITORADOS</th>
+                                <th>LOCALIZAÇÃO</th>
+                                <th>STATUS</th>
+                                <th>ÚLTIMA ATUALIZAÇÃO</th>
+                                <th>AÇÕES</th>
+                            </tr>
+                        </thead>
+                        <tbody id="corpo-tabela-hardwares"></tbody>
+                    </table>
+                </div>
+
+                <div class="rodape-hardwares">
+
+                </div>
+            </div>
+        </main>
+
+        <div class="sobreposicao-modal">
+            <div class="modal-cadastro">
+                <div class="cabecalho-modal">
+                    <h2>Cadastrar Novo Hardware</h2>
+                    <button class="fechar-modal"></button>
+                </div>
+
+                <div class="corpo-modal">
+                    <div class="coluna-modal">
+                        <span class="titulo-coluna-modal">INFORMAÇÕES GERAIS</span>
+
+                        <div class="campo-modal">
+                            <label>Nome do dispositivo <span class="obrigatorio">*</span></label>
+                            <input type="text" id="input-nome-hardware" placeholder="Ex: SRV-01">
+                        </div>
+
+                        <div class="campo-modal">
+                            <label>Tipo de dispositivo <span class="obrigatorio">*</span></label>
+                            <div class="seletor-modal">
+                                <select id="select-tipo-hardware">
+                                    <option value="">Selecione o tipo</option>
+                                    <option value="Servidor">Servidor</option>
+                                    <option value="Notebook">Notebook</option>
+                                    <option value="Computador">Computador</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="campo-modal">
+                            <label>Localização / Setor <span class="obrigatorio">*</span></label>
+                            <input type="text" id="input-localizacao-hardware" placeholder="Ex: TI / Sala de Servidores">
+                        </div>
+
+                        <div class="campo-modal">
+                            <label>Descrição (opcional)</label>
+                            <textarea id="input-descricao-hardware"
+                                placeholder="Informações adicionais sobre o dispositivo"></textarea>
                         </div>
                     </div>
 
-                    <div class="campo-modal">
-                        <label>Localização / Setor <span class="obrigatorio">*</span></label>
-                        <input type="text" id="input-localizacao-hardware" placeholder="Ex: TI / Sala de Servidores">
-                    </div>
+                    <div class="coluna-modal">
+                        <span class="titulo-coluna-modal">COMPONENTES A MONITORAR</span>
+                        <p class="descricao-coluna-modal">Selecione os componentes que serão monitorados neste dispositivo.
+                        </p>
 
-                    <div class="campo-modal">
-                        <label>Descrição (opcional)</label>
-                        <textarea id="input-descricao-hardware"
-                            placeholder="Informações adicionais sobre o dispositivo"></textarea>
-                    </div>
-                </div>
+                        <div class="grade-checkbox">
+                            <label class="item-checkbox">
+                                <i class="fa-solid fa-microchip" style="color: rgb(255, 255, 255);"></i>
+                                <div class="texto-checkbox">
+                                    <strong>CPU / Processador</strong>
+                                    <span>Uso, temperatura e performance</span>
+                                </div>
+                                <input type="checkbox" class="checkbox-componente" data-nome="Processador" data-tipo="CPU"
+                                    data-descricao="Uso, temperatura e performance" checked>
+                            </label>
 
-                <div class="coluna-modal">
-                    <span class="titulo-coluna-modal">COMPONENTES A MONITORAR</span>
-                    <p class="descricao-coluna-modal">Selecione os componentes que serão monitorados neste dispositivo.
-                    </p>
+                            <label class="item-checkbox">
+                                <i class="fa-solid fa-memory" style="color: rgb(255, 255, 255);"></i>
+                                <div class="texto-checkbox">
+                                    <strong>Memória RAM</strong>
+                                    <span>Uso de memória e swap</span>
+                                </div>
+                                <input type="checkbox" class="checkbox-componente" data-nome="Memória RAM" data-tipo="RAM"
+                                    data-descricao="Uso de memória e swap" checked>
+                            </label>
 
-                    <div class="grade-checkbox">
-                        <label class="item-checkbox">
-                            <i class="fa-solid fa-microchip" style="color: rgb(255, 255, 255);"></i>
-                            <div class="texto-checkbox">
-                                <strong>CPU / Processador</strong>
-                                <span>Uso, temperatura e performance</span>
-                            </div>
-                            <input type="checkbox" class="checkbox-componente" data-nome="Processador" data-tipo="CPU"
-                                data-descricao="Uso, temperatura e performance" checked>
-                        </label>
+                            <label class="item-checkbox">
+                                <i class="fa-solid fa-database" style="color: rgb(255, 255, 255);"></i>
+                                <div class="texto-checkbox">
+                                    <strong>Disco / Armazenamento</strong>
+                                    <span>Uso, espaço livre e saúde</span>
+                                </div>
+                                <input type="checkbox" class="checkbox-componente" data-nome="Disco"
+                                    data-tipo="Armazenamento" data-descricao="Uso, espaço livre e saúde" checked>
+                            </label>
 
-                        <label class="item-checkbox">
-                            <i class="fa-solid fa-memory" style="color: rgb(255, 255, 255);"></i>
-                            <div class="texto-checkbox">
-                                <strong>Memória RAM</strong>
-                                <span>Uso de memória e swap</span>
-                            </div>
-                            <input type="checkbox" class="checkbox-componente" data-nome="Memória RAM" data-tipo="RAM"
-                                data-descricao="Uso de memória e swap" checked>
-                        </label>
+                            <label class="item-checkbox">
+                                <i class="fa-solid fa-wifi" style="color: rgb(255, 255, 255);"></i>
+                                <div class="texto-checkbox">
+                                    <strong>Rede</strong>
+                                    <span>Tráfego, banda e conexões</span>
+                                </div>
+                                <input type="checkbox" class="checkbox-componente" data-nome="Rede" data-tipo="Rede"
+                                    data-descricao="Tráfego, banda e conexões" checked>
+                            </label>
 
-                        <label class="item-checkbox">
-                            <i class="fa-solid fa-database" style="color: rgb(255, 255, 255);"></i>
-                            <div class="texto-checkbox">
-                                <strong>Disco / Armazenamento</strong>
-                                <span>Uso, espaço livre e saúde</span>
-                            </div>
-                            <input type="checkbox" class="checkbox-componente" data-nome="Disco"
-                                data-tipo="Armazenamento" data-descricao="Uso, espaço livre e saúde" checked>
-                        </label>
+                            <label class="item-checkbox">
+                                <i class="fa-solid fa-temperature-quarter" style="color: rgb(255, 255, 255);"></i>
+                                <div class="texto-checkbox">
+                                    <strong>Temperatura</strong>
+                                    <span>Monitoramento térmico</span>
+                                </div>
+                                <input type="checkbox" class="checkbox-componente" data-nome="Temperatura"
+                                    data-tipo="Temperatura" data-descricao="Monitoramento térmico" checked>
+                            </label>
 
-                        <label class="item-checkbox">
-                            <i class="fa-solid fa-wifi" style="color: rgb(255, 255, 255);"></i>
-                            <div class="texto-checkbox">
-                                <strong>Rede</strong>
-                                <span>Tráfego, banda e conexões</span>
-                            </div>
-                            <input type="checkbox" class="checkbox-componente" data-nome="Rede" data-tipo="Rede"
-                                data-descricao="Tráfego, banda e conexões" checked>
-                        </label>
+                            <label class="item-checkbox">
+                                <i class="fa-solid fa-battery-three-quarters" style="color: rgb(255, 255, 255);"></i>
+                                <div class="texto-checkbox">
+                                    <strong>Energia / Fonte</strong>
+                                    <span>Consumo e status</span>
+                                </div>
+                                <input type="checkbox" class="checkbox-componente" data-nome="Energia" data-tipo="Energia"
+                                    data-descricao="Consumo e status">
+                            </label>
 
-                        <label class="item-checkbox">
-                            <i class="fa-solid fa-temperature-quarter" style="color: rgb(255, 255, 255);"></i>
-                            <div class="texto-checkbox">
-                                <strong>Temperatura</strong>
-                                <span>Monitoramento térmico</span>
-                            </div>
-                            <input type="checkbox" class="checkbox-componente" data-nome="Temperatura"
-                                data-tipo="Temperatura" data-descricao="Monitoramento térmico" checked>
-                        </label>
+                            <label class="item-checkbox">
+                                <i class="fa-solid fa-fan" style="color: rgb(255, 255, 255);"></i>
+                                <div class="texto-checkbox">
+                                    <strong>Ventoinhas</strong>
+                                    <span>Velocidade e status</span>
+                                </div>
+                                <input type="checkbox" class="checkbox-componente" data-nome="Ventoinhas"
+                                    data-tipo="Ventoinhas" data-descricao="Velocidade e status">
+                            </label>
 
-                        <label class="item-checkbox">
-                            <i class="fa-solid fa-battery-three-quarters" style="color: rgb(255, 255, 255);"></i>
-                            <div class="texto-checkbox">
-                                <strong>Energia / Fonte</strong>
-                                <span>Consumo e status</span>
-                            </div>
-                            <input type="checkbox" class="checkbox-componente" data-nome="Energia" data-tipo="Energia"
-                                data-descricao="Consumo e status">
-                        </label>
+                            <label class="item-checkbox">
+                                <i class="fa-solid fa-desktop" style="color: rgb(255, 255, 255);"></i>
+                                <div class="texto-checkbox">
+                                    <strong>GPU / Placa de Vídeo</strong>
+                                    <span>Uso, temperatura e performance</span>
+                                </div>
+                                <input type="checkbox" class="checkbox-componente" data-nome="GPU" data-tipo="GPU"
+                                    data-descricao="Uso, temperatura e performance">
+                            </label>
 
-                        <label class="item-checkbox">
-                            <i class="fa-solid fa-fan" style="color: rgb(255, 255, 255);"></i>
-                            <div class="texto-checkbox">
-                                <strong>Ventoinhas</strong>
-                                <span>Velocidade e status</span>
-                            </div>
-                            <input type="checkbox" class="checkbox-componente" data-nome="Ventoinhas"
-                                data-tipo="Ventoinhas" data-descricao="Velocidade e status">
-                        </label>
+                            <label class="item-checkbox">
+                                <i class="fa-solid fa-gears" style="color: rgb(255, 255, 255);"></i>
+                                <div class="texto-checkbox">
+                                    <strong>Serviços</strong>
+                                    <span>Status de serviços</span>
+                                </div>
+                                <input type="checkbox" class="checkbox-componente" data-nome="Serviços" data-tipo="Serviços"
+                                    data-descricao="Status de serviços">
+                            </label>
 
-                        <label class="item-checkbox">
-                            <i class="fa-solid fa-desktop" style="color: rgb(255, 255, 255);"></i>
-                            <div class="texto-checkbox">
-                                <strong>GPU / Placa de Vídeo</strong>
-                                <span>Uso, temperatura e performance</span>
-                            </div>
-                            <input type="checkbox" class="checkbox-componente" data-nome="GPU" data-tipo="GPU"
-                                data-descricao="Uso, temperatura e performance">
-                        </label>
-
-                        <label class="item-checkbox">
-                            <i class="fa-solid fa-gears" style="color: rgb(255, 255, 255);"></i>
-                            <div class="texto-checkbox">
-                                <strong>Serviços</strong>
-                                <span>Status de serviços</span>
-                            </div>
-                            <input type="checkbox" class="checkbox-componente" data-nome="Serviços" data-tipo="Serviços"
-                                data-descricao="Status de serviços">
-                        </label>
-
-                        <label class="item-checkbox">
-                            <i class="fa-solid fa-file" style="color: rgb(255, 255, 255);"></i>
-                            <div class="texto-checkbox">
-                                <strong>Logs do Sistema</strong>
-                                <span>Eventos e logs do sistema</span>
-                            </div>
-                            <input type="checkbox" class="checkbox-componente" data-nome="Logs" data-tipo="Logs"
-                                data-descricao="Eventos e logs do sistema">
-                        </label>
+                            <label class="item-checkbox">
+                                <i class="fa-solid fa-file" style="color: rgb(255, 255, 255);"></i>
+                                <div class="texto-checkbox">
+                                    <strong>Logs do Sistema</strong>
+                                    <span>Eventos e logs do sistema</span>
+                                </div>
+                                <input type="checkbox" class="checkbox-componente" data-nome="Logs" data-tipo="Logs"
+                                    data-descricao="Eventos e logs do sistema">
+                            </label>
+                        </div>
                     </div>
                 </div>
-            </div>
 
-            <div class="rodape-modal">
-                <button class="btn-cancelar">Cancelar</button>
-                <button class="btn-salvar">Salvar Hardware</button>
+                <div class="rodape-modal">
+                    <button class="btn-cancelar">Cancelar</button>
+                    <button class="btn-salvar">Salvar Hardware</button>
+                </div>
             </div>
         </div>
-    </div>
 
-    <div class="sobreposicao-modal-editar">
-        <div class="modal-cadastro">
-            <div class="cabecalho-modal">
-                <h2>Editar Hardware</h2>
-                <button class="fechar-modal-editar">×</button>
-            </div>
+        <div class="sobreposicao-modal-editar">
+            <div class="modal-cadastro">
+                <div class="cabecalho-modal">
+                    <h2>Editar Hardware</h2>
+                    <button class="fechar-modal-editar">×</button>
+                </div>
 
-            <input type="hidden" id="input-editar-id-hardware">
-            <input type="hidden" id="input-editar-id-empresa">
+                <input type="hidden" id="input-editar-id-hardware">
+                <input type="hidden" id="input-editar-id-empresa">
 
-            <div class="corpo-modal">
-                <div class="coluna-modal">
-                    <span class="titulo-coluna-modal">INFORMAÇÕES GERAIS</span>
+                <div class="corpo-modal">
+                    <div class="coluna-modal">
+                        <span class="titulo-coluna-modal">INFORMAÇÕES GERAIS</span>
 
-                    <div class="campo-modal">
-                        <label>Nome do dispositivo <span class="obrigatorio">*</span></label>
-                        <input type="text" id="input-editar-nome-hardware" placeholder="Ex: SRV-01">
-                    </div>
+                        <div class="campo-modal">
+                            <label>Nome do dispositivo <span class="obrigatorio">*</span></label>
+                            <input type="text" id="input-editar-nome-hardware" placeholder="Ex: SRV-01">
+                        </div>
 
-                    <div class="campo-modal">
-                        <label>Tipo de dispositivo <span class="obrigatorio">*</span></label>
-                        <div class="seletor-modal">
-                            <select id="select-editar-tipo-hardware">
-                                <option value="">Selecione o tipo</option>
-                                <option value="Servidor">Servidor</option>
-                                <option value="Notebook">Notebook</option>
-                                <option value="Computador">Computador</option>
-                            </select>
+                        <div class="campo-modal">
+                            <label>Tipo de dispositivo <span class="obrigatorio">*</span></label>
+                            <div class="seletor-modal">
+                                <select id="select-editar-tipo-hardware">
+                                    <option value="">Selecione o tipo</option>
+                                    <option value="Servidor">Servidor</option>
+                                    <option value="Notebook">Notebook</option>
+                                    <option value="Computador">Computador</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="campo-modal">
+                            <label>Localização / Setor <span class="obrigatorio">*</span></label>
+                            <input type="text" id="input-editar-localizacao-hardware"
+                                placeholder="Ex: TI / Sala de Servidores">
+                        </div>
+
+                        <div class="campo-modal">
+                            <label>Descrição (opcional)</label>
+                            <textarea id="input-editar-descricao-hardware"
+                                placeholder="Informações adicionais sobre o dispositivo"></textarea>
                         </div>
                     </div>
 
-                    <div class="campo-modal">
-                        <label>Localização / Setor <span class="obrigatorio">*</span></label>
-                        <input type="text" id="input-editar-localizacao-hardware" placeholder="Ex: TI / Sala de Servidores">
-                    </div>
+                    <div class="coluna-modal">
+                        <span class="titulo-coluna-modal">COMPONENTES A MONITORAR</span>
+                        <p class="descricao-coluna-modal">Selecione os componentes que serão monitorados neste dispositivo.
+                        </p>
 
-                    <div class="campo-modal">
-                        <label>Descrição (opcional)</label>
-                        <textarea id="input-editar-descricao-hardware"
-                            placeholder="Informações adicionais sobre o dispositivo"></textarea>
-                    </div>
-                </div>
+                        <div class="grade-checkbox">
+                            <label class="item-checkbox">
+                                <i class="fa-solid fa-microchip" style="color: rgb(255, 255, 255);"></i>
+                                <div class="texto-checkbox">
+                                    <strong>CPU / Processador</strong>
+                                    <span>Uso, temperatura e performance</span>
+                                </div>
+                                <input type="checkbox" class="checkbox-componente-editar" data-nome="Processador"
+                                    data-tipo="CPU" data-descricao="Uso, temperatura e performance">
+                            </label>
 
-                <div class="coluna-modal">
-                    <span class="titulo-coluna-modal">COMPONENTES A MONITORAR</span>
-                    <p class="descricao-coluna-modal">Selecione os componentes que serão monitorados neste dispositivo.
-                    </p>
+                            <label class="item-checkbox">
+                                <i class="fa-solid fa-memory" style="color: rgb(255, 255, 255);"></i>
+                                <div class="texto-checkbox">
+                                    <strong>Memória RAM</strong>
+                                    <span>Uso de memória e swap</span>
+                                </div>
+                                <input type="checkbox" class="checkbox-componente-editar" data-nome="Memória RAM"
+                                    data-tipo="RAM" data-descricao="Uso de memória e swap">
+                            </label>
 
-                    <div class="grade-checkbox">
-                        <label class="item-checkbox">
-                            <i class="fa-solid fa-microchip" style="color: rgb(255, 255, 255);"></i>
-                            <div class="texto-checkbox">
-                                <strong>CPU / Processador</strong>
-                                <span>Uso, temperatura e performance</span>
-                            </div>
-                            <input type="checkbox" class="checkbox-componente-editar" data-nome="Processador" data-tipo="CPU"
-                                data-descricao="Uso, temperatura e performance">
-                        </label>
+                            <label class="item-checkbox">
+                                <i class="fa-solid fa-database" style="color: rgb(255, 255, 255);"></i>
+                                <div class="texto-checkbox">
+                                    <strong>Disco / Armazenamento</strong>
+                                    <span>Uso, espaço livre e saúde</span>
+                                </div>
+                                <input type="checkbox" class="checkbox-componente-editar" data-nome="Disco"
+                                    data-tipo="Armazenamento" data-descricao="Uso, espaço livre e saúde">
+                            </label>
 
-                        <label class="item-checkbox">
-                            <i class="fa-solid fa-memory" style="color: rgb(255, 255, 255);"></i>
-                            <div class="texto-checkbox">
-                                <strong>Memória RAM</strong>
-                                <span>Uso de memória e swap</span>
-                            </div>
-                            <input type="checkbox" class="checkbox-componente-editar" data-nome="Memória RAM" data-tipo="RAM"
-                                data-descricao="Uso de memória e swap">
-                        </label>
+                            <label class="item-checkbox">
+                                <i class="fa-solid fa-wifi" style="color: rgb(255, 255, 255);"></i>
+                                <div class="texto-checkbox">
+                                    <strong>Rede</strong>
+                                    <span>Tráfego, banda e conexões</span>
+                                </div>
+                                <input type="checkbox" class="checkbox-componente-editar" data-nome="Rede" data-tipo="Rede"
+                                    data-descricao="Tráfego, banda e conexões">
+                            </label>
 
-                        <label class="item-checkbox">
-                            <i class="fa-solid fa-database" style="color: rgb(255, 255, 255);"></i>
-                            <div class="texto-checkbox">
-                                <strong>Disco / Armazenamento</strong>
-                                <span>Uso, espaço livre e saúde</span>
-                            </div>
-                            <input type="checkbox" class="checkbox-componente-editar" data-nome="Disco"
-                                data-tipo="Armazenamento" data-descricao="Uso, espaço livre e saúde">
-                        </label>
+                            <label class="item-checkbox">
+                                <i class="fa-solid fa-temperature-quarter" style="color: rgb(255, 255, 255);"></i>
+                                <div class="texto-checkbox">
+                                    <strong>Temperatura</strong>
+                                    <span>Monitoramento térmico</span>
+                                </div>
+                                <input type="checkbox" class="checkbox-componente-editar" data-nome="Temperatura"
+                                    data-tipo="Temperatura" data-descricao="Monitoramento térmico">
+                            </label>
 
-                        <label class="item-checkbox">
-                            <i class="fa-solid fa-wifi" style="color: rgb(255, 255, 255);"></i>
-                            <div class="texto-checkbox">
-                                <strong>Rede</strong>
-                                <span>Tráfego, banda e conexões</span>
-                            </div>
-                            <input type="checkbox" class="checkbox-componente-editar" data-nome="Rede" data-tipo="Rede"
-                                data-descricao="Tráfego, banda e conexões">
-                        </label>
+                            <label class="item-checkbox">
+                                <i class="fa-solid fa-battery-three-quarters" style="color: rgb(255, 255, 255);"></i>
+                                <div class="texto-checkbox">
+                                    <strong>Energia / Fonte</strong>
+                                    <span>Consumo e status</span>
+                                </div>
+                                <input type="checkbox" class="checkbox-componente-editar" data-nome="Energia"
+                                    data-tipo="Energia" data-descricao="Consumo e status">
+                            </label>
 
-                        <label class="item-checkbox">
-                            <i class="fa-solid fa-temperature-quarter" style="color: rgb(255, 255, 255);"></i>
-                            <div class="texto-checkbox">
-                                <strong>Temperatura</strong>
-                                <span>Monitoramento térmico</span>
-                            </div>
-                            <input type="checkbox" class="checkbox-componente-editar" data-nome="Temperatura"
-                                data-tipo="Temperatura" data-descricao="Monitoramento térmico">
-                        </label>
+                            <label class="item-checkbox">
+                                <i class="fa-solid fa-fan" style="color: rgb(255, 255, 255);"></i>
+                                <div class="texto-checkbox">
+                                    <strong>Ventoinhas</strong>
+                                    <span>Velocidade e status</span>
+                                </div>
+                                <input type="checkbox" class="checkbox-componente-editar" data-nome="Ventoinhas"
+                                    data-tipo="Ventoinhas" data-descricao="Velocidade e status">
+                            </label>
 
-                        <label class="item-checkbox">
-                            <i class="fa-solid fa-battery-three-quarters" style="color: rgb(255, 255, 255);"></i>
-                            <div class="texto-checkbox">
-                                <strong>Energia / Fonte</strong>
-                                <span>Consumo e status</span>
-                            </div>
-                            <input type="checkbox" class="checkbox-componente-editar" data-nome="Energia" data-tipo="Energia"
-                                data-descricao="Consumo e status">
-                        </label>
+                            <label class="item-checkbox">
+                                <i class="fa-solid fa-desktop" style="color: rgb(255, 255, 255);"></i>
+                                <div class="texto-checkbox">
+                                    <strong>GPU / Placa de Vídeo</strong>
+                                    <span>Uso, temperatura e performance</span>
+                                </div>
+                                <input type="checkbox" class="checkbox-componente-editar" data-nome="GPU" data-tipo="GPU"
+                                    data-descricao="Uso, temperatura e performance">
+                            </label>
 
-                        <label class="item-checkbox">
-                            <i class="fa-solid fa-fan" style="color: rgb(255, 255, 255);"></i>
-                            <div class="texto-checkbox">
-                                <strong>Ventoinhas</strong>
-                                <span>Velocidade e status</span>
-                            </div>
-                            <input type="checkbox" class="checkbox-componente-editar" data-nome="Ventoinhas"
-                                data-tipo="Ventoinhas" data-descricao="Velocidade e status">
-                        </label>
+                            <label class="item-checkbox">
+                                <i class="fa-solid fa-gears" style="color: rgb(255, 255, 255);"></i>
+                                <div class="texto-checkbox">
+                                    <strong>Serviços</strong>
+                                    <span>Status de serviços</span>
+                                </div>
+                                <input type="checkbox" class="checkbox-componente-editar" data-nome="Serviços"
+                                    data-tipo="Serviços" data-descricao="Status de serviços">
+                            </label>
 
-                        <label class="item-checkbox">
-                            <i class="fa-solid fa-desktop" style="color: rgb(255, 255, 255);"></i>
-                            <div class="texto-checkbox">
-                                <strong>GPU / Placa de Vídeo</strong>
-                                <span>Uso, temperatura e performance</span>
-                            </div>
-                            <input type="checkbox" class="checkbox-componente-editar" data-nome="GPU" data-tipo="GPU"
-                                data-descricao="Uso, temperatura e performance">
-                        </label>
-
-                        <label class="item-checkbox">
-                            <i class="fa-solid fa-gears" style="color: rgb(255, 255, 255);"></i>
-                            <div class="texto-checkbox">
-                                <strong>Serviços</strong>
-                                <span>Status de serviços</span>
-                            </div>
-                            <input type="checkbox" class="checkbox-componente-editar" data-nome="Serviços" data-tipo="Serviços"
-                                data-descricao="Status de serviços">
-                        </label>
-
-                        <label class="item-checkbox">
-                            <i class="fa-solid fa-file" style="color: rgb(255, 255, 255);"></i>
-                            <div class="texto-checkbox">
-                                <strong>Logs do Sistema</strong>
-                                <span>Eventos e logs do sistema</span>
-                            </div>
-                            <input type="checkbox" class="checkbox-componente-editar" data-nome="Logs" data-tipo="Logs"
-                                data-descricao="Eventos e logs do sistema">
-                        </label>
+                            <label class="item-checkbox">
+                                <i class="fa-solid fa-file" style="color: rgb(255, 255, 255);"></i>
+                                <div class="texto-checkbox">
+                                    <strong>Logs do Sistema</strong>
+                                    <span>Eventos e logs do sistema</span>
+                                </div>
+                                <input type="checkbox" class="checkbox-componente-editar" data-nome="Logs" data-tipo="Logs"
+                                    data-descricao="Eventos e logs do sistema">
+                            </label>
+                        </div>
                     </div>
                 </div>
+
+                <div class="rodape-modal">
+                    <button class="btn-cancelar-editar">Cancelar</button>
+                    <button class="btn-salvar-editar">Salvar Alterações</button>
+                </div>
             </div>
+        </div>
 
-            <div class="rodape-modal">
-                <button class="btn-cancelar-editar">Cancelar</button>
-                <button class="btn-salvar-editar">Salvar Alterações</button>
+        <div class="modal-overlay-deletar">
+
+        </div>
+
+        <div class="modal-deletar">
+            <div class="modal-deletar-top">
+                <h2 id="aviso-deletar">Você tem certeza que deseja DELETAR o hardware de ID: </h2>
+            </div>
+            <div class="modal-deletar-bottom">
+                <button id="btn-fechar-modal-deletar">
+                    Cancelar
+                </button>
+                <button id="btn-deletar-hardware">
+                    Deletar
+                </button>
             </div>
         </div>
-    </div>
 
-    <div class="modal-deletar">
-        <div class="modal-deletar-top">
-            <h2>Você tem certeza que deseja DELETAR esse hardware?</h2>
+        <div class="modal-visualizar">
+
         </div>
-        <div class="modal-deletar-bottom">
-            <button id="btn-fechar-modal-deletar">
-                Cancelar
-            </button>
-            <button id="btn-deletar-hardware">
-                DELETAR
-            </button>
-        </div>
-    </div>
 
-</body>
+    </body>
 
-</html>
+    </html>
+
+    <script src="../public/assets/js/hardwares.js" defer></script>
+    <script src="../public/assets/js/sessao.js" defer></script>
+    <script src="../public/assets/js/redirecionamento.js"></script>

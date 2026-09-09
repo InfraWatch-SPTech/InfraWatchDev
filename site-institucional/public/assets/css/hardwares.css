@@ -1263,6 +1263,24 @@ main {
     background-color: #5178f9b3;
 }
 
+.modal-overlay-deletar{
+    position: absolute;
+    display: none;
+    top: 0;
+    left: 0;
+
+    height: 100%;
+    width: 100%;
+
+    background-color: rgba(0, 0, 0, 0.7);
+
+    z-index: 200000;
+}
+
+.modal-overlay-deletar.active{
+    display: flex;
+}
+
 .modal-deletar{
     position: absolute;
 
@@ -1278,13 +1296,15 @@ main {
 
     padding: 2rem;
 
-    height: 15vh;
+    height: 18vh;
     width: 30%;
 
     background-color: var(--cor-azul-contraste);
     border: 1px solid var(--cor-azul-contraste2);
 
     border-radius: 0.3rem;
+
+    z-index: 300000;
 }
 
 .modal-deletar.active{
@@ -1304,7 +1324,47 @@ main {
 
     text-align: center;
 
-    max-width: 65%;
+    max-width: 80%;
 
     color: white;
+}
+
+.modal-deletar-bottom{
+    display: flex;
+    align-content: center;
+    justify-content: center;
+
+    gap: 1vw;
+}
+
+.modal-deletar-bottom button{
+    padding: 0.3rem 1.5rem;
+
+    font-family: var(--font-padrao);
+    color: white;
+
+    border-radius: 0.3rem;
+
+    cursor: pointer;
+    transition: 0.3s;
+}
+
+#btn-fechar-modal-deletar{
+    background-color: var(--cor-azul-contraste);
+
+    border: 1px solid var(--cor-azul-contraste2)
+}
+
+#btn-fechar-modal-deletar:hover{
+    border-color: white;
+}
+
+#btn-deletar-hardware{
+    background-color: rgba(255, 0, 0, 0.415);
+
+    border: 1px solid rgb(255, 6, 6);
+}
+
+#btn-deletar-hardware:hover{
+    border-color: rgb(246, 244, 244);
 }

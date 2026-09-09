@@ -63,12 +63,12 @@ CREATE TABLE metrica (
 );
 
 INSERT INTO permissao (idPermissao, nome, descricao) VALUES 
-(1, 'Super Usuario','root'),
+(1, 'Root','root'),
 (2, 'Admin', 'Administrador'),
-(3, 'Gerente', 'Gerente'),
-(4, 'Usuario','Usuario Comum');
+(3, 'Usuario','Usuario Comum');
 
 INSERT INTO empresa (idEmpresa, nome, cnpj, email, codigo) VALUES 
+(1, 'InfraWatch', '12.345.555/0001-90', 'contato@infraWatch.com', 'X678JNLL'),
 (2, 'Bananinha Ltda', '12.345.678/0001-90', 'contato@techsolutions.com', 'X678JNSZ'),
 (3, 'Xpto Brasil', '98.765.432/0001-10', 'suporte@datacenterbrasil.com', 'K492MLQX'),
 (4, 'Batata Tech', '11.222.333/0001-44', 'contato@cloudnova.com', 'V375BWRZ'),
@@ -77,7 +77,7 @@ INSERT INTO empresa (idEmpresa, nome, cnpj, email, codigo) VALUES
 
 INSERT INTO usuario (nome, email, senha, fkEmpresa, fkPermissao) VALUES 
 -- InfraWatch
-('root', 'admin@infrawatch.com', 'admin123', NULL, 1),
+('root', 'admin@infrawatch.com', 'admin123', 1, 1),
 -- Bananinha Ltda
 ('Admin Bananinha', 'admin@bananinha.com', 'admin123', 2, 2),
 ('Gerente Bananinha', 'gerente@bananinha.com', 'gerente123', 2, 3),
