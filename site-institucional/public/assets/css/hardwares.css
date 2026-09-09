@@ -1013,7 +1013,7 @@ main {
 .sobreposicao-modal,
 .sobreposicao-modal-editar {
     display: none;
-    align-items: flex-end;
+    align-items: center;
     justify-content: center;
 
     position: fixed;
