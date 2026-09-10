@@ -25,6 +25,14 @@
         min-width: 16vw;
     }
 
+    .navbar .popup-perfil.active{
+        min-width: 20vw;
+    }
+
+    .navbar .popup-perfil.active .content-perfil .content-perfil-top i{
+        padding: 0.3rem 2rem;
+    }
+
     .container-hardwares .caixa-tabela-hardwares .tabela-hardwares tbody tr td .celula-dispositivo .info-dispositivo strong {
         display: inline-block;
     }
@@ -60,6 +68,11 @@
         flex-direction: column;
         gap: 2vh;
     }
+
+    .navbar .popup-perfil.active{
+        top: 90%;
+        min-width: 24vw;
+    }
 }
 
 @media (max-height: 900px) {
@@ -76,9 +89,17 @@
     .sobreposicao-modal-editar {
         align-items: center !important;
     }
+
+    .navbar .popup-perfil.active{
+        min-width: 30vw;
+    }
 }
 
 @media (max-width: 900px) {
+     .navbar .popup-perfil.active{
+        min-width: 30vw;
+    }
+
     .cabecalho-hardwares {
         flex-direction: column;
         align-items: flex-start;
@@ -412,7 +433,7 @@
     flex-direction: column;
 
     height: 22vh;
-    width: 14%;
+    width: 16%;
 
     background-color: var(--cor-azul-contraste);
     border-radius: 0.3rem;

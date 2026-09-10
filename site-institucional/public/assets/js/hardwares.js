@@ -526,11 +526,11 @@ function modalVisualizar(idEquipamento) {
                 });
             });
         } else {
-            console.error('Nenhum quiz econtrado!');
+            console.error('Nenhum dado encontrado!');
         }
     })
         .catch(function (error) {
-            console.error(`Erro na obtenção dos dados do Quiz ${error.message}`);
+            console.error(`Erro na obtenção dos dados ${error.message}`);
         });
 }
 
