@@ -77,7 +77,7 @@ function cadastrar(req, res) {
                     }
 
                     var fkEmpresa = resultadoEmpresa[0].idEmpresa;
-                    var fkPermissao = 4;
+                    var fkPermissao = 3; // user
 
                     usuarioModel.cadastrar(
                         nome,
