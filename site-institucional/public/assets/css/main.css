@@ -789,11 +789,23 @@ body {
    MEDIA QUERIES (Ajustes finos para telas menores)
    ========================================================================== */
 
-/* Tablets e dispositivos médios */
-@media (max-width: 992px) {
-    /* .nav-links {
-        display: none; /* Esconde links padrão caso não haja menu hambúrguer com JS */
+@media (max-width: 1547px) {
+    .navbar .popup-perfil.active{
+        min-width: 20vw;
+    }
 
+    .navbar .popup-perfil.active .content-perfil .content-perfil-top i{
+        padding: 0.3rem 2rem;
+    }
+}
+ @media(max-width: 1145px){
+     .navbar .popup-perfil.active{
+        top: 90%;
+        min-width: 24vw;
+    }
+}
+
+@media (max-width: 992px) {
     .container-main {
         flex-direction: column;
         text-align: center;
@@ -832,6 +844,12 @@ body {
     .footer-top-links {
         flex-wrap: wrap;
         gap: 2rem;
+    }
+}
+
+@media(max-width: 900px){
+    .navbar .popup-perfil.active{
+        min-width: 40vw;
     }
 }
 
@@ -888,6 +906,12 @@ body {
     }
 }
 
+@media(max-width: 680px){
+    .navbar .popup-perfil.active{
+        min-width: 40vw;
+}
+}
+
 /* Celulares */
 @media (max-width: 576px) {
     .navbar {
@@ -919,5 +943,8 @@ body {
     .footer-top-links {
         flex-direction: column;
         align-items: center;
+    }
+   .navbar .popup-perfil.active{
+        min-width: 60vw;
     }
 }

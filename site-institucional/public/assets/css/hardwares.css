@@ -162,42 +162,14 @@
 }
 
 
+@media(max-width: 700px){
+    .navbar .popup-perfil.active{
+        min-width: 60vw;
+    }
+
+}
+
 @media (max-width: 650px) {
-/* .navbar {
-    flex-direction: column;
-    flex-wrap: nowrap;
-    align-items: center;
-    justify-content: center;
-    height: auto;
-    padding: 1.2rem 1rem;
-    gap: 1.2rem;
-}
-
-.nav-logo h1 {
-    font-size: 1.3rem;
-}
-
-.nav-links ul {
-    gap: 1.2rem;
-    flex-wrap: wrap;
-    justify-content: center;
-    row-gap: 0.6rem;
-}
-
-.nav-links ul li {
-    font-size: 0.85rem;
-}
-
-.nav-login {
-    width: 100%;
-    justify-content: center;
-    gap: 3vw;
-}
-
-.nav-login button {
-    font-size: 0.85rem;
-} */
-
     .container-hardwares .cabecalho-hardwares .cabecalho-hardwares-direita #btn-novo-hardware {
         font-size: 0.85rem;
         width: 100%;
@@ -246,30 +218,6 @@
     }
 }
 
-@media (max-width: 420px) {
-    .paginacao .numero-pagina,
-    .paginacao .seta-pagina {
-        width: 1.9rem;
-        height: 1.9rem;
-        font-size: 0.75rem;
-    }
-
-    .celula-dispositivo {
-        flex-wrap: wrap;
-    }
-
-    .popup-perfil {
-        width: 92%;
-        top: calc(100% + 8px);
-    }
-
-    .content-perfil-bottom button {
-        width: 100%;
-    }
-    .perfil-bottom-btn {
-        flex-direction: column; 
-    }
-}
 
 
 .navbar {

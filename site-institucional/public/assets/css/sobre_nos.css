@@ -916,7 +916,22 @@ body {
     color: var(--cor-branco-default);
 }
 
+@media(max-width: 1547){
+    .navbar .popup-perfil.active{
+        min-width: 20vw;
+    }
 
+    .navbar .popup-perfil.active .content-perfil .content-perfil-top i{
+        padding: 0.3rem 2rem;
+    }
+}
+
+@media(max-width: 1145px){
+    .navbar .popup-perfil.active{
+        top: 90%;
+        min-width: 24vw;
+    }
+}
 
 
 @media (max-width: 1024px) {
@@ -1017,7 +1032,11 @@ body {
     }
 }
 
-
+@media(max-width: 900px){
+    .navbar .popup-perfil.active{
+        min-width: 30vw;
+    }
+}
 
 
 @media (max-width: 768px) {
@@ -1359,13 +1378,23 @@ body {
         text-align: center;
     }
 }
+@media(max-width: 700px){
+    .navbar .popup-perfil.active{
+        min-width: 40vw;
+    }
+}
 
+@media(max-width: 520px){
+    .navbar .popup-perfil.active{
+        min-width: 60vw;
+    }
 
-
+}
 
 @media (max-width: 480px) {
-
-    /* ANTI-OVERFLOW (evita que palavras longas estourem a caixa em telas bem pequenas) */
+    .navbar .popup-perfil.active{
+        min-width: 60vw;
+    }
 
     * {
         min-width: 0;
