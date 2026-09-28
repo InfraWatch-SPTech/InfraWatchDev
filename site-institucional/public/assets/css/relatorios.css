@@ -1,0 +1,367 @@
+@import url('https://fonts.googleapis.com/css2?family=Allerta&family=Allerta+Stencil&display=swap');
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+:root {
+    --fonte-padrao: "Allerta", sans-serif;
+    --fonte-titulo: "Allerta Stencil", sans-serif;
+    --cor-fundo: #0e0921;
+    --cor-barra-lateral: #0b071a;
+    --cor-roxo-card: #170F38;
+    --cor-azul-destaque: #5178F9;
+    --cor-texto-claro: #ffffff;
+    --cor-texto-apagado: #5C6288;
+    --cor-campo-fundo: #130c2c;
+    --borda-fina: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+body {
+    background-color: var(--cor-fundo);
+    font-family: var(--fonte-padrao);
+    color: var(--cor-texto-claro);
+    min-height: 100vh;
+}
+
+
+.tela-painel {
+    display: flex;
+    min-height: 100vh;
+    width: 100%;
+}
+
+.menu-lateral {
+    width: 250px;
+    background-color: var(--cor-barra-lateral);
+    border-right: var(--borda-fina);
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    padding: 1.5rem 1.2rem;
+    flex-shrink: 0;
+}
+
+.topo-menu {
+    padding-bottom: 1.2rem;
+}
+
+.botao-menu {
+    background: transparent;
+    border: none;
+    color: var(--cor-texto-claro);
+    font-size: 1.8rem;
+    cursor: pointer;
+    transition: 0.3s;
+}
+
+.botao-menu:hover {
+    color: var(--cor-azul-destaque);
+}
+
+.navegacao-menu {
+    flex: 1;
+    margin-top: 1.5rem;
+}
+
+.navegacao-menu ul {
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+}
+
+.navegacao-menu ul li a {
+    color: var(--cor-texto-claro);
+    text-decoration: none;
+    font-size: 0.95rem;
+    display: block;
+    padding: 0.4rem 0.6rem;
+    border-radius: 0.3rem;
+    transition: 0.3s;
+}
+
+.navegacao-menu ul li a:hover,
+.navegacao-menu ul li.item-ativo a {
+    background-color: var(--cor-roxo-card);
+    color: var(--cor-azul-destaque);
+}
+
+.navegacao-menu ul li.item-ativo a {
+    border-left: 3px solid var(--cor-azul-destaque);
+}
+
+.rodape-menu {
+    display: flex;
+    flex-direction: column;
+    gap: 0.2rem;
+    padding-top: 1.5rem;
+    border-top: var(--borda-fina);
+}
+
+.titulo-suporte {
+    font-size: 0.85rem;
+    color: var(--cor-texto-apagado);
+}
+
+.link-suporte {
+    font-size: 0.9rem;
+    color: var(--cor-texto-claro);
+    text-decoration: none;
+    transition: 0.3s;
+}
+
+.link-suporte:hover {
+    color: var(--cor-azul-destaque);
+}
+
+
+.conteudo-principal {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+}
+
+.cabecalho-topo {
+    height: 70px;
+    border-bottom: var(--borda-fina);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 3rem;
+    background-color: var(--cor-fundo);
+}
+
+.saudacao-usuario span {
+    font-size: 1.1rem;
+    font-weight: 500;
+}
+
+.dados-usuario {
+    display: flex;
+    align-items: center;
+    gap: 2rem;
+}
+
+.nome-empresa {
+    font-size: 0.95rem;
+    color: rgba(255, 255, 255, 0.8);
+}
+
+.perfil-usuario {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    padding-left: 1.5rem;
+    border-left: var(--borda-fina);
+}
+
+.perfil-usuario i {
+    font-size: 1.8rem;
+    color: var(--cor-azul-destaque);
+}
+
+/* Formulário */
+.area-formulario {
+    flex: 1;
+    display: flex;
+    justify-content: center;
+    padding: 3rem 4%;
+}
+
+.caixa-formulario {
+    width: 100%;
+    max-width: 1050px;
+    display: flex;
+    flex-direction: column;
+    gap: 2.2rem;
+}
+
+.titulo-formulario {
+    text-align: center;
+    font-family: var(--fonte-titulo);
+    font-size: 2.2rem;
+    font-style: italic;
+    letter-spacing: 1px;
+}
+
+.formulario-relatorio {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+}
+
+/* Divisões de Linhas */
+.linha-tres-campos {
+    display: grid;
+    grid-template-columns: 2fr 1fr 1fr;
+    gap: 1.5rem;
+}
+
+.linha-dois-campos {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1.5rem;
+}
+
+.linha-campo-unico {
+    width: 100%;
+}
+
+/* Campos e Entradas */
+.campo {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.campo label,
+.etiqueta-anexo {
+    font-size: 0.9rem;
+    font-weight: 500;
+    color: var(--cor-texto-claro);
+}
+
+.campo input,
+.campo select,
+.campo textarea {
+    width: 100%;
+    background-color: var(--cor-campo-fundo);
+    border: var(--borda-fina);
+    border-radius: 0.6rem;
+    padding: 0.75rem 1rem;
+    color: var(--cor-texto-claro);
+    font-family: var(--fonte-padrao);
+    font-size: 0.95rem;
+    outline: none;
+    transition: 0.3s;
+}
+
+.campo input:focus,
+.campo select:focus,
+.campo textarea:focus {
+    border-color: var(--cor-azul-destaque);
+    box-shadow: 0 0 6px rgba(81, 120, 249, 0.4);
+}
+
+.campo input[readonly] {
+    opacity: 0.8;
+    cursor: not-allowed;
+}
+
+/* Customização do Select */
+.caixa-selecao {
+    position: relative;
+    width: 100%;
+}
+
+.caixa-selecao select {
+    appearance: none;
+    -webkit-appearance: none;
+    cursor: pointer;
+    padding-right: 2.5rem;
+}
+
+.icone-seta {
+    position: absolute;
+    right: 1rem;
+    top: 50%;
+    transform: translateY(-50%);
+    pointer-events: none;
+    font-size: 0.8rem;
+    color: rgba(255, 255, 255, 0.7);
+}
+
+/* Área de Texto */
+.campo textarea {
+    resize: vertical;
+    min-height: 140px;
+    line-height: 1.5;
+}
+
+/* Anexo de Arquivo */
+.linha-anexo {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.botao-anexo {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.6rem;
+    width: fit-content;
+    padding: 0.6rem 1.4rem;
+    background-color: var(--cor-roxo-card);
+    border: var(--borda-fina);
+    border-radius: 0.5rem;
+    cursor: pointer;
+    font-size: 0.9rem;
+    transition: 0.3s;
+}
+
+.botao-anexo:hover {
+    border-color: var(--cor-azul-destaque);
+}
+
+.botao-anexo input[type="file"] {
+    display: none;
+}
+
+/* Botão Enviar */
+.linha-botoes {
+    display: flex;
+    margin-top: 1rem;
+}
+
+#botao-enviar {
+    padding: 0.7rem 2.8rem;
+    font-size: 1rem;
+    font-weight: 600;
+    font-family: var(--fonte-padrao);
+    color: #000;
+    background: linear-gradient(90deg, #5178F9 0%, #6FE0FF 100%);
+    border: none;
+    border-radius: 0.4rem;
+    cursor: pointer;
+    transition: 0.3s ease;
+}
+
+#botao-enviar:hover {
+    transform: translateY(-2px);
+    opacity: 0.9;
+}
+
+/* ==========================================================================
+   RESPONSIVIDADE (TELAS MENORES)
+   ========================================================================== */
+
+@media (max-width: 900px) {
+    .tela-painel {
+        flex-direction: column;
+    }
+
+    .menu-lateral {
+        width: 100%;
+        border-right: none;
+        border-bottom: var(--borda-fina);
+    }
+
+    .navegacao-menu ul {
+        flex-direction: row;
+        flex-wrap: wrap;
+        gap: 0.8rem;
+    }
+
+    .cabecalho-topo {
+        padding: 0 1.5rem;
+    }
+
+    .linha-tres-campos,
+    .linha-dois-campos {
+        grid-template-columns: 1fr;
+    }
+}

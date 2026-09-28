@@ -10,7 +10,7 @@ CREATE TABLE empresa (
     email VARCHAR(100),
     codigo CHAR(8) NOT NULL
 );
-
+    
 
 CREATE TABLE permissao (
     idPermissao INT PRIMARY KEY AUTO_INCREMENT,
