@@ -41,6 +41,17 @@ CREATE TABLE equipamento (
     FOREIGN KEY (fkEmpresa) REFERENCES empresa(idEmpresa)
 );
 
+CREATE TABLE configuracaoAlerta (
+    idConfiguracaoAlerta INT PRIMARY KEY AUTO_INCREMENT,
+    nomeMetrica VARCHAR(50) NOT NULL,
+    valorLimite DECIMAL(10,2) NOT NULL,
+    unidade VARCHAR(20) NOT NULL,
+    ativo TINYINT(1) NOT NULL DEFAULT 1,
+    fkEquipamento INT NOT NULL,
+    UNIQUE KEY uq_configuracaoAlerta_equipamento_metrica (fkEquipamento, nomeMetrica),
+    CONSTRAINT fk_configuracaoAlerta_equipamento
+        FOREIGN KEY (fkEquipamento) REFERENCES equipamento(idEquipamento) ON DELETE CASCADE
+);
 
 CREATE TABLE componente (
     idComponente INT PRIMARY KEY AUTO_INCREMENT,
@@ -112,6 +123,16 @@ VALUES
 ('Servidor Principal', 'Servidor', '192.168.5.10', 'Online','Financeiro', 'Servidor principal do financeiro',6),
 ('Switch Core', 'Switch', '192.168.5.20', 'Online','Financeiro', 'Switch core do financeiro', 6),
 ('Roteador', 'Roteador', '192.168.5.1', 'Manutenção','RH', 'Roteador do RH',6);
+
+-- Os valores seed usam os mesmos limites padrão oferecidos pelo formulário (80%).
+INSERT INTO configuracaoAlerta (fkEquipamento, nomeMetrica, valorLimite, unidade, ativo)
+SELECT equipamento.idEquipamento, metricas.nomeMetrica, 80, '%', 1
+FROM equipamento
+CROSS JOIN (
+    SELECT 'CPU' AS nomeMetrica
+    UNION ALL SELECT 'RAM'
+    UNION ALL SELECT 'DISCO'
+) AS metricas;
 
 INSERT INTO componente
 (nome, tipo, descricao, fkEquipamento)
