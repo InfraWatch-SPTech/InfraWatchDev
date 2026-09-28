@@ -13,7 +13,7 @@
     <title>InfraWatch.Dev - Hardwares</title>
 </head>
 
-<body>
+<body onload="validarSessao()">
     <header>
         <div class="navbar">
             <div class="nav-logo">
@@ -55,6 +55,9 @@
     <div class="divisao-nav" style="height: 9vh; width: 100%;"></div>
 
     <main>
+        <button id="btn-gerenciar-usuarios" onclick="redirecionamento_gerUsuarios()">
+                Gerenciar usuários
+        </button>
         <div class="container-hardwares">
 
             <div class="cabecalho-hardwares">
@@ -135,6 +138,20 @@
                     <div class="campo-modal">
                         <label>Descrição (opcional)</label>
                         <textarea id="input-descricao-hardware" placeholder="Informações adicionais sobre o dispositivo"></textarea>
+                    </div>
+
+                    <span class="titulo-coluna-modal">LIMITES DE USO (%)</span>
+                    <div class="campo-modal">
+                        <label for="input-limite-cpu-hardware">Limite de CPU <span class="obrigatorio">*</span></label>
+                        <input type="number" id="input-limite-cpu-hardware" min="1" max="100" step="1" value="80" required>
+                    </div>
+                    <div class="campo-modal">
+                        <label for="input-limite-ram-hardware">Limite de RAM <span class="obrigatorio">*</span></label>
+                        <input type="number" id="input-limite-ram-hardware" min="1" max="100" step="1" value="80" required>
+                    </div>
+                    <div class="campo-modal">
+                        <label for="input-limite-disco-hardware">Limite de disco <span class="obrigatorio">*</span></label>
+                        <input type="number" id="input-limite-disco-hardware" min="1" max="100" step="1" value="80" required>
                     </div>
                 </div>
 
@@ -245,6 +262,20 @@
                     <div class="campo-modal">
                         <label>Descrição (opcional)</label>
                         <textarea id="input-editar-descricao-hardware" placeholder="Informações adicionais sobre o dispositivo"></textarea>
+                    </div>
+
+                    <span class="titulo-coluna-modal">LIMITES DE USO (%)</span>
+                    <div class="campo-modal">
+                        <label for="input-editar-limite-cpu-hardware">Limite de CPU <span class="obrigatorio">*</span></label>
+                        <input type="number" id="input-editar-limite-cpu-hardware" min="1" max="100" step="1" value="80" required>
+                    </div>
+                    <div class="campo-modal">
+                        <label for="input-editar-limite-ram-hardware">Limite de RAM <span class="obrigatorio">*</span></label>
+                        <input type="number" id="input-editar-limite-ram-hardware" min="1" max="100" step="1" value="80" required>
+                    </div>
+                    <div class="campo-modal">
+                        <label for="input-editar-limite-disco-hardware">Limite de disco <span class="obrigatorio">*</span></label>
+                        <input type="number" id="input-editar-limite-disco-hardware" min="1" max="100" step="1" value="80" required>
                     </div>
                 </div>
 

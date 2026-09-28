@@ -1,5 +1,25 @@
 let hardwaresModel = require("../models/hardwaresModel");
 
+function validarLimites(req, res) {
+    let limites = [
+        { campo: "limiteCpu", nome: "CPU" },
+        { campo: "limiteRam", nome: "RAM" },
+        { campo: "limiteDisco", nome: "disco" }
+    ];
+
+    for (let i = 0; i < limites.length; i++) {
+        let campo = limites[i].campo;
+        let valor = req.body[campo];
+
+        if (!Number.isInteger(valor) || valor < 1 || valor > 100) {
+            res.status(400).send(`O limite de ${limites[i].nome} deve ser um número inteiro entre 1 e 100.`);
+            return false;
+        }
+    }
+
+    return true;
+}
+
 function buscarEquipamentosEmpresa(req, res) {
 
     let idEmpresa = req.params.idEmpresa;
@@ -24,6 +44,13 @@ function buscarEquipamentosEmpresa(req, res) {
 
 function cadastrarEquipamento(req, res) {
 
+    if (!validarLimites(req, res)) {
+        return;
+    }
+
+    let limiteCpu = req.body.limiteCpu;
+    let limiteRam = req.body.limiteRam;
+    let limiteDisco = req.body.limiteDisco;
     let nome = req.body.nome;
     let tipo = req.body.tipo;
     let localizacao = req.body.localizacao;
@@ -41,7 +68,7 @@ function cadastrarEquipamento(req, res) {
         res.status(400).send("A empresa do equipamento não foi informada!");
     } else {
 
-        hardwaresModel.cadastrarEquipamento(nome, tipo, localizacao, descricao, fkEmpresa)
+        hardwaresModel.cadastrarEquipamento(nome, tipo, localizacao, descricao, fkEmpresa, limiteCpu, limiteRam, limiteDisco)
             .then(function (resultadoEquipamento) {
 
                 let idEquipamento = resultadoEquipamento.insertId;
@@ -94,6 +121,13 @@ function buscarEquipamentoPorId(req, res) {
 
 function atualizarEquipamento(req, res) {
 
+    if (!validarLimites(req, res)) {
+        return;
+    }
+
+    let limiteCpu = req.body.limiteCpu;
+    let limiteRam = req.body.limiteRam;
+    let limiteDisco = req.body.limiteDisco;
     let idEquipamento = req.params.idEquipamento;
     let nome = req.body.nome;
     let tipo = req.body.tipo;
@@ -108,7 +142,7 @@ function atualizarEquipamento(req, res) {
     } else if (localizacao == undefined) {
         res.status(400).send("A localização/setor é obrigatória!");
     } else {
-        hardwaresModel.atualizarEquipamento(idEquipamento, nome, tipo, localizacao, descricao)
+        hardwaresModel.atualizarEquipamento(idEquipamento, nome, tipo, localizacao, descricao, limiteCpu, limiteRam, limiteDisco)
             .then(function () {
                 return hardwaresModel.deletarComponentesPorEquipamento(idEquipamento);
             })
