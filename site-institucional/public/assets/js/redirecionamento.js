@@ -9,3 +9,7 @@ function redirecionamento_home(){
 function redirecionamento_cadastroServidor(){
     window.location.href = "../public/hardwares.html";
 }
+
+function redirecionamento_gerUsuarios(){
+    window.location.href = "../public/usuarios.html";
+}

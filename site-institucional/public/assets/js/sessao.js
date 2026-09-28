@@ -1,3 +1,12 @@
+function atualizarLinksUsuarioAdmin(){
+    const listaNavegacao = document.querySelector('.nav links-ul')
+
+    if (!listaNavegacao){
+        return;
+    }
+    
+}
+
 // sessão
 function validarSessao() {
 
