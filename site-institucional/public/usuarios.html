@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" type="image/png" href="../public/assets/midias/main-icon-image.png">
+    <link rel="stylesheet" href="../public/assets/css/usuarios.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.3.1/css/all.min.css"
+        integrity="sha512-QeR2VH+lsBE5LSAe1Q5EnTBbe7XTBubt8dG93Y7gidSgdMCr8nVqKcfKAMyN96SV8KDbZVTDXChatu5G2KQGzg=="
+        crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <title>InfraWatch.Dev - Usuários</title>
+</head>
+
+<body>
+    <header>
+        <div class="navbar">
+            <div class="nav-logo">
+                <h1>Infra<span>Watch</span></h1>
+            </div>
+            <div class="nav-links">
+                <ul>
+                    <li><a href="./main.html">Home</a></li>
+                    <li><a href="./sobrenos.html">Sobre-nós</a></li>
+                    <li><a href="./sobrenos.html#contato">Contato</a></li>
+                </ul>
+            </div>
+            <div class="nav-login">
+                <button id="btn-logar" onclick="redirecionamento_login()">Entrar</button>
+                <button id="btn-cadastrar" onclick="redirecionamento_login()">Cadastrar-se</button>
+            </div>
+            <div class="popup-perfil"></div>
+        </div>
+    </header>
+
+    <div class="divisao-nav"></div>
+
+    <main>
+        <section class="container-usuarios" id="painel-usuarios" hidden>
+            <div class="cabecalho-usuarios">
+                <div>
+                    <span class="rotulo-usuarios">ADMINISTRAÇÃO</span>
+                    <h2>Usuários da empresa</h2>
+                    <p>Consulte os membros da sua empresa e gerencie suas permissões.</p>
+                </div>
+            </div>
+
+            <p class="mensagem-estado" id="mensagem-estado" role="status" aria-live="polite"></p>
+
+            <div class="caixa-tabela-usuarios">
+                <table class="tabela-usuarios">
+                    <thead>
+                        <tr>
+                            <th>USUÁRIO</th>
+                            <th>E-MAIL</th>
+                            <th>PERMISSÃO</th>
+                            <th>AÇÃO</th>
+                        </tr>
+                    </thead>
+                    <tbody id="corpo-tabela-usuarios"></tbody>
+                </table>
+            </div>
+        </section>
+
+        <section class="aviso-acesso" id="aviso-acesso" role="alert" hidden>
+            <h2>Acesso restrito</h2>
+            <p id="texto-aviso-acesso">Esta página está disponível somente para administradores.</p>
+            <p>Você será redirecionado em instantes.</p>
+        </section>
+    </main>
+
+    <script src="../public/assets/js/redirecionamento.js" defer></script>
+    <script src="../public/assets/js/sessao.js" defer></script>
+    <script src="../public/assets/js/usuarios.js" defer></script>
+</body>
+
+</html>
