@@ -84,7 +84,7 @@ function renderizarTabela(equipamentos) {
 }
 
 function buscarEquipamentosEmpresa(idEmpresa) {
-    fetch(`/hardwares/buscarEq/${idEmpresa}`, { cache: 'no-store' })
+    fetch(`/hardwares/buscarEq/${idEmpresa}?idUsuario=${dadosUsuario.id}`, { cache: 'no-store' })
         .then(function (response) {
             if (response.ok) {
                 if (response.status === 204) {
@@ -182,6 +182,7 @@ function cadastrarHardware() {
         localizacao: localizacao,
         descricao: descricao,
         fkEmpresa: idEmpresa,
+        idUsuario: dadosUsuario.id,
         componentes: componentes,
         limiteCpu: limites.limiteCpu,
         limiteRam: limites.limiteRam,
@@ -303,6 +304,8 @@ function salvarEdicaoHardware() {
         tipo: tipo,
         localizacao: localizacao,
         descricao: descricao,
+        idUsuario: dadosUsuario.id,
+        idEmpresa: idEmpresa,
         componentes: componentes,
         limiteCpu: limites.limiteCpu,
         limiteRam: limites.limiteRam,
@@ -354,7 +357,7 @@ function deletarEquipamento(idEmpresa, idEquipamento) {
     lidarComDeletar = () => {
         fecharModalGeral();
 
-        fetch(`/hardwares/deletarEq/${idEmpresa}/${idEquipamento}`, {
+        fetch(`/hardwares/deletarEq/${idEmpresa}/${idEquipamento}?idUsuario=${dadosUsuario.id}`, {
             method: 'DELETE',
             signal: controller.signal,
             cache: 'no-store'
@@ -448,17 +451,26 @@ modalOverlayEditar.addEventListener('click', function (evento) {
 
 function aplicarPermissoes() {
     const usuario = dadosUser();
+    const nivel = usuario.nomeNivelAcesso || usuario.nomePermissao;
 
-    if (usuario.nomePermissao === 'Usuario') {
+    // Usuário comum apenas visualiza os equipamentos liberados.
+    if (nivel === 'Usuario') {
         document.querySelectorAll('.btn-excluir, .btn-editar').forEach(function (btn) {
             btn.style.display = 'none';
         });
+    }
 
-        const btnAdicionarHardware = document.getElementById('btn-novo-hardware');
+    // Gerente pode visualizar e editar, mas não cadastrar nem excluir.
+    if (nivel === 'Gerente') {
+        document.querySelectorAll('.btn-excluir').forEach(function (btn) {
+            btn.style.display = 'none';
+        });
+    }
 
-        if (btnAdicionarHardware) {
-            btnAdicionarHardware.style.display = 'none';
-        }
+    // Somente o Root pode cadastrar e excluir equipamentos.
+    const btnAdicionarHardware = document.getElementById('btn-novo-hardware');
+    if (btnAdicionarHardware && nivel !== 'Root') {
+        btnAdicionarHardware.style.display = 'none';
     }
 }
 
@@ -466,7 +478,7 @@ function modalVisualizar(idEquipamento) {
     let jsonEquipamentos = [];
     let jsonComponentes = [];
 
-    fetch(`/hardwares/buscarEqId/${idEquipamento}`, { cache: 'no-store' }).then(function (response) {
+    fetch(`/hardwares/buscarEqId/${idEquipamento}?idUsuario=${dadosUsuario.id}&idEmpresa=${idEmpresa}`, { cache: 'no-store' }).then(function (response) {
         if (response.ok) {
             response.json().then(function (equipamento) {
                 jsonEquipamentos = equipamento;

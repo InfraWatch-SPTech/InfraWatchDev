@@ -1,421 +1,149 @@
-function atualizarLinksUsuarioAdmin(){
-    const listaNavegacao = document.querySelector('.nav links-ul')
+function lerDadosSessao() {
+    const usuarioTexto = localStorage.getItem('usuarioLogado');
 
-    if (!listaNavegacao){
-        return;
+    if (!usuarioTexto) {
+        return null;
     }
-    
+
+    try {
+        return JSON.parse(usuarioTexto);
+    } catch (erro) {
+        localStorage.removeItem('usuarioLogado');
+        return null;
+    }
 }
 
-// sessão
-function validarSessao() {
+function nivelUsuario(usuario) {
+    return usuario.nomeNivelAcesso || usuario.nomePermissao || '';
+}
 
-    // guarda qual página o usuário está
-    let pagina_now = window.location.pathname;
-    let paginas_com_login = [''] // páginas que o usuário não pode acessar sem login
+function atualizarLinkUsuarios(usuario) {
+    const listaNavegacao = document.querySelector('.nav-links ul');
 
-    const usuarioTexto = localStorage.getItem('usuarioLogado'); // pega as coisas salvas no localStorage
-
-    if (usuarioTexto == null && !pagina_now.includes("main.html") && !pagina_now.includes("sobrenos.html")) {
-        window.location.href = "../public/main.html";
+    if (!listaNavegacao) {
         return;
     }
 
-    const usuarioLogado = JSON.parse(usuarioTexto);
-    console.log(usuarioLogado)
+    const linkExistente = listaNavegacao.querySelector('.link-usuarios-admin');
+    const nivel = nivelUsuario(usuario);
+    const podeGerenciar = nivel === 'Root' || nivel === 'Gerente';
 
-    // salvando infos do usuário no localStorage
+    if (podeGerenciar && !linkExistente) {
+        const item = document.createElement('li');
+        item.className = 'link-usuarios-admin';
 
-    const nomeUsuario = usuarioLogado.nome;
-    const permissaoUsuario = usuarioLogado.nomePermissao;
-    const idEmpresaUsuario = usuarioLogado.idEmpresa;
-    const nomeEmpresaUsuario = usuarioLogado.nomeEmpresa;
-    const emailUsuario = usuarioLogado.email;
+        const link = document.createElement('a');
+        link.href = './usuarios.html';
+        link.textContent = 'Usuários';
 
-    // salvando div da navbar para adicionar comportamento
+        item.appendChild(link);
+        listaNavegacao.appendChild(item);
+    } else if (!podeGerenciar && linkExistente) {
+        linkExistente.remove();
+    }
+}
+
+function montarPerfilUsuario(usuario) {
     const navLogin = document.querySelector('.nav-login');
     const popupPerfil = document.querySelector('.popup-perfil');
 
-    if (permissaoUsuario == 'Usuario') {
-        navLogin.innerHTML =
-            `
-            <button id="btn-pagina-empresa" onclick="redirecionamento_cadastroServidor()">
-                Painel Empresa
-            </button>
-            <button id="btn-perfil-usuario">
-                <i class="fa-solid fa-user" style="color: rgb(255, 255, 255);"></i>
-                Perfil
-            </button>
-        `;
-
-        const btnPerfil = document.getElementById('btn-perfil-usuario');
-
-        btnPerfil.addEventListener('click', () => {
-            if (popupPerfil.classList.contains('active')) {
-                popupPerfil.classList.remove('active');
-            } else {
-                popupPerfil.classList.add('active');
-
-                popupPerfil.innerHTML =
-                    `
-                    <i id="btn-fechar-perfil" class="fa-regular fa-circle-xmark"></i>
-                        <div class="content-perfil">
-                            <div class="content-perfil-top">
-                                <i class="fa-solid fa-user"></i>
-                                <div class="perfil-top-text">
-                                    <h5>
-                                        ${nomeUsuario}
-                                    </h5>
-                                    <h6>
-                                        ${emailUsuario}
-                                    </h6>
-                                </div>
-                            </div>
-                            <div class="content-perfil-bottom">
-                                <div class="perfil-bottom-info">
-                                    <div class="info-box-text">
-                                        <i class="fa-regular fa-building"></i>
-                                        <span class="empresa-limit">
-                                            <h6>Empresa</h6>
-                                            <h5>${nomeEmpresaUsuario}</h5>
-                                        </span>
-                                    </div>
-                                    <div class="info-box-text">
-                                        <i class="fa-regular fa-address-card"></i>
-                                        <span>
-                                            <h6>Permissão</h6>
-                                            <h5>${permissaoUsuario}</h5>
-                                        </span>
-                                    </div>
-                                </div>
-                                <div class="perfil-bottom-btn">
-                                    <button>
-                                        <i class="fa-regular fa-pen-to-square"></i>
-                                        Editar
-                                    </button>
-                                    <button onclick="limparSessao()">
-                                        <i class="fa-solid fa-right-from-bracket"></i>
-                                        Logout
-                                    </button>
-                                </div>
-                            </div>
-                        </div>
-                    `;
-
-                const btnClosePerfil = document.getElementById('btn-fechar-perfil');
-
-                btnClosePerfil.addEventListener('click', () => {
-                    if (popupPerfil.classList.contains('active')) {
-                        popupPerfil.classList.remove('active');
-                    } else {
-                        popupPerfil.classList.add('active');
-
-                       popupPerfil.innerHTML = `
-    <i id="btn-fechar-perfil" class="fa-regular fa-circle-xmark"></i>
-    <div class="content-perfil">
-        <!-- Topo: Avatar, Nome e Email -->
-        <div class="content-perfil-top">
-            <i class="fa-solid fa-user icon-avatar"></i>
-            <div class="perfil-top-text">
-                <h5 class="nome-usuario">${nomeUsuario}</h5>
-                <h6 class="email-usuario">${emailUsuario}</h6>
-            </div>
-        </div>
-        
-        <!-- Conteúdo do meio: Empresa e Permissão -->
-        <div class="content-perfil-bottom">
-            <div class="perfil-bottom-info">
-                <div class="info-item">
-                    <i class="fa-regular fa-building info-icon"></i>
-                    <div class="info-text">
-                        <span class="info-label">Empresa</span>
-                        <span class="info-valor">${empresaUsuario}</span>
-                    </div>
-                </div>
-                
-                <div class="info-item">
-                    <i class="fa-regular fa-address-card info-icon"></i>
-                    <div class="info-text">
-                        <span class="info-label">Permissão</span>
-                        <span class="info-valor">${permissaoUsuario}</span>
-                    </div>
-                </div>
-            </div>
-            
-            <!-- Botões de Ação -->
-            <div class="perfil-bottom-btn">
-                <button type="button" class="btn-editar">
-                    <i class="fa-regular fa-pen-to-square"></i> Editar
-                </button>
-                <button type="button" class="btn-logout" onclick="limparSessao()">
-                    <i class="fa-solid fa-right-from-bracket"></i> Logout
-                </button>
-            </div>
-        </div>
-    </div>
-`;
-                    }
-                })
-            }
-        })
-
-        const btnAdicionarHardware = document.getElementById('btn-novo-hardware');
-        if (btnAdicionarHardware) {
-            btnAdicionarHardware.style.display = 'none';
-        }
-
-
-    } else if (permissaoUsuario == 'Admin') {
-        navLogin.innerHTML =
-            `
-            <button id="btn-pagina-empresa" onclick="redirecionamento_cadastroServidor()">
-                Painel Empresa
-            </button>
-            <button id="btn-perfil-usuario">
-                <i class="fa-solid fa-user" style="color: rgb(255, 255, 255);"></i>
-                Perfil
-            </button>
-        `;
-
-        const btnPerfil = document.getElementById('btn-perfil-usuario');
-
-        btnPerfil.addEventListener('click', () => {
-            if (popupPerfil.classList.contains('active')) {
-                popupPerfil.classList.remove('active');
-            } else {
-                popupPerfil.classList.add('active');
-
-                popupPerfil.innerHTML =
-                    `
-                    <i id="btn-fechar-perfil" class="fa-regular fa-circle-xmark"></i>
-                        <div class="content-perfil">
-                            <div class="content-perfil-top">
-                                <i class="fa-solid fa-user"></i>
-                                <div class="perfil-top-text">
-                                    <h5>
-                                        ${nomeUsuario}
-                                    </h5>
-                                    <h6>
-                                        ${emailUsuario}
-                                    </h6>
-                                </div>
-                            </div>
-                            <div class="content-perfil-bottom">
-                                <div class="perfil-bottom-info">
-                                    <div class="info-box-text">
-                                        <i class="fa-regular fa-building"></i>
-                                        <span class="empresa-limit">
-                                            <h6>Empresa</h6>
-                                            <h5>${nomeEmpresaUsuario}</h5>
-                                        </span>
-                                    </div>
-                                    <div class="info-box-text">
-                                        <i class="fa-regular fa-address-card"></i>
-                                        <span>
-                                            <h6>Permissão</h6>
-                                            <h5>${permissaoUsuario}</h5>
-                                        </span>
-                                    </div>
-                                </div>
-                                <div class="perfil-bottom-btn">
-                                    <button>
-                                        <i class="fa-regular fa-pen-to-square"></i>
-                                        Editar
-                                    </button>
-                                    <button onclick="limparSessao()">
-                                        <i class="fa-solid fa-right-from-bracket"></i>
-                                        Logout
-                                    </button>
-                                </div>
-                            </div>
-                        </div>
-                    `;
-
-                const btnClosePerfil = document.getElementById('btn-fechar-perfil');
-
-                btnClosePerfil.addEventListener('click', () => {
-                    if (popupPerfil.classList.contains('active')) {
-                        popupPerfil.classList.remove('active');
-                    } else {
-                        popupPerfil.classList.add('active');
-
-                        popupPerfil.innerHTML =
-                            `
-                                <i id="btn-fechar-perfil" class="fa-regular fa-circle-xmark"></i>
-                                <div class="content-perfil">
-                                    <div class="content-perfil-top">
-                                        <i class="fa-solid fa-user"></i>
-                                        <div class="perfil-top-text">
-                                            <h5>
-                                                ${nomeUsuario}
-                                            </h5>
-                                            <h6 style="padding-left: 0.6rem;">
-                                                ${emailUsuario}
-                                            </h6>
-                                        </div>
-                                    </div>
-                                    <div class="content-perfil-bottom">
-                                        <div class="perfil-bottom-info">
-                                            <div class="info-box-text">
-                                                <i class="fa-regular fa-building"></i>
-                                                <span>
-                                                    <h6>Empresa</h6>
-                                                    <h5>${empresaUsuario}</h5>
-                                                </span>
-                                            </div>
-                                            <div class="info-box-text">
-                                                <i class="fa-regular fa-address-card"></i>
-                                                <span>
-                                                    <h6>Permissão</h6>
-                                                    <h5>${permissaoUsuario}</h5>
-                                                </span>
-                                            </div>
-                                        </div>
-                                        <div class="perfil-bottom-btn">
-                                            <button>
-                                                <i class="fa-regular fa-pen-to-square"></i>
-                                                Editar
-                                            </button>
-                                            <button onclick="limparSessao()">
-                                                <i class="fa-solid fa-right-from-bracket"></i>
-                                                Logout
-                                            </button>
-                                        </div>
-                                    </div>
-                                </div>
-                    
-                            `;
-                    }
-                })
-            }
-        })
-    } else if (permissaoUsuario == 'Root') {
-        navLogin.innerHTML =
-            `
-            <button id="btn-pagina-empresa" onclick="redirecionamento_cadastroServidor()">
-                Painel Empresa
-            </button>
-            <button id="btn-perfil-usuario">
-                <i class="fa-solid fa-user" style="color: rgb(255, 255, 255);"></i>
-                Perfil
-            </button>
-        `;
-
-        const btnPerfil = document.getElementById('btn-perfil-usuario');
-
-        btnPerfil.addEventListener('click', () => {
-            if (popupPerfil.classList.contains('active')) {
-                popupPerfil.classList.remove('active');
-            } else {
-                popupPerfil.classList.add('active');
-
-                popupPerfil.innerHTML =
-                    `
-                    <i id="btn-fechar-perfil" class="fa-regular fa-circle-xmark"></i>
-                        <div class="content-perfil">
-                            <div class="content-perfil-top">
-                                <i class="fa-solid fa-user"></i>
-                                <div class="perfil-top-text">
-                                    <h5>
-                                        ${nomeUsuario}
-                                    </h5>
-                                    <h6>
-                                        ${emailUsuario}
-                                    </h6>
-                                </div>
-                            </div>
-                            <div class="content-perfil-bottom">
-                                <div class="perfil-bottom-info">
-                                    <div class="info-box-text">
-                                        <i class="fa-regular fa-building"></i>
-                                        <span class="empresa-limit">
-                                            <h6>Empresa</h6>
-                                            <h5>${nomeEmpresaUsuario}</h5>
-                                        </span>
-                                    </div>
-                                    <div class="info-box-text">
-                                        <i class="fa-regular fa-address-card"></i>
-                                        <span>
-                                            <h6>Permissão</h6>
-                                            <h5>${permissaoUsuario}</h5>
-                                        </span>
-                                    </div>
-                                </div>
-                                <div class="perfil-bottom-btn">
-                                    <button>
-                                        <i class="fa-regular fa-pen-to-square"></i>
-                                        Editar
-                                    </button>
-                                    <button onclick="limparSessao()">
-                                        <i class="fa-solid fa-right-from-bracket"></i>
-                                        Logout
-                                    </button>
-                                </div>
-                            </div>
-                        </div>
-                    `;
-
-                const btnClosePerfil = document.getElementById('btn-fechar-perfil');
-
-                btnClosePerfil.addEventListener('click', () => {
-                    if (popupPerfil.classList.contains('active')) {
-                        popupPerfil.classList.remove('active');
-                    } else {
-                        popupPerfil.classList.add('active');
-
-                        popupPerfil.innerHTML =
-                            `
-                                <i id="btn-fechar-perfil" class="fa-regular fa-circle-xmark"></i>
-                                <div class="content-perfil">
-                                    <div class="content-perfil-top">
-                                        <i class="fa-solid fa-user"></i>
-                                        <div class="perfil-top-text">
-                                            <h5>
-                                                ${nomeUsuario}
-                                            </h5>
-                                            <h6 style="padding-left: 0.6rem;">
-                                                ${emailUsuario}
-                                            </h6>
-                                        </div>
-                                    </div>
-                                    <div class="content-perfil-bottom">
-                                        <div class="perfil-bottom-info">
-                                            <div class="info-box-text">
-                                                <i class="fa-regular fa-building"></i>
-                                                <span>
-                                                    <h6>Empresa</h6>
-                                                    <h5>${empresaUsuario}</h5>
-                                                </span>
-                                            </div>
-                                            <div class="info-box-text">
-                                                <i class="fa-regular fa-address-card"></i>
-                                                <span>
-                                                    <h6>Permissão</h6>
-                                                    <h5>${permissaoUsuario}</h5>
-                                                </span>
-                                            </div>
-                                        </div>
-                                        <div class="perfil-bottom-btn">
-                                            <button>
-                                                <i class="fa-regular fa-pen-to-square"></i>
-                                                Editar
-                                            </button>
-                                            <button onclick="limparSessao()">
-                                                <i class="fa-solid fa-right-from-bracket"></i>
-                                                Logout
-                                            </button>
-                                        </div>
-                                    </div>
-                                </div>
-                    
-                            `;
-                    }
-                })
-            }
-        })
+    if (!navLogin || !popupPerfil) {
+        return;
     }
 
+    navLogin.innerHTML = `
+        <button id="btn-pagina-empresa" onclick="redirecionamento_cadastroServidor()">
+            Painel Empresa
+        </button>
+        <button id="btn-perfil-usuario">
+            <i class="fa-solid fa-user" style="color: rgb(255, 255, 255);"></i>
+            Perfil
+        </button>
+    `;
 
+    const btnPerfil = document.getElementById('btn-perfil-usuario');
+
+    btnPerfil.addEventListener('click', function () {
+        if (popupPerfil.classList.contains('active')) {
+            popupPerfil.classList.remove('active');
+            return;
+        }
+
+        const permissoes = Array.isArray(usuario.permissoes)
+            ? usuario.permissoes
+            : [];
+
+        popupPerfil.innerHTML = `
+            <i id="btn-fechar-perfil" class="fa-regular fa-circle-xmark"></i>
+            <div class="content-perfil">
+                <div class="content-perfil-top">
+                    <i class="fa-solid fa-user"></i>
+                    <div class="perfil-top-text">
+                        <h5>${usuario.nome}</h5>
+                        <h6>${usuario.email}</h6>
+                    </div>
+                </div>
+
+                <div class="content-perfil-bottom">
+                    <div class="perfil-bottom-info">
+                        <div class="info-box-text">
+                            <i class="fa-regular fa-building"></i>
+                            <span>
+                                <h6>Empresa</h6>
+                                <h5>${usuario.nomeEmpresa}</h5>
+                            </span>
+                        </div>
+
+                        <div class="info-box-text">
+                            <i class="fa-regular fa-address-card"></i>
+                            <span>
+                                <h6>Nível de acesso</h6>
+                                <h5>${nivelUsuario(usuario)}</h5>
+                            </span>
+                        </div>
+                    </div>
+
+                    <div class="perfil-bottom-info">
+                        <span>
+                            <h6>Dashboards liberadas</h6>
+                            <h5>${permissoes.length > 0 ? permissoes.join(', ') : 'Nenhuma'}</h5>
+                        </span>
+                    </div>
+
+                    <div class="perfil-bottom-btn">
+                        <button onclick="limparSessao()">
+                            <i class="fa-solid fa-right-from-bracket"></i>
+                            Logout
+                        </button>
+                    </div>
+                </div>
+            </div>
+        `;
+
+        popupPerfil.classList.add('active');
+
+        const btnFechar = document.getElementById('btn-fechar-perfil');
+        btnFechar.addEventListener('click', function () {
+            popupPerfil.classList.remove('active');
+        });
+    });
+}
+
+function validarSessao() {
+    const caminhoPagina = window.location.pathname;
+    const paginaProtegida = caminhoPagina.includes('hardwares.html') ||
+        caminhoPagina.includes('usuarios.html');
+    const usuario = lerDadosSessao();
+
+    if (!usuario) {
+        if (paginaProtegida) {
+            window.location.href = '../public/login.html';
+        }
+        return;
+    }
+
+    atualizarLinkUsuarios(usuario);
+    montarPerfilUsuario(usuario);
 }
 
 function limparSessao() {
@@ -424,24 +152,26 @@ function limparSessao() {
 }
 
 function dadosUser() {
-    const usuarioTexto = localStorage.getItem('usuarioLogado');
-    const usuarioLogado = JSON.parse(usuarioTexto);
-
-    return usuarioLogado;
+    return lerDadosSessao();
 }
 
-// carregamento (loading)
 function aguardar() {
-    var divAguardar = document.getElementById('div_aguardar');
-    divAguardar.style.display = 'flex';
+    const divAguardar = document.getElementById('div_aguardar');
+
+    if (divAguardar) {
+        divAguardar.style.display = 'flex';
+    }
 }
 
 function finalizarAguardar(texto) {
-    var divAguardar = document.getElementById('div_aguardar');
-    divAguardar.style.display = 'none';
+    const divAguardar = document.getElementById('div_aguardar');
+    const divErrosLogin = document.getElementById('div_erros_login');
 
-    var divErrosLogin = document.getElementById('div_erros_login');
-    if (texto) {
+    if (divAguardar) {
+        divAguardar.style.display = 'none';
+    }
+
+    if (texto && divErrosLogin) {
         divErrosLogin.style.display = 'flex';
         divErrosLogin.innerHTML = texto;
     }

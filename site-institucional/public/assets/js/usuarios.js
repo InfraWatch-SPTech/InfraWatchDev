@@ -1,334 +1,290 @@
-
-let usuarioLogado = null;
-
-let usuariosEmpresa = [];
-
-
-function buscarUsuarioLogado() {
-    const usuarioSalvo = localStorage.getItem("usuarioLogado");
-
-    if (usuarioSalvo == null) {
+function lerUsuarioLogado() {
+    try {
+        const texto = localStorage.getItem('usuarioLogado');
+        return texto ? JSON.parse(texto) : null;
+    } catch (erro) {
         return null;
     }
-
-    return JSON.parse(usuarioSalvo);
 }
 
-function mostrarMensagem(texto, tipo) {
-    const mensagem = document.getElementById("mensagem-estado");
+function mostrarAvisoAcesso(texto) {
+    const aviso = document.getElementById('aviso-acesso');
+    const mensagem = document.getElementById('texto-aviso-acesso');
 
     mensagem.textContent = texto;
-    mensagem.className = "mensagem-estado";
-
-    if (tipo != null && tipo != "") {
-        mensagem.classList.add(tipo);
-    }
+    aviso.hidden = false;
 }
 
+function mostrarEstado(texto, tipo) {
+    const elemento = document.getElementById('mensagem-estado');
 
-function protegerTexto(texto) {
-    const elemento = document.createElement("div");
-
-    elemento.textContent = texto || "-";
-
-    return elemento.innerHTML;
+    elemento.textContent = texto;
+    elemento.className = 'mensagem-estado' + (tipo ? ' ' + tipo : '');
 }
 
+function criarCelula(texto, classe) {
+    const celula = document.createElement('td');
+    celula.textContent = texto == null || texto === '' ? '-' : String(texto);
 
-function mostrarUsuariosNaTabela() {
-    const corpoTabela = document.getElementById("corpo-tabela-usuarios");
-
-    corpoTabela.innerHTML = "";
-
-    if (usuariosEmpresa.length == 0) {
-        corpoTabela.innerHTML = `
-            <tr>
-                <td colspan="4">
-                    Nenhum usuário encontrado para esta empresa.
-                </td>
-            </tr>
-        `;
-
-        return;
+    if (classe) {
+        celula.className = classe;
     }
 
-    for (let i = 0; i < usuariosEmpresa.length; i++) {
-        const usuario = usuariosEmpresa[i];
+    return celula;
+}
 
-        const idUsuario = Number(usuario.idUsuario);
-        const nome = protegerTexto(usuario.nome);
-        const email = protegerTexto(usuario.email);
+function nomeAmigavelPermissao(nome) {
+    if (nome === 'DASHBOARD_SERVIDORES') {
+        return 'Servidores';
+    }
 
-        // Verifica se a linha é do próprio administrador conectado
-        const ehUsuarioLogado =
-            idUsuario == Number(usuarioLogado.id);
+    if (nome === 'DASHBOARD_NOTEBOOKS') {
+        return 'Notebooks e computadores';
+    }
 
-        let desabilitado = "";
+    if (nome === 'DASHBOARD_REDE') {
+        return 'Equipamentos de rede';
+    }
 
-        if (ehUsuarioLogado) {
-            desabilitado = "disabled";
+    return nome;
+}
+
+function criarSeletorNivel(usuario) {
+    const seletor = document.createElement('select');
+    seletor.className = 'seletor-permissao';
+
+    const opcaoGerente = document.createElement('option');
+    opcaoGerente.value = 'Gerente';
+    opcaoGerente.textContent = 'Gerente';
+    seletor.appendChild(opcaoGerente);
+
+    const opcaoUsuario = document.createElement('option');
+    opcaoUsuario.value = 'Usuario';
+    opcaoUsuario.textContent = 'Usuário comum';
+    seletor.appendChild(opcaoUsuario);
+
+    if (usuario.nomeNivelAcesso === 'Root') {
+        const opcaoRoot = document.createElement('option');
+        opcaoRoot.value = 'Root';
+        opcaoRoot.textContent = 'Root';
+        seletor.appendChild(opcaoRoot);
+    }
+
+    seletor.value = usuario.nomeNivelAcesso;
+    return seletor;
+}
+
+function criarListaPermissoes(usuario, permissoesDisponiveis) {
+    const caixa = document.createElement('div');
+    caixa.className = 'lista-permissoes-usuario';
+
+    for (let i = 0; i < permissoesDisponiveis.length; i++) {
+        const permissao = permissoesDisponiveis[i];
+        const rotulo = document.createElement('label');
+        rotulo.className = 'item-permissao-usuario';
+
+        const checkbox = document.createElement('input');
+        checkbox.type = 'checkbox';
+        checkbox.value = String(permissao.idPermissao);
+        checkbox.checked = usuario.idsPermissoes.includes(permissao.idPermissao);
+
+        const texto = document.createElement('span');
+        texto.textContent = nomeAmigavelPermissao(permissao.nome);
+
+        rotulo.appendChild(checkbox);
+        rotulo.appendChild(texto);
+        caixa.appendChild(rotulo);
+    }
+
+    return caixa;
+}
+
+function coletarIdsPermissoes(caixaPermissoes) {
+    const checkboxes = caixaPermissoes.querySelectorAll('input[type="checkbox"]:checked');
+    const ids = [];
+
+    for (let i = 0; i < checkboxes.length; i++) {
+        ids.push(Number(checkboxes[i].value));
+    }
+
+    return ids;
+}
+
+function criarLinhaUsuario(usuario, atual, permissoesDisponiveis) {
+    const linha = document.createElement('tr');
+    linha.appendChild(criarCelula(usuario.nome));
+    linha.appendChild(criarCelula(usuario.email, 'email-usuario'));
+
+    const celulaNivel = document.createElement('td');
+    const seletorNivel = criarSeletorNivel(usuario);
+    celulaNivel.appendChild(seletorNivel);
+    linha.appendChild(celulaNivel);
+
+    const celulaPermissoes = document.createElement('td');
+    const caixaPermissoes = criarListaPermissoes(usuario, permissoesDisponiveis);
+    celulaPermissoes.appendChild(caixaPermissoes);
+    linha.appendChild(celulaPermissoes);
+
+    const celulaAcao = document.createElement('td');
+    const botaoSalvar = document.createElement('button');
+    botaoSalvar.type = 'button';
+    botaoSalvar.className = 'btn-salvar-permissao';
+    botaoSalvar.textContent = 'Salvar';
+
+    const ehUsuarioAtual = Number(usuario.idUsuario) === Number(atual.id);
+    const ehRoot = usuario.nomeNivelAcesso === 'Root';
+
+    if (ehUsuarioAtual || ehRoot) {
+        seletorNivel.disabled = true;
+        botaoSalvar.disabled = true;
+
+        const checkboxes = caixaPermissoes.querySelectorAll('input');
+        for (let i = 0; i < checkboxes.length; i++) {
+            checkboxes[i].disabled = true;
         }
 
-        corpoTabela.innerHTML += `
-            <tr>
-                <td>${nome}</td>
-
-                <td class="email-usuario">
-                    ${email}
-                </td>
-
-                <td>
-                    <select
-                        id="permissao-${idUsuario}"
-                        class="seletor-permissao"
-                        ${desabilitado}
-                    >
-                        <option
-                            value="2"
-                            ${usuario.fkPermissao == 2 ? "selected" : ""}
-                        >
-                            Admin
-                        </option>
-
-                        <option
-                            value="3"
-                            ${usuario.fkPermissao == 3 ? "selected" : ""}
-                        >
-                            Usuário comum
-                        </option>
-                    </select>
-                </td>
-
-                <td>
-                    <button
-                        id="botao-${idUsuario}"
-                        class="btn-salvar-permissao"
-                        onclick="salvarPermissao(${idUsuario})"
-                        ${desabilitado}
-                    >
-                        Salvar
-                    </button>
-                </td>
-            </tr>
-        `;
+        botaoSalvar.title = ehUsuarioAtual
+            ? 'Não é permitido alterar o próprio acesso.'
+            : 'O acesso do Root não pode ser alterado nesta tela.';
     }
-}
 
+    botaoSalvar.addEventListener('click', function () {
+        const nomeNivelAcesso = seletorNivel.value;
+        const idsPermissoes = coletarIdsPermissoes(caixaPermissoes);
 
-// 5. Busca os usuários da empresa no backend
-async function carregarUsuarios() {
-    mostrarMensagem("Carregando usuários...", "");
-
-    const parametros = new URLSearchParams();
-
-    parametros.append(
-        "idAdministrador",
-        usuarioLogado.id
-    );
-
-    parametros.append(
-        "idEmpresa",    
-        usuarioLogado.idEmpresa
-    );
-
-    try {
-        const resposta = await fetch(
-            "/usuarios?" + parametros.toString()
-        );
-
-        if (resposta.ok == false) {
-            const mensagemErro = await resposta.text();
-
-            mostrarMensagem(
-                mensagemErro || "Não foi possível carregar os usuários.",
-                "erro"
-            );
-
+        if (nomeNivelAcesso !== 'Gerente' && nomeNivelAcesso !== 'Usuario') {
+            mostrarEstado('Selecione um nível de acesso válido.', 'erro');
             return;
         }
 
-        usuariosEmpresa = await resposta.json();
+        seletorNivel.disabled = true;
+        botaoSalvar.disabled = true;
+        mostrarEstado('Salvando nível e permissões...', '');
 
-        mostrarUsuariosNaTabela();
+        fetch('/usuarios/' + encodeURIComponent(usuario.idUsuario) + '/acesso', {
+            method: 'PUT',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                idGerente: atual.id,
+                idEmpresa: atual.idEmpresa,
+                nomeNivelAcesso: nomeNivelAcesso,
+                idsPermissoes: idsPermissoes
+            })
+        })
+            .then(function (resposta) {
+                if (!resposta.ok) {
+                    return resposta.text().then(function (textoErro) {
+                        throw new Error(textoErro || 'Não foi possível alterar o acesso.');
+                    });
+                }
 
-        mostrarMensagem("", "");
-    } catch (erro) {
-        mostrarMensagem(
-            "Erro ao conectar com o servidor.",
-            "erro"
+                return resposta.json();
+            })
+            .then(function (resultado) {
+                usuario.nomeNivelAcesso = resultado.nomeNivelAcesso;
+                usuario.idsPermissoes = resultado.idsPermissoes;
+
+                mostrarEstado(
+                    'Acesso de ' + usuario.nome + ' atualizado com sucesso.',
+                    'sucesso'
+                );
+            })
+            .catch(function (erro) {
+                mostrarEstado(erro.message || 'Erro ao alterar o acesso.', 'erro');
+            })
+            .finally(function () {
+                seletorNivel.disabled = false;
+                botaoSalvar.disabled = false;
+            });
+    });
+
+    celulaAcao.appendChild(botaoSalvar);
+    linha.appendChild(celulaAcao);
+    return linha;
+}
+
+function renderizarUsuarios(usuarios, atual, permissoesDisponiveis) {
+    const corpo = document.getElementById('corpo-tabela-usuarios');
+    corpo.replaceChildren();
+
+    if (usuarios.length === 0) {
+        const linha = document.createElement('tr');
+        const celula = document.createElement('td');
+        celula.colSpan = 5;
+        celula.textContent = 'Nenhum usuário encontrado para esta empresa.';
+        linha.appendChild(celula);
+        corpo.appendChild(linha);
+        return;
+    }
+
+    for (let i = 0; i < usuarios.length; i++) {
+        corpo.appendChild(
+            criarLinhaUsuario(usuarios[i], atual, permissoesDisponiveis)
         );
     }
 }
 
+function carregarDadosTela(atual) {
+    const parametros = new URLSearchParams({
+        idGerente: String(atual.id),
+        idEmpresa: String(atual.idEmpresa)
+    });
 
-// 6. Salva a nova permissão escolhida pelo administrador
-async function salvarPermissao(idUsuario) {
-    const seletor = document.getElementById(
-        "permissao-" + idUsuario
-    );
+    const requisicaoPermissoes = fetch('/usuarios/permissoes?' + parametros.toString(), {
+        cache: 'no-store'
+    });
 
-    const botao = document.getElementById(
-        "botao-" + idUsuario
-    );
+    const requisicaoUsuarios = fetch('/usuarios?' + parametros.toString(), {
+        cache: 'no-store'
+    });
 
-    const novaPermissao = Number(seletor.value);
-
-    // Procura o usuário dentro da lista
-    let usuarioSelecionado = null;
-
-    for (let i = 0; i < usuariosEmpresa.length; i++) {
-        if (
-            Number(usuariosEmpresa[i].idUsuario)
-            == Number(idUsuario)
-        ) {
-            usuarioSelecionado = usuariosEmpresa[i];
-            break;
-        }
-    }
-
-    if (usuarioSelecionado == null) {
-        mostrarMensagem(
-            "Usuário não encontrado.",
-            "erro"
-        );
-
-        return;
-    }
-
-    // Não envia se a permissão continuar igual
-    if (
-        novaPermissao
-        == Number(usuarioSelecionado.fkPermissao)
-    ) {
-        mostrarMensagem(
-            "Essa permissão já está aplicada.",
-            ""
-        );
-
-        return;
-    }
-
-    seletor.disabled = true;
-    botao.disabled = true;
-
-    mostrarMensagem(
-        "Salvando permissão...",
-        ""
-    );
-
-    try {
-        const resposta = await fetch(
-            "/usuarios/" + idUsuario + "/permissao",
-            {
-                method: "PUT",
-
-                headers: {
-                    "Content-Type": "application/json"
-                },
-
-                body: JSON.stringify({
-                    idAdministrador: usuarioLogado.id,
-                    idEmpresa: usuarioLogado.idEmpresa,
-                    fkPermissao: novaPermissao
-                })
+    Promise.all([requisicaoPermissoes, requisicaoUsuarios])
+        .then(function (respostas) {
+            if (!respostas[0].ok || !respostas[1].ok) {
+                return Promise.all([
+                    respostas[0].text(),
+                    respostas[1].text()
+                ]).then(function (textos) {
+                    throw new Error(textos[0] || textos[1] || 'Não foi possível carregar a tela.');
+                });
             }
-        );
 
-        if (resposta.ok == false) {
-            const mensagemErro = await resposta.text();
-
-            // Volta o select para a permissão anterior
-            seletor.value =
-                usuarioSelecionado.fkPermissao;
-
-            mostrarMensagem(
-                mensagemErro || "Não foi possível alterar a permissão.",
-                "erro"
-            );
-
-            seletor.disabled = false;
-            botao.disabled = false;
-
-            return;
-        }
-
-        const resultado = await resposta.json();
-
-        // Atualiza a permissão na lista do JavaScript
-        usuarioSelecionado.fkPermissao =
-            resultado.fkPermissao;
-
-        mostrarMensagem(
-            "Permissão de " +
-            usuarioSelecionado.nome +
-            " atualizada com sucesso.",
-            "sucesso"
-        );
-    } catch (erro) {
-        // Volta para o valor anterior
-        seletor.value =
-            usuarioSelecionado.fkPermissao;
-
-        mostrarMensagem(
-            "Erro ao conectar com o servidor.",
-            "erro"
-        );
-    }
-
-    seletor.disabled = false;
-    botao.disabled = false;
+            return Promise.all([respostas[0].json(), respostas[1].json()]);
+        })
+        .then(function (resultados) {
+            const permissoes = resultados[0];
+            const usuarios = resultados[1];
+            renderizarUsuarios(usuarios, atual, permissoes);
+        })
+        .catch(function (erro) {
+            mostrarEstado(erro.message || 'Erro ao carregar os usuários.', 'erro');
+        });
 }
 
+(function iniciarTelaUsuarios() {
+    const usuario = lerUsuarioLogado();
 
-// 7. Verifica o acesso e inicia a página
-function iniciarPagina() {
-    usuarioLogado = buscarUsuarioLogado();
-
-    // Se não estiver conectado, volta para o login
-    if (usuarioLogado == null) {
-        window.location.href = "./login.html";
+    if (!usuario || !usuario.id || !usuario.idEmpresa) {
+        window.location.replace('../public/login.html');
         return;
     }
 
-    // Se não for Admin, mostra o aviso
-    if (Number(usuarioLogado.perm) != 2) {
-        const aviso = document.getElementById(
-            "aviso-acesso"
-        );
+    const nivel = usuario.nomeNivelAcesso || usuario.nomePermissao;
 
-        const textoAviso = document.getElementById(
-            "texto-aviso-acesso"
-        );
+    if (nivel !== 'Gerente' && nivel !== 'Root') {
+        mostrarAvisoAcesso('Esta página está disponível somente para gerentes.');
 
-        textoAviso.textContent =
-            "Esta página está disponível somente para administradores.";
-
-        aviso.hidden = false;
-
-        setTimeout(function () {
-            window.location.href = "./hardwares.html";
+        window.setTimeout(function () {
+            window.location.replace('./hardwares.html');
         }, 2500);
-
         return;
     }
 
-    // Exibe o conteúdo da página
-    document.getElementById(
-        "painel-usuarios"
-    ).hidden = false;
+    document.getElementById('painel-usuarios').hidden = false;
 
-    // Atualiza a navbar e a sessão
-    if (typeof validarSessao == "function") {
+    if (typeof validarSessao === 'function') {
         validarSessao();
     }
 
-    // Busca os usuários no backend
-    carregarUsuarios();
-}
-
-
-// Executa quando o HTML terminar de carregar
-document.addEventListener(
-    "DOMContentLoaded",
-    iniciarPagina
-);
+    carregarDadosTela(usuario);
+})();
