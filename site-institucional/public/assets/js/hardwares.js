@@ -449,29 +449,44 @@ modalOverlayEditar.addEventListener('click', function (evento) {
     }
 });
 
+function possuiPermissao(nomePermissao) {
+    const permissoes = Array.isArray(dadosUsuario.permissoes)
+        ? dadosUsuario.permissoes
+        : [];
+
+    return permissoes.includes(nomePermissao);
+}
+
 function aplicarPermissoes() {
-    const usuario = dadosUser();
-    const nivel = usuario.nomeNivelAcesso || usuario.nomePermissao;
+    const nivel = dadosUsuario.nomeNivelAcesso || dadosUsuario.nomePermissao;
+    const ehRoot = nivel === 'Root';
+    const ehAdministrador = nivel === 'Administrador';
 
-    // Usuário comum apenas visualiza os equipamentos liberados.
-    if (nivel === 'Usuario') {
-        document.querySelectorAll('.btn-excluir, .btn-editar').forEach(function (btn) {
-            btn.style.display = 'none';
-        });
-    }
+    const podeCadastrar = ehRoot || (
+        ehAdministrador && possuiPermissao('EQUIPAMENTOS_CADASTRAR')
+    );
 
-    // Gerente pode visualizar e editar, mas não cadastrar nem excluir.
-    if (nivel === 'Gerente') {
-        document.querySelectorAll('.btn-excluir').forEach(function (btn) {
-            btn.style.display = 'none';
-        });
-    }
+    const podeEditar = ehRoot || (
+        ehAdministrador && possuiPermissao('EQUIPAMENTOS_EDITAR')
+    );
 
-    // Somente o Root pode cadastrar e excluir equipamentos.
+    const podeExcluir = ehRoot || (
+        ehAdministrador && possuiPermissao('EQUIPAMENTOS_EXCLUIR')
+    );
+
     const btnAdicionarHardware = document.getElementById('btn-novo-hardware');
-    if (btnAdicionarHardware && nivel !== 'Root') {
-        btnAdicionarHardware.style.display = 'none';
+
+    if (btnAdicionarHardware) {
+        btnAdicionarHardware.style.display = podeCadastrar ? 'block' : 'none';
     }
+
+    document.querySelectorAll('.btn-editar').forEach(function (botao) {
+        botao.style.display = podeEditar ? 'inline-flex' : 'none';
+    });
+
+    document.querySelectorAll('.btn-excluir').forEach(function (botao) {
+        botao.style.display = podeExcluir ? 'inline-flex' : 'none';
+    });
 }
 
 function modalVisualizar(idEquipamento) {

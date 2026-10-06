@@ -17,6 +17,14 @@ function nivelUsuario(usuario) {
     return usuario.nomeNivelAcesso || usuario.nomePermissao || '';
 }
 
+function usuarioPossuiPermissao(usuario, nomePermissao) {
+    const permissoes = Array.isArray(usuario.permissoes)
+        ? usuario.permissoes
+        : [];
+
+    return permissoes.includes(nomePermissao);
+}
+
 function atualizarLinkUsuarios(usuario) {
     const listaNavegacao = document.querySelector('.nav-links ul');
 
@@ -26,9 +34,15 @@ function atualizarLinkUsuarios(usuario) {
 
     const linkExistente = listaNavegacao.querySelector('.link-usuarios-admin');
     const nivel = nivelUsuario(usuario);
-    const podeGerenciar = nivel === 'Root' || nivel === 'Gerente';
+    const ehRoot = nivel === 'Root';
+    const ehAdministrador = nivel === 'Administrador';
+    const podeVisualizarUsuarios = usuarioPossuiPermissao(
+        usuario,
+        'USUARIOS_VISUALIZAR'
+    );
+    const podeAcessar = ehRoot || (ehAdministrador && podeVisualizarUsuarios);
 
-    if (podeGerenciar && !linkExistente) {
+    if (podeAcessar && !linkExistente) {
         const item = document.createElement('li');
         item.className = 'link-usuarios-admin';
 
@@ -38,7 +52,7 @@ function atualizarLinkUsuarios(usuario) {
 
         item.appendChild(link);
         listaNavegacao.appendChild(item);
-    } else if (!podeGerenciar && linkExistente) {
+    } else if (!podeAcessar && linkExistente) {
         linkExistente.remove();
     }
 }
@@ -105,7 +119,7 @@ function montarPerfilUsuario(usuario) {
 
                     <div class="perfil-bottom-info">
                         <span>
-                            <h6>Dashboards liberadas</h6>
+                            <h6>Permissões adicionais</h6>
                             <h5>${permissoes.length > 0 ? permissoes.join(', ') : 'Nenhuma'}</h5>
                         </span>
                     </div>

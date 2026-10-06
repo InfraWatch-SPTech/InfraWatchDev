@@ -22,30 +22,52 @@ function possuiPermissao(permissoes, nome) {
     return permissoes.indexOf(nome) !== -1;
 }
 
-function obterTiposPermitidos(acesso) {
-    var nivel = acesso.nomeNivelAcesso;
-    var permissoes = transformarPermissoes(acesso.permissoes);
+function usuarioEhRoot(acesso) {
+    return acesso.nomeNivelAcesso === "Root";
+}
 
-    if (nivel === "Root") {
+function usuarioEhAdministrador(acesso) {
+    return acesso.nomeNivelAcesso === "Administrador";
+}
+
+function podeExecutarAcao(acesso, nomePermissao) {
+    if (usuarioEhRoot(acesso)) {
+        return true;
+    }
+
+    var permissoes = transformarPermissoes(acesso.permissoes);
+    return possuiPermissao(permissoes, nomePermissao);
+}
+
+function obterTiposPermitidos(acesso) {
+    if (usuarioEhRoot(acesso)) {
         return null;
     }
 
+    var permissoes = transformarPermissoes(acesso.permissoes);
     var tipos = [];
 
-    if (possuiPermissao(permissoes, "DASHBOARD_SERVIDORES")) {
+    if (possuiPermissao(permissoes, "EQUIPAMENTOS_SERVIDORES_VISUALIZAR")) {
         tipos.push("Servidor");
     }
 
-    if (possuiPermissao(permissoes, "DASHBOARD_NOTEBOOKS")) {
+    if (possuiPermissao(permissoes, "EQUIPAMENTOS_NOTEBOOKS_VISUALIZAR")) {
         tipos.push("Notebook");
         tipos.push("Computador");
     }
 
-    if (possuiPermissao(permissoes, "DASHBOARD_REDE")) {
+    if (possuiPermissao(permissoes, "EQUIPAMENTOS_REDE_VISUALIZAR")) {
         tipos.push("Switch");
         tipos.push("Roteador");
         tipos.push("Firewall");
         tipos.push("Rede");
+    }
+
+    // Compatibilidade com bancos que ainda não receberam as novas
+    // permissões de categoria. Nesse caso, EQUIPAMENTOS_VISUALIZAR
+    // continua liberando todos os tipos de equipamento.
+    if (tipos.length === 0) {
+        return null;
     }
 
     return tipos;
@@ -107,6 +129,11 @@ function buscarEquipamentosEmpresa(req, res) {
                 return null;
             }
 
+            if (!podeExecutarAcao(acesso, "EQUIPAMENTOS_VISUALIZAR")) {
+                res.status(403).send("Você não possui permissão para visualizar equipamentos.");
+                return null;
+            }
+
             var tiposPermitidos = obterTiposPermitidos(acesso);
             return hardwaresModel.buscarEquipamentosEmpresa(idEmpresa, tiposPermitidos);
         })
@@ -160,8 +187,20 @@ function cadastrarEquipamento(req, res) {
                 return null;
             }
 
-            if (acesso.nomeNivelAcesso !== "Root") {
-                res.status(403).send("Somente o Root pode cadastrar equipamentos.");
+            if (!usuarioEhRoot(acesso) && !usuarioEhAdministrador(acesso)) {
+                res.status(403).send("Somente administradores podem cadastrar equipamentos.");
+                return null;
+            }
+
+            if (!podeExecutarAcao(acesso, "EQUIPAMENTOS_CADASTRAR")) {
+                res.status(403).send("Você não possui permissão para cadastrar equipamentos.");
+                return null;
+            }
+
+            var tiposPermitidos = obterTiposPermitidos(acesso);
+
+            if (!tipoEstaPermitido(tipo, tiposPermitidos)) {
+                res.status(403).send("Você não possui acesso a esta categoria de equipamento.");
                 return null;
             }
 
@@ -213,6 +252,11 @@ function buscarEquipamentoPorId(req, res) {
     buscarAcesso(idUsuario, idEmpresa, res)
         .then(function (acesso) {
             if (!acesso) {
+                return null;
+            }
+
+            if (!podeExecutarAcao(acesso, "EQUIPAMENTOS_VISUALIZAR")) {
+                res.status(403).send("Você não possui permissão para visualizar equipamentos.");
                 return null;
             }
 
@@ -287,8 +331,13 @@ function atualizarEquipamento(req, res) {
                 return null;
             }
 
-            if (acesso.nomeNivelAcesso !== "Root" && acesso.nomeNivelAcesso !== "Gerente") {
-                res.status(403).send("Seu nível de acesso não permite editar equipamentos.");
+            if (!usuarioEhRoot(acesso) && !usuarioEhAdministrador(acesso)) {
+                res.status(403).send("Somente administradores podem editar equipamentos.");
+                return null;
+            }
+
+            if (!podeExecutarAcao(acesso, "EQUIPAMENTOS_EDITAR")) {
+                res.status(403).send("Você não possui permissão para editar equipamentos.");
                 return null;
             }
 
@@ -363,6 +412,7 @@ function deletarEquipamento(req, res) {
     var idEmpresa = converterId(req.params.idEmpresa);
     var idEquipamento = converterId(req.params.idEquipamento);
     var idUsuario = converterId(req.query.idUsuario);
+    var acessoAtual;
 
     if (!idEmpresa || !idEquipamento || !idUsuario) {
         return res.status(400).send("Informe equipamento, usuário e empresa válidos.");
@@ -374,8 +424,33 @@ function deletarEquipamento(req, res) {
                 return null;
             }
 
-            if (acesso.nomeNivelAcesso !== "Root") {
-                res.status(403).send("Somente o Root pode excluir equipamentos.");
+            if (!usuarioEhRoot(acesso) && !usuarioEhAdministrador(acesso)) {
+                res.status(403).send("Somente administradores podem excluir equipamentos.");
+                return null;
+            }
+
+            if (!podeExecutarAcao(acesso, "EQUIPAMENTOS_EXCLUIR")) {
+                res.status(403).send("Você não possui permissão para excluir equipamentos.");
+                return null;
+            }
+
+            acessoAtual = acesso;
+            return hardwaresModel.buscarTipoEquipamento(idEquipamento, idEmpresa);
+        })
+        .then(function (equipamentos) {
+            if (!equipamentos || res.headersSent) {
+                return null;
+            }
+
+            if (equipamentos.length === 0) {
+                res.status(404).send("Equipamento não encontrado nesta empresa.");
+                return null;
+            }
+
+            var tiposPermitidos = obterTiposPermitidos(acessoAtual);
+
+            if (!tipoEstaPermitido(equipamentos[0].tipo, tiposPermitidos)) {
+                res.status(403).send("Você não possui acesso a esta categoria de equipamento.");
                 return null;
             }
 

@@ -76,33 +76,43 @@ function cadastrar(nome, email, senha, fkEmpresa, nomeNivelAcesso) {
     return database.executar(instrucaoUsuario)
         .then(function (resultadoUsuario) {
             var idUsuario = resultadoUsuario.insertId;
+            var descricaoNivel;
+
+            if (nomeNivelAcesso === "Administrador") {
+                descricaoNivel = "Administra equipamentos e usuarios conforme as permissoes";
+            } else {
+                descricaoNivel = "Visualiza equipamentos conforme as permissoes";
+            }
 
             var instrucaoNivel = `
                 INSERT INTO nivel_acesso (nome, descricao, fk_usuario)
-                VALUES (
-                    '${nomeNivelAcesso}',
-                    '${nomeNivelAcesso === "Gerente" ? "Gerencia usuarios e equipamentos permitidos" : "Visualiza as dashboards permitidas"}',
-                    ${idUsuario}
-                );
+                VALUES ('${nomeNivelAcesso}', '${descricaoNivel}', ${idUsuario});
             `;
 
             return database.executar(instrucaoNivel)
                 .then(function (resultadoNivel) {
-                    if (nomeNivelAcesso !== "Gerente") {
-                        return resultadoUsuario;
-                    }
-
                     var idNivelAcesso = resultadoNivel.insertId;
-                    var instrucaoPermissoes = `
-                        INSERT INTO permissoes_acesso (fkNivelAcesso, fkPermissao)
-                        SELECT ${idNivelAcesso}, idPermissao
-                        FROM permissao
-                        WHERE nome IN (
-                            'DASHBOARD_SERVIDORES',
-                            'DASHBOARD_NOTEBOOKS',
-                            'DASHBOARD_REDE'
-                        );
-                    `;
+                    var instrucaoPermissoes;
+
+                    if (nomeNivelAcesso === "Administrador") {
+                        instrucaoPermissoes = `
+                            INSERT INTO permissoes_acesso (fkNivelAcesso, fkPermissao)
+                            SELECT ${idNivelAcesso}, idPermissao
+                            FROM permissao;
+                        `;
+                    } else {
+                        instrucaoPermissoes = `
+                            INSERT INTO permissoes_acesso (fkNivelAcesso, fkPermissao)
+                            SELECT ${idNivelAcesso}, idPermissao
+                            FROM permissao
+                            WHERE nome IN (
+                                'EQUIPAMENTOS_VISUALIZAR',
+                                'EQUIPAMENTOS_SERVIDORES_VISUALIZAR',
+                                'EQUIPAMENTOS_NOTEBOOKS_VISUALIZAR',
+                                'EQUIPAMENTOS_REDE_VISUALIZAR'
+                            );
+                        `;
+                    }
 
                     return database.executar(instrucaoPermissoes)
                         .then(function () {
@@ -112,15 +122,23 @@ function cadastrar(nome, email, senha, fkEmpresa, nomeNivelAcesso) {
         });
 }
 
-function buscarGerenteNaEmpresa(idGerente, idEmpresa) {
+function buscarAdministradorNaEmpresa(idAdministrador, idEmpresa) {
     var instrucaoSql = `
-        SELECT u.idUsuario
+        SELECT
+            u.idUsuario,
+            na.nome AS nomeNivelAcesso,
+            GROUP_CONCAT(DISTINCT p.nome ORDER BY p.nome SEPARATOR ',') AS permissoes
         FROM usuario u
         JOIN nivel_acesso na
             ON na.fk_usuario = u.idUsuario
-        WHERE u.idUsuario = ${idGerente}
+        LEFT JOIN permissoes_acesso pa
+            ON pa.fkNivelAcesso = na.idnivel_acesso
+        LEFT JOIN permissao p
+            ON p.idPermissao = pa.fkPermissao
+        WHERE u.idUsuario = ${idAdministrador}
             AND u.fkEmpresa = ${idEmpresa}
-            AND na.nome IN ('Root', 'Gerente');
+            AND na.nome IN ('Root', 'Administrador')
+        GROUP BY u.idUsuario, na.nome;
     `;
 
     return database.executar(instrucaoSql);
@@ -160,12 +178,7 @@ function listarPermissoesDisponiveis() {
     var instrucaoSql = `
         SELECT idPermissao, nome, descricao
         FROM permissao
-        WHERE nome IN (
-            'DASHBOARD_SERVIDORES',
-            'DASHBOARD_NOTEBOOKS',
-            'DASHBOARD_REDE'
-        )
-        ORDER BY idPermissao;
+        ORDER BY nome;
     `;
 
     return database.executar(instrucaoSql);
@@ -191,10 +204,10 @@ function buscarUsuarioNaEmpresa(idUsuario, idEmpresa) {
 function atualizarNivelAcesso(idNivelAcesso, nomeNivelAcesso) {
     var descricao;
 
-    if (nomeNivelAcesso === "Gerente") {
-        descricao = "Gerencia usuarios e equipamentos permitidos";
+    if (nomeNivelAcesso === "Administrador") {
+        descricao = "Administra equipamentos e usuarios conforme as permissoes";
     } else {
-        descricao = "Visualiza as dashboards permitidas";
+        descricao = "Visualiza equipamentos conforme as permissoes";
     }
 
     var instrucaoSql = `
@@ -243,12 +256,7 @@ function verificarPermissoesValidas(idsPermissoes) {
     var instrucaoSql = `
         SELECT idPermissao
         FROM permissao
-        WHERE idPermissao IN (${idsPermissoes.join(",")})
-            AND nome IN (
-                'DASHBOARD_SERVIDORES',
-                'DASHBOARD_NOTEBOOKS',
-                'DASHBOARD_REDE'
-            );
+        WHERE idPermissao IN (${idsPermissoes.join(",")});
     `;
 
     return database.executar(instrucaoSql);
@@ -260,7 +268,7 @@ module.exports = {
     verificar_empresa_por_nome,
     verificar_usuarios_empresa,
     cadastrar,
-    buscarGerenteNaEmpresa,
+    buscarAdministradorNaEmpresa,
     listarUsuariosEmpresa,
     listarPermissoesDisponiveis,
     buscarUsuarioNaEmpresa,

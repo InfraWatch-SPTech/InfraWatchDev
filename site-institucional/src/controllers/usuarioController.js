@@ -21,6 +21,15 @@ function transformarLista(texto) {
     return texto.split(",");
 }
 
+function possuiPermissao(administrador, nomePermissao) {
+    if (administrador.nomeNivelAcesso === "Root") {
+        return true;
+    }
+
+    var permissoes = transformarLista(administrador.permissoes);
+    return permissoes.indexOf(nomePermissao) !== -1;
+}
+
 function autenticar(req, res) {
     var email = req.body.emailServer;
     var senha = req.body.senhaServer;
@@ -118,7 +127,7 @@ function cadastrar(req, res) {
                     var nomeNivelAcesso;
 
                     if (quantidadeUsuarios === 0) {
-                        nomeNivelAcesso = "Gerente";
+                        nomeNivelAcesso = "Administrador";
                     } else {
                         nomeNivelAcesso = "Usuario";
                     }
@@ -147,17 +156,22 @@ function cadastrar(req, res) {
 }
 
 function listarUsuariosEmpresa(req, res) {
-    var idGerente = converterId(req.query.idGerente);
+    var idAdministrador = converterId(req.query.idAdministrador);
     var idEmpresa = converterId(req.query.idEmpresa);
 
-    if (!idGerente || !idEmpresa) {
-        return res.status(400).send("Informe um gerente e uma empresa válidos.");
+    if (!idAdministrador || !idEmpresa) {
+        return res.status(400).send("Informe um administrador e uma empresa válidos.");
     }
 
-    usuarioModel.buscarGerenteNaEmpresa(idGerente, idEmpresa)
-        .then(function (gerentes) {
-            if (gerentes.length === 0) {
-                res.status(403).send("Solicitante não é gerente desta empresa.");
+    usuarioModel.buscarAdministradorNaEmpresa(idAdministrador, idEmpresa)
+        .then(function (administradores) {
+            if (administradores.length === 0) {
+                res.status(403).send("Solicitante não é administrador desta empresa.");
+                return null;
+            }
+
+            if (!possuiPermissao(administradores[0], "USUARIOS_VISUALIZAR")) {
+                res.status(403).send("Você não possui permissão para visualizar usuários.");
                 return null;
             }
 
@@ -185,17 +199,22 @@ function listarUsuariosEmpresa(req, res) {
 }
 
 function listarPermissoes(req, res) {
-    var idGerente = converterId(req.query.idGerente);
+    var idAdministrador = converterId(req.query.idAdministrador);
     var idEmpresa = converterId(req.query.idEmpresa);
 
-    if (!idGerente || !idEmpresa) {
-        return res.status(400).send("Informe um gerente e uma empresa válidos.");
+    if (!idAdministrador || !idEmpresa) {
+        return res.status(400).send("Informe um administrador e uma empresa válidos.");
     }
 
-    usuarioModel.buscarGerenteNaEmpresa(idGerente, idEmpresa)
-        .then(function (gerentes) {
-            if (gerentes.length === 0) {
-                res.status(403).send("Solicitante não é gerente desta empresa.");
+    usuarioModel.buscarAdministradorNaEmpresa(idAdministrador, idEmpresa)
+        .then(function (administradores) {
+            if (administradores.length === 0) {
+                res.status(403).send("Solicitante não é administrador desta empresa.");
+                return null;
+            }
+
+            if (!possuiPermissao(administradores[0], "USUARIOS_VISUALIZAR")) {
+                res.status(403).send("Você não possui permissão para visualizar permissões.");
                 return null;
             }
 
@@ -216,17 +235,17 @@ function listarPermissoes(req, res) {
 function atualizarAcesso(req, res) {
     var corpo = req.body || {};
     var idUsuarioAlvo = converterId(req.params.idUsuario);
-    var idGerente = converterId(corpo.idGerente);
+    var idAdministrador = converterId(corpo.idAdministrador);
     var idEmpresa = converterId(corpo.idEmpresa);
     var nomeNivelAcesso = corpo.nomeNivelAcesso;
     var idsPermissoes = corpo.idsPermissoes;
 
-    if (!idUsuarioAlvo || !idGerente || !idEmpresa) {
-        return res.status(400).send("Informe os identificadores do usuário, gerente e empresa.");
+    if (!idUsuarioAlvo || !idAdministrador || !idEmpresa) {
+        return res.status(400).send("Informe os identificadores do usuário, administrador e empresa.");
     }
 
-    if (nomeNivelAcesso !== "Gerente" && nomeNivelAcesso !== "Usuario") {
-        return res.status(400).send("O nível deve ser Gerente ou Usuario.");
+    if (nomeNivelAcesso !== "Administrador" && nomeNivelAcesso !== "Usuario") {
+        return res.status(400).send("O nível deve ser Administrador ou Usuario.");
     }
 
     if (!Array.isArray(idsPermissoes)) {
@@ -243,15 +262,20 @@ function atualizarAcesso(req, res) {
 
     idsPermissoes = Array.from(new Set(idsPermissoes));
 
-    usuarioModel.buscarGerenteNaEmpresa(idGerente, idEmpresa)
-        .then(function (gerentes) {
-            if (gerentes.length === 0) {
-                res.status(403).send("Solicitante não é gerente desta empresa.");
+    usuarioModel.buscarAdministradorNaEmpresa(idAdministrador, idEmpresa)
+        .then(function (administradores) {
+            if (administradores.length === 0) {
+                res.status(403).send("Solicitante não é administrador desta empresa.");
                 return null;
             }
 
-            if (idUsuarioAlvo === idGerente) {
-                res.status(403).send("O gerente não pode alterar o próprio acesso.");
+            if (!possuiPermissao(administradores[0], "USUARIOS_GERENCIAR")) {
+                res.status(403).send("Você não possui permissão para gerenciar usuários.");
+                return null;
+            }
+
+            if (idUsuarioAlvo === idAdministrador) {
+                res.status(403).send("O administrador não pode alterar o próprio acesso.");
                 return null;
             }
 

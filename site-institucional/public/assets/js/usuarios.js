@@ -7,6 +7,11 @@ function lerUsuarioLogado() {
     }
 }
 
+function nivelUsuarioAtualEhRoot(usuario) {
+    const nivel = usuario.nomeNivelAcesso || usuario.nomePermissao;
+    return nivel === 'Root';
+}
+
 function mostrarAvisoAcesso(texto) {
     const aviso = document.getElementById('aviso-acesso');
     const mensagem = document.getElementById('texto-aviso-acesso');
@@ -34,29 +39,34 @@ function criarCelula(texto, classe) {
 }
 
 function nomeAmigavelPermissao(nome) {
-    if (nome === 'DASHBOARD_SERVIDORES') {
-        return 'Servidores';
-    }
+    const nomes = {
+        DASHBOARD_GERAL_VISUALIZAR: 'Visualizar dashboard geral',
+        EQUIPAMENTOS_VISUALIZAR: 'Visualizar equipamentos',
+        EQUIPAMENTOS_CADASTRAR: 'Cadastrar equipamentos',
+        EQUIPAMENTOS_EDITAR: 'Editar equipamentos',
+        EQUIPAMENTOS_EXCLUIR: 'Excluir equipamentos',
+        EQUIPAMENTOS_SERVIDORES_VISUALIZAR: 'Visualizar servidores',
+        EQUIPAMENTOS_NOTEBOOKS_VISUALIZAR: 'Visualizar notebooks e computadores',
+        EQUIPAMENTOS_REDE_VISUALIZAR: 'Visualizar equipamentos de rede',
+        ALERTAS_VISUALIZAR: 'Visualizar alertas',
+        ALERTAS_CONFIGURAR: 'Configurar alertas',
+        RELATORIOS_VISUALIZAR: 'Visualizar relatórios',
+        RELATORIOS_GERENCIAR: 'Gerenciar relatórios',
+        USUARIOS_VISUALIZAR: 'Visualizar usuários',
+        USUARIOS_GERENCIAR: 'Gerenciar usuários'
+    };
 
-    if (nome === 'DASHBOARD_NOTEBOOKS') {
-        return 'Notebooks e computadores';
-    }
-
-    if (nome === 'DASHBOARD_REDE') {
-        return 'Equipamentos de rede';
-    }
-
-    return nome;
+    return nomes[nome] || nome;
 }
 
 function criarSeletorNivel(usuario) {
     const seletor = document.createElement('select');
     seletor.className = 'seletor-permissao';
 
-    const opcaoGerente = document.createElement('option');
-    opcaoGerente.value = 'Gerente';
-    opcaoGerente.textContent = 'Gerente';
-    seletor.appendChild(opcaoGerente);
+    const opcaoAdministrador = document.createElement('option');
+    opcaoAdministrador.value = 'Administrador';
+    opcaoAdministrador.textContent = 'Administrador';
+    seletor.appendChild(opcaoAdministrador);
 
     const opcaoUsuario = document.createElement('option');
     opcaoUsuario.value = 'Usuario';
@@ -133,8 +143,13 @@ function criarLinhaUsuario(usuario, atual, permissoesDisponiveis) {
 
     const ehUsuarioAtual = Number(usuario.idUsuario) === Number(atual.id);
     const ehRoot = usuario.nomeNivelAcesso === 'Root';
+    const permissoesAtuais = Array.isArray(atual.permissoes)
+        ? atual.permissoes
+        : [];
+    const podeGerenciar = nivelUsuarioAtualEhRoot(atual) ||
+        permissoesAtuais.includes('USUARIOS_GERENCIAR');
 
-    if (ehUsuarioAtual || ehRoot) {
+    if (ehUsuarioAtual || ehRoot || !podeGerenciar) {
         seletorNivel.disabled = true;
         botaoSalvar.disabled = true;
 
@@ -143,16 +158,20 @@ function criarLinhaUsuario(usuario, atual, permissoesDisponiveis) {
             checkboxes[i].disabled = true;
         }
 
-        botaoSalvar.title = ehUsuarioAtual
-            ? 'Não é permitido alterar o próprio acesso.'
-            : 'O acesso do Root não pode ser alterado nesta tela.';
+        if (ehUsuarioAtual) {
+            botaoSalvar.title = 'Não é permitido alterar o próprio acesso.';
+        } else if (ehRoot) {
+            botaoSalvar.title = 'O acesso do Root não pode ser alterado nesta tela.';
+        } else {
+            botaoSalvar.title = 'Você não possui permissão para gerenciar usuários.';
+        }
     }
 
     botaoSalvar.addEventListener('click', function () {
         const nomeNivelAcesso = seletorNivel.value;
         const idsPermissoes = coletarIdsPermissoes(caixaPermissoes);
 
-        if (nomeNivelAcesso !== 'Gerente' && nomeNivelAcesso !== 'Usuario') {
+        if (nomeNivelAcesso !== 'Administrador' && nomeNivelAcesso !== 'Usuario') {
             mostrarEstado('Selecione um nível de acesso válido.', 'erro');
             return;
         }
@@ -165,7 +184,7 @@ function criarLinhaUsuario(usuario, atual, permissoesDisponiveis) {
             method: 'PUT',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({
-                idGerente: atual.id,
+                idAdministrador: atual.id,
                 idEmpresa: atual.idEmpresa,
                 nomeNivelAcesso: nomeNivelAcesso,
                 idsPermissoes: idsPermissoes
@@ -226,7 +245,7 @@ function renderizarUsuarios(usuarios, atual, permissoesDisponiveis) {
 
 function carregarDadosTela(atual) {
     const parametros = new URLSearchParams({
-        idGerente: String(atual.id),
+        idAdministrador: String(atual.id),
         idEmpresa: String(atual.idEmpresa)
     });
 
@@ -271,8 +290,14 @@ function carregarDadosTela(atual) {
 
     const nivel = usuario.nomeNivelAcesso || usuario.nomePermissao;
 
-    if (nivel !== 'Gerente' && nivel !== 'Root') {
-        mostrarAvisoAcesso('Esta página está disponível somente para gerentes.');
+    const permissoes = Array.isArray(usuario.permissoes)
+        ? usuario.permissoes
+        : [];
+    const podeVisualizarUsuarios = permissoes.includes('USUARIOS_VISUALIZAR');
+
+    if (nivel !== 'Root' &&
+        (nivel !== 'Administrador' || !podeVisualizarUsuarios)) {
+        mostrarAvisoAcesso('Esta página está disponível somente para administradores autorizados.');
 
         window.setTimeout(function () {
             window.location.replace('./hardwares.html');
