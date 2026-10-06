@@ -122,7 +122,7 @@ function cadastrar(nome, email, senha, fkEmpresa, nomeNivelAcesso) {
         });
 }
 
-function buscarAdministradorNaEmpresa(idAdministrador, idEmpresa) {
+function buscarSolicitanteNaEmpresa(idSolicitante, idEmpresa) {
     var instrucaoSql = `
         SELECT
             u.idUsuario,
@@ -135,9 +135,8 @@ function buscarAdministradorNaEmpresa(idAdministrador, idEmpresa) {
             ON pa.fkNivelAcesso = na.idnivel_acesso
         LEFT JOIN permissao p
             ON p.idPermissao = pa.fkPermissao
-        WHERE u.idUsuario = ${idAdministrador}
+        WHERE u.idUsuario = ${idSolicitante}
             AND u.fkEmpresa = ${idEmpresa}
-            AND na.nome IN ('Root', 'Administrador')
         GROUP BY u.idUsuario, na.nome;
     `;
 
@@ -268,7 +267,7 @@ module.exports = {
     verificar_empresa_por_nome,
     verificar_usuarios_empresa,
     cadastrar,
-    buscarAdministradorNaEmpresa,
+    buscarSolicitanteNaEmpresa,
     listarUsuariosEmpresa,
     listarPermissoesDisponiveis,
     buscarUsuarioNaEmpresa,

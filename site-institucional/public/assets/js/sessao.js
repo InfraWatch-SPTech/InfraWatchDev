@@ -35,12 +35,15 @@ function atualizarLinkUsuarios(usuario) {
     const linkExistente = listaNavegacao.querySelector('.link-usuarios-admin');
     const nivel = nivelUsuario(usuario);
     const ehRoot = nivel === 'Root';
-    const ehAdministrador = nivel === 'Administrador';
     const podeVisualizarUsuarios = usuarioPossuiPermissao(
         usuario,
         'USUARIOS_VISUALIZAR'
     );
-    const podeAcessar = ehRoot || (ehAdministrador && podeVisualizarUsuarios);
+    const podeGerenciarUsuarios = usuarioPossuiPermissao(
+        usuario,
+        'USUARIOS_GERENCIAR'
+    );
+    const podeAcessar = ehRoot || podeVisualizarUsuarios || podeGerenciarUsuarios;
 
     if (podeAcessar && !linkExistente) {
         const item = document.createElement('li');

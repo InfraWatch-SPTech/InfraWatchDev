@@ -184,7 +184,7 @@ function criarLinhaUsuario(usuario, atual, permissoesDisponiveis) {
             method: 'PUT',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({
-                idAdministrador: atual.id,
+                idSolicitante: atual.id,
                 idEmpresa: atual.idEmpresa,
                 nomeNivelAcesso: nomeNivelAcesso,
                 idsPermissoes: idsPermissoes
@@ -245,7 +245,7 @@ function renderizarUsuarios(usuarios, atual, permissoesDisponiveis) {
 
 function carregarDadosTela(atual) {
     const parametros = new URLSearchParams({
-        idAdministrador: String(atual.id),
+        idSolicitante: String(atual.id),
         idEmpresa: String(atual.idEmpresa)
     });
 
@@ -294,10 +294,12 @@ function carregarDadosTela(atual) {
         ? usuario.permissoes
         : [];
     const podeVisualizarUsuarios = permissoes.includes('USUARIOS_VISUALIZAR');
+    const podeGerenciarUsuarios = permissoes.includes('USUARIOS_GERENCIAR');
 
     if (nivel !== 'Root' &&
-        (nivel !== 'Administrador' || !podeVisualizarUsuarios)) {
-        mostrarAvisoAcesso('Esta página está disponível somente para administradores autorizados.');
+        !podeVisualizarUsuarios &&
+        !podeGerenciarUsuarios) {
+        mostrarAvisoAcesso('Você não possui permissão para acessar o gerenciamento de usuários.');
 
         window.setTimeout(function () {
             window.location.replace('./hardwares.html');

@@ -106,7 +106,6 @@ CREATE TABLE equipamento (
     fkEmpresa INT NOT NULL,
     endereco_idEndereco INT,
     relatorio_idRelatorio INT,
-    hostname varchar (150), 
 
     CONSTRAINT fk_equipamento_empresa
         FOREIGN KEY (fkEmpresa)
@@ -228,10 +227,12 @@ INSERT INTO permissoes_acesso (fkNivelAcesso, fkPermissao) VALUES
 (3, 13),
 (3, 14);
 
--- Usuario 4: visualiza somente notebooks e computadores.
+-- Usuario 4: visualiza somente notebooks e computadores
+-- e possui a permissao adicional de gerenciar usuarios.
 INSERT INTO permissoes_acesso (fkNivelAcesso, fkPermissao) VALUES
 (4, 1),
 (4, 2),
+(4, 11),
 (4, 13);
 
 -- Usuario 5: visualiza somente servidores e relatorios.
@@ -310,3 +311,4 @@ VALUES
 ('USO_CPU', 65.00, 85.00, '%', 1, 4, 1),
 ('USO_RAM', 70.00, 90.00, '%', 1, 4, 2),
 ('USO_DISCO', 75.00, 90.00, '%', 1, 4, 3);
+

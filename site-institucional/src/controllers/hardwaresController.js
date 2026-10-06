@@ -39,6 +39,19 @@ function podeExecutarAcao(acesso, nomePermissao) {
     return possuiPermissao(permissoes, nomePermissao);
 }
 
+function podeVisualizarEquipamentos(acesso) {
+    if (usuarioEhRoot(acesso)) {
+        return true;
+    }
+
+    var permissoes = transformarPermissoes(acesso.permissoes);
+
+    return possuiPermissao(permissoes, "EQUIPAMENTOS_VISUALIZAR") ||
+        possuiPermissao(permissoes, "EQUIPAMENTOS_SERVIDORES_VISUALIZAR") ||
+        possuiPermissao(permissoes, "EQUIPAMENTOS_NOTEBOOKS_VISUALIZAR") ||
+        possuiPermissao(permissoes, "EQUIPAMENTOS_REDE_VISUALIZAR");
+}
+
 function obterTiposPermitidos(acesso) {
     if (usuarioEhRoot(acesso)) {
         return null;
@@ -129,7 +142,7 @@ function buscarEquipamentosEmpresa(req, res) {
                 return null;
             }
 
-            if (!podeExecutarAcao(acesso, "EQUIPAMENTOS_VISUALIZAR")) {
+            if (!podeVisualizarEquipamentos(acesso)) {
                 res.status(403).send("Você não possui permissão para visualizar equipamentos.");
                 return null;
             }
@@ -255,7 +268,7 @@ function buscarEquipamentoPorId(req, res) {
                 return null;
             }
 
-            if (!podeExecutarAcao(acesso, "EQUIPAMENTOS_VISUALIZAR")) {
+            if (!podeVisualizarEquipamentos(acesso)) {
                 res.status(403).send("Você não possui permissão para visualizar equipamentos.");
                 return null;
             }
