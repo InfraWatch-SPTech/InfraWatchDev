@@ -4,12 +4,13 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
     <link rel="icon" type="image/png" href="../public/assets/midias/main-icon-image.png">
-    
+
     <link rel="stylesheet" href="./assets/css/relatorios.css">
-    
+
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"
-        crossorigin="anonymous" referrerpolicy="no-referrer" />
+        crossorigin="anonymous" referrerpolicy="no-referrer">
 
     <title>InfraWatch.Dev - Criar Relatório</title>
 </head>
@@ -19,6 +20,7 @@
     <div class="tela-painel">
 
         <aside class="menu-lateral">
+
             <div class="topo-menu">
                 <button class="botao-menu" id="botao-menu">
                     <i class="fa-solid fa-bars"></i>
@@ -27,150 +29,328 @@
 
             <nav class="navegacao-menu">
                 <ul>
+
                     <li>
                         <a href="./main.html">
                             <span>Home</span>
                         </a>
                     </li>
+
                     <li>
                         <a href="./servidores.html">
                             <span>Servidores</span>
                         </a>
                     </li>
+
                     <li>
                         <a href="./funcionarios.html">
                             <span>Gerenciar funcionários</span>
                         </a>
                     </li>
+
                     <li>
                         <a href="./gerenciar-servidores.html">
                             <span>Gerenciar servidores</span>
                         </a>
                     </li>
+
                     <li class="item-ativo">
                         <a href="./relatorios.html">
                             <span>Relatórios</span>
                         </a>
                     </li>
+
                 </ul>
             </nav>
 
             <div class="rodape-menu">
                 <span class="titulo-suporte">Suporte</span>
-                <a href="#suporte" class="link-suporte">Precisa de ajuda?</a>
+                <a href="#suporte" class="link-suporte">
+                    Precisa de ajuda?
+                </a>
             </div>
+
         </aside>
+
 
         <div class="conteudo-principal">
 
             <header class="cabecalho-topo">
+
                 <div class="saudacao-usuario">
                     <span>Olá gerente!</span>
                 </div>
 
                 <div class="dados-usuario">
-                    <span class="nome-empresa">Bananhinha ltda.</span>
+
+                    <span class="nome-empresa">
+                        Bananhinha ltda.
+                    </span>
+
                     <div class="perfil-usuario">
                         <i class="fa-solid fa-circle-user"></i>
                         <span>Gerente</span>
                     </div>
+
                 </div>
+
             </header>
 
+
             <main class="area-formulario">
+
                 <div class="caixa-formulario">
-                    
-                    <h1 class="titulo-formulario">CRIAR RELATÓRIO</h1>
+
+                    <h1 class="titulo-formulario">
+                        CRIAR RELATÓRIO
+                    </h1>
+
 
                     <form class="formulario-relatorio" id="form-relatorio">
 
                         <div class="linha-tres-campos">
+
                             <div class="campo">
-                                <label for="titulo">Título do relatório</label>
-                                <input type="text" id="titulo" name="titulo" 
+
+                                <label for="titulo">
+                                    Título do relatório
+                                </label>
+
+                                <input type="text" id="titulo" name="titulo"
                                     placeholder="Análise de desempenho - CPU e RAM" required>
+
                             </div>
 
                             <div class="campo">
-                                <label for="data">Data referente ao relatório</label>
+
+                                <label for="data">
+                                    Data referente ao relatório
+                                </label>
+
                                 <input type="date" id="data" name="data" required>
+
                             </div>
 
                             <div class="campo">
-                                <label for="servidor">Servidor</label>
+
+                                <label for="servidor">
+                                    Servidor
+                                </label>
+
                                 <div class="caixa-selecao">
+
                                     <select id="servidor" name="servidor" required>
-                                        <option value="" disabled selected>Selecione um servidor</option>
-                                        <option value="Servidor_01">Servidor_01</option>
-                                        <option value="Servidor_02">Servidor_02</option>
-                                        <option value="Servidor_03">Servidor_03</option>
-                                    </select>
-                                    <i class="fa-solid fa-chevron-down icone-seta"></i>
-                                </div>
-                            </div>
-                        </div>
 
-                        <div class="linha-dois-campos">
-                            <div class="campo">
-                                <label for="analista">Analista responsável</label>
-                                <input type="text" id="analista" name="analista" 
-                                    value="Funcionário logado" readonly>
+                                        <option value="" disabled selected>
+                                            Selecione um servidor
+                                        </option>
+
+                                    </select>
+
+                                    <i class="fa-solid fa-chevron-down icone-seta"></i>
+
+                                </div>
+
                             </div>
 
-                            <div class="campo">
-                                <label for="tipo">Tipo de relatório:</label>
-                                <div class="caixa-selecao">
-                                    <select id="tipo" name="tipo" required>
-                                        <option value="incidente">Incidente</option>
-                                        <option value="manutencao">Manutenção</option>
-                                        <option value="desempenho">Desempenho</option>
-                                    </select>
-                                    <i class="fa-solid fa-chevron-down icone-seta"></i>
-                                </div>
-                            </div>
                         </div>
 
                         <div class="linha-campo-unico">
-                            <div class="campo">
-                                <label for="detalhes">Relatório detalhado</label>
-                                <textarea id="detalhes" name="detalhes" rows="6" 
-                                    placeholder="Descreva as informações detalhadas do relatório..." required></textarea>
-                            </div>
-                        </div>
 
-                        <div class="linha-anexo">
-                            <label class="etiqueta-anexo">Anexar arquivo</label>
-                            <label for="campo-arquivo" class="botao-anexo">
-                                <i class="fa-solid fa-paperclip"></i>
-                                <span id="texto-arquivo">Selecionar arquivo</span>
-                                <input type="file" id="campo-arquivo" name="arquivo">
-                            </label>
+                            <div class="campo">
+
+                                <label for="detalhes">
+                                    Relatório detalhado
+                                </label>
+
+                                <textarea id="detalhes" name="detalhes" rows="6"
+                                    placeholder="Descreva as informações detalhadas do relatório..."
+                                    required></textarea>
+
+                            </div>
+
                         </div>
 
                         <div class="linha-botoes">
+
                             <button type="submit" id="botao-enviar">
                                 Enviar
                             </button>
+
                         </div>
 
                     </form>
+
                 </div>
+
             </main>
 
         </div>
+
     </div>
 
-    <script>
-        let inputArquivo = document.getElementById('campo-arquivo');
-        let textoArquivo = document.getElementById('texto-arquivo');
 
-        inputArquivo.addEventListener('change', () => {
-            if (inputArquivo.files.length > 0) {
-                textoArquivo.textContent = inputArquivo.files[0].name;
-            } else {
-                textoArquivo.textContent = 'Selecionar arquivo';
+    <script>
+
+        let formulario = document.getElementById("form-relatorio");
+        let servidor = document.getElementById("servidor");
+        let idEmpresa = sessionStorage.ID_EMPRESA;
+
+        function buscarServidores() {
+
+            fetch(`/relatorios/servidores/${idEmpresa}`)
+                .then(function (resposta) {
+
+                    if (resposta.ok) {
+                        return resposta.json();
+
+                    } else {
+                        throw new Error("Erro ao buscar os servidores.");
+                    }
+
+                })
+                .then(function (dados) {
+
+                    servidor.innerHTML = `
+                        <option value="" disabled selected>
+                            Selecione um servidor
+                        </option>
+                    `;
+
+                    for (let i = 0; i < dados.length; i++) {
+
+                        servidor.innerHTML += `
+                            <option value="${dados[i].idEquipamento}">
+                                ${dados[i].nomeEquipamento}
+                            </option>
+                        `;
+
+                    }
+
+                })
+                .catch(function (erro) {
+
+                    console.log(erro);
+
+                    servidor.innerHTML = `
+                        <option value="" disabled selected>
+                            Erro ao carregar servidores
+                        </option>
+                    `;
+
+                });
+
+        }
+
+        formulario.addEventListener("submit", function (event) {
+
+            event.preventDefault();
+
+            let titulo = document.getElementById("titulo").value;
+            let data = document.getElementById("data").value;
+            let detalhes = document.getElementById("detalhes").value;
+            let idEquipamento = servidor.value;
+
+
+            if (titulo == "") {
+
+                alert("Informe o título do relatório.");
+                return;
+
             }
+
+            if (data == "") {
+
+                alert("Informe a data do relatório.");
+                return;
+
+            }
+
+            if (idEquipamento == "") {
+
+                alert("Selecione um servidor.");
+                return;
+
+            }
+
+            if (detalhes == "") {
+
+                alert("Informe os detalhes do relatório.");
+                return;
+
+            }
+
+            fetch("/relatorios/cadastrar", {
+
+                method: "POST",
+
+                headers: {
+                    "Content-Type": "application/json"
+                },
+
+                body: JSON.stringify({
+
+                    titulo: titulo,
+
+                    descricao: detalhes,
+
+                    dataRel: data + " 00:00:00",
+
+                    idEquipamento: idEquipamento
+
+                })
+
+            })
+
+                .then(function (resposta) {
+
+                    if (resposta.ok) {
+
+                        return resposta.json();
+
+                    } else {
+
+                        return resposta.text().then(function (texto) {
+
+                            throw new Error(texto);
+
+                        });
+
+                    }
+
+                })
+
+                .then(function (resultado) {
+
+                    console.log(resultado);
+
+                    alert("Relatório cadastrado com sucesso!");
+
+                    formulario.reset();
+
+                    servidor.innerHTML = `
+                        <option value="" disabled selected>
+                            Selecione um servidor
+                        </option>
+                    `;
+
+                    buscarServidores();
+
+                })
+
+                .catch(function (erro) {
+
+                    console.log(erro);
+
+                    alert("Não foi possível cadastrar o relatório.");
+
+                });
+
         });
+        buscarServidores();
+
     </script>
+
 </body>
+
 </html>

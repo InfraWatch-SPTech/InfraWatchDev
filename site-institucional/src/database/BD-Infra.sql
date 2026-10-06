@@ -1,155 +1,312 @@
-DROP DATABASE IF EXISTS InfraWatch;
+-- =============================================================
+-- INFRAWATCH - SCRIPT DA NOVA MODELAGEM COM SEEDS
+-- Banco: MySQL 8+
+--
+-- ATENCAO: DROP DATABASE apaga completamente o banco existente.
+-- Use este script somente se puder recriar o banco do zero.
+-- =============================================================
 
+DROP DATABASE IF EXISTS InfraWatch;
 CREATE DATABASE InfraWatch;
 USE InfraWatch;
+
+-- =============================================================
+-- 1. CRIACAO DAS TABELAS
+-- =============================================================
 
 CREATE TABLE empresa (
     idEmpresa INT PRIMARY KEY AUTO_INCREMENT,
     nome VARCHAR(100) NOT NULL,
     cnpj VARCHAR(18),
     email VARCHAR(100),
-    codigo CHAR(8) NOT NULL
-);
-    
-
-CREATE TABLE permissao (
-    idPermissao INT PRIMARY KEY AUTO_INCREMENT,
-    nome VARCHAR(50) NOT NULL,
-    descricao VARCHAR(200)
+    codigo CHAR(8) NOT NULL UNIQUE
 );
 
 CREATE TABLE usuario (
     idUsuario INT PRIMARY KEY AUTO_INCREMENT,
     nome VARCHAR(100) NOT NULL,
-    email VARCHAR(100) NOT NULL,
+    email VARCHAR(100) NOT NULL UNIQUE,
+    telefone CHAR(9),
     senha VARCHAR(100) NOT NULL,
-    fkEmpresa INT,
-    fkPermissao INT,
-    FOREIGN KEY (fkEmpresa) REFERENCES empresa(idEmpresa),
-    FOREIGN KEY (fkPermissao) REFERENCES permissao(idPermissao)
+    fkEmpresa INT NOT NULL,
+
+    CONSTRAINT fk_usuario_empresa
+        FOREIGN KEY (fkEmpresa)
+        REFERENCES empresa(idEmpresa)
+);
+
+CREATE TABLE nivel_acesso (
+    idnivel_acesso INT PRIMARY KEY AUTO_INCREMENT,
+    nome VARCHAR(45) NOT NULL,
+    descricao VARCHAR(80),
+    fk_usuario INT NOT NULL,
+
+    CONSTRAINT fk_nivel_acesso_usuario
+        FOREIGN KEY (fk_usuario)
+        REFERENCES usuario(idUsuario)
+        ON DELETE CASCADE
+);
+
+CREATE TABLE permissao (
+    idPermissao INT PRIMARY KEY AUTO_INCREMENT,
+    nome VARCHAR(50) NOT NULL UNIQUE,
+    descricao VARCHAR(200)
+);
+
+CREATE TABLE permissoes_acesso (
+    fkNivelAcesso INT NOT NULL,
+    fkPermissao INT NOT NULL,
+
+    CONSTRAINT pk_permissoes_acesso
+        PRIMARY KEY (fkNivelAcesso, fkPermissao),
+
+    CONSTRAINT fk_permissoes_acesso_nivel
+        FOREIGN KEY (fkNivelAcesso)
+        REFERENCES nivel_acesso(idnivel_acesso)
+        ON DELETE CASCADE,
+
+    CONSTRAINT fk_permissoes_acesso_permissao
+        FOREIGN KEY (fkPermissao)
+        REFERENCES permissao(idPermissao)
+        ON DELETE CASCADE
+);
+
+CREATE TABLE endereco (
+    idEndereco INT PRIMARY KEY AUTO_INCREMENT,
+    logradouro VARCHAR(200) NOT NULL,
+    numero VARCHAR(45) NOT NULL,
+    bairro VARCHAR(45) NOT NULL,
+    cidade VARCHAR(100) NOT NULL,
+    estado CHAR(2) NOT NULL,
+    cep CHAR(8) NOT NULL,
+    complemento VARCHAR(45),
+    empresa_idEmpresa INT NOT NULL,
+
+    CONSTRAINT fk_endereco_empresa
+        FOREIGN KEY (empresa_idEmpresa)
+        REFERENCES empresa(idEmpresa)
+        ON DELETE CASCADE
+);
+
+CREATE TABLE relatorio (
+    idRelatorio INT PRIMARY KEY AUTO_INCREMENT,
+    titulo VARCHAR(45) NOT NULL,
+    descricao VARCHAR(500) NOT NULL,
+    data_rel DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP
 );
 
 CREATE TABLE equipamento (
     idEquipamento INT PRIMARY KEY AUTO_INCREMENT,
     nome VARCHAR(100) NOT NULL,
-    tipo VARCHAR(50),
-    ip VARCHAR(15),
-    status VARCHAR(20),
+    tipo VARCHAR(50) NOT NULL,
+    ip VARCHAR(25),
+    status VARCHAR(20) NOT NULL,
     localizacao VARCHAR(150),
     descricao VARCHAR(200),
-    fkEmpresa INT,
-    FOREIGN KEY (fkEmpresa) REFERENCES empresa(idEmpresa)
-);
+    fkEmpresa INT NOT NULL,
+    endereco_idEndereco INT,
+    relatorio_idRelatorio INT,
+    hostname varchar (150), 
 
+    CONSTRAINT fk_equipamento_empresa
+        FOREIGN KEY (fkEmpresa)
+        REFERENCES empresa(idEmpresa),
+
+    CONSTRAINT fk_equipamento_endereco
+        FOREIGN KEY (endereco_idEndereco)
+        REFERENCES endereco(idEndereco)
+        ON DELETE SET NULL,
+
+    CONSTRAINT fk_equipamento_relatorio
+        FOREIGN KEY (relatorio_idRelatorio)
+        REFERENCES relatorio(idRelatorio)
+        ON DELETE SET NULL
+);
 
 CREATE TABLE componente (
     idComponente INT PRIMARY KEY AUTO_INCREMENT,
     nome VARCHAR(100) NOT NULL,
-    tipo VARCHAR(50),
-    descricao VARCHAR(200),
-    fkEquipamento INT,
-    FOREIGN KEY (fkEquipamento) REFERENCES equipamento(idEquipamento) ON DELETE CASCADE
+    tipo VARCHAR(50) NOT NULL,
+    descricao VARCHAR(200)
 );
 
+CREATE TABLE parametro_alerta (
+    nomeMetrica VARCHAR(50) NOT NULL,
+    limite_atencao DECIMAL(10,2) NOT NULL,
+    limite_critico DECIMAL(10,2) NOT NULL,
+    unidade VARCHAR(20) NOT NULL DEFAULT '%',
+    ativo TINYINT(1) NOT NULL DEFAULT 1,
+    fkEquipamento INT NOT NULL,
+    fkComponente INT NOT NULL,
 
-CREATE TABLE metrica (
-    idMetrica INT PRIMARY KEY AUTO_INCREMENT,
-    nome VARCHAR(100) NOT NULL,
-    valor DECIMAL(10,2),
-    unidade VARCHAR(20),
-    dataHora DATETIME,
-    fkComponente INT,
-    FOREIGN KEY (fkComponente) REFERENCES componente(idComponente) ON DELETE CASCADE
+    CONSTRAINT pk_parametro_alerta
+        PRIMARY KEY (fkEquipamento, fkComponente),
+
+    CONSTRAINT fk_parametro_alerta_equipamento
+        FOREIGN KEY (fkEquipamento)
+        REFERENCES equipamento(idEquipamento)
+        ON DELETE CASCADE,
+
+    CONSTRAINT fk_parametro_alerta_componente
+        FOREIGN KEY (fkComponente)
+        REFERENCES componente(idComponente)
 );
 
-INSERT INTO permissao (idPermissao, nome, descricao) VALUES 
-(1, 'Root','root'),
-(2, 'Admin', 'Administrador'),
-(3, 'Usuario','Usuario Comum');
+-- =============================================================
+-- 2. SEEDS DE EMPRESAS
+-- A empresa de codigo NOVA0001 fica sem usuarios para permitir
+-- o teste da regra: primeiro usuario da empresa recebe nivel Administrador.
+-- =============================================================
 
-INSERT INTO empresa (idEmpresa, nome, cnpj, email, codigo) VALUES 
-(1, 'InfraWatch', '12.345.555/0001-90', 'contato@infraWatch.com', 'X678JNLL'),
-(2, 'Bananinha Ltda', '12.345.678/0001-90', 'contato@techsolutions.com', 'X678JNSZ'),
-(3, 'Xpto Brasil', '98.765.432/0001-10', 'suporte@datacenterbrasil.com', 'K492MLQX'),
-(4, 'Batata Tech', '11.222.333/0001-44', 'contato@cloudnova.com', 'V375BWRZ'),
-(5, 'Security SA', '55.666.777/0001-88', 'seguranca@infosecurity.com', 'P254KTVW'),
-(6, 'Pro', '99.888.777/0001-66', 'network@networkpro.com', 'M931JGBC');
+INSERT INTO empresa (nome, cnpj, email, codigo) VALUES
+('InfraWatch', '12.345.555/0001-90', 'contato@infrawatch.com', 'X678JNLL'),
+('Bananinha Ltda', '12.345.678/0001-90', 'contato@bananinha.com', 'X678JNSZ'),
+('XPTO Brasil', '98.765.432/0001-10', 'suporte@xpto.com', 'K492MLQX'),
+('Empresa para Teste', NULL, 'teste@empresa.com', 'NOVA0001');
 
-INSERT INTO usuario (nome, email, senha, fkEmpresa, fkPermissao) VALUES 
--- InfraWatch
-('root', 'admin@infrawatch.com', 'admin123', 1, 1),
--- Bananinha Ltda
-('Admin Bananinha', 'admin@bananinha.com', 'admin123', 2, 2),
-('Gerente Bananinha', 'gerente@bananinha.com', 'gerente123', 2, 3),
--- Xpto Brasil
-('Admin Xpto', 'admin@xpto.com', 'admin123', 3, 2),
-('Gerente Xpto', 'gerente@xpto.com', 'gerente123', 3, 3),
--- Batata Tech
-('Admin Batata', 'admin@batata.com', 'admin123', 4, 2),
-('Gerente Batata', 'gerente@batata.com', 'gerente123', 4, 3),
--- Security SA
-('Admin Security', 'admin@security.com', 'admin123', 5, 2),
-('Gerente Security', 'gerente@security.com', 'gerente123', 5, 3),
--- Pro
-('Admin Pro', 'admin@pro.com', 'admin123', 6, 2),
-('Gerente Pro', 'gerente@pro.com', 'gerente123', 6, 3);
+-- =============================================================
+-- 3. SEEDS DE USUARIOS
+-- Senhas simples somente para ambiente academico/de teste.
+-- Em producao, as senhas devem ser armazenadas com hash.
+-- =============================================================
+
+INSERT INTO usuario
+(nome, email, telefone, senha, fkEmpresa)
+VALUES
+('Root InfraWatch', 'admin@infrawatch.com', '999999999', 'admin123', 1),
+('Admin Bananinha', 'admin@bananinha.com', '988888888', 'admin123', 2),
+('Analista Geral', 'analista@bananinha.com', '977777777', 'usuario123', 2),
+('Analista de Alertas', 'alertas@bananinha.com', '966666666', 'usuario123', 2),
+('Auditor XPTO', 'auditor@xpto.com', '955555555', 'usuario123', 3);
+
+-- O nivel define o limite máximo de ações de cada usuario.
+-- As permissoes adicionais refinam o que ele realmente pode acessar.
+INSERT INTO nivel_acesso (nome, descricao, fk_usuario) VALUES
+('Root', 'Acesso completo ao sistema', 1),
+('Administrador', 'Administra equipamentos e usuarios conforme as permissoes', 2),
+('Usuario', 'Visualiza equipamentos conforme as permissoes', 3),
+('Usuario', 'Visualiza equipamentos conforme as permissoes', 4),
+('Usuario', 'Visualiza equipamentos conforme as permissoes', 5);
+
+-- =============================================================
+-- 4. SEEDS DE PERMISSOES ESPECIFICAS
+-- =============================================================
+
+INSERT INTO permissao (nome, descricao) VALUES
+('DASHBOARD_GERAL_VISUALIZAR', 'Permite visualizar a dashboard geral'),
+('EQUIPAMENTOS_VISUALIZAR', 'Permite visualizar equipamentos'),
+('EQUIPAMENTOS_CADASTRAR', 'Permite cadastrar equipamentos'),
+('EQUIPAMENTOS_EDITAR', 'Permite editar equipamentos'),
+('EQUIPAMENTOS_EXCLUIR', 'Permite excluir equipamentos'),
+('ALERTAS_VISUALIZAR', 'Permite visualizar alertas'),
+('ALERTAS_CONFIGURAR', 'Permite configurar os limites dos alertas'),
+('RELATORIOS_VISUALIZAR', 'Permite visualizar relatorios'),
+('RELATORIOS_GERENCIAR', 'Permite criar, editar e excluir relatorios'),
+('USUARIOS_VISUALIZAR', 'Permite visualizar usuarios da empresa'),
+('USUARIOS_GERENCIAR', 'Permite administrar usuarios e niveis de acesso'),
+('EQUIPAMENTOS_SERVIDORES_VISUALIZAR', 'Limita a visualizacao aos servidores'),
+('EQUIPAMENTOS_NOTEBOOKS_VISUALIZAR', 'Limita a visualizacao aos notebooks e computadores'),
+('EQUIPAMENTOS_REDE_VISUALIZAR', 'Limita a visualizacao aos equipamentos de rede');
+
+-- Root: todas as permissoes.
+INSERT INTO permissoes_acesso (fkNivelAcesso, fkPermissao)
+SELECT 1, idPermissao
+FROM permissao;
+
+-- Administrador: todas as permissoes.
+INSERT INTO permissoes_acesso (fkNivelAcesso, fkPermissao)
+SELECT 2, idPermissao
+FROM permissao;
+
+-- Usuario 3: visualiza todas as categorias de equipamento.
+INSERT INTO permissoes_acesso (fkNivelAcesso, fkPermissao) VALUES
+(3, 1),
+(3, 2),
+(3, 6),
+(3, 8),
+(3, 12),
+(3, 13),
+(3, 14);
+
+-- Usuario 4: visualiza somente notebooks e computadores.
+INSERT INTO permissoes_acesso (fkNivelAcesso, fkPermissao) VALUES
+(4, 1),
+(4, 2),
+(4, 13);
+
+-- Usuario 5: visualiza somente servidores e relatorios.
+INSERT INTO permissoes_acesso (fkNivelAcesso, fkPermissao) VALUES
+(5, 1),
+(5, 2),
+(5, 8),
+(5, 12);
+
+-- =============================================================
+-- 5. SEEDS DE ENDERECOS
+-- =============================================================
+
+INSERT INTO endereco
+(logradouro, numero, bairro, cidade, estado, cep, complemento, empresa_idEmpresa)
+VALUES
+('Avenida Paulista', '1000', 'Bela Vista', 'Sao Paulo', 'SP', '01310100', 'Datacenter A', 2),
+('Rua das Flores', '250', 'Centro', 'Campinas', 'SP', '13010000', 'Sala de servidores', 2),
+('Avenida Brasil', '500', 'Centro', 'Rio de Janeiro', 'RJ', '20040002', 'Datacenter principal', 3);
+
+-- =============================================================
+-- 6. SEEDS DE RELATORIOS
+-- Na modelagem recebida, equipamento possui a FK de relatorio.
+-- Por isso, os relatorios sao inseridos antes dos equipamentos.
+-- =============================================================
+
+INSERT INTO relatorio (titulo, descricao, data_rel) VALUES
+('Desempenho principal', 'Relatorio de CPU, RAM e disco do servidor principal.', '2026-09-25 10:00:00'),
+('Rotina de backup', 'Relatorio de verificacao do servidor de backup.', '2026-09-26 11:30:00'),
+('Disponibilidade da rede', 'Relatorio de funcionamento do switch central.', '2026-09-27 14:00:00'),
+('Servidor web XPTO', 'Relatorio do servidor web em estado de atencao.', '2026-09-28 16:45:00');
+
+-- =============================================================
+-- 7. SEEDS DE EQUIPAMENTOS
+-- =============================================================
 
 INSERT INTO equipamento
-(nome, tipo, ip, status,localizacao, descricao, fkEmpresa)
+(nome, tipo, ip, status, localizacao, descricao,
+ fkEmpresa, endereco_idEndereco, relatorio_idRelatorio)
 VALUES
-('Servidor Principal', 'Servidor', '192.168.1.10', 'Online','TI','Servidor principal de TI', 2),
-('Switch Central', 'Switch', '192.168.1.20', 'Online','RH','Switch central do RH', 2),
-('Roteador Principal', 'Roteador', '192.168.1.1', 'Online','RH','Roteador principal do RH', 2),
-('Servidor Web', 'Servidor', '192.168.2.10', 'Online', 'TI','Servidor web de TI', 3),
-('Servidor Banco de Dados', 'Servidor', '192.168.2.11', 'Online','TI','Servidor do banco de dados', 3),
-('Firewall', 'Firewall', '192.168.2.254', 'Online', 'Segurança','Firewall localizado na área de segurança', 3),
-('Servidor Aplicação', 'Servidor', '192.168.3.10', 'Online','TI','Servidor de Aplicação de TI', 4),
-('Switch Produção', 'Switch', '192.168.3.20', 'Offline', 'TI', 'Switch de produção de TI',4),
-('Roteador Principal', 'Roteador', '192.168.3.1', 'Online','Segurança','Roteador principal de segurança', 4),
-('Servidor Segurança', 'Servidor', '192.168.4.10', 'Online','Segurança','Servidor de segurança', 5),
-('Firewall Corporativo', 'Firewall', '192.168.4.254', 'Online','RH','Firewall do RH', 5),
-('Servidor Backup', 'Servidor', '192.168.4.20', 'Online','TI','Servidor de roolback', 5),
-('Servidor Principal', 'Servidor', '192.168.5.10', 'Online','Financeiro', 'Servidor principal do financeiro',6),
-('Switch Core', 'Switch', '192.168.5.20', 'Online','Financeiro', 'Switch core do financeiro', 6),
-('Roteador', 'Roteador', '192.168.5.1', 'Manutenção','RH', 'Roteador do RH',6);
+('Servidor Principal', 'Servidor', '192.168.1.10', 'Online', 'Datacenter A', 'Servidor principal da empresa', 2, 1, 1),
+('Servidor de Backup', 'Servidor', '192.168.1.20', 'Online', 'Datacenter A', 'Servidor de copias de seguranca', 2, 1, 2),
+('Switch Central', 'Switch', '192.168.1.30', 'Online', 'Sala de servidores', 'Switch central da rede', 2, 2, 3),
+('Servidor Web XPTO', 'Servidor', '192.168.2.10', 'Atencao', 'Datacenter principal', 'Servidor web da XPTO Brasil', 3, 3, 4),
+('Notebook Financeiro', 'Notebook', '192.168.1.50', 'Online', 'Financeiro', 'Notebook usado pelo setor financeiro', 2, 1, NULL);
 
-INSERT INTO componente
-(nome, tipo, descricao, fkEquipamento)
+-- =============================================================
+-- 8. SEEDS DE COMPONENTES
+-- Os componentes funcionam como um catalogo. A associacao com
+-- os equipamentos acontece por meio da tabela parametro_alerta.
+-- =============================================================
+
+INSERT INTO componente (nome, tipo, descricao) VALUES
+('Processador', 'CPU', 'Uso do processador'),
+('Memoria RAM', 'RAM', 'Uso da memoria principal'),
+('Disco', 'ARMAZENAMENTO', 'Uso do armazenamento'),
+('Temperatura', 'TEMPERATURA', 'Temperatura interna do equipamento'),
+('Rede', 'REDE', 'Uso da rede do equipamento');
+
+-- =============================================================
+-- 9. SEEDS DE PARAMETROS DE ALERTA
+-- =============================================================
+
+INSERT INTO parametro_alerta
+(nomeMetrica, limite_atencao, limite_critico, unidade,
+ ativo, fkEquipamento, fkComponente)
 VALUES
-('Processador', 'CPU', 'Processador do servidor', 1),
-('Memória RAM', 'RAM', 'Memória principal do servidor', 1),
-('Disco', 'Armazenamento', 'Unidade de armazenamento principal', 1),
-('CPU', 'CPU', 'Processador interno do switch', 2),
-('Memória', 'RAM', 'Memória interna do equipamento', 2),
-('CPU', 'CPU', 'Processador do roteador', 3),
-('Memória', 'RAM', 'Memória do roteador', 3),
-('Processador', 'CPU', 'Processador do servidor web', 4),
-('Memória RAM', 'RAM', 'Memória do servidor web', 4),
-('Disco', 'Armazenamento', 'Armazenamento do servidor web', 4),
-('Processador', 'CPU', 'Processador do banco de dados', 5),
-('Memória RAM', 'RAM', 'Memória do banco de dados', 5),
-('Disco', 'Armazenamento', 'Armazenamento do banco de dados', 5),
-('Processador', 'CPU', 'Processador do firewall', 6),
-('Memória', 'RAM', 'Memória do firewall', 6),
-('Processador', 'CPU', 'Processador do servidor', 7),
-('Memória RAM', 'RAM', 'Memória do servidor', 7),
-('Disco', 'Armazenamento', 'Armazenamento do servidor', 7),
-('CPU', 'CPU', 'Processador do switch', 8),
-('Memória', 'RAM', 'Memória do switch', 8),
-('CPU', 'CPU', 'Processador do roteador', 9),
-('Memória', 'RAM', 'Memória do roteador', 9),
-('Processador', 'CPU', 'Processador do servidor de segurança', 10),
-('Memória RAM', 'RAM', 'Memória do servidor', 10),
-('Disco', 'Armazenamento', 'Armazenamento do servidor', 10),
-('Processador', 'CPU', 'Processador do firewall', 11),
-('Memória', 'RAM', 'Memória do firewall', 11),
-('Processador', 'CPU', 'Processador do servidor de backup', 12),
-('Memória RAM', 'RAM', 'Memória do servidor', 12),
-('Disco', 'Armazenamento', 'Unidade de backup', 12),
-('Processador', 'CPU', 'Processador do servidor', 13),
-('Memória RAM', 'RAM', 'Memória principal', 13),
-('Disco', 'Armazenamento', 'Armazenamento principal', 13),
-('CPU', 'CPU', 'Processador do switch', 14),
-('Memória', 'RAM', 'Memória do switch', 14),
-('CPU', 'CPU', 'Processador do roteador', 15),
-('Memória', 'RAM', 'Memória do roteador', 15);
+('USO_CPU', 70.00, 90.00, '%', 1, 1, 1),
+('USO_RAM', 75.00, 90.00, '%', 1, 1, 2),
+('USO_DISCO', 80.00, 95.00, '%', 1, 1, 3),
+('TEMPERATURA_CPU', 65.00, 80.00, 'C', 1, 1, 4),
+('USO_CPU', 70.00, 90.00, '%', 1, 2, 1),
+('USO_RAM', 75.00, 90.00, '%', 1, 2, 2),
+('USO_DISCO', 80.00, 95.00, '%', 1, 2, 3),
+('USO_REDE', 70.00, 90.00, '%', 1, 3, 5),
+('USO_CPU', 65.00, 85.00, '%', 1, 4, 1),
+('USO_RAM', 70.00, 90.00, '%', 1, 4, 2),
+('USO_DISCO', 75.00, 90.00, '%', 1, 4, 3);
