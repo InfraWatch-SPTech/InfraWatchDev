@@ -162,6 +162,30 @@ main {
 }
 .btn-salvar-permissao:disabled { opacity: 0.55; cursor: not-allowed; }
 
+.lista-permissoes-usuario {
+    display: flex;
+    flex-direction: column;
+    gap: 0.55rem;
+    min-width: 210px;
+}
+
+.item-permissao-usuario {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    color: var(--cor-branco-default);
+    cursor: pointer;
+}
+
+.item-permissao-usuario input {
+    accent-color: var(--cor-azul-contraste2);
+}
+
+.item-permissao-usuario:has(input:disabled) {
+    opacity: 0.55;
+    cursor: not-allowed;
+}
+
 .aviso-acesso {
     max-width: 620px;
     margin: 12vh auto;

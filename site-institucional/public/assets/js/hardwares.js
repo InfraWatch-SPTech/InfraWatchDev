@@ -84,7 +84,7 @@ function renderizarTabela(equipamentos) {
 }
 
 function buscarEquipamentosEmpresa(idEmpresa) {
-    fetch(`/hardwares/buscarEq/${idEmpresa}`, { cache: 'no-store' })
+    fetch(`/hardwares/buscarEq/${idEmpresa}?idUsuario=${dadosUsuario.id}`, { cache: 'no-store' })
         .then(function (response) {
             if (response.ok) {
                 if (response.status === 204) {
@@ -182,6 +182,7 @@ function cadastrarHardware() {
         localizacao: localizacao,
         descricao: descricao,
         fkEmpresa: idEmpresa,
+        idUsuario: dadosUsuario.id,
         componentes: componentes,
         limiteCpu: limites.limiteCpu,
         limiteRam: limites.limiteRam,
@@ -303,6 +304,8 @@ function salvarEdicaoHardware() {
         tipo: tipo,
         localizacao: localizacao,
         descricao: descricao,
+        idUsuario: dadosUsuario.id,
+        idEmpresa: idEmpresa,
         componentes: componentes,
         limiteCpu: limites.limiteCpu,
         limiteRam: limites.limiteRam,
@@ -354,7 +357,7 @@ function deletarEquipamento(idEmpresa, idEquipamento) {
     lidarComDeletar = () => {
         fecharModalGeral();
 
-        fetch(`/hardwares/deletarEq/${idEmpresa}/${idEquipamento}`, {
+        fetch(`/hardwares/deletarEq/${idEmpresa}/${idEquipamento}?idUsuario=${dadosUsuario.id}`, {
             method: 'DELETE',
             signal: controller.signal,
             cache: 'no-store'
@@ -446,27 +449,51 @@ modalOverlayEditar.addEventListener('click', function (evento) {
     }
 });
 
+function possuiPermissao(nomePermissao) {
+    const permissoes = Array.isArray(dadosUsuario.permissoes)
+        ? dadosUsuario.permissoes
+        : [];
+
+    return permissoes.includes(nomePermissao);
+}
+
 function aplicarPermissoes() {
-    const usuario = dadosUser();
+    const nivel = dadosUsuario.nomeNivelAcesso || dadosUsuario.nomePermissao;
+    const ehRoot = nivel === 'Root';
+    const ehAdministrador = nivel === 'Administrador';
 
-    if (usuario.nomePermissao === 'Usuario') {
-        document.querySelectorAll('.btn-excluir, .btn-editar').forEach(function (btn) {
-            btn.style.display = 'none';
-        });
+    const podeCadastrar = ehRoot || (
+        ehAdministrador && possuiPermissao('EQUIPAMENTOS_CADASTRAR')
+    );
 
-        const btnAdicionarHardware = document.getElementById('btn-novo-hardware');
+    const podeEditar = ehRoot || (
+        ehAdministrador && possuiPermissao('EQUIPAMENTOS_EDITAR')
+    );
 
-        if (btnAdicionarHardware) {
-            btnAdicionarHardware.style.display = 'none';
-        }
+    const podeExcluir = ehRoot || (
+        ehAdministrador && possuiPermissao('EQUIPAMENTOS_EXCLUIR')
+    );
+
+    const btnAdicionarHardware = document.getElementById('btn-novo-hardware');
+
+    if (btnAdicionarHardware) {
+        btnAdicionarHardware.style.display = podeCadastrar ? 'block' : 'none';
     }
+
+    document.querySelectorAll('.btn-editar').forEach(function (botao) {
+        botao.style.display = podeEditar ? 'inline-flex' : 'none';
+    });
+
+    document.querySelectorAll('.btn-excluir').forEach(function (botao) {
+        botao.style.display = podeExcluir ? 'inline-flex' : 'none';
+    });
 }
 
 function modalVisualizar(idEquipamento) {
     let jsonEquipamentos = [];
     let jsonComponentes = [];
 
-    fetch(`/hardwares/buscarEqId/${idEquipamento}`, { cache: 'no-store' }).then(function (response) {
+    fetch(`/hardwares/buscarEqId/${idEquipamento}?idUsuario=${dadosUsuario.id}&idEmpresa=${idEmpresa}`, { cache: 'no-store' }).then(function (response) {
         if (response.ok) {
             response.json().then(function (equipamento) {
                 jsonEquipamentos = equipamento;
