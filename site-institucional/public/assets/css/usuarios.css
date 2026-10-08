@@ -1,0 +1,209 @@
+@import url('https://fonts.googleapis.com/css2?family=Allerta&family=Allerta+Stencil&display=swap');
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+:root {
+    --font-padrao: "Allerta", sans-serif;
+    --font-logo: "Allerta Stencil", sans-serif;
+    --cor-branco-default: #ffffff;
+    --cor-azul-contraste: #170F38;
+    --cor-azul-contraste2: #5178F9;
+    --cor-azul-apagado: #9ba0bd;
+    --bg-dark: #0e0921;
+}
+
+body {
+    min-height: 100vh;
+    background-color: var(--bg-dark);
+    color: var(--cor-branco-default);
+    font-family: var(--font-padrao);
+}
+
+.navbar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    position: fixed;
+    z-index: 1000;
+    top: 0;
+    left: 0;
+    width: 100%;
+    min-height: 9vh;
+    padding: 0.8rem 5%;
+    background-color: var(--bg-dark);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.12);
+}
+
+.nav-logo h1 {
+    color: var(--cor-branco-default);
+    font-family: var(--font-logo);
+    font-size: 1.6rem;
+    font-weight: 500;
+}
+
+.nav-logo h1 span { color: var(--cor-azul-contraste2); }
+.nav-links ul { display: flex; gap: 2rem; list-style: none; }
+.nav-links li { color: var(--cor-branco-default); transition: 0.2s; }
+.nav-links li:hover { color: rgba(255, 255, 255, 0.6); }
+.nav-links a { color: inherit; text-decoration: none; }
+.nav-login { display: flex; align-items: center; gap: 0.8rem; }
+.nav-login button {
+    padding: 0.45rem 0.8rem;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    border-radius: 0.3rem;
+    background: transparent;
+    color: white;
+    font: inherit;
+    cursor: pointer;
+}
+.nav-login #btn-cadastrar, .nav-login #btn-pagina-empresa {
+    background: var(--cor-azul-contraste2);
+}
+.nav-login button:hover { border-color: var(--cor-azul-contraste2); }
+.popup-perfil {
+    display: none;
+    position: absolute;
+    top: 90%;
+    right: 2.8%;
+    z-index: 10000;
+    width: min(360px, 90vw);
+    padding: 1.5rem;
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    border-radius: 0.4rem;
+    background: var(--cor-azul-contraste);
+    color: white;
+}
+.popup-perfil.active { display: block; }
+.popup-perfil .content-perfil { display: flex; flex-direction: column; gap: 1rem; }
+.popup-perfil .content-perfil-top,
+.popup-perfil .perfil-bottom-info,
+.popup-perfil .perfil-bottom-btn { display: flex; align-items: center; justify-content: space-between; gap: 0.8rem; }
+.popup-perfil .perfil-bottom-info { padding-top: 0.8rem; border-top: 1px solid rgba(255, 255, 255, 0.16); }
+.popup-perfil .perfil-bottom-btn { margin-top: 0.8rem; }
+.popup-perfil button { padding: 0.45rem 0.7rem; border: 1px solid var(--cor-azul-contraste2); border-radius: 0.3rem; background: transparent; color: white; cursor: pointer; }
+#btn-fechar-perfil { float: right; cursor: pointer; }
+.divisao-nav { height: 9vh; }
+
+main {
+    min-height: 91vh;
+    padding: 5vh 5%;
+    background: var(--bg-dark);
+}
+
+.container-usuarios {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+    width: min(100%, 1200px);
+    margin: 0 auto;
+}
+
+.cabecalho-usuarios { display: flex; align-items: center; justify-content: space-between; }
+.rotulo-usuarios {
+    color: var(--cor-azul-contraste2);
+    font-size: 0.9rem;
+    font-weight: 600;
+    letter-spacing: 0.04em;
+}
+.cabecalho-usuarios h2 { margin-top: 0.4rem; font-size: clamp(1.5rem, 3vw, 2rem); }
+.cabecalho-usuarios p { margin-top: 0.6rem; color: var(--cor-azul-apagado); }
+
+.mensagem-estado {
+    min-height: 1.4rem;
+    color: var(--cor-azul-apagado);
+    font-size: 0.9rem;
+}
+.mensagem-estado.erro { color: #ff8b8b; }
+.mensagem-estado.sucesso { color: #6ce5a0; }
+
+.caixa-tabela-usuarios {
+    width: 100%;
+    overflow-x: auto;
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 0.6rem;
+    background: var(--cor-azul-contraste);
+}
+.tabela-usuarios { width: 100%; min-width: 650px; border-collapse: collapse; }
+.tabela-usuarios th, .tabela-usuarios td {
+    padding: 1.1rem 1.3rem;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    text-align: left;
+}
+.tabela-usuarios th {
+    color: var(--cor-azul-contraste2);
+    font-size: 0.78rem;
+    font-weight: 600;
+}
+.tabela-usuarios td { color: var(--cor-branco-default); font-size: 0.9rem; }
+.tabela-usuarios tbody tr:last-child td { border-bottom: 0; }
+.tabela-usuarios .email-usuario { color: var(--cor-azul-apagado); }
+.seletor-permissao {
+    min-width: 155px;
+    padding: 0.55rem 0.7rem;
+    border: 1px solid rgba(255, 255, 255, 0.16);
+    border-radius: 0.3rem;
+    background: var(--bg-dark);
+    color: white;
+    font: inherit;
+}
+.seletor-permissao:disabled { opacity: 0.55; cursor: not-allowed; }
+.btn-salvar-permissao {
+    padding: 0.6rem 0.9rem;
+    border: 1px solid var(--cor-azul-contraste2);
+    border-radius: 0.3rem;
+    background: var(--cor-azul-contraste2);
+    color: white;
+    font: inherit;
+    cursor: pointer;
+}
+.btn-salvar-permissao:disabled { opacity: 0.55; cursor: not-allowed; }
+
+.lista-permissoes-usuario {
+    display: flex;
+    flex-direction: column;
+    gap: 0.55rem;
+    min-width: 210px;
+}
+
+.item-permissao-usuario {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    color: var(--cor-branco-default);
+    cursor: pointer;
+}
+
+.item-permissao-usuario input {
+    accent-color: var(--cor-azul-contraste2);
+}
+
+.item-permissao-usuario:has(input:disabled) {
+    opacity: 0.55;
+    cursor: not-allowed;
+}
+
+.aviso-acesso {
+    max-width: 620px;
+    margin: 12vh auto;
+    padding: 2rem;
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    border-radius: 0.6rem;
+    background: var(--cor-azul-contraste);
+    text-align: center;
+}
+.aviso-acesso h2 { margin-bottom: 1rem; }
+.aviso-acesso p { margin-top: 0.5rem; color: var(--cor-azul-apagado); }
+
+@media (max-width: 760px) {
+    .navbar { position: relative; flex-direction: column; gap: 1rem; padding: 1rem; }
+    .nav-links ul { justify-content: center; flex-wrap: wrap; gap: 1rem; }
+    .nav-login { justify-content: center; flex-wrap: wrap; }
+    .divisao-nav { display: none; }
+    main { padding: 2rem 4%; }
+    .container-usuarios { gap: 1rem; }
+    .tabela-usuarios th, .tabela-usuarios td { padding: 0.8rem; }
+}

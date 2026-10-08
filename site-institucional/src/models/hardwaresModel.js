@@ -1,143 +1,280 @@
-var database = require("../database/config")
+var database = require("../database/config");
 
-function buscarEquipamentosEmpresa(idEmpresa) {
-    console.log("ACESSEI O USUARIO MODEL \n \n\t\t >> Se aqui der erro de 'Error: connect ECONNREFUSED',\n \t\t >> verifique suas credenciais de acesso ao banco\n \t\t >> e se o servidor de seu BD está rodando corretamente. \n\n buscarEquipamentosEmpresa(idEmpresa)", idEmpresa)
+function buscarAcessoUsuario(idUsuario, idEmpresa) {
+    var instrucaoSql = `
+        SELECT
+            u.idUsuario,
+            u.fkEmpresa,
+            na.nome AS nomeNivelAcesso,
+            GROUP_CONCAT(DISTINCT p.nome ORDER BY p.nome SEPARATOR ',') AS permissoes
+        FROM usuario u
+        JOIN nivel_acesso na
+            ON na.fk_usuario = u.idUsuario
+        LEFT JOIN permissoes_acesso pa
+            ON pa.fkNivelAcesso = na.idnivel_acesso
+        LEFT JOIN permissao p
+            ON p.idPermissao = pa.fkPermissao
+        WHERE u.idUsuario = ${idUsuario}
+            AND u.fkEmpresa = ${idEmpresa}
+        GROUP BY u.idUsuario, u.fkEmpresa, na.nome;
+    `;
 
-    let instrucaoSql = 
-    `
+    return database.executar(instrucaoSql);
+}
+
+function montarFiltroTipos(tiposPermitidos) {
+    if (tiposPermitidos === null) {
+        return "";
+    }
+
+    if (tiposPermitidos.length === 0) {
+        return " AND 1 = 0 ";
+    }
+
+    var tiposFormatados = [];
+
+    for (var i = 0; i < tiposPermitidos.length; i++) {
+        tiposFormatados.push(`'${tiposPermitidos[i]}'`);
+    }
+
+    return ` AND eq.tipo IN (${tiposFormatados.join(", ")}) `;
+}
+
+function buscarEquipamentosEmpresa(idEmpresa, tiposPermitidos) {
+    var filtroTipos = montarFiltroTipos(tiposPermitidos);
+
+    var instrucaoSql = `
         SELECT
             cp.nome AS nomeComponente,
             cp.tipo AS tipoComponente,
             cp.descricao AS descricaoComponente,
-            eq.idEquipamento AS idEquipamento,
+            eq.idEquipamento,
             eq.nome AS nomeEquipamento,
             eq.tipo AS tipoEquipamento,
             eq.ip AS ipEquipamento,
             eq.status AS statusEquipamento,
-            eq.localizacao AS localizacao,
+            eq.localizacao,
+            eq.descricao AS descricaoEquipamento,
+            COALESCE(alertas.limiteCpu, 80) AS limiteCpu,
+            COALESCE(alertas.limiteRam, 80) AS limiteRam,
+            COALESCE(alertas.limiteDisco, 80) AS limiteDisco,
             eq.fkEmpresa AS idEmpresa
-        FROM componente AS cp
-            JOIN equipamento AS eq
-                ON cp.fkEquipamento = eq.idEquipamento
-            JOIN empresa AS em
-                ON eq.fkEmpresa = em.idEmpresa
+        FROM equipamento eq
+        LEFT JOIN parametro_alerta pa
+            ON pa.fkEquipamento = eq.idEquipamento
+        LEFT JOIN componente cp
+            ON cp.idComponente = pa.fkComponente
+        LEFT JOIN (
+            SELECT
+                pa2.fkEquipamento,
+                MAX(CASE WHEN c2.tipo = 'CPU' THEN pa2.limite_critico END) AS limiteCpu,
+                MAX(CASE WHEN c2.tipo = 'RAM' THEN pa2.limite_critico END) AS limiteRam,
+                MAX(CASE WHEN c2.tipo = 'ARMAZENAMENTO' THEN pa2.limite_critico END) AS limiteDisco
+            FROM parametro_alerta pa2
+            JOIN componente c2
+                ON c2.idComponente = pa2.fkComponente
+            GROUP BY pa2.fkEquipamento
+        ) alertas
+            ON alertas.fkEquipamento = eq.idEquipamento
         WHERE eq.fkEmpresa = ${idEmpresa}
-        ORDER BY eq.idEquipamento;
-        
+            ${filtroTipos}
+        ORDER BY eq.idEquipamento, cp.idComponente;
     `;
 
-    console.log("Executando a instrução SQL: \n" + instrucaoSql);
+    return database.executar(instrucaoSql);
+}
+
+function buscarTipoEquipamento(idEquipamento, idEmpresa) {
+    var instrucaoSql = `
+        SELECT idEquipamento, tipo, fkEmpresa
+        FROM equipamento
+        WHERE idEquipamento = ${idEquipamento}
+            AND fkEmpresa = ${idEmpresa};
+    `;
+
     return database.executar(instrucaoSql);
 }
 
 function cadastrarEquipamento(nome, tipo, localizacao, descricao, fkEmpresa) {
-    console.log("ACESSEI O HARDWARES MODEL \n \n\t\t >> Se aqui der erro de 'Error: connect ECONNREFUSED',\n \t\t >> verifique suas credenciais de acesso ao banco\n \t\t >> e se o servidor de seu BD está rodando corretamente. \n\n cadastrarEquipamento(): ", nome, tipo, localizacao, fkEmpresa);
-
-    let instrucaoSql =
-    `
-        INSERT INTO equipamento (nome, tipo, status, localizacao, descricao, fkEmpresa)
-        VALUES ('${nome}', '${tipo}', 'Ativo', '${localizacao}', '${descricao}', ${fkEmpresa});
+    var instrucaoSql = `
+        INSERT INTO equipamento
+            (nome, tipo, status, localizacao, descricao, fkEmpresa)
+        VALUES
+            ('${nome}', '${tipo}', 'Ativo', '${localizacao}', '${descricao}', ${fkEmpresa});
     `;
 
-    console.log("Executando a instrução SQL: \n" + instrucaoSql);
     return database.executar(instrucaoSql);
 }
 
-function cadastrarComponentes(componentes, idEquipamento) {
-    console.log("ACESSEI O HARDWARES MODEL \n\n cadastrarComponentes(): ", componentes, idEquipamento);
+function valorLimitePorTipo(tipoComponente, limiteCpu, limiteRam, limiteDisco) {
+    var tipo = String(tipoComponente).toUpperCase();
 
-    let listaValores = [];
-    for (let i = 0; i < componentes.length; i++) {
-        let componente = componentes[i];
-        listaValores.push(`('${componente.nome}', '${componente.tipo}', '${componente.descricao}', ${idEquipamento})`);
+    if (tipo === "CPU") {
+        return limiteCpu;
     }
-    let valores = listaValores.join(", ");
 
-    let instrucaoSql =
-    `
-        INSERT INTO componente (nome, tipo, descricao, fkEquipamento)
-        VALUES ${valores};
+    if (tipo === "RAM") {
+        return limiteRam;
+    }
+
+    if (tipo === "ARMAZENAMENTO") {
+        return limiteDisco;
+    }
+
+    return 90;
+}
+
+function cadastrarComponentes(componentes, idEquipamento, limiteCpu, limiteRam, limiteDisco) {
+    if (!componentes || componentes.length === 0) {
+        return Promise.resolve();
+    }
+
+    var tipos = [];
+    var configuracoes = {};
+
+    for (var i = 0; i < componentes.length; i++) {
+        var tipo = String(componentes[i].tipo).toUpperCase();
+
+        if (tipos.indexOf(tipo) === -1) {
+            tipos.push(tipo);
+            configuracoes[tipo] = valorLimitePorTipo(
+                tipo,
+                limiteCpu,
+                limiteRam,
+                limiteDisco
+            );
+        }
+    }
+
+    var tiposSql = tipos.map(function (tipo) {
+        return `'${tipo}'`;
+    }).join(", ");
+
+    var casosLimiteAtencao = [];
+    var casosLimiteCritico = [];
+    var casosMetrica = [];
+
+    for (var j = 0; j < tipos.length; j++) {
+        var tipoAtual = tipos[j];
+        var limiteCritico = configuracoes[tipoAtual];
+        var limiteAtencao = Math.max(1, limiteCritico - 10);
+
+        casosLimiteAtencao.push(`WHEN '${tipoAtual}' THEN ${limiteAtencao}`);
+        casosLimiteCritico.push(`WHEN '${tipoAtual}' THEN ${limiteCritico}`);
+        casosMetrica.push(`WHEN '${tipoAtual}' THEN 'USO_${tipoAtual}'`);
+    }
+
+    var instrucaoSql = `
+        INSERT INTO parametro_alerta
+            (nomeMetrica, limite_atencao, limite_critico, unidade,
+             ativo, fkEquipamento, fkComponente)
+        SELECT
+            CASE UPPER(tipo)
+                ${casosMetrica.join("\n                ")}
+                ELSE CONCAT('USO_', UPPER(tipo))
+            END,
+            CASE UPPER(tipo)
+                ${casosLimiteAtencao.join("\n                ")}
+                ELSE 80
+            END,
+            CASE UPPER(tipo)
+                ${casosLimiteCritico.join("\n                ")}
+                ELSE 90
+            END,
+            '%',
+            1,
+            ${idEquipamento},
+            idComponente
+        FROM componente
+        WHERE UPPER(tipo) IN (${tiposSql});
     `;
 
-    console.log("Executando a instrução SQL: \n" + instrucaoSql);
     return database.executar(instrucaoSql);
 }
 
-function buscarEquipamentoPorId(idEquipamento) {
-    console.log("ACESSEI O HARDWARES MODEL \n\n buscarEquipamentoPorId(idEquipamento)", idEquipamento);
-
-    let instrucaoSql =
-    `
+function buscarEquipamentoPorId(idEquipamento, idEmpresa) {
+    var instrucaoSql = `
         SELECT
-            cp.idComponente AS idComponente,
+            cp.idComponente,
             cp.nome AS nomeComponente,
             cp.tipo AS tipoComponente,
             cp.descricao AS descricaoComponente,
-            eq.idEquipamento AS idEquipamento,
+            eq.idEquipamento,
             eq.nome AS nomeEquipamento,
             eq.tipo AS tipoEquipamento,
             eq.status AS statusEquipamento,
-            eq.localizacao AS localizacao,
+            eq.localizacao,
             eq.descricao AS descricaoEquipamento,
+            COALESCE(alertas.limiteCpu, 80) AS limiteCpu,
+            COALESCE(alertas.limiteRam, 80) AS limiteRam,
+            COALESCE(alertas.limiteDisco, 80) AS limiteDisco,
             eq.fkEmpresa AS idEmpresa
-        FROM equipamento AS eq
-            JOIN componente AS cp
-                ON cp.fkEquipamento = eq.idEquipamento
-        WHERE eq.idEquipamento = ${idEquipamento};
+        FROM equipamento eq
+        LEFT JOIN parametro_alerta pa
+            ON pa.fkEquipamento = eq.idEquipamento
+        LEFT JOIN componente cp
+            ON cp.idComponente = pa.fkComponente
+        LEFT JOIN (
+            SELECT
+                pa2.fkEquipamento,
+                MAX(CASE WHEN c2.tipo = 'CPU' THEN pa2.limite_critico END) AS limiteCpu,
+                MAX(CASE WHEN c2.tipo = 'RAM' THEN pa2.limite_critico END) AS limiteRam,
+                MAX(CASE WHEN c2.tipo = 'ARMAZENAMENTO' THEN pa2.limite_critico END) AS limiteDisco
+            FROM parametro_alerta pa2
+            JOIN componente c2
+                ON c2.idComponente = pa2.fkComponente
+            GROUP BY pa2.fkEquipamento
+        ) alertas
+            ON alertas.fkEquipamento = eq.idEquipamento
+        WHERE eq.idEquipamento = ${idEquipamento}
+            AND eq.fkEmpresa = ${idEmpresa}
+        ORDER BY cp.idComponente;
     `;
 
-    console.log("Executando a instrução SQL: \n" + instrucaoSql);
     return database.executar(instrucaoSql);
 }
 
-function atualizarEquipamento(idEquipamento, nome, tipo, localizacao, descricao) {
-    console.log("ACESSEI O HARDWARES MODEL \n\n atualizarEquipamento(): ", idEquipamento, nome, tipo, localizacao, descricao);
-
-    let instrucaoSql =
-    `
+function atualizarEquipamento(idEquipamento, idEmpresa, nome, tipo, localizacao, descricao) {
+    var instrucaoSql = `
         UPDATE equipamento
         SET nome = '${nome}',
             tipo = '${tipo}',
             localizacao = '${localizacao}',
             descricao = '${descricao}'
-        WHERE idEquipamento = ${idEquipamento};
+        WHERE idEquipamento = ${idEquipamento}
+            AND fkEmpresa = ${idEmpresa};
     `;
 
-    console.log("Executando a instrução SQL: \n" + instrucaoSql);
     return database.executar(instrucaoSql);
 }
 
-function deletarComponentesPorEquipamento(idEquipamento) {
-    console.log("ACESSEI O HARDWARES MODEL \n\n deletarComponentesPorEquipamento(idEquipamento)", idEquipamento);
-
-    let instrucaoSql =
-    `
-        DELETE FROM componente WHERE fkEquipamento = ${idEquipamento};
+function deletarParametrosPorEquipamento(idEquipamento) {
+    var instrucaoSql = `
+        DELETE FROM parametro_alerta
+        WHERE fkEquipamento = ${idEquipamento};
     `;
 
-    console.log("Executando a instrução SQL: \n" + instrucaoSql);
     return database.executar(instrucaoSql);
 }
 
 function deletarEquipamento(idEmpresa, idEquipamento) {
-    console.log("ACESSEI O USUARIO MODEL \n \n\t\t >> Se aqui der erro de 'Error: connect ECONNREFUSED',\n \t\t >> verifique suas credenciais de acesso ao banco\n \t\t >> e se o servidor de seu BD está rodando corretamente. \n\n buscarEquipamentosEmpresa(idEmpresa)", idEmpresa)
-
-    let instrucaoSql = 
-    `
-        DELETE FROM equipamento WHERE idEquipamento = ${idEquipamento};
-        
+    var instrucaoSql = `
+        DELETE FROM equipamento
+        WHERE idEquipamento = ${idEquipamento}
+            AND fkEmpresa = ${idEmpresa};
     `;
 
-    console.log("Executando a instrução SQL: \n" + instrucaoSql);
     return database.executar(instrucaoSql);
 }
 
 module.exports = {
+    buscarAcessoUsuario,
     buscarEquipamentosEmpresa,
-    buscarEquipamentoPorId,
+    buscarTipoEquipamento,
     cadastrarEquipamento,
     cadastrarComponentes,
+    buscarEquipamentoPorId,
     atualizarEquipamento,
-    deletarComponentesPorEquipamento,
+    deletarParametrosPorEquipamento,
     deletarEquipamento
 };

@@ -84,7 +84,7 @@ function renderizarTabela(equipamentos) {
 }
 
 function buscarEquipamentosEmpresa(idEmpresa) {
-    fetch(`/hardwares/buscarEq/${idEmpresa}`, { cache: 'no-store' })
+    fetch(`/hardwares/buscarEq/${idEmpresa}?idUsuario=${dadosUsuario.id}`, { cache: 'no-store' })
         .then(function (response) {
             if (response.ok) {
                 if (response.status === 204) {
@@ -127,12 +127,41 @@ function coletarComponentesSelecionados() {
     return componentes;
 }
 
+function coletarLimites(editar) {
+    let prefixo = editar ? 'input-editar-limite-' : 'input-limite-';
+    let limiteCpu = document.getElementById(prefixo + 'cpu-hardware').value.trim();
+    let limiteRam = document.getElementById(prefixo + 'ram-hardware').value.trim();
+    let limiteDisco = document.getElementById(prefixo + 'disco-hardware').value.trim();
+    let limites = [
+        { campo: 'limiteCpu', nome: 'CPU', valor: limiteCpu },
+        { campo: 'limiteRam', nome: 'RAM', valor: limiteRam },
+        { campo: 'limiteDisco', nome: 'disco', valor: limiteDisco }
+    ];
+    let resultado = {};
+
+    for (let i = 0; i < limites.length; i++) {
+        let valor = Number(limites[i].valor);
+        if (limites[i].valor === '' || !Number.isInteger(valor) || valor < 1 || valor > 100) {
+            alert(`O limite de ${limites[i].nome} deve ser um número inteiro entre 1 e 100.`);
+            return null;
+        }
+        resultado[limites[i].campo] = valor;
+    }
+
+    return resultado;
+}
+
 function cadastrarHardware() {
     let nome = document.getElementById('input-nome-hardware').value.trim();
     let tipo = document.getElementById('select-tipo-hardware').value;
     let localizacao = document.getElementById('input-localizacao-hardware').value.trim();
     let descricao = document.getElementById('input-descricao-hardware').value.trim();
     let componentes = coletarComponentesSelecionados();
+    let limites = coletarLimites(false);
+
+    if (!limites) {
+        return;
+    }
 
     if (nome === '') {
         alert('Preencha o nome do dispositivo.');
@@ -153,7 +182,11 @@ function cadastrarHardware() {
         localizacao: localizacao,
         descricao: descricao,
         fkEmpresa: idEmpresa,
-        componentes: componentes
+        idUsuario: dadosUsuario.id,
+        componentes: componentes,
+        limiteCpu: limites.limiteCpu,
+        limiteRam: limites.limiteRam,
+        limiteDisco: limites.limiteDisco
     };
 
     fetch('/hardwares/cadastrar', {
@@ -169,6 +202,9 @@ function cadastrarHardware() {
                 document.getElementById('select-tipo-hardware').value = '';
                 document.getElementById('input-localizacao-hardware').value = '';
                 document.getElementById('input-descricao-hardware').value = '';
+                document.getElementById('input-limite-cpu-hardware').value = 80;
+                document.getElementById('input-limite-ram-hardware').value = 80;
+                document.getElementById('input-limite-disco-hardware').value = 80;
             } else {
                 response.text().then(function (mensagemErro) {
                     alert('Não foi possível cadastrar o hardware: ' + mensagemErro);
@@ -215,6 +251,9 @@ function abrirModalEditar(idEquipamento) {
     document.getElementById('select-editar-tipo-hardware').value = equipamento.tipoEquipamento || '';
     document.getElementById('input-editar-localizacao-hardware').value = equipamento.localizacao || '';
     document.getElementById('input-editar-descricao-hardware').value = equipamento.descricaoEquipamento || '';
+    document.getElementById('input-editar-limite-cpu-hardware').value = equipamento.limiteCpu ?? 80;
+    document.getElementById('input-editar-limite-ram-hardware').value = equipamento.limiteRam ?? 80;
+    document.getElementById('input-editar-limite-disco-hardware').value = equipamento.limiteDisco ?? 80;
 
     //lista de tipos de componente que esse equipamento já tem pra marcar os checkbox correspondentes
     let tiposComponentesAtuais = linhasDoEquipamento
@@ -241,6 +280,11 @@ function salvarEdicaoHardware() {
     let localizacao = document.getElementById('input-editar-localizacao-hardware').value.trim();
     let descricao = document.getElementById('input-editar-descricao-hardware').value.trim();
     let componentes = coletarComponentesSelecionadosEditar();
+    let limites = coletarLimites(true);
+
+    if (!limites) {
+        return;
+    }
 
     if (nome === '') {
         alert('Preencha o nome do dispositivo.');
@@ -260,7 +304,12 @@ function salvarEdicaoHardware() {
         tipo: tipo,
         localizacao: localizacao,
         descricao: descricao,
-        componentes: componentes
+        idUsuario: dadosUsuario.id,
+        idEmpresa: idEmpresa,
+        componentes: componentes,
+        limiteCpu: limites.limiteCpu,
+        limiteRam: limites.limiteRam,
+        limiteDisco: limites.limiteDisco
     };
 
     fetch(`/hardwares/atualizar/${idEquipamento}`, {
@@ -308,7 +357,7 @@ function deletarEquipamento(idEmpresa, idEquipamento) {
     lidarComDeletar = () => {
         fecharModalGeral();
 
-        fetch(`/hardwares/deletarEq/${idEmpresa}/${idEquipamento}`, {
+        fetch(`/hardwares/deletarEq/${idEmpresa}/${idEquipamento}?idUsuario=${dadosUsuario.id}`, {
             method: 'DELETE',
             signal: controller.signal,
             cache: 'no-store'
@@ -400,27 +449,51 @@ modalOverlayEditar.addEventListener('click', function (evento) {
     }
 });
 
+function possuiPermissao(nomePermissao) {
+    const permissoes = Array.isArray(dadosUsuario.permissoes)
+        ? dadosUsuario.permissoes
+        : [];
+
+    return permissoes.includes(nomePermissao);
+}
+
 function aplicarPermissoes() {
-    const usuario = dadosUser();
+    const nivel = dadosUsuario.nomeNivelAcesso || dadosUsuario.nomePermissao;
+    const ehRoot = nivel === 'Root';
+    const ehAdministrador = nivel === 'Administrador';
 
-    if (usuario.nomePermissao === 'Usuario') {
-        document.querySelectorAll('.btn-excluir, .btn-editar').forEach(function (btn) {
-            btn.style.display = 'none';
-        });
+    const podeCadastrar = ehRoot || (
+        ehAdministrador && possuiPermissao('EQUIPAMENTOS_CADASTRAR')
+    );
 
-        const btnAdicionarHardware = document.getElementById('btn-novo-hardware');
+    const podeEditar = ehRoot || (
+        ehAdministrador && possuiPermissao('EQUIPAMENTOS_EDITAR')
+    );
 
-        if (btnAdicionarHardware) {
-            btnAdicionarHardware.style.display = 'none';
-        }
+    const podeExcluir = ehRoot || (
+        ehAdministrador && possuiPermissao('EQUIPAMENTOS_EXCLUIR')
+    );
+
+    const btnAdicionarHardware = document.getElementById('btn-novo-hardware');
+
+    if (btnAdicionarHardware) {
+        btnAdicionarHardware.style.display = podeCadastrar ? 'block' : 'none';
     }
+
+    document.querySelectorAll('.btn-editar').forEach(function (botao) {
+        botao.style.display = podeEditar ? 'inline-flex' : 'none';
+    });
+
+    document.querySelectorAll('.btn-excluir').forEach(function (botao) {
+        botao.style.display = podeExcluir ? 'inline-flex' : 'none';
+    });
 }
 
 function modalVisualizar(idEquipamento) {
     let jsonEquipamentos = [];
     let jsonComponentes = [];
 
-    fetch(`/hardwares/buscarEqId/${idEquipamento}`, { cache: 'no-store' }).then(function (response) {
+    fetch(`/hardwares/buscarEqId/${idEquipamento}?idUsuario=${dadosUsuario.id}&idEmpresa=${idEmpresa}`, { cache: 'no-store' }).then(function (response) {
         if (response.ok) {
             response.json().then(function (equipamento) {
                 jsonEquipamentos = equipamento;
