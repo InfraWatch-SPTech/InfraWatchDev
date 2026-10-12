@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="./assets/css/dash_empresas.css">
+    <title>Dashboard Empresa</title>
+</head>
+<body onload="validarSessao()">
+    <header>
+        <div class="navbar">
+            <div class="nav-logo">
+                <h1>
+                    Infra<span>Watch</span>
+                </h1> 
+            </div>
+            <div class="nav-links">
+                <ul>
+                    <li>
+                        <a href="./main.html">Home</a>
+                    </li>
+                    <li>
+                        <a href="./sobrenos.html">
+                            Sobre-nós
+                        </a>
+                    </li>
+                    <li>
+                        <a href="./sobrenos.html#contato">
+                            Contato
+                        </a>
+                    </li>
+                </ul>
+            </div>
+            <div class="nav-login">
+                <button id="btn-logar" onclick="redirecionamento_login()">
+                    Entrar
+                </button>
+                <button id="btn-cadastrar" onclick="redirecionamento_login()">
+                    Cadastrar-se
+                </button>
+            </div>
+            <div class="popup-perfil">
+
+            </div>
+        </div>
+    </header>
+
+    <div class="divisao-nav" style="height: 9vh; width: 100%;"></div>
+
+    <main class="container-dash-empresa">
+
+        <div class="content content-header">
+            <div class="infos-usuario">
+                <p class="subtitulo-user">Usuário</p>
+                <h2 id="user-nome" class="user-nome">$User</h2>
+                <h5 id="user-cargo" class="user-cargo">$Cargo</h5>
+            </div>
+            <div class="infos-empresa">
+                <p class="subtitulo-bem-vindo">Bem-vindo(a) de volta!</p>
+                <h2 id="user-empresa" class="user-empresa">$Empresa</h2>
+            </div>
+        </div>
+
+        <div class="content content-dashboard">
+            <p class="titulo-pagina">status de todos os servidores monitorados</p>
+            <div class="content-dashboard-kpis">
+
+                <div class="kpi-box">
+                    <div class="icon">
+                        <!-- Ícone da KPI -->   
+                    </div>
+                    <div class="infos-kpis">
+                        <p class="infos-kpis-nome">Servidores Ativos</p>
+                        <p class="infos-kpis-principal">
+                            <span id="kpi-s-ativos">$$</span>
+                            /
+                            <span id="kpi-s-totais">$$</span>
+                        </p>
+                        <p class="infos-kpis-secundaria">
+                            <span id="kpi-s-inativos">$ servidores inativos</span>
+                        </p>
+                    </div>
+                </div>
+
+                <div class="kpi-box">
+                    <div class="icon">
+                        <!-- Ícone da KPI -->
+                    </div>
+                    <div class="infos-kpis">
+                        <p class="infos-kpis-nome">Tempo em Downtime</p>
+                        <p class="infos-kpis-principal">
+                            <span id="kpi-t-downtime">$$</span>
+                        </p>
+                        <p class="infos-kpis-secundaria">
+                            <span id="kpi-s-inativos">$% acima do limite</span>
+                        </p>
+                    </div>
+                </div>
+
+                <div class="kpi-box">
+                    <div class="icon">
+                        <!-- Ícone da KPI -->
+                    </div>
+                    <div class="infos-kpis">
+                        <p class="infos-kpis-nome">Tempo Médio de Resolução</p>
+                        <p class="infos-kpis-principal">
+                            <span id="kpi-t-mttd">$$</span>
+                        </p>
+                        <p class="infos-kpis-secundaria">
+                            <span id="kpi-p-comparada">$% mais rápico</span>
+                        </p>
+                    </div>
+                </div>
+
+                <div class="kpi-box">
+                    <div class="icon">
+                        <!-- Ícone da KPI -->
+                    </div>
+                    <div class="infos-kpis">
+                        <p class="infos-kpis-nome">Disponibilidade Externa</p>
+                        <p class="infos-kpis-principal">
+                            <span id="kpi-d-externa">$$</span>%
+                        </p>
+                        <p class="infos-kpis-secundaria">
+                            <span id="kpi-de-status">Status: Ruim</span>
+                        </p>
+                    </div>
+                </div>
+
+                <div class="kpi-box">
+                    <div class="icon">
+                        <!-- Ícone da KPI -->
+                    </div>
+                    <div class="infos-kpis">
+                        <p class="infos-kpis-nome">Alertas Ativos</p>
+                        <p class="infos-kpis-principal">
+                            <span id="kpi-alertas-ativos">$$</span>
+                        </p>
+                        <p class="infos-kpis-secundaria">
+                            <span id="kpi-qtd-alertas-criticos">$ alertas críticos</span>
+                        </p>
+                    </div>
+                </div>
+
+            </div>
+            <div class="content-dashboard-graficos">
+
+                <div class="content-dashboard-graficos-div">
+
+                    <div class="box-graficos left grafico-saldo-indisp">
+                        <p class="infos-kpis-nome">Orçamento de Insdisponibilidade Restante (Anual)</p>
+                        <p class="grafic-disp-limite-max">Limite máximo: 8h46m</p>
+                        <canvas style="width: 100%; height: 5vh;"></canvas> <!--  Gráfico CHART.JS -->
+                        <div class="infos-grafic-status">
+                            <p id="grafic-disp-consumido">Consumido: $$</p>
+                            <p id="grafic-disp-restante">Restam: $$</p>
+                        </div>
+                    </div>
+
+                    <div class="box-graficos left grafico-disp-tempo">
+                        <canvas style="width: 100%; height: 85%;"></canvas> <!-- Gráfico CHART.JS -->
+                    </div>
+
+                </div>
+
+                <div class="content-dashboard-graficos-div">
+                    
+                    <div class="box-graficos right grafico-incidentes-pservidor">
+                        <canvas style="width: 100%; height: 85%;"></canvas> <!-- Gráfico CHART.JS -->
+                    </div>
+
+                    <div class="box-graficos right grafico-incidentes-pcomponente">
+
+                        <div class="gipc-titulo-totais">
+                            <p class="infos-grafic-content-titulo">quantidade de alertas por componente</p>
+
+                            <div class="infos-grafic-content-subtitulo">
+                                <p class="infos-kpis-nome">Alertas totais</p>
+                                <p class="infos-grafic-alertas-totais">
+                                    <span id="kpi-alertas-ativos">$</span>
+                                </p>
+                            </div>
+                        </div>
+
+                        <div class="gipc-graficos-pcomponente">
+                            <div class="grafico-comps">
+                                <h2 id="comp-1">Cpu</h2>
+                                <!-- <canvas></canvas>  Gráfico CHART.JS -->
+                                <p>Total: <span id="qtd-comp1">$$</span></p>
+                            </div>
+                            <div class="grafico-comps">
+                                <h2 id="comp-2">Ram</h2>
+                                <!-- <canvas></canvas>  Gráfico CHART.JS -->
+                                <p>Total: <span id="qtd-comp2">$$</span></p>
+                            </div>
+                            <div class="grafico-comps">
+                                <h2 id="comp-3">Disco</h2>
+                                <!-- <canvas></canvas>  Gráfico CHART.JS -->
+                                <p>Total: <span id="qtd-comp3">$$</span></p>
+                            </div>
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+        </div>
+    </main>
+
+    <footer>
+        <!-- COLOCAR FOOTER AQUI -->
+    </footer>
+</body>
+<script src="../public/assets/js/sessao.js" defer></script>
+<script src="../public/assets/js/redirecionamento.js"></script>
+</html>

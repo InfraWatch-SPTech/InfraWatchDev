@@ -1,0 +1,23 @@
+@import url('https://fonts.googleapis.com/css2?family=Allerta+Stencil&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Allerta&family=Allerta+Stencil&display=swap');
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    background-color: var(--bg-dark);
+}
+
+:root {
+    --font-padrao: "Allerta", sans-serif;
+    --font-logo: "Allerta Stencil", sans-serif;
+    --cor-preto-default: #0f0f0f;
+    --cor-branco-default: #eaeaf3;
+    --cor-azul-contraste: #170F38;
+    --cor-azul-contraste2: #5178F9;
+    --cor-cinza-padrao: #5C6288;
+    --bg-dark: #0e0921;
+    --cor-verde-ativo: #3DDC84;
+    --cor-amarelo-atencao: #F5C542;
+    --cor-vermelho-inativo: #FF5C5C;  
+}

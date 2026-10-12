@@ -1,0 +1,277 @@
+@import url(./global.css);
+@import url(./navbar.css);
+
+
+
+
+/* GERAL */
+.container-dash-empresa {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 3% 4%;
+    flex-direction: column;
+    color: var(--cor-branco-default);
+    font-family: var(--font-padrao);
+    gap: 25px;
+}
+
+.container-dash-empresa .content {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    height: auto;
+}
+
+
+
+
+/* INFORMAÇÕES DO USUÁRIO */
+.container-dash-empresa .content-header {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+    height: auto;
+}
+
+.content-header .infos-usuario {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: flex-start;
+}
+
+.content-header .infos-usuario .subtitulo-user{
+    text-transform: uppercase;
+    font-weight: 300;
+    font-size: 14px;
+}
+
+.content-header .infos-usuario .user-nome{
+    text-transform: uppercase;
+    font-weight: 800;
+    font-size: 32px;
+}
+
+.content-header .infos-usuario .user-cargo{
+    text-transform: capitalize;
+    font-weight: 300;
+    font-size: 14px;
+    color: var(--cor-azul-contraste2);
+}
+
+.content-header .infos-empresa {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: flex-end;
+}
+
+.content-header .infos-empresa .subtitulo-bem-vindo {
+    text-transform: capitalize;
+    font-weight: 300;
+    font-size: 14px;
+    color: var(--cor-cinza-padrao);
+}
+
+.content-header .infos-empresa .user-empresa {
+    font-weight: 800;
+    font-size: 32px;
+    color: var(--cor-azul-contraste2);
+}
+
+
+
+
+/* GERAL GRÁFICOS E KPIS */
+.container-dash-empresa .content-dashboard {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: flex-start;
+    width: 100%;
+    height: auto;
+    gap: 20px;
+}
+
+.container-dash-empresa .content-dashboard .titulo-pagina {
+    font-weight: 300;
+    font-size: 16px;
+    text-transform: uppercase;
+    color: var(--cor-cinza-padrao);
+}
+
+
+
+
+/* KPIS */
+.content-dashboard .content-dashboard-kpis {
+    width: 100%;
+    height: auto;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+}
+
+.content-dashboard .content-dashboard-kpis .kpi-box {
+    background-color: var(--cor-azul-contraste);
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: flex-start;
+    width: 17vw;
+    height: 15vh;
+    border-radius: 10px;
+    border: 1px solid var(--cor-cinza-padrao);
+    padding: 1%;
+    gap: 5px;   
+}
+
+.content-dashboard-kpis .kpi-box .icon {
+    background-color: transparent;
+    width: 2.5vw;
+    height: 8vh;
+    background-image: url(../midias/dash-empresa/icon-kpi-padrao.svg);
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: contain;
+}
+
+.content-dashboard-kpis .kpi-box .infos-kpis {
+    background-color: transparent;
+    display: flex;
+    flex-direction: column;
+    width: 80%;
+    height: 90%;
+    justify-content: space-between;
+    align-items: flex-start;
+}
+
+.content-dashboard-kpis .kpi-box .infos-kpis .infos-kpis-nome{
+    background-color: transparent;
+    font-size: 15px;
+    font-weight: 300;
+    text-transform: capitalize;
+}
+
+.content-dashboard-kpis .kpi-box .infos-kpis .infos-kpis-principal {
+    background-color: transparent;
+    font-size: 32px;
+    font-weight: 800;
+    text-transform: uppercase;
+}
+
+.content-dashboard-kpis .kpi-box .infos-kpis .infos-kpis-principal span {
+    background-color: transparent;
+}
+
+.content-dashboard-kpis .kpi-box .infos-kpis .infos-kpis-secundaria {
+    background-color: transparent;
+    font-size: 15px;
+    font-weight: 300;
+    text-transform: capitalize;
+}
+
+.content-dashboard-kpis .kpi-box .infos-kpis .infos-kpis-secundaria span {
+    background-color: transparent;
+}
+
+
+
+
+/* GRÁFICOS */
+.content-dashboard .content-dashboard-graficos {
+    width: 100%;
+    height: 80vh;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+}
+
+.content-dashboard .content-dashboard-graficos .box-graficos {
+    background-color: var(--cor-azul-contraste);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    border-radius: 10px;
+    border: 1px solid var(--cor-cinza-padrao);
+    padding: 0px 3%;
+    height: auto;
+}
+
+.content-dashboard .content-dashboard-graficos .left {
+    width: 51vw;
+}
+
+.content-dashboard .content-dashboard-graficos .right {
+    width: 39vw;
+}
+
+.content-dashboard .content-dashboard-graficos .content-dashboard-graficos-div {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    height: 60vh;
+    background-color: transparent;
+}
+
+.content-dashboard .content-dashboard-graficos .content-dashboard-graficos-div .grafico-saldo-indisp {
+    height: 17vh;
+    display: flex;
+    align-items: flex-start;
+}
+
+.content-dashboard-graficos .content-dashboard-graficos-div .grafico-saldo-indisp .infos-kpis-nome {
+    background-color: transparent;
+    font-size: 15px;
+    font-weight: 300;
+    text-transform: capitalize;
+}
+
+.content-dashboard-graficos .content-dashboard-graficos-div .grafico-saldo-indisp .grafic-disp-limite-max {
+    background-color: transparent;
+    font-size: 12px;
+    font-weight: 300;
+    text-transform: capitalize;
+    align-self: flex-end;
+    color: var(--cor-cinza-padrao);
+}
+
+.content-dashboard-graficos .content-dashboard-graficos-div .grafico-saldo-indisp .infos-grafic-status {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    width: 100%;
+    background-color: transparent;
+    padding: 10px 0px;
+    font-size: 12px;
+    font-weight: 300;
+    text-transform: capitalize;
+    align-self: flex-end;
+
+}
+
+.content-dashboard-graficos-div .grafico-saldo-indisp .infos-grafic-status #grafic-disp-restante {
+    color: var(--cor-amarelo-atencao);
+    background-color: transparent;
+}
+
+.content-dashboard-graficos-div .grafico-saldo-indisp .infos-grafic-status #grafic-disp-consumido {
+    color: var(--cor-verde-ativo);
+    background-color: transparent;
+}
+
+.content-dashboard .content-dashboard-graficos .content-dashboard-graficos-div .grafico-disp-tempo {
+    height: 41vh;
+    display: flex;
+}
+
+.content-dashboard .content-dashboard-graficos .content-dashboard-graficos-div .grafico-incidentes-pservidor {
+    height: 34vh;
+    display: flex;
+}
+
