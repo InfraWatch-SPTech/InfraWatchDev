@@ -275,3 +275,85 @@
     display: flex;
 }
 
+.content-dashboard .content-dashboard-graficos .content-dashboard-graficos-div .grafico-incidentes-pcomponente {
+    height: 24vh;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    padding: 4%;
+}
+
+.content-dashboard-graficos .content-dashboard-graficos-div .grafico-incidentes-pcomponente .gipc-titulo-totais {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    align-items: flex-start;
+    width: 25%;
+    height: 100%;
+    background-color: transparent;
+}
+
+.content-dashboard-graficos .content-dashboard-graficos-div .grafico-incidentes-pcomponente .gipc-titulo-totais .infos-grafic-content-titulo {
+    text-transform: uppercase;
+    font-size: 16px;
+    font-weight: 900;
+    background-color: transparent;
+}
+
+.content-dashboard-graficos .content-dashboard-graficos-div .grafico-incidentes-pcomponente .gipc-titulo-totais .infos-grafic-content-subtitulo {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    justify-content: center;
+    background-color: transparent;
+}
+
+.content-dashboard-graficos .content-dashboard-graficos-div .grafico-incidentes-pcomponente .gipc-titulo-totais .infos-grafic-content-subtitulo .infos-kpis-nome {
+    background-color: transparent;
+    font-size: 15px;
+    font-weight: 300;
+    text-transform: capitalize;
+}
+
+.content-dashboard-graficos .content-dashboard-graficos-div .grafico-incidentes-pcomponente .gipc-titulo-totais .infos-grafic-content-subtitulo .infos-grafic-alertas-totais {
+    background-color: transparent;
+    font-size: 40px;
+    color: var(--cor-vermelho-inativo);
+}
+
+.content-dashboard-graficos .content-dashboard-graficos-div .grafico-incidentes-pcomponente .gipc-graficos-pcomponente {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    width: 75%;
+    height: 100%;
+    background-color: transparent;
+}
+
+.content-dashboard-graficos .content-dashboard-graficos-div .grafico-incidentes-pcomponente .gipc-graficos-pcomponente .grafico-comps {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    align-items: center;
+    height: 100%;
+    width: 30%;
+    background-color: transparent;
+}
+
+.content-dashboard-graficos .content-dashboard-graficos-div .grafico-incidentes-pcomponente .gipc-graficos-pcomponente .grafico-comps h2 {
+    font-size: 16px;
+    font-weight: 800;
+    text-transform: uppercase;
+    color: var(--cor-vermelho-inativo);
+    background-color: transparent;
+}
+
+.content-dashboard-graficos .content-dashboard-graficos-div .grafico-incidentes-pcomponente .gipc-graficos-pcomponente .grafico-comps p {
+    font-size: 12px;
+    font-weight: 800;
+    text-transform: capitalize;
+    color: var(--cor-branco-default);
+    background-color: transparent;
+}

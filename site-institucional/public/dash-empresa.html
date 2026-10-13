@@ -150,7 +150,7 @@
                     <div class="box-graficos left grafico-saldo-indisp">
                         <p class="infos-kpis-nome">Orçamento de Insdisponibilidade Restante (Anual)</p>
                         <p class="grafic-disp-limite-max">Limite máximo: 8h46m</p>
-                        <canvas style="width: 100%; height: 5vh;"></canvas> <!--  Gráfico CHART.JS -->
+                        <canvas style="width: 100%; height: 5vh;" id="grafico-indisponibilidade"></canvas>
                         <div class="infos-grafic-status">
                             <p id="grafic-disp-consumido">Consumido: $$</p>
                             <p id="grafic-disp-restante">Restam: $$</p>
@@ -176,26 +176,24 @@
 
                             <div class="infos-grafic-content-subtitulo">
                                 <p class="infos-kpis-nome">Alertas totais</p>
-                                <p class="infos-grafic-alertas-totais">
-                                    <span id="kpi-alertas-ativos">$</span>
-                                </p>
+                                <p class="infos-grafic-alertas-totais" id="kpi-alertas-ativos">$</p>
                             </div>
                         </div>
 
                         <div class="gipc-graficos-pcomponente">
                             <div class="grafico-comps">
                                 <h2 id="comp-1">Cpu</h2>
-                                <!-- <canvas></canvas>  Gráfico CHART.JS -->
+                                <canvas style="width: 7em; height: 7em;"></canvas> <!-- Gráfico CHART.JS -->
                                 <p>Total: <span id="qtd-comp1">$$</span></p>
                             </div>
                             <div class="grafico-comps">
                                 <h2 id="comp-2">Ram</h2>
-                                <!-- <canvas></canvas>  Gráfico CHART.JS -->
+                                <canvas style="width: 7em; height: 7em;"></canvas> <!-- Gráfico CHART.JS -->
                                 <p>Total: <span id="qtd-comp2">$$</span></p>
                             </div>
                             <div class="grafico-comps">
                                 <h2 id="comp-3">Disco</h2>
-                                <!-- <canvas></canvas>  Gráfico CHART.JS -->
+                                <canvas style="width: 7em; height: 7em;"></canvas> <!-- Gráfico CHART.JS -->
                                 <p>Total: <span id="qtd-comp3">$$</span></p>
                             </div>
                         </div>
@@ -212,6 +210,10 @@
         <!-- COLOCAR FOOTER AQUI -->
     </footer>
 </body>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+    // CONFIGURAÇÕES DO CHART AQUI -----------------------------
+</script>
 <script src="../public/assets/js/sessao.js" defer></script>
 <script src="../public/assets/js/redirecionamento.js"></script>
 </html>
