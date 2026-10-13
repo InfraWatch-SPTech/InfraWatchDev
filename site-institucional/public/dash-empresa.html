@@ -107,7 +107,7 @@
                             <span id="kpi-t-mttd">$$</span>
                         </p>
                         <p class="infos-kpis-secundaria">
-                            <span id="kpi-p-comparada">$% mais rápico</span>
+                            <span id="kpi-p-comparada">$% mais rápido</span>
                         </p>
                     </div>
                 </div>
@@ -134,7 +134,7 @@
                     <div class="infos-kpis">
                         <p class="infos-kpis-nome">Alertas Ativos</p>
                         <p class="infos-kpis-principal">
-                            <span id="kpi-alertas-ativos">$$</span>
+                            <span class="kpi-alertas-ativos">$$</span>
                         </p>
                         <p class="infos-kpis-secundaria">
                             <span id="kpi-qtd-alertas-criticos">$ alertas críticos</span>
@@ -150,7 +150,7 @@
                     <div class="box-graficos left grafico-saldo-indisp">
                         <p class="infos-kpis-nome">Orçamento de Insdisponibilidade Restante (Anual)</p>
                         <p class="grafic-disp-limite-max">Limite máximo: 8h46m</p>
-                        <canvas style="width: 100%; height: 5vh;" id="grafico-indisponibilidade"></canvas>
+                        <canvas id="grafico-indisp-saldo" style="max-width: 100%; max-height: 50px; background-color: transparent;" id="grafico-indisponibilidade"></canvas>
                         <div class="infos-grafic-status">
                             <p id="grafic-disp-consumido">Consumido: $$</p>
                             <p id="grafic-disp-restante">Restam: $$</p>
@@ -158,7 +158,7 @@
                     </div>
 
                     <div class="box-graficos left grafico-disp-tempo">
-                        <canvas style="width: 100%; height: 85%;"></canvas> <!-- Gráfico CHART.JS -->
+                        <canvas id="grafico-disp-tempo" style="width: 100%; height: 85%; background-color: transparent;"></canvas>
                     </div>
 
                 </div>
@@ -166,7 +166,7 @@
                 <div class="content-dashboard-graficos-div">
                     
                     <div class="box-graficos right grafico-incidentes-pservidor">
-                        <canvas style="width: 100%; height: 85%;"></canvas> <!-- Gráfico CHART.JS -->
+                        <canvas id="grafico-incidentes-pservidor" style="width: 100%; height: 85%; background-color: transparent;"></canvas>
                     </div>
 
                     <div class="box-graficos right grafico-incidentes-pcomponente">
@@ -176,24 +176,24 @@
 
                             <div class="infos-grafic-content-subtitulo">
                                 <p class="infos-kpis-nome">Alertas totais</p>
-                                <p class="infos-grafic-alertas-totais" id="kpi-alertas-ativos">$</p>
+                                <p class="infos-grafic-alertas-totais kpi-alertas-ativos">$</p>
                             </div>
                         </div>
 
                         <div class="gipc-graficos-pcomponente">
                             <div class="grafico-comps">
                                 <h2 id="comp-1">Cpu</h2>
-                                <canvas style="width: 7em; height: 7em;"></canvas> <!-- Gráfico CHART.JS -->
+                                <canvas id="grafico-comps1" style="background-color: transparent; max-width: 110px; max-height: 110px;"></canvas>
                                 <p>Total: <span id="qtd-comp1">$$</span></p>
                             </div>
                             <div class="grafico-comps">
                                 <h2 id="comp-2">Ram</h2>
-                                <canvas style="width: 7em; height: 7em;"></canvas> <!-- Gráfico CHART.JS -->
+                                <canvas id="grafico-comps2" style="background-color: transparent; max-width: 110px; max-height: 110px;"></canvas>
                                 <p>Total: <span id="qtd-comp2">$$</span></p>
                             </div>
-                            <div class="grafico-comps">
+                            <div class="grafico-comps" >
                                 <h2 id="comp-3">Disco</h2>
-                                <canvas style="width: 7em; height: 7em;"></canvas> <!-- Gráfico CHART.JS -->
+                                <canvas id="grafico-comps3" style="background-color: transparent; max-width: 110px; max-height: 110px;"></canvas>
                                 <p>Total: <span id="qtd-comp3">$$</span></p>
                             </div>
                         </div>
@@ -211,8 +211,499 @@
     </footer>
 </body>
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-<script>
+<script defer>
+    const incidentesServidor = [
+        {
+            'nome': 'Principal',
+            'qtd_incidentes': 12,
+            'qtd_resolvidos': 5
+        },
+        {
+            'nome': 'Backup',
+            'qtd_incidentes': 2,
+            'qtd_resolvidos': 1
+        },
+        {
+            'nome': 'Switch Central',
+            'qtd_incidentes': 20,
+            'qtd_resolvidos': 10
+        },
+        {
+            'nome': 'Web XPTO',
+            'qtd_incidentes': 8,
+            'qtd_resolvidos': 3
+        },
+        {
+            'nome': 'Notebook Financeiro',
+            'qtd_incidentes': 1,
+            'qtd_resolvidos': 0
+        }
+    ]
+
+    // Tratamento do json
+    let nomeServidores = [];
+    let qtdIncidentes = [];
+    let qtdResolvidos = [];
+    let incidentesTotais = 0;
+
+    function tratarIncidentesServidor(incidentesServidor) {
+        for (let i = 0; i < incidentesServidor.length; i++) {
+            nomeServidores.push(incidentesServidor[i].nome.toUpperCase());
+            qtdIncidentes.push(incidentesServidor[i].qtd_incidentes);
+            qtdResolvidos.push(incidentesServidor[i].qtd_resolvidos);
+            if (incidentesTotais < incidentesServidor[i].qtd_incidentes) {
+                incidentesTotais = incidentesServidor[i].qtd_incidentes;
+            }
+        }
+        return nomeServidores, qtdIncidentes, qtdResolvidos, incidentesTotais;
+    }
+    tratarIncidentesServidor(incidentesServidor);
+
     // CONFIGURAÇÕES DO CHART AQUI -----------------------------
+    const ctx_serv = document.getElementById('grafico-incidentes-pservidor');
+
+    new Chart(ctx_serv, {
+        type: 'bar',
+        data: {
+        labels: nomeServidores,
+        datasets: [
+            {
+                label: 'Incidentes',
+                data: qtdIncidentes,
+                borderWidth: 0,
+                backgroundColor: '#FF5C5C' ,
+                grouped: false,
+                order: 2,
+                borderRadius: 5
+            },
+            {
+                label: 'Resolvidos',
+                data: qtdResolvidos,
+                borderWidth: 0,
+                backgroundColor: '#3DDC84',
+                grouped: false,
+                order: 1,
+                borderRadius: 5
+            }
+        ]
+        },
+        options: {
+            responsive: true,
+            scales: {
+                x: {
+                    grid: {
+                        display: false
+                    },
+                    ticks: {
+                        color: '#eaeaf3',
+                        font: { family: 'allerta',  size: 10, weight: 'normal' }
+                    }
+                },
+                y: {
+                    beginAtZero: true,
+                    min: 0,
+                    max: incidentesTotais,
+                    grid: {
+                        display: false
+                    },
+                    ticks: {
+                        color: '#eaeaf3',
+                        font: { size: 14, weight: 'bold' }
+                    },
+                    border: {
+                        display: true,
+                        color: '#eaeaf3',
+                        width: 1
+                    }
+                }
+            },
+            plugins: {
+                title: {
+                    display: true,
+                    text: 'Número de Incidentes por Servidor',
+                    color: '#eaeaf3',
+                    position: 'top',
+                    font: { family: 'allerta', size: 16, weight: 'normal' },
+                    padding: { top: 10, bottom: 20 },
+                    align: 'center'
+                },
+                legend: {
+                    display: true,
+                    position: 'top',
+                    align: 'end',
+                    labels: {
+                        color: '#eaeaf3',
+                        borderRadius: 10,
+                        boxWidth: 15,
+                        boxHeight: 15,
+                        font: { family: 'allerta', size: 14 }
+                    }
+                }
+            }
+        }
+    });
+
+
+
+
+
+    const dispPorTempo = [
+        {
+            'dispPercent': 88,
+            'timestamp': '12:00:00'
+        },
+        {
+            'dispPercent': 89,
+            'timestamp': '13:00:00'
+        },
+        {
+            'dispPercent': 91,
+            'timestamp': '14:00:00'
+        },
+        {
+            'dispPercent': 99,
+            'timestamp': '15:00:00'
+        },
+        {
+            'dispPercent': 80,
+            'timestamp': '16:00:00'
+        }
+    ]
+
+    // Tratamento do json
+    let dispPercent = [];
+    let timestamp = [];
+    let meta = [];
+
+    function tratarDispPorTempo(dispPorTempo) {
+        for (let i = 0; i < dispPorTempo.length; i++) {
+            dispPercent.push(dispPorTempo[i].dispPercent)
+            timestamp.push(dispPorTempo[i].timestamp)
+            meta.push(99.9)
+        }
+        return dispPercent, timestamp, meta;
+    }
+    tratarDispPorTempo(dispPorTempo);
+
+    const ctx_disp = document.getElementById('grafico-disp-tempo');
+
+    new Chart(ctx_disp, {
+        type: 'line',
+        data: {
+        labels: timestamp,
+        datasets: [
+            {
+                label: 'Atual',
+                data: dispPercent,
+                borderWidth: 1,
+                pointBackgroundColor: '#FF5C5C',
+                pointBorderColor: '#FF5C5C',
+                borderColor: '#eaeaf3',
+                borderWidth: 2,
+                fill:true
+            },
+            {
+                label: 'Meta',
+                data: meta,
+                borderWidth: 1,
+                pointRadius: 0,
+                pointBackgroundRadius: 0,
+                borderColor: '#3DDC84',
+                borderWidth: 1,
+                borderDash: [5, 5]
+            }
+        ]
+        },
+        options: {
+        scales: {
+            y: {
+                beginAtZero: true,
+                min: 0,
+                max: 100,
+                grid: {
+                    display: false
+                },
+                ticks: {
+                    color: '#5C6288',
+                    font: { size: 14, weight: 'bold' },
+                    stepSize: 20
+                },
+                border: {
+                    display: true,
+                    color: '#5C6288',
+                    width: 1
+                }
+            },
+            x: {
+                grid: {
+                    display: false
+                },
+                ticks: {
+                    color: '#5C6288',
+                    font: { size: 14, weight: 'bold' }
+                },
+                border: {
+                    display: true,
+                    color: '#5C6288',
+                    width: 1
+                }
+            }
+        },
+        plugins: {
+                title: {
+                    display: true,
+                    text: 'Disponibilidade ao longo do tempo',
+                    color: '#eaeaf3',
+                    position: 'top',
+                    font: { family:'allerta',  size: 16, weight: 'normal' },
+                    padding: { top: 10, bottom: 20 },
+                    align: 'center'
+                },
+                legend: {
+                    display: true,
+                    position: 'bottom',
+                    align: 'end',
+                    labels: {
+                        color: '#eaeaf3',
+                        borderRadius: 10,
+                        boxWidth: 15,
+                        boxHeight: 15,
+                        font: { family: 'allerta', size: 14 }
+                    }
+                }
+            }
+        }
+    });
+
+
+
+
+
+    const alertasPorComponente = [
+        {
+            'componente': 'cpu',
+            'qtd_alertas_ativos': 11,
+            'qtd_alertas_totais': 48,
+        },
+        {
+            'componente': 'ram',
+            'qtd_alertas_ativos': 10,
+            'qtd_alertas_totais': 27,
+        },
+        {
+            'componente': 'disco',
+            'qtd_alertas_ativos': 4,
+            'qtd_alertas_totais': 34,
+        }
+    ]
+
+    // Tratamento do json
+    let componentes = [];
+    let qtdAlertasAtivos = [];
+    let qtdTotalAlertas = [];
+    let alertasTotaisComp = 0;
+
+    function tratarAlertasPorComponente(alertasPorComponente) {
+        for (let i = 0; i < 3; i++) {
+            componentes.push(alertasPorComponente[i].componente)
+            qtdAlertasAtivos.push(alertasPorComponente[i].qtd_alertas_ativos)
+            qtdTotalAlertas.push(alertasPorComponente[i].qtd_alertas_totais)
+            alertasTotaisComp += alertasPorComponente[i].qtd_alertas_ativos;
+        }
+        return componentes, qtdAlertasAtivos, qtdTotalAlertas;
+    }
+    tratarAlertasPorComponente(alertasPorComponente);
+    
+    
+    // Inserindo innerHTML
+    qtdComp1 = document.getElementById('qtd-comp1');
+    qtdComp2 = document.getElementById('qtd-comp2');
+    qtdComp3 = document.getElementById('qtd-comp3');
+    kpiAlertasTotais = document.getElementsByClassName('kpi-alertas-ativos');
+
+    qtdComp1.innerHTML = `${qtdTotalAlertas[0]}`;
+    qtdComp2.innerHTML = `${qtdTotalAlertas[1]}`;
+    qtdComp3.innerHTML = `${qtdTotalAlertas[2]}`;
+
+    for (let i = 0; i < kpiAlertasTotais.length; i++) {
+        kpiAlertasTotais[i].innerHTML = `${alertasTotaisComp}`;
+    }
+
+    const ctx_comp1 = document.getElementById('grafico-comps1');
+
+    new Chart(ctx_comp1, {
+        type: 'doughnut',
+        data: {
+            labels: ['Em alerta', 'Qtd Total'],
+            datasets: [{
+                label: false,
+                data: [qtdAlertasAtivos[0], qtdTotalAlertas[0]],
+                backgroundColor: ["#FF5C5C", '#291C58'],
+                borderWidth: 0
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                    title: {
+                        display: false
+                    },
+                    legend: {
+                        display: false
+                    }
+            }
+        }
+    });
+
+
+    
+    const ctx_comp2 = document.getElementById('grafico-comps2');
+
+    new Chart(ctx_comp2, {
+        type: 'doughnut',
+        data: {
+            labels: ['Em alerta', 'Qtd Total'],
+            datasets: [{
+                label: false,
+                data: [qtdAlertasAtivos[1], qtdTotalAlertas[1]],
+                backgroundColor: ["#FF5C5C", '#291C58'],
+                borderWidth: 0
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                    title: {
+                        display: false
+                    },
+                    legend: {
+                        display: false
+                    }
+            }
+        }
+    });
+
+
+    const ctx_comp3 = document.getElementById('grafico-comps3');
+
+    new Chart(ctx_comp3, {
+        type: 'doughnut',
+        data: {
+        labels: ['Em alerta', 'Qtd Total'],
+            datasets: [{
+                label: false,
+                data: [qtdAlertasAtivos[2], qtdTotalAlertas[2]],
+                backgroundColor: ["#FF5C5C", '#291C58'],
+                borderWidth: 0
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                title: {
+                    display: false
+                },
+                legend: {
+                    display: false
+                }
+        }
+        }
+    });
+
+
+
+
+
+
+    const dispAnual = [
+        {
+            'tempoDispAnualMin': 42
+        }
+    ]
+
+    // Tratamento do json
+    let tempoDispAnualMin = dispAnual[0].tempoDispAnualMin;
+    let tempoMinTotais = 526;
+    let tempDispAnualPercent = (tempoDispAnualMin * 100) / tempoMinTotais;
+    tempDispAnualPercent = Math.round(tempDispAnualPercent)
+    let restante = 100 - tempDispAnualPercent;
+
+    let idConsumido = document.getElementById('grafic-disp-consumido')
+    let idRestante = document.getElementById('grafic-disp-restante')
+
+    let qtdConsumidoMin = tempoDispAnualMin % 60;
+    let qtdConsumidoHoras = tempoDispAnualMin / 60;
+    
+    if (qtdConsumidoHoras < 1) {
+        qtdConsumido = `${tempoDispAnualMin}m`
+    } else {
+        qtdConsumido = `${qtdConsumidoHoras}h${qtdConsumidoMin}m`
+    }
+
+    let qtdRestanteMinTotais = tempoMinTotais - tempoDispAnualMin;
+    let qtdRestanteHoras = Math.round(qtdRestanteMinTotais / 60);
+    let qtdRestanteMin = qtdRestanteMinTotais % 60;
+
+    if (qtdRestanteHoras < 1) {
+        qtdRestante = `${qtdRestanteMin}m`
+    } else {
+        qtdRestante = `${qtdRestanteHoras}h${qtdRestanteMin}m`
+    }
+
+    idConsumido.innerHTML = `Consumido: ${qtdConsumido}`
+    idRestante.innerHTML = `Restante: ${qtdRestante}`
+
+    const ctx_saldo = document.getElementById('grafico-indisp-saldo');
+
+    new Chart(ctx_saldo, {
+    type: 'bar',
+    data: {
+      labels: ['Orçamento'],
+      datasets: [
+        {
+            label: 'Consumido',
+            data: [tempDispAnualPercent],
+            backgroundColor: '#3DDC84',
+            borderRadius: 8
+        },
+        {
+            label: 'Restante',
+            data: [restante],
+            backgroundColor: '#170F38',
+            borderRadius: 8,
+            borderColor: '#5C6288',
+            borderWidth: 1
+        }
+    ]
+    },
+    options: {
+        indexAxis: 'y',
+        responsive: true,
+        maintainAspectRatio: false,
+        scales: {
+            y: {
+                stacked: true,
+                display: false
+            },
+            x: {
+                stacked: true,
+                display: false,
+                max: 100
+            }
+        },
+        plugins: {
+            legend: {
+                display: false
+            }
+        }
+    }
+  });
+
+    
+
 </script>
 <script src="../public/assets/js/sessao.js" defer></script>
 <script src="../public/assets/js/redirecionamento.js"></script>
