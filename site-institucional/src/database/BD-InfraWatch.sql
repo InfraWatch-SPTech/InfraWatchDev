@@ -97,6 +97,7 @@ CREATE TABLE relatorio (
 
 CREATE TABLE equipamento (
     idEquipamento INT PRIMARY KEY AUTO_INCREMENT,
+    hostname VARCHAR (150) UNIQUE DEFAULT NULL,
     nome VARCHAR(100) NOT NULL,
     tipo VARCHAR(50) NOT NULL,
     ip VARCHAR(25),
@@ -312,3 +313,6 @@ VALUES
 ('USO_RAM', 70.00, 90.00, '%', 1, 4, 2),
 ('USO_DISCO', 75.00, 90.00, '%', 1, 4, 3);
 
+CREATE USER 'infra_watch_captura'@'%' IDENTIFIED BY 'urubu100';
+GRANT all privileges ON InfraWatch.* TO 'infra_watch_captura'@'%';
+FLUSH PRIVILEGES;
