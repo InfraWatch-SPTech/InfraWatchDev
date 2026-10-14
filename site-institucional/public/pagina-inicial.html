@@ -9,12 +9,11 @@
     <!-- FontAwesome Icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" crossorigin="anonymous" />
     <!-- Estilos Globais e Específicos -->
-    <link rel="stylesheet" href="./assets/css/main.css">
-    <link rel="stylesheet" href="./assets/css/pagina-inicial.css">
-    <!-- Scripts de Navegação e Sessão -->
-    <script src="./assets/js/redirecionamento.js" defer></script>
-    <script src="./assets/js/sessao.js" defer></script>
-    <script src="./assets/js/pagina-inicial.js" defer></script>
+    <link rel="stylesheet" href="/assets/css/main.css"/>
+    <link rel="stylesheet" href="/assets/css/pagina-inicial.css"/>
+    <script src="/assets/js/redirecionamento.js" defer></script>
+    <script src="/assets/js/sessao.js" defer></script>
+    <script src="/assets/js/pagina-inicial.js" defer></script>
 </head>
 <body>
 
@@ -175,9 +174,9 @@
                                 <div class="caixa-alerta-info">
                                     <em><strong>O que é o script de captura?</strong> O Script de captura é um arquivo python que será utilizado para capturar os dados que alimentarão a dashboard do seu servidor. Você pode baixar clicando no botão abaixo:</em>
                                 </div>
-                                <button class="btn-download-script" onclick="baixarScriptPython()">
-                                    <i class="fa-solid fa-download"></i> Baixar script.py
-                                </button>
+                                <button class="btn-download-script" onclick="window.location.href='/assets/scripts/captura.py'">
+                                        <i class="fa-solid fa-download"></i> Baixar script.py
+                                </button>  
                             </div>
                         </div>
 
