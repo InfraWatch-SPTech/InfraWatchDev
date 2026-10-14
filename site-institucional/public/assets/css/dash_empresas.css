@@ -358,3 +358,19 @@
     color: var(--cor-branco-default);
     background-color: transparent;
 }
+
+.cor-vermelha {
+    color: var(--cor-vermelho-inativo) !important;
+}
+
+.cor-amarela {
+    color: var(--cor-amarelo-atencao) !important;
+}
+
+.cor-verde {
+    color: var(--cor-verde-ativo) !important;
+}
+
+.cor-padrao {
+    color: var(--cor-branco-default) !important;
+}
