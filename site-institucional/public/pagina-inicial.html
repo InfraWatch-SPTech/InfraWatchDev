@@ -1,0 +1,277 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>InfraWatch - Página Inicial</title>
+    <!-- Google Fonts -->
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Allerta&family=Allerta+Stencil&display=swap">
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" crossorigin="anonymous" />
+    <!-- Estilos Globais e Específicos -->
+    <link rel="stylesheet" href="./assets/css/main.css">
+    <link rel="stylesheet" href="./assets/css/pagina-inicial.css">
+    <!-- Scripts de Navegação e Sessão -->
+    <script src="./assets/js/redirecionamento.js" defer></script>
+    <script src="./assets/js/sessao.js" defer></script>
+    <script src="./assets/js/pagina-inicial.js" defer></script>
+</head>
+<body>
+
+    <header>
+        <div class="navbar">
+            <div class="nav-logo" onclick="redirecionamento_paginaInicial()">
+                <h1>Infra<span>Watch</span></h1>
+            </div>
+            <div class="nav-links">
+                <ul>
+                    <li class="nav-select">
+                        <a href="./pagina-inicial.html">Início</a>
+                    </li>
+                    <li>
+                        <a href="./hardwares.html">Hardwares</a>
+                    </li>
+                    <li>
+                        <a href="./relatorios.html">Relatórios</a>
+                    </li>
+                    <li>
+                        <a href="./sobrenos.html">Sobre-nós</a>
+                    </li>
+                </ul>
+            </div>
+            <div class="nav-login">
+                <!-- Preenchido dinamicamente pelo sessao.js -->
+            </div>
+            <div class="popup-perfil">
+                <!-- Popup de Perfil preenchido pelo sessao.js -->
+            </div>
+        </div>
+    </header>
+
+    <div class="divisao-nav" style="height: 9vh; width: 100%;"></div>
+
+    <main class="container-boas-vindas">
+
+        <!-- BANNER DE BOAS-VINDAS DO USUÁRIO -->
+        <section class="banner-usuario">
+            <div class="usuario-info-principal">
+                <span class="subtitulo-boas-vindas">BEM VINDO(A) DE VOLTA AO NOSSO SISTEMA</span>
+                <h1 id="nome-usuario-dashboard">MARIANA SOARES</h1>
+                <h3 id="cargo-usuario-dashboard">Gerente de Operações de TI</h3>
+            </div>
+            <div class="empresa-tag-box">
+                <span class="rotulo-empresa">EMPRESA</span>
+                <div class="badge-empresa" id="nome-empresa-dashboard">ITAÚ UNIBANK</div>
+            </div>
+            <div class="logo-letra-bg">
+                <span>W</span>
+            </div>
+        </section>
+
+        <!-- CARDS DE INFORMAÇÕES DE ACESSO RÁPIDO -->
+        <section class="secao-metricas-rapidas">
+            <span class="titulo-bloco-secao">INFORMAÇÕES DE ACESSO RÁPIDO</span>
+            <div class="grid-metricas-rapidas">
+                
+                <div class="card-metrica">
+                    <div class="icone-card-metrica azul">
+                        <i class="fa-solid fa-lightbulb"></i>
+                    </div>
+                    <div class="conteudo-card-metrica">
+                        <span class="rotulo-card">Disponibilidade Interna</span>
+                        <h2 class="valor-card">100%</h2>
+                        <span class="status-tag status-otimo">Status: Ótimo</span>
+                    </div>
+                </div>
+
+                <div class="card-metrica">
+                    <div class="icone-card-metrica roxo">
+                        <i class="fa-solid fa-bell"></i>
+                    </div>
+                    <div class="conteudo-card-metrica">
+                        <span class="rotulo-card">Alertas ativos</span>
+                        <h2 class="valor-card" id="qtd-alertas-ativos">25</h2>
+                        <span class="status-subtexto status-critico-texto" id="subtexto-alertas">2 alertas críticos</span>
+                    </div>
+                </div>
+
+                <div class="card-metrica">
+                    <div class="icone-card-metrica roxo-escuro">
+                        <i class="fa-solid fa-tower-broadcast"></i>
+                    </div>
+                    <div class="conteudo-card-metrica">
+                        <span class="rotulo-card">Disponibilidade Externa</span>
+                        <h2 class="valor-card">99,5%</h2>
+                        <span class="status-tag status-ruim">Status: Ruim</span>
+                    </div>
+                </div>
+
+            </div>
+
+            <!-- BOTÕES DE ACESSO RÁPIDO -->
+            <div class="barra-botoes-rapidos">
+                <button class="btn-acao-rapida primario" onclick="window.location.href='./hardwares.html'">
+                    ACESSAR DASHBOARD GERAL <i class="fa-solid fa-arrow-right"></i>
+                </button>
+                <button class="btn-acao-rapida secundario" onclick="window.location.href='./hardwares.html'">
+                    ACESSAR SERVIDOR MAIS AFETADO
+                </button>
+                <button class="btn-acao-rapida secundario" onclick="rolarParaSecao('etapa-jira')">
+                    CONECTAR PLATAFORMAS DE ALERTA
+                </button>
+                <button class="btn-acao-rapida secundario" onclick="rolarParaSecao('primeiros-passos')">
+                    MANUAL DE INSTRUÇÕES <i class="fa-solid fa-arrow-down"></i>
+                </button>
+            </div>
+        </section>
+
+        <!-- GUIA PRIMEIROS PASSOS -->
+        <section class="container-onboarding" id="primeiros-passos">
+            <div class="cabecalho-onboarding">
+                <span class="rotulo-secao">COMO CONFIGURAR SEU SISTEMA INFRAWATCH</span>
+                <h2>PRIMEIROS PASSOS</h2>
+            </div>
+
+            <div class="caixa-onboarding-principal">
+                
+                <div class="bloco-explicativo">
+                    <h3>COMO FUNCIONA NOSSO SISTEMA?</h3>
+                    <p>O sistema InfraWatch funciona de uma forma bem simples. Para adotar a nossa solução você precisará seguir um fluxo para acessar as funcionalidades da nossa solução. Seguindo esse passo a passo você estará pronto para conseguir aderir à nossa solução da melhor forma!</p>
+                </div>
+
+                <!-- ETAPA 01 -->
+                <div class="card-etapa">
+                    <span class="etapa-numero">ETAPA 01</span>
+                    <h3 class="etapa-titulo">CONECTANDO SERVIDOR</h3>
+
+                    <div class="lista-passos">
+                        <div class="item-passo">
+                            <span class="num-passo">01.</span>
+                            <div class="conteudo-passo">
+                                <strong>CADASTRE UM SERVIDOR</strong>
+                                <p>Na área de servidores, informe os dados da máquina que deseja monitorar.</p>
+                                <div class="caixa-alerta-info">
+                                    <span class="tag-alerta-amarela">Guarde o código!</span> Ele será necessário novamente no passo 4.
+                                    <br><br>
+                                    <em><strong>O que significa esse código?</strong> O código é como uma senha do seu servidor. É ele que diz à nossa solução qual é o seu servidor e se ele realmente existe. Cada servidor tem um código único.</em>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="item-passo">
+                            <span class="num-passo">02.</span>
+                            <div class="conteudo-passo">
+                                <strong>DEFINA OS PARÂMETROS DE ALERTA</strong>
+                                <p>Para cada componente que desejar monitorar do seu servidor defina um parâmetro (gatilho), onde quando o gatilho for atingido um alerta será gerado.</p>
+                                <span class="tag-passo-obrigatorio">Esse passo é obrigatório!</span> Você poderá alterar os valores dos parâmetros depois na aba "Servidores".
+                            </div>
+                        </div>
+
+                        <div class="item-passo">
+                            <span class="num-passo">03.</span>
+                            <div class="conteudo-passo">
+                                <strong>FAÇA O DOWNLOAD DO SCRIPT DE CAPTURA</strong>
+                                <p>Faça o download do Script de captura para recebimento dos dados do seu servidor.</p>
+                                <div class="caixa-alerta-info">
+                                    <em><strong>O que é o script de captura?</strong> O Script de captura é um arquivo python que será utilizado para capturar os dados que alimentarão a dashboard do seu servidor. Você pode baixar clicando no botão abaixo:</em>
+                                </div>
+                                <button class="btn-download-script" onclick="baixarScriptPython()">
+                                    <i class="fa-solid fa-download"></i> Baixar script.py
+                                </button>
+                            </div>
+                        </div>
+
+                        <div class="item-passo">
+                            <span class="num-passo">04.</span>
+                            <div class="conteudo-passo">
+                                <strong>EXECUTE O SCRIPT.PY NO SERVIDOR</strong>
+                                <p>O arquivo que você fez download no passo anterior deve ser executado em seu servidor. Durante ele deve-se informar suas credenciais conforme as credenciais cadastradas no site.</p>
+                                <span class="tag-alerta-vermelha">Código:</span> O código cadastrado no servidor deve ser o mesmo digitado no script de captura.
+                            </div>
+                        </div>
+
+                        <div class="item-passo">
+                            <span class="num-passo">05.</span>
+                            <div class="conteudo-passo">
+                                <strong>VISUALIZE OS DADOS DO SEU SERVIDOR NA DASHBOARD</strong>
+                                <p>Pronto! Agora o monitoramento do seu servidor está configurado, liberando o acesso às dashboards e gerenciamento.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- ETAPA 02 -->
+                <div class="card-etapa" id="etapa-jira">
+                    <span class="etapa-numero">ETAPA 02</span>
+                    <h3 class="etapa-titulo">CONEXÃO DE ALERTAS AUTOMÁTICOS</h3>
+
+                    <div class="caixa-alerta-aviso">
+                        <em>Antes de começar você deve ter ao menos um servidor com parâmetros configurados.</em>
+                    </div>
+
+                    <div class="lista-passos">
+                        <div class="item-passo">
+                            <span class="num-passo">01.</span>
+                            <div class="conteudo-passo">
+                                <strong>ACESSE A PLATAFORMA DE ALERTAS</strong>
+                                <p>Abra o menu lateral do site e clique em Plataforma de Alerta.</p>
+                            </div>
+                        </div>
+
+                        <div class="item-passo">
+                            <span class="num-passo">02.</span>
+                            <div class="conteudo-passo">
+                                <strong>CONEXÃO COM O JIRA</strong>
+                                <p>Para conseguir receber alertas pelo Jira você deve preencher os campos de conexão:</p>
+                                <ul class="lista-detalhes-jira">
+                                    <li><strong>Link do espaço:</strong> O endereço do seu Jira, no formato <code>https://sua-empresa.atlassian.net</code></li>
+                                    <li><strong>E-mail:</strong> O e-mail da sua conta Atlassian.</li>
+                                    <li><strong>Token de API:</strong> O passo a passo é explicado na caixa ao lado.</li>
+                                </ul>
+                                <span class="tag-seguranca">Segurança:</span> O token de API funciona como uma senha, não o compartilhe!
+                            </div>
+                        </div>
+
+                        <div class="item-passo">
+                            <span class="num-passo">03.</span>
+                            <div class="conteudo-passo">
+                                <strong>RECEBA ALERTAS AUTOMATICAMENTE</strong>
+                                <p>Pronto, sua configuração de alertas está concluída! Quando um componente atingir o parâmetro definido, a InfraWatch cria uma tarefa no Jira.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </section>
+
+    </main>
+
+    <footer>
+        <div class="container-footer">
+            <div class="content-footer">
+                <div class="content-footer-top">
+                    <div class="footer-top-title">
+                        <h2>Infra<span style="color: #5178F9;">Watch</span></h2>
+                        <h6>Observabilidade de infraestrutura para empresas <span>que não podem parar</span>.</h6>
+                    </div>
+                    <div class="footer-top-links">
+                        <div class="f-top-links-box">
+                            <h2>Menu</h2>
+                            <ul>
+                                <li onclick="window.location.href='./pagina-inicial.html'">Início</li>
+                                <li onclick="window.location.href='./hardwares.html'">Hardwares</li>
+                                <li onclick="window.location.href='./relatorios.html'">Relatórios</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+                <div class="content-footer-bottom">
+                    <h6>© 2026 Copyright: Infra<span style="color: #5178F9;">Watch</span>.com.br</h6>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+</body>
+</html>
