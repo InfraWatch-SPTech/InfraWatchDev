@@ -170,11 +170,51 @@ function buscarEquipamentosEmpresa(req, res) {
         });
 }
 
-function cadastrarEquipamento(req, res) {
-    if (!validarLimites(req, res)) {
-        return;
+// BY PEDRO
+
+function validarComponentesCadastro(componentes, res) {
+    if (!Array.isArray(componentes) || componentes.length === 0) {
+        res.status(400).send('Selecione pelo menos um componente.');
+        return false;
     }
 
+    const tiposPermitidos = [
+        'CPU', 'RAM', 'ARMAZENAMENTO', 'REDE', 'TEMPERATURA'
+    ];
+
+    const tiposRecebidos = new Set();
+
+    for (let componente of componentes) {
+        const tipo = String(componente.tipo || '').toUpperCase();
+        const atencao = componente.limiteAtencao;
+        const critico = componente.limiteCritico;
+
+        if (!tiposPermitidos.includes(tipo) || tiposRecebidos.has(tipo)) {
+            res.status(400).send('Componente inválido ou duplicado.');
+            return false;
+        }
+
+        tiposRecebidos.add(tipo);
+
+        if (
+            typeof atencao !== 'number' ||
+            typeof critico !== 'number' ||
+            !Number.isFinite(atencao) ||
+            !Number.isFinite(critico) ||
+            atencao < 1 ||
+            critico <= atencao ||
+            (tipo !== 'TEMPERATURA' && critico > 100)
+        ) {
+            res.status(400).send(`Limites inválidos para ${tipo}.`);
+            return false;
+        }
+    }
+
+    return true;
+}
+// FIM BY PEDRO
+
+function cadastrarEquipamento(req, res) {
     var idUsuario = converterId(req.body.idUsuario);
     var fkEmpresa = converterId(req.body.fkEmpresa);
     var nome = req.body.nome;
@@ -182,9 +222,10 @@ function cadastrarEquipamento(req, res) {
     var localizacao = req.body.localizacao;
     var descricao = req.body.descricao || "";
     var componentes = req.body.componentes || [];
-    var limiteCpu = req.body.limiteCpu;
-    var limiteRam = req.body.limiteRam;
-    var limiteDisco = req.body.limiteDisco;
+
+    if (!validarComponentesCadastro(componentes, res)) {
+        return;
+    }
 
     if (!idUsuario || !fkEmpresa) {
         return res.status(400).send("O usuário e a empresa são obrigatórios.");
@@ -232,12 +273,9 @@ function cadastrarEquipamento(req, res) {
 
             var idEquipamento = resultadoEquipamento.insertId;
 
-            return hardwaresModel.cadastrarComponentes(
+            return hardwaresModel.cadastrarComponentesComLimites(
                 componentes,
-                idEquipamento,
-                limiteCpu,
-                limiteRam,
-                limiteDisco
+                idEquipamento
             ).then(function () {
                 res.status(201).json({ idEquipamento: idEquipamento });
             });
