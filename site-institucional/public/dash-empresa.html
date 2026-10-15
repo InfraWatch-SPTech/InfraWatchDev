@@ -68,7 +68,7 @@
 
         <div class="content content-dashboard">
             <p class="titulo-pagina">status de todos os servidores monitorados</p>
-            <div class="content-dashboard-kpis">
+            <div class="content-dashboard-kpis" id="content-dash-kpis">
 
                 <div class="kpi-box">
                     <div class="icon">
@@ -144,7 +144,7 @@
                 </div>
 
             </div>
-            <div class="content-dashboard-graficos">
+            <div class="content-dashboard-graficos" id="content-dash-graficos">
 
                 <div class="content-dashboard-graficos-div">
 
@@ -207,15 +207,15 @@
 
             <div class="content-list-server">
                 <p class="titulo-pagina">meus servidores</p>
-                <div class="content-list-server-box">
+                <div class="content-list-server-box" id="container-server-box-vazio">
                     <div class="server-box">
                         <input type="checkbox">
-                        <p style="font-weight: 800; color: var(--cor-cinza-padrao);">nome</p>
-                        <p style="font-weight: 800; color: var(--cor-cinza-padrao);">status</p>
-                        <p style="font-weight: 800; color: var(--cor-cinza-padrao);">componentes</p>
-                        <p style="font-weight: 800; color: var(--cor-cinza-padrao);">ip</p>
-                        <p style="font-weight: 800; color: var(--cor-cinza-padrao);">localização</p>
-                        <p style="font-weight: 800; color: var(--cor-cinza-padrao);" class="acoes">ações</p>
+                        <p style="font-weight: 800; color: var(--cor-cinza-padrao); font-size: 14px;">nome</p>
+                        <p style="font-weight: 800; color: var(--cor-cinza-padrao); font-size: 14px;">status</p>
+                        <p style="font-weight: 800; color: var(--cor-cinza-padrao); font-size: 14px;">componentes</p>
+                        <p style="font-weight: 800; color: var(--cor-cinza-padrao); font-size: 14px;">ip</p>
+                        <p style="font-weight: 800; color: var(--cor-cinza-padrao); font-size: 14px;">localização</p>
+                        <p style="font-weight: 800; color: var(--cor-cinza-padrao); font-size: 14px;" class="acoes">ações</p>
                     </div>
                     <div class="container-server-box" id="corpo-tabela-hardwares"></div>
                 </div>
@@ -291,6 +291,28 @@
             } else {
                 sttsEquip[i].classList.add('cor-vermelha');
             }
+        }
+        
+        let containerServers = document.getElementById('container-server-box-vazio');
+        let containerKpis = document.getElementById('content-dash-kpis');
+        let containerGraficos = document.getElementById('content-dash-graficos');
+
+        if (Object.keys(equipamentosAgrupados).length === 0) {
+            containerServers.innerHTML = `
+                <div class="server-box-vazio">
+                    <p>Nenhum servidor encontrado</p>
+                </div>
+            `
+            containerKpis.innerHTML = `
+                <div class="sem-servidores">
+                    <div style="display:flex; flex-direction:column; align-items:flex-start; background-color:transparent;">
+                        <h3>Nenhum servidor encontrado</h3>
+                        <p>Cadastre um servidor para iniciar o monitoramento!</p>
+                    </div>
+                    <a href="#">Cadastrar Servidor ➔</a>
+                </div>
+            `
+            containerGraficos.style.display = 'none';
         }
     }
 
