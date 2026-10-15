@@ -1,5 +1,70 @@
 var database = require("../database/config");
 
+// BY PEDRO
+
+function cadastrarComponentesComLimites(componentes, idEquipamento) {
+    if (!componentes || componentes.length === 0) {
+        return Promise.resolve();
+    }
+
+    let configuracoes = {};
+
+    for (let componente of componentes) {
+        let tipo = String(componente.tipo).toUpperCase();
+
+        configuracoes[tipo] = {
+            atencao: componente.limiteAtencao,
+            critico: componente.limiteCritico
+        };
+    }
+
+    let tipos = Object.keys(configuracoes);
+
+    let tiposSql = tipos.map(function(tipo) {
+        return `'${tipo}'`;
+    }).join(', ');
+
+    let casosAtencao = [];
+    let casosCritico = [];
+
+    for (let tipo of tipos) {
+        casosAtencao.push(
+            `WHEN '${tipo}' THEN ${configuracoes[tipo].atencao}`
+        );
+
+        casosCritico.push(
+            `WHEN '${tipo}' THEN ${configuracoes[tipo].critico}`
+        );
+    }
+
+    let instrucaoSql = `
+        INSERT INTO parametro_alerta
+            (nomeMetrica, limite_atencao, limite_critico,
+             unidade, ativo, fkEquipamento, fkComponente)
+        SELECT
+            CONCAT('USO_', UPPER(tipo)),
+            CASE UPPER(tipo)
+                ${casosAtencao.join('\n')}
+            END,
+            CASE UPPER(tipo)
+                ${casosCritico.join('\n')}
+            END,
+            CASE
+                WHEN UPPER(tipo) = 'TEMPERATURA' THEN '°C'
+                ELSE '%'
+            END,
+            1,
+            ${idEquipamento},
+            idComponente
+        FROM componente
+        WHERE UPPER(tipo) IN (${tiposSql});
+    `;
+
+    return database.executar(instrucaoSql);
+}
+
+// FIM BY PEDRO
+
 function buscarAcessoUsuario(idUsuario, idEmpresa) {
     var instrucaoSql = `
         SELECT
@@ -268,6 +333,7 @@ function deletarEquipamento(idEmpresa, idEquipamento) {
 }
 
 module.exports = {
+    cadastrarComponentesComLimites,
     buscarAcessoUsuario,
     buscarEquipamentosEmpresa,
     buscarTipoEquipamento,

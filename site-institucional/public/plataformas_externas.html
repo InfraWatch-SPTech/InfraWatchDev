@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <link rel="stylesheet" href="assets/css/plat_externas.css">
+
+    <link rel="stylesheet"
+        href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+
+    <title>InfraWatch - Configuração do Jira</title>
+</head>
+
+<body>
+    <header class="cabecalho">
+        <div class="cabecalho-esquerda">
+            <button class="btn-menu" type="button" aria-label="Abrir menu">
+                <i class="fa-solid fa-bars"></i>
+            </button>
+
+            <a class="logo" href="#">
+                Infra<span>Watch</span>
+            </a>
+        </div>
+
+        <div class="cabecalho-direita">
+            <span class="nome-usuario">Mariana Soares</span>
+
+            <button class="btn-perfil" type="button" aria-label="Abrir perfil">
+                <i class="fa-regular fa-user"></i>
+            </button>
+
+            <button class="btn-sair" type="button" aria-label="Sair da conta">
+                <i class="fa-solid fa-arrow-right-from-bracket"></i>
+            </button>
+        </div>
+    </header>
+
+    <main class="conteudo-principal">
+        <section class="secao-integracao">
+            <h1>Receber alertas via plataformas externas</h1>
+
+            <div class="painel-integracao">
+                <div class="coluna-informacoes">
+                    <article class="caixa-informacao">
+                        <h2>Token de API</h2>
+                        <p>
+                            O Token de API é o código que permite criar uma Issue no Jira
+                            com seu e-mail para gerar alertas por você.
+                        </p>
+
+                        <h2>Como conseguir?</h2>
+                        <ol>
+                            <li>Na sua conta Jira, entre em <a href="#">Configurações da conta</a>.</li>
+                            <li>Acesse a aba de <a href="#">Segurança</a>.</li>
+                            <li>Em Tokens de API, acesse <a href="#">Gerenciar Tokens de API</a>.</li>
+                            <li>Verifique seu e-mail.</li>
+                            <li>Crie um Token de API.</li>
+                        </ol>
+                    </article>
+
+                    <article class="caixa-informacao">
+                        <h2 class="titulo-azul">Teste de credenciais</h2>
+                        <p>
+                            Após atualizar suas credenciais, é importante que você as
+                            <strong>teste para garantir a efetividade dos alertas.</strong>
+                            Enviaremos uma mensagem de teste que confirma que a integração
+                            está funcionando.
+                        </p>
+
+                        <p>Você pode testá-las clicando no botão abaixo:</p>
+
+                        <button class="btn-contorno" type="button">
+                            Testar credenciais
+                        </button>
+                    </article>
+                </div>
+
+                <form class="formulario-jira">
+                    <h2>Configurar Jira</h2>
+
+                    <div class="grupo-campo">
+                        <label for="email-jira">Seu e-mail do Jira</label>
+                        <input
+                            type="email"
+                            id="email-jira"
+                            placeholder="ana.reis@sptech.school">
+                    </div>
+
+                    <div class="grupo-campo">
+                        <label for="link-jira">Link do espaço Jira</label>
+                        <input
+                            type="url"
+                            id="link-jira"
+                            placeholder="https://infra-watch.atlassian.net/">
+                    </div>
+
+                    <div class="grupo-campo">
+                        <label for="token-jira">Token de API</label>
+                        <input
+                            type="password"
+                            id="token-jira"
+                            placeholder="Digite seu token de API">
+                    </div>
+
+                    <button class="btn-salvar" type="submit">
+                        <i class="fa-brands fa-jira"></i>
+                        Salvar
+                    </button>
+                </form>
+            </div>
+        </section>
+    </main>
+</body>
+
+</html>
