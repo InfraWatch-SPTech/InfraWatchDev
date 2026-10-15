@@ -36,6 +36,11 @@
                             Contato
                         </a>
                     </li>
+                    <li>
+                        <a href="./dash-empresa.html">
+                            Dashboard Empresa
+                        </a>
+                    </li>
                 </ul>
             </div>
             <div class="nav-login">
@@ -108,7 +113,7 @@
 
             <div class="corpo-modal">
                 <div class="coluna-modal">
-                    <span class="titulo-coluna-modal">INFORMAÇÕES GERAIS</span>
+                    <span class="titulo-coluna-modal">CADASTRAR NOVO HARDWARE</span>
 
                     <div class="campo-modal">
                         <label>Nome do dispositivo <span class="obrigatorio">*</span></label>
@@ -140,80 +145,188 @@
                         <label>Descrição (opcional)</label>
                         <textarea id="input-descricao-hardware" placeholder="Informações adicionais sobre o dispositivo"></textarea>
                     </div>
-
-                    <span class="titulo-coluna-modal">LIMITES DE USO (%)</span>
-                    <div class="campo-modal">
-                        <label for="input-limite-cpu-hardware">Limite de CPU <span class="obrigatorio">*</span></label>
-                        <input type="number" id="input-limite-cpu-hardware" min="1" max="100" step="1" value="80" required>
-                    </div>
-                    <div class="campo-modal">
-                        <label for="input-limite-ram-hardware">Limite de RAM <span class="obrigatorio">*</span></label>
-                        <input type="number" id="input-limite-ram-hardware" min="1" max="100" step="1" value="80" required>
-                    </div>
-                    <div class="campo-modal">
-                        <label for="input-limite-disco-hardware">Limite de disco <span class="obrigatorio">*</span></label>
-                        <input type="number" id="input-limite-disco-hardware" min="1" max="100" step="1" value="80" required>
-                    </div>
                 </div>
 
+                
                 <div class="coluna-modal">
-                    <span class="titulo-coluna-modal">COMPONENTES A MONITORAR</span>
+                    <span class="titulo-coluna-modal">CARDÁPIO DE COMPONENTES</span>
                     <div class="grade-checkbox">
-                        <label class="item-checkbox">
-                            <i class="fa-solid fa-microchip" style="color: rgb(255, 255, 255);"></i>
-                            <div class="texto-checkbox">
-                                <strong>CPU / Processador</strong>
-                                <span>Uso, temperatura e performance</span>
-                            </div>
-                            <input type="checkbox" class="checkbox-componente" data-nome="Processador" data-tipo="CPU" data-descricao="Uso, temperatura e performance" checked>
-                        </label>
 
-                        <label class="item-checkbox">
-                            <i class="fa-solid fa-memory" style="color: rgb(255, 255, 255);"></i>
-                            <div class="texto-checkbox">
-                                <strong>Memória RAM</strong>
-                                <span>Uso de memória e swap</span>
-                            </div>
-                            <input type="checkbox" class="checkbox-componente" data-nome="Memória RAM" data-tipo="RAM" data-descricao="Uso de memória e swap" checked>
-                        </label>
+                        <!-- Cabeçalho do cardápio -->
+                        <div class="cabecalho-componentes">
+                            <span>COMPONENTES</span>
+                            <span>GATILHOS DE ALERTA</span>
+                        </div>
+                        
+                        <!-- CPU -->
+                        <div class="linha-componente">
+                            <input type="checkbox" class="checkbox-componente"
+                                data-nome="Processador"
+                                data-tipo="CPU"
+                                data-descricao="Uso, temperatura e performance"
+                                id="check-cpu" checked>
 
-                        <label class="item-checkbox">
-                            <i class="fa-solid fa-database" style="color: rgb(255, 255, 255);"></i>
-                            <div class="texto-checkbox">
-                                <strong>Disco / Armazenamento</strong>
-                                <span>Uso, espaço livre e saúde</span>
-                            </div>
-                            <input type="checkbox" class="checkbox-componente" data-nome="Disco" data-tipo="Armazenamento" data-descricao="Uso, espaço livre e saúde" checked>
-                        </label>
+                            <label class="item-checkbox" for="check-cpu">
+                                <i class="fa-solid fa-microchip"></i>
+                                <span>CPU / Processador</span>
+                            </label>
 
-                        <label class="item-checkbox">
-                            <i class="fa-solid fa-wifi" style="color: rgb(255, 255, 255);"></i>
-                            <div class="texto-checkbox">
-                                <strong>Rede</strong>
-                                <span>Tráfego, banda e conexões</span>
-                            </div>
-                            <input type="checkbox" class="checkbox-componente" data-nome="Rede" data-tipo="Rede" data-descricao="Tráfego, banda e conexões" checked>
-                        </label>
+                            <div class="alertas-componente">
+                                <div class="campo-alerta">
+                                    <label for="atencao-cpu">ATENÇÃO</label>
+                                    <input type="number" id="atencao-cpu"
+                                        class="limite-atencao"
+                                        value="75" min="1" max="100" step="0.1">
+                                    <small>Ex: 75.0</small>
+                                </div>
 
-                        <label class="item-checkbox">
-                            <i class="fa-solid fa-temperature-quarter" style="color: rgb(255, 255, 255);"></i>
-                            <div class="texto-checkbox">
-                                <strong>Temperatura</strong>
-                                <span>Monitoramento térmico</span>
+                                <div class="campo-alerta">
+                                    <label for="critico-cpu">CRÍTICO</label>
+                                    <input type="number" id="critico-cpu"
+                                        class="limite-critico"
+                                        value="85" min="1" max="100" step="0.1">
+                                    <small>Ex: 85.0</small>
+                                </div>
                             </div>
-                            <input type="checkbox" class="checkbox-componente" data-nome="Temperatura" data-tipo="Temperatura" data-descricao="Monitoramento térmico" checked>
-                        </label>
+                        </div>
 
-                        <label class="item-checkbox">
-                            <i class="fa-solid fa-battery-three-quarters" style="color: rgb(255, 255, 255);"></i>
-                            <div class="texto-checkbox">
-                                <strong>Energia / Fonte</strong>
-                                <span>Consumo e status</span>
+                        <!-- MEMÓRIA RAM -->
+                        <div class="linha-componente">
+                            <input type="checkbox" class="checkbox-componente"
+                                data-nome="Memória RAM"
+                                data-tipo="RAM"
+                                data-descricao="Uso de memória e swap"
+                                id="check-ram" checked>
+
+                            <label class="item-checkbox" for="check-ram">
+                                <i class="fa-solid fa-memory"></i>
+                                <span>Memória RAM</span>
+                            </label>
+
+                            <div class="alertas-componente">
+                                <div class="campo-alerta">
+                                    <label for="atencao-ram">ATENÇÃO</label>
+                                    <input type="number" id="atencao-ram"
+                                        class="limite-atencao"
+                                        value="75" min="1" max="100" step="0.1">
+                                    <small>Ex: 75.0</small>
+                                </div>
+
+                                <div class="campo-alerta">
+                                    <label for="critico-ram">CRÍTICO</label>
+                                    <input type="number" id="critico-ram"
+                                        class="limite-critico"
+                                        value="85" min="1" max="100" step="0.1">
+                                    <small>Ex: 85.0</small>
+                                </div>
                             </div>
-                            <input type="checkbox" class="checkbox-componente" data-nome="Energia" data-tipo="Energia" data-descricao="Consumo e status">
-                        </label>
+                        </div>
+
+                        <!-- DISCO -->
+                        <div class="linha-componente">
+                            <input type="checkbox" class="checkbox-componente"
+                                data-nome="Disco"
+                                data-tipo="Armazenamento"
+                                data-descricao="Uso, espaço livre e saúde"
+                                id="check-disco" checked>
+
+                            <label class="item-checkbox" for="check-disco">
+                                <i class="fa-solid fa-database"></i>
+                                <span>Disco / Armazenamento</span>
+                            </label>
+
+                            <div class="alertas-componente">
+                                <div class="campo-alerta">
+                                    <label for="atencao-disco">ATENÇÃO</label>
+                                    <input type="number" id="atencao-disco"
+                                        class="limite-atencao"
+                                        value="75" min="1" max="100" step="0.1">
+                                    <small>Ex: 75.0</small>
+                                </div>
+
+                                <div class="campo-alerta">
+                                    <label for="critico-disco">CRÍTICO</label>
+                                    <input type="number" id="critico-disco"
+                                        class="limite-critico"
+                                        value="85" min="1" max="100" step="0.1">
+                                    <small>Ex: 85.0</small>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- REDE -->
+                        <div class="linha-componente">
+                            <input type="checkbox" class="checkbox-componente"
+                                data-nome="Rede"
+                                data-tipo="Rede"
+                                data-descricao="Tráfego, banda e conexões"
+                                id="check-rede">
+
+                            <label class="item-checkbox" for="check-rede">
+                                <i class="fa-solid fa-wifi"></i>
+                                <span>Rede</span>
+                            </label>
+
+                            <div class="alertas-componente">
+                                <div class="campo-alerta">
+                                    <label for="atencao-rede">ATENÇÃO</label>
+                                    <input type="number" id="atencao-rede"
+                                        class="limite-atencao"
+                                        value="75" min="1" max="100" step="0.1">
+                                    <small>Ex: 75.0</small>
+                                </div>
+
+                                <div class="campo-alerta">
+                                    <label for="critico-rede">CRÍTICO</label>
+                                    <input type="number" id="critico-rede"
+                                        class="limite-critico"
+                                        value="85" min="1" max="100" step="0.1">
+                                    <small>Ex: 85.0</small>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- TEMPERATURA -->
+                        <div class="linha-componente">
+                            <input type="checkbox" class="checkbox-componente"
+                                data-nome="Temperatura"
+                                data-tipo="Temperatura"
+                                data-descricao="Monitoramento térmico"
+                                id="check-temperatura">
+
+                            <label class="item-checkbox" for="check-temperatura">
+                                <i class="fa-solid fa-temperature-quarter"></i>
+                                <span>Temperatura</span>
+                            </label>
+
+                            <div class="alertas-componente">
+                                <div class="campo-alerta">
+                                    <label for="atencao-temperatura">ATENÇÃO</label>
+                                    <input type="number" id="atencao-temperatura"
+                                        class="limite-atencao"
+                                        value="75" step="0.1">
+                                    <small>Ex: 75.0</small>
+                                </div>
+
+                                <div class="campo-alerta">
+                                    <label for="critico-temperatura">CRÍTICO</label>
+                                    <input type="number" id="critico-temperatura"
+                                        class="limite-critico"
+                                        value="85" step="0.1">
+                                    <small>Ex: 85.0</small>
+                                </div>
+                            </div>
+                        </div>
+
                     </div>
+
+                    <!-- Compatibilidade temporária com o JS antigo -->
+                    <input type="hidden" id="input-limite-cpu-hardware" value="80">
+                    <input type="hidden" id="input-limite-ram-hardware" value="80">
+                    <input type="hidden" id="input-limite-disco-hardware" value="80">
+
                 </div>
+
             </div>
 
             <div class="rodape-modal">
@@ -223,9 +336,11 @@
         </div>
     </div>
 
-    <!-- MODAL DE EDIÇÃO (SEPARADA DA MODAL DE CADASTRO) -->
+    
+    <!-- MODAL DE EDIÇÃO -->
     <div class="sobreposicao-modal-editar" id="modal-editar">
         <div class="modal-cadastro">
+
             <div class="cabecalho-modal">
                 <h2>Editar Hardware</h2>
                 <button class="fechar-modal-editar">×</button>
@@ -235,8 +350,11 @@
             <input type="hidden" id="input-editar-id-empresa">
 
             <div class="corpo-modal">
+
                 <div class="coluna-modal">
-                    <span class="titulo-coluna-modal">INFORMAÇÕES GERAIS</span>
+                    <span class="titulo-coluna-modal">
+                        CADASTRAR NOVO HARDWARE
+                    </span>
 
                     <div class="campo-modal">
                         <label>Nome do dispositivo <span class="obrigatorio">*</span></label>
@@ -266,83 +384,160 @@
 
                     <div class="campo-modal">
                         <label>Descrição (opcional)</label>
-                        <textarea id="input-editar-descricao-hardware" placeholder="Informações adicionais sobre o dispositivo"></textarea>
-                    </div>
-
-                    <span class="titulo-coluna-modal">LIMITES DE USO (%)</span>
-                    <div class="campo-modal">
-                        <label for="input-editar-limite-cpu-hardware">Limite de CPU <span class="obrigatorio">*</span></label>
-                        <input type="number" id="input-editar-limite-cpu-hardware" min="1" max="100" step="1" value="80" required>
-                    </div>
-                    <div class="campo-modal">
-                        <label for="input-editar-limite-ram-hardware">Limite de RAM <span class="obrigatorio">*</span></label>
-                        <input type="number" id="input-editar-limite-ram-hardware" min="1" max="100" step="1" value="80" required>
-                    </div>
-                    <div class="campo-modal">
-                        <label for="input-editar-limite-disco-hardware">Limite de disco <span class="obrigatorio">*</span></label>
-                        <input type="number" id="input-editar-limite-disco-hardware" min="1" max="100" step="1" value="80" required>
+                        <textarea id="input-editar-descricao-hardware" placeholder="Informações adicionais"></textarea>
                     </div>
                 </div>
 
+                <!-- COMPONENTES -->
                 <div class="coluna-modal">
-                    <span class="titulo-coluna-modal">COMPONENTES A MONITORAR</span>
-                    <p class="descricao-coluna-modal">Selecione os componentes que serão monitorados neste dispositivo.</p>
+                    <span class="titulo-coluna-modal">
+                        CARDÁPIO DE COMPONENTES
+                    </span>
 
                     <div class="grade-checkbox">
-                        <label class="item-checkbox">
-                            <i class="fa-solid fa-microchip" style="color: rgb(255, 255, 255);"></i>
-                            <div class="texto-checkbox">
-                                <strong>CPU / Processador</strong>
-                                <span>Uso, temperatura e performance</span>
-                            </div>
-                            <input type="checkbox" class="checkbox-componente-editar" data-nome="Processador" data-tipo="CPU" data-descricao="Uso, temperatura e performance">
-                        </label>
 
-                        <label class="item-checkbox">
-                            <i class="fa-solid fa-memory" style="color: rgb(255, 255, 255);"></i>
-                            <div class="texto-checkbox">
-                                <strong>Memória RAM</strong>
-                                <span>Uso de memória e swap</span>
-                            </div>
-                            <input type="checkbox" class="checkbox-componente-editar" data-nome="Memória RAM" data-tipo="RAM" data-descricao="Uso de memória e swap">
-                        </label>
+                        <div class="cabecalho-componentes">
+                            <span>COMPONENTES</span>
+                            <span>GATILHOS DE ALERTA</span>
+                        </div>
 
-                        <label class="item-checkbox">
-                            <i class="fa-solid fa-database" style="color: rgb(255, 255, 255);"></i>
-                            <div class="texto-checkbox">
-                                <strong>Disco / Armazenamento</strong>
-                                <span>Uso, espaço livre e saúde</span>
-                            </div>
-                            <input type="checkbox" class="checkbox-componente-editar" data-nome="Disco" data-tipo="Armazenamento" data-descricao="Uso, espaço livre e saúde">
-                        </label>
+                        <!-- CPU -->
+                        <div class="linha-componente">
+                            <input type="checkbox" class="checkbox-componente checkbox-componente-editar"
+                                data-nome="Processador" data-tipo="CPU"
+                                data-descricao="Uso, temperatura e performance"
+                                id="editar-check-cpu">
 
-                        <label class="item-checkbox">
-                            <i class="fa-solid fa-wifi" style="color: rgb(255, 255, 255);"></i>
-                            <div class="texto-checkbox">
-                                <strong>Rede</strong>
-                                <span>Tráfego, banda e conexões</span>
-                            </div>
-                            <input type="checkbox" class="checkbox-componente-editar" data-nome="Rede" data-tipo="Rede" data-descricao="Tráfego, banda e conexões">
-                        </label>
+                            <label class="item-checkbox" for="editar-check-cpu">
+                                <i class="fa-solid fa-microchip"></i>
+                                <span>CPU / Processador</span>
+                            </label>
 
-                        <label class="item-checkbox">
-                            <i class="fa-solid fa-temperature-quarter" style="color: rgb(255, 255, 255);"></i>
-                            <div class="texto-checkbox">
-                                <strong>Temperatura</strong>
-                                <span>Monitoramento térmico</span>
+                            <div class="alertas-componente">
+                                <div class="campo-alerta">
+                                    <label>ATENÇÃO</label>
+                                    <input type="number" id="editar-atencao-cpu" value="70" min="1" max="100" step="1">
+                                    <small>Ex: 70</small>
+                                </div>
+                                <div class="campo-alerta">
+                                    <label>CRÍTICO</label>
+                                    <input type="number" id="editar-critico-cpu" value="80" min="1" max="100" step="1">
+                                    <small>Ex: 80</small>
+                                </div>
                             </div>
-                            <input type="checkbox" class="checkbox-componente-editar" data-nome="Temperatura" data-tipo="Temperatura" data-descricao="Monitoramento térmico">
-                        </label>
+                        </div>
 
-                        <label class="item-checkbox">
-                            <i class="fa-solid fa-battery-three-quarters" style="color: rgb(255, 255, 255);"></i>
-                            <div class="texto-checkbox">
-                                <strong>Energia / Fonte</strong>
-                                <span>Consumo e status</span>
+                        <!-- RAM -->
+                        <div class="linha-componente">
+                            <input type="checkbox" class="checkbox-componente checkbox-componente-editar"
+                                data-nome="Memória RAM" data-tipo="RAM"
+                                data-descricao="Uso de memória e swap"
+                                id="editar-check-ram">
+
+                            <label class="item-checkbox" for="editar-check-ram">
+                                <i class="fa-solid fa-memory"></i>
+                                <span>Memória RAM</span>
+                            </label>
+
+                            <div class="alertas-componente">
+                                <div class="campo-alerta">
+                                    <label>ATENÇÃO</label>
+                                    <input type="number" id="editar-atencao-ram" value="70" min="1" max="100" step="1">
+                                    <small>Ex: 70</small>
+                                </div>
+                                <div class="campo-alerta">
+                                    <label>CRÍTICO</label>
+                                    <input type="number" id="editar-critico-ram" value="80" min="1" max="100" step="1">
+                                    <small>Ex: 80</small>
+                                </div>
                             </div>
-                            <input type="checkbox" class="checkbox-componente-editar" data-nome="Energia" data-tipo="Energia" data-descricao="Consumo e status">
-                        </label>
+                        </div>
+
+                        <!-- DISCO -->
+                        <div class="linha-componente">
+                            <input type="checkbox" class="checkbox-componente checkbox-componente-editar"
+                                data-nome="Disco" data-tipo="Armazenamento"
+                                data-descricao="Uso, espaço livre e saúde"
+                                id="editar-check-disco">
+
+                            <label class="item-checkbox" for="editar-check-disco">
+                                <i class="fa-solid fa-database"></i>
+                                <span>Disco / Armazenamento</span>
+                            </label>
+
+                            <div class="alertas-componente">
+                                <div class="campo-alerta">
+                                    <label>ATENÇÃO</label>
+                                    <input type="number" id="editar-atencao-disco" value="70" min="1" max="100" step="1">
+                                    <small>Ex: 70</small>
+                                </div>
+                                <div class="campo-alerta">
+                                    <label>CRÍTICO</label>
+                                    <input type="number" id="editar-critico-disco" value="80" min="1" max="100" step="1">
+                                    <small>Ex: 80</small>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- REDE -->
+                        <div class="linha-componente">
+                            <input type="checkbox" class="checkbox-componente checkbox-componente-editar"
+                                data-nome="Rede" data-tipo="Rede"
+                                data-descricao="Tráfego, banda e conexões"
+                                id="editar-check-rede">
+
+                            <label class="item-checkbox" for="editar-check-rede">
+                                <i class="fa-solid fa-wifi"></i>
+                                <span>Rede</span>
+                            </label>
+
+                            <div class="alertas-componente">
+                                <div class="campo-alerta">
+                                    <label>ATENÇÃO</label>
+                                    <input type="number" id="editar-atencao-rede" value="70" step="1">
+                                    <small>Ex: 70</small>
+                                </div>
+                                <div class="campo-alerta">
+                                    <label>CRÍTICO</label>
+                                    <input type="number" id="editar-critico-rede" value="80" step="1">
+                                    <small>Ex: 80</small>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- TEMPERATURA -->
+                        <div class="linha-componente">
+                            <input type="checkbox" class="checkbox-componente checkbox-componente-editar"
+                                data-nome="Temperatura" data-tipo="Temperatura"
+                                data-descricao="Monitoramento térmico"
+                                id="editar-check-temperatura">
+
+                            <label class="item-checkbox" for="editar-check-temperatura">
+                                <i class="fa-solid fa-temperature-quarter"></i>
+                                <span>Temperatura</span>
+                            </label>
+
+                            <div class="alertas-componente">
+                                <div class="campo-alerta">
+                                    <label>ATENÇÃO</label>
+                                    <input type="number" id="editar-atencao-temperatura" value="70" step="1">
+                                    <small>Ex: 70</small>
+                                </div>
+                                <div class="campo-alerta">
+                                    <label>CRÍTICO</label>
+                                    <input type="number" id="editar-critico-temperatura" value="80" step="1">
+                                    <small>Ex: 80</small>
+                                </div>
+                            </div>
+                        </div>
+
                     </div>
+
+                    <!-- COMPATIBILIDADE COM O JS ATUAL -->
+                    <input type="hidden" id="input-editar-limite-cpu-hardware" value="80">
+                    <input type="hidden" id="input-editar-limite-ram-hardware" value="80">
+                    <input type="hidden" id="input-editar-limite-disco-hardware" value="80">
+
                 </div>
             </div>
 
@@ -350,12 +545,10 @@
                 <button class="btn-cancelar-editar">Cancelar</button>
                 <button class="btn-salvar-editar">Salvar Alterações</button>
             </div>
+
         </div>
     </div>
-                </div>
-            </div>
-        </div>
-    </div>
+
 
     <div class="modal-overlay-deletar">
 
