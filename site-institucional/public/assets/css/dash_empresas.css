@@ -2,7 +2,9 @@
 @import url(./navbar.css);
 
 
-
+* {
+    background-color: var(--bg-dark);
+}
 
 /* GERAL */
 .container-dash-empresa {
@@ -97,7 +99,7 @@
     gap: 20px;
 }
 
-.container-dash-empresa .content-dashboard .titulo-pagina {
+.titulo-pagina {
     font-weight: 300;
     font-size: 16px;
     text-transform: uppercase;
@@ -185,10 +187,12 @@
 /* GRÁFICOS */
 .content-dashboard .content-dashboard-graficos {
     width: 100%;
-    height: 80vh;
+    height: 60vh;
     display: flex;
     flex-direction: row;
     justify-content: space-between;
+    align-items: center;
+    margin-bottom: 2%;
 }
 
 .content-dashboard .content-dashboard-graficos .box-graficos {
@@ -356,6 +360,107 @@
     font-weight: 800;
     text-transform: capitalize;
     color: var(--cor-branco-default);
+    background-color: transparent;
+}
+
+.content-list-server {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    justify-content: center;
+    width: 100%;
+    height: auto;
+}
+
+.content-list-server .content-list-server-box {
+    background-color: var(--cor-azul-contraste);
+    width: 100%;
+    height: auto;
+    margin-top: 2%;
+    border-radius: 10px;
+    border: 1px solid var(--cor-cinza-padrao);
+    padding: 1%;
+}
+
+.content-list-server .content-list-server-box .server-box {
+    background-color: transparent;
+    padding: 1%;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.content-list-server .content-list-server-box hr {
+    border: 1px solid var(--cor-cinza-padrao);
+    width: 100%;
+}
+
+.content-list-server .content-list-server-box .server-box input[type="checkbox"] {
+    appearance: none;
+    width: 20px;
+    height: 20px;
+    background-color: var(--cor-azul-contraste);
+    border: 1px solid var(--cor-cinza-padrao);
+    border-radius: 2px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.content-list-server .content-list-server-box .server-box input[type="checkbox"]:checked {
+    background-color: var(--cor-azul-contraste2);
+    border: none;
+    transform: scale(0.9);
+}
+
+.content-list-server .content-list-server-box .server-box input[type="checkbox"]:checked::after {
+    content: "✓";
+    color: var(--cor-branco-default);
+    font-size: 20px;
+}
+
+.content-list-server .content-list-server-box .server-box .acoes {
+    width: 8vw;
+    height: 4vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+.content-list-server .content-list-server-box .server-box p {
+    background-color: transparent;
+    text-transform: uppercase;
+    font-size: 14px;
+    width: 12vw;
+}
+
+.content-list-server .content-list-server-box .server-box .btn-ver {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    width: 8vw;
+    height: 4vh;
+    border: 2px solid var(--cor-azul-contraste2);
+    background-color: transparent;
+    border-radius: 0px;
+    font-size: 16px;
+    text-transform: uppercase;
+    text-decoration: none;
+    color: var(--cor-azul-contraste2);
+    font-weight: 300;
+    transition: all ease-in-out 0.3s;
+}
+
+.content-list-server .content-list-server-box .server-box .btn-ver:hover {
+    border: 2px solid var(--cor-azul-contraste2);
+    background-color: var(--cor-azul-contraste2);
+    border-radius: 5vw;
+    color: var(--cor-branco-default);
+    transform: scale(0.9);
+    font-weight: 800;
+}
+.content-list-server .content-list-server-box .container-server-box {
     background-color: transparent;
 }
 
