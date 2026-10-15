@@ -1931,10 +1931,10 @@ main {
     margin: 0;
 }
 
-#modal-cadastrar .campo-alerta input,
+/*#modal-cadastrar .campo-alerta input,
 #modal-editar .campo-alerta input {
     -moz-appearance: textfield;
-}
+}*/
 
 /*Foco*/
 
