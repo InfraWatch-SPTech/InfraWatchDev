@@ -212,6 +212,7 @@ function cadastrar() {
 function entrar() {
     var emailVar = document.getElementById('input-email').value;
     var senhaVar = document.getElementById('input-senha').value;
+    
 
     if (emailVar == '' || senhaVar == '') {
         alert("Preencha todos os campos!");
@@ -242,7 +243,7 @@ function entrar() {
                 localStorage.setItem('usuarioLogado', JSON.stringify(usuario));
 
                 alert(`Login realizado com sucesso! Bem-vindo(a), ${usuario.nome}!`);
-                window.location.href = "/";
+                window.location.href = "/inicio";
             });
         } else {
             return resposta.text().then(function (erroMsg) {

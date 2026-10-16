@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard Servidor Principal - XPTO</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Lexend:wght@400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="./assets/css/dash_servidor.css">
+</head>
+<body onload="validarSessao()">
+
+    <header class="header_principal">
+        <button class="header_botao_menu" id="botao_menu" type="button" aria-label="Abrir menu" aria-expanded="false" aria-controls="menu_lateral">
+            <img src="assets/midias/menu.svg" alt="">
+        </button>
+        <a class="header_logo" href="#">Infra<span>Watch</span></a>
+        <!-- <div class="header_usuario">
+            <span class="header_usuario_nome" id="user-nome">Usuário</span>
+            <span class="header_avatar">
+                <svg class="icone" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+            </span>
+            <button class="header_botao_sair" id="btn_sair" type="button" aria-label="Sair">
+                <svg class="icone" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+            </button>
+        </div> -->
+    </header>
+
+    <div class="menu_fundo" id="menu_fundo"></div>
+    <nav class="menu_lateral" id="menu_lateral" aria-label="Menu principal" aria-hidden="true">
+        <div class="menu_topo">
+            <span class="menu_titulo">MENU</span>
+            <button class="menu_fechar" id="menu_fechar" type="button" aria-label="Fechar menu">
+                <svg class="icone" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><line x1="5" y1="5" x2="19" y2="19"/><line x1="19" y1="5" x2="5" y2="19"/></svg>
+            </button>
+        </div>
+ 
+        <ul class="menu_lista">
+            <li>
+                <a class="menu_link" href="#">
+                    <svg class="icone" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+                    Página Inicial
+                </a>
+            </li>
+            <li>
+                <a class="menu_link" href="#" aria-current="page">
+                    <svg class="icone" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="2"/><line x1="3" y1="9" x2="21" y2="9"/><line x1="9" y1="21" x2="9" y2="9"/></svg>
+                    Dashboard
+                </a>
+            </li>
+            <li>
+                <a class="menu_link" href="#">
+                    <svg class="icone" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="2" y="2" width="20" height="8" rx="2"/><rect x="2" y="14" width="20" height="8" rx="2"/><line x1="6" y1="6" x2="6.01" y2="6"/><line x1="6" y1="18" x2="6.01" y2="18"/></svg>
+                    Servidores
+                </a>
+            </li>
+            <li>
+                <a class="menu_link" href="#">
+                    <svg class="icone" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+                    Gerenciar Funcionários
+                </a>
+            </li>
+            <li>
+                <a class="menu_link" href="#">
+                    <svg class="icone" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><polyline points="8 17 11 13 13 15 16 11"/></svg>
+                    Relatórios
+                </a>
+            </li>
+            <li>
+                <a class="menu_link" href="#">
+                    <svg class="icone" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polygon points="12 2 2 7 12 12 22 7 12 2"/><polyline points="2 17 12 22 22 17"/><polyline points="2 12 12 17 22 12"/></svg>
+                    Plataforma de Alertas
+                </a>
+            </li>
+        </ul>
+ 
+    </nav>
+
+    <main class="pagina_conteudo">
+
+        <section class="servidor_cabecalho">
+            <div class="servidor_icone">
+                <img src="assets/midias/servidor.svg" alt="">
+            </div>
+            <div class="servidor_info">
+                <div class="servidor_titulo_linha">
+                    <h1 class="servidor_nome" id="servidor_nome"></h1>
+                    <span class="servidor_badge" id="servidor_badge"></span>
+                </div>
+                <p class="servidor_meta">
+                    <span>IP: <span id="servidor_ip"></span></span>
+                    <span id="servidor_funcao"></span>
+                    <span>Online desde: <span id="servidor_online_desde"></span></span>
+                </p>
+            </div>
+        </section>
+
+        <section class="servidor_resumo">
+            <div class="servidor_barra">
+                <h2 class="servidor_secao_titulo">Status específico de servidor</h2>
+                <button class="btn_novo_relatorio" id="btn_novo_relatorio" type="button">
+                    <svg class="icone" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" aria-hidden="true"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+                    Novo relatório
+                </button>
+            </div>
+
+            <div class="kpi_grid">
+                <section class="card_kpi">
+                    <div class="card_kpi_icone">
+                        <img src="assets/midias/cpu.svg" alt="">
+                    </div>
+                    <div class="card_kpi_texto">
+                        <h3 class="card_kpi_titulo">Uso atual CPU (%)</h3>
+                        <p class="card_kpi_valor" id="kpi_cpu_valor"></p>
+                        <p class="card_kpi_sub">Status: <strong id="kpi_cpu_status"></strong></p>
+                    </div>
+                </section>
+
+                <section class="card_kpi">
+                    <div class="card_kpi_icone">
+                        <svg class="icone" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="2" y="6" width="20" height="10" rx="1"/><line x1="6" y1="10" x2="6" y2="12"/><line x1="10" y1="10" x2="10" y2="12"/><line x1="14" y1="10" x2="14" y2="12"/><line x1="18" y1="10" x2="18" y2="12"/><line x1="6" y1="16" x2="6" y2="19"/><line x1="10" y1="16" x2="10" y2="19"/><line x1="14" y1="16" x2="14" y2="19"/><line x1="18" y1="16" x2="18" y2="19"/></svg>
+                    </div>
+                    <div class="card_kpi_texto">
+                        <h3 class="card_kpi_titulo">Uso atual RAM (%)</h3>
+                        <p class="card_kpi_valor" id="kpi_ram_valor"></p>
+                        <p class="card_kpi_sub" id="kpi_ram_sub"></p>
+                    </div>
+                </section>
+
+                <section class="card_kpi">
+                    <div class="card_kpi_icone">
+                        <svg class="icone" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="22" y1="12" x2="2" y2="12"/><path d="M5.45 5.11L2 12v6a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-6l-3.45-6.89A2 2 0 0 0 16.76 4H7.24a2 2 0 0 0-1.79 1.11z"/><line x1="6" y1="16" x2="6.01" y2="16"/><line x1="10" y1="16" x2="10.01" y2="16"/></svg>
+                    </div>
+                    <div class="card_kpi_texto">
+                        <h3 class="card_kpi_titulo">Uso de Disco (%)</h3>
+                        <p class="card_kpi_valor" id="kpi_disco_valor"></p>
+                        <p class="card_kpi_sub"><strong id="kpi_disco_disponivel"></strong> disponível</p>
+                    </div>
+                </section>
+
+                <section class="card_kpi">
+                    <div class="card_kpi_icone">
+                        <svg class="icone" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+                    </div>
+                    <div class="card_kpi_texto">
+                        <h3 class="card_kpi_titulo">Latência de rede</h3>
+                        <p class="card_kpi_valor" id="kpi_latencia_valor"></p>
+                        <p class="card_kpi_sub" id="kpi_latencia_sub"></p>
+                    </div>
+                </section>
+            </div>
+        </section>
+
+        <section class="grafico_grid">
+            <section class="card_grafico">
+                <header class="card_grafico_topo">
+                    <h3 class="card_grafico_titulo">CPU (%)</h3>
+                    <span class="card_grafico_limite" id="limite_cpu"></span>
+                </header>
+                <div class="card_grafico_area"><canvas id="grafico_cpu"></canvas></div>
+            </section>
+
+            <section class="card_grafico">
+                <header class="card_grafico_topo">
+                    <h3 class="card_grafico_titulo">RAM (%)</h3>
+                    <span class="card_grafico_limite" id="limite_ram"></span>
+                </header>
+                <div class="card_grafico_area"><canvas id="grafico_ram"></canvas></div>
+            </section>
+
+            <section class="card_grafico">
+                <header class="card_grafico_topo">
+                    <h3 class="card_grafico_titulo">Disco (%)</h3>
+                    <span class="card_grafico_limite" id="limite_disco"></span>
+                </header>
+                <div class="card_grafico_area"><canvas id="grafico_disco"></canvas></div>
+            </section>
+
+            <section class="card_grafico">
+                <header class="card_grafico_topo">
+                    <h3 class="card_grafico_titulo">Latência de rede (ms)</h3>
+                    <span class="card_grafico_limite" id="limite_latencia"></span>
+                </header>
+                <div class="card_grafico_area"><canvas id="grafico_latencia"></canvas></div>
+            </section>
+        </section>
+
+        <section class="card_historico">
+            <h3 class="card_titulo">Histórico de status do servidor (24h)</h3>
+            <div class="historico_trilha" id="historico_trilha" role="img" aria-label="Linha do tempo das últimas 24 horas com os períodos de incidente"></div>
+            <div class="historico_legenda">
+                <span>Últimas 24h</span>
+                <span>Agora</span>
+            </div>
+        </section>
+
+        <section class="card_incidentes">
+            <h3 class="card_titulo">Últimos incidentes</h3>
+            <div class="tabela_scroll">
+                <table class="tabela_incidentes">
+                    <thead>
+                        <tr>
+                            <th><input class="tabela_checkbox" id="selecionar_todos" type="checkbox" aria-label="Selecionar todos os incidentes"></th>
+                            <th>Componente</th>
+                            <th>Registro</th>
+                            <th>Parâmetro</th>
+                            <th>Nível urgência</th>
+                            <th>Descrição</th>
+                            <th>Timestamp</th>
+                            <th class="tabela_acao">Resolvido?</th>
+                        </tr>
+                    </thead>
+                    <tbody id="tabela_corpo"></tbody>
+                </table>
+            </div>
+        </section>
+
+    </main>
+
+</body>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+<script src="../public/assets/js/sessao.js" defer></script>
+<script src="../public/assets/js/redirecionamento.js"></script>
+<script src="./assets/js/dash_servidor.js"></script>
+</html>
