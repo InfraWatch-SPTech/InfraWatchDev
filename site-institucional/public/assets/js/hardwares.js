@@ -83,7 +83,8 @@ function renderizarTabela(equipamentos) {
     aplicarPermissoes();
 }
 
-function buscarEquipamentosEmpresa(idEmpresa) {
+function buscarEquipamentosEmpresa(idEmpresa)
+{
     fetch(`/hardwares/buscarEq/${idEmpresa}?idUsuario=${dadosUsuario.id}`, { cache: 'no-store' })
         .then(function (response) {
             if (response.ok) {
@@ -111,21 +112,31 @@ function buscarEquipamentosEmpresa(idEmpresa) {
         });
 }
 
+
 function coletarComponentesSelecionados() {
-    let checkboxes = document.querySelectorAll('.checkbox-componente:checked');
+    let checkboxes = document.querySelectorAll(
+        '#modal-cadastrar .checkbox-componente:checked'
+    );
+
     let componentes = [];
 
-    for (let i = 0; i < checkboxes.length; i++) {
-        let checkbox = checkboxes[i];
+    for (let checkbox of checkboxes) {
+        let linha = checkbox.closest('.linha-componente');
+
+        let campos = linha.querySelectorAll('.campo-alerta input');
+
         componentes.push({
             nome: checkbox.dataset.nome,
             tipo: checkbox.dataset.tipo,
-            descricao: checkbox.dataset.descricao
+            descricao: checkbox.dataset.descricao,
+            limiteAtencao: Number(campos[0].value),
+            limiteCritico: Number(campos[1].value)
         });
     }
 
     return componentes;
 }
+
 
 function coletarLimites(editar) {
     let prefixo = editar ? 'input-editar-limite-' : 'input-limite-';
@@ -157,9 +168,8 @@ function cadastrarHardware() {
     let localizacao = document.getElementById('input-localizacao-hardware').value.trim();
     let descricao = document.getElementById('input-descricao-hardware').value.trim();
     let componentes = coletarComponentesSelecionados();
-    let limites = coletarLimites(false);
 
-    if (!limites) {
+    if (!validarComponentes(componentes)) {
         return;
     }
 
@@ -183,10 +193,10 @@ function cadastrarHardware() {
         descricao: descricao,
         fkEmpresa: idEmpresa,
         idUsuario: dadosUsuario.id,
-        componentes: componentes,
-        limiteCpu: limites.limiteCpu,
-        limiteRam: limites.limiteRam,
-        limiteDisco: limites.limiteDisco
+        componentes: componentes
+        //limiteCpu: limites.limiteCpu,
+        //limiteRam: limites.limiteRam,
+        //limiteDisco: limites.limiteDisco
     };
 
     fetch('/hardwares/cadastrar', {

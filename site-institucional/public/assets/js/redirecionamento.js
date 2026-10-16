@@ -13,3 +13,4 @@ function redirecionamento_cadastroServidor(){
 function redirecionamento_gerUsuarios(){
     window.location.href = "../public/usuarios.html";
 }
+function redirecionamento_paginaInicial() { window.location.href = "/inicio"; }

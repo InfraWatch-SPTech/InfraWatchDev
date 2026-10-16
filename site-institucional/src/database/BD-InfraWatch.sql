@@ -97,6 +97,7 @@ CREATE TABLE relatorio (
 
 CREATE TABLE equipamento (
     idEquipamento INT PRIMARY KEY AUTO_INCREMENT,
+    hostname VARCHAR (150) UNIQUE DEFAULT NULL,
     nome VARCHAR(100) NOT NULL,
     tipo VARCHAR(50) NOT NULL,
     ip VARCHAR(25),
