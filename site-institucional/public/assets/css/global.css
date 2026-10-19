@@ -1,5 +1,41 @@
-@import url('https://fonts.googleapis.com/css2?family=Allerta+Stencil&display=swap');
 @import url('https://fonts.googleapis.com/css2?family=Allerta&family=Allerta+Stencil&display=swap');
+
+:root {
+    --font-padrao: "Allerta", sans-serif;
+    --font-logo: "Allerta Stencil", sans-serif;
+
+    --cor-preto-default: #1E1E1E;
+    --cor-branco-default: #FFFFFF;
+    --bg-dark: #0E0921;
+    --cor-barra-lateral: #0B071A;
+    --cor-painel: #100A27;
+    --cor-campo: #1A1040;
+    --cor-campo-fundo: #130C2C;
+
+    --cor-azul-contraste: #170F38;
+    --cor-azul-contraste2: #5178F9;
+    --cor-azul-profundo: #3C3CE8;
+    --cor-azul-icone-fundo: #0E1840;
+    --cor-azul-claro: #6FE0FF;
+    --cor-azul-apagado: #5C6288;
+
+    --cor-cinza: #AAA8BA;
+    --cor-cinza-eixo: #8B869B;
+    --cor-cinza-claro: #C5C3CD;
+    --cor-texto-apagado: #A5A9C5;
+    --cor-borda: #48445F;
+
+    --cor-verde-ativo: #3DDC84;
+    --cor-verde-online: #01BE50;
+    --cor-amarelo-atencao: #F5C542;
+    --cor-amarelo-claro: #FFEE8C;
+    --cor-vermelho-inativo: #FF5C5C;
+    --cor-vermelho-claro: #FF746C;
+
+    --borda-fina: 1px solid rgba(255, 255, 255, 0.2);
+    --altura-header: 70px;
+    --raio-card: 8px;
+}
 
 * {
     margin: 0;
@@ -7,16 +43,144 @@
     box-sizing: border-box;
 }
 
-:root {
-    --font-padrao: "Allerta", sans-serif;
-    --font-logo: "Allerta Stencil", sans-serif;
-    --cor-preto-default: #0f0f0f;
-    --cor-branco-default: #eaeaf3;
-    --cor-azul-contraste: #170F38;
-    --cor-azul-contraste2: #5178F9;
-    --cor-cinza-padrao: #5C6288;
-    --bg-dark: #0e0921;
-    --cor-verde-ativo: #3DDC84;
-    --cor-amarelo-atencao: #F5C542;
-    --cor-vermelho-inativo: #FF5C5C;  
+html {
+    scroll-behavior: smooth;
+}
+
+body {
+    min-height: 100vh;
+    background-color: var(--bg-dark);
+    color: var(--cor-branco-default);
+    font-family: var(--font-padrao);
+}
+
+/* popup de perfil (navbar pública e header do sistema) */
+
+.perfil_popup {
+    display: none;
+    position: absolute;
+    top: calc(100% + 8px);
+    right: clamp(16px, 3vw, 48px);
+    z-index: 200;
+    width: min(320px, 92vw);
+    flex-direction: column;
+    gap: 1rem;
+    padding: 1.2rem;
+    background-color: var(--cor-azul-contraste);
+    border: 1px solid var(--cor-azul-apagado);
+    border-radius: 0.5rem;
+    color: var(--cor-branco-default);
+    font-family: var(--font-padrao);
+}
+
+.perfil_popup.ativo {
+    display: flex;
+}
+
+.perfil_fechar {
+    position: absolute;
+    top: 0.7rem;
+    right: 0.8rem;
+    background: transparent;
+    border: 0;
+    color: inherit;
+    font-size: 1.1rem;
+    cursor: pointer;
+    transition: 0.3s;
+}
+
+.perfil_fechar:hover {
+    color: var(--cor-vermelho-inativo);
+}
+
+.perfil_topo {
+    display: flex;
+    align-items: center;
+    gap: 0.8rem;
+    padding-right: 1.4rem;
+}
+
+.perfil_avatar {
+    display: grid;
+    place-items: center;
+    flex-shrink: 0;
+    width: 48px;
+    height: 48px;
+    border: 1px solid var(--cor-azul-contraste2);
+    border-radius: 50%;
+    font-size: 1.4rem;
+}
+
+.perfil_topo_texto {
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+    gap: 0.2rem;
+}
+
+.perfil_topo_texto strong,
+.perfil_topo_texto span {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.perfil_topo_texto span {
+    font-size: 0.85rem;
+    color: var(--cor-texto-apagado);
+}
+
+.perfil_info {
+    display: flex;
+    flex-direction: column;
+    gap: 0.9rem;
+    padding-top: 1rem;
+    border-top: 1px solid var(--cor-azul-apagado);
+}
+
+.perfil_info_item {
+    display: flex;
+    align-items: center;
+    gap: 0.8rem;
+}
+
+.perfil_info_item i {
+    width: 20px;
+    text-align: center;
+    color: var(--cor-azul-contraste2);
+}
+
+.perfil_info_item div {
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+}
+
+.perfil_rotulo {
+    font-size: 0.8rem;
+    color: var(--cor-texto-apagado);
+}
+
+.perfil_valor {
+    font-size: 0.95rem;
+    overflow-wrap: anywhere;
+}
+
+.perfil_sair {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    padding: 0.5rem 0.9rem;
+    background-color: var(--cor-azul-contraste);
+    border: 1px solid var(--cor-azul-contraste2);
+    border-radius: 0.3rem;
+    color: var(--cor-branco-default);
+    font: inherit;
+    cursor: pointer;
+    transition: 0.3s;
+}
+
+.perfil_sair:hover {
+    background-color: var(--cor-azul-contraste2);
 }

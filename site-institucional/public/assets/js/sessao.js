@@ -1,3 +1,6 @@
+var paginasPublicas = ['main.html', 'sobrenos.html', 'login.html'];
+var sessaoValidada = false;
+
 function lerDadosSessao() {
     const usuarioTexto = localStorage.getItem('usuarioLogado');
 
@@ -13,6 +16,10 @@ function lerDadosSessao() {
     }
 }
 
+function dadosUser() {
+    return lerDadosSessao();
+}
+
 function nivelUsuario(usuario) {
     return usuario.nomeNivelAcesso || usuario.nomePermissao || '';
 }
@@ -25,151 +32,170 @@ function usuarioPossuiPermissao(usuario, nomePermissao) {
     return permissoes.includes(nomePermissao);
 }
 
-function atualizarLinkUsuarios(usuario) {
-    const listaNavegacao = document.querySelector('.nav-links ul');
+function usuarioPodeGerenciarUsuarios(usuario) {
+    return nivelUsuario(usuario) === 'Root' ||
+        usuarioPossuiPermissao(usuario, 'USUARIOS_VISUALIZAR') ||
+        usuarioPossuiPermissao(usuario, 'USUARIOS_GERENCIAR');
+}
 
-    if (!listaNavegacao) {
-        return;
+function nomePagina() {
+    const caminho = window.location.pathname;
+    const nome = caminho.substring(caminho.lastIndexOf('/') + 1);
+
+    if (nome === '') {
+        return 'main.html';
     }
 
-    const linkExistente = listaNavegacao.querySelector('.link-usuarios-admin');
-    const nivel = nivelUsuario(usuario);
-    const ehRoot = nivel === 'Root';
-    const podeVisualizarUsuarios = usuarioPossuiPermissao(
-        usuario,
-        'USUARIOS_VISUALIZAR'
-    );
-    const podeGerenciarUsuarios = usuarioPossuiPermissao(
-        usuario,
-        'USUARIOS_GERENCIAR'
-    );
-    const podeAcessar = ehRoot || podeVisualizarUsuarios || podeGerenciarUsuarios;
+    if (nome === 'inicio') {
+        return 'pagina-inicial.html';
+    }
 
-    if (podeAcessar && !linkExistente) {
-        const item = document.createElement('li');
-        item.className = 'link-usuarios-admin';
+    return nome;
+}
 
-        const link = document.createElement('a');
-        link.href = './usuarios.html';
-        link.textContent = 'Usuários';
+function paginaPublica() {
+    return paginasPublicas.indexOf(nomePagina()) !== -1;
+}
 
-        item.appendChild(link);
-        listaNavegacao.appendChild(item);
-    } else if (!podeAcessar && linkExistente) {
-        linkExistente.remove();
+function fecharPopupPerfil() {
+    const popup = document.getElementById('perfil_popup');
+
+    if (popup) {
+        popup.classList.remove('ativo');
     }
 }
 
-function montarPerfilUsuario(usuario) {
-    const navLogin = document.querySelector('.nav-login');
-    const popupPerfil = document.querySelector('.popup-perfil');
+function alternarPopupPerfil() {
+    const popup = document.getElementById('perfil_popup');
 
-    if (!navLogin || !popupPerfil) {
+    if (popup) {
+        popup.classList.toggle('ativo');
+    }
+}
+
+function montarPopupPerfil(usuario) {
+    const popup = document.getElementById('perfil_popup');
+
+    if (!popup) {
         return;
     }
 
-    navLogin.innerHTML = `
-        <button id="btn-pagina-empresa" onclick="redirecionamento_cadastroServidor()">
-            Painel Empresa
+    const permissoes = Array.isArray(usuario.permissoes)
+        ? usuario.permissoes
+        : [];
+
+    popup.innerHTML = `
+        <button class="perfil_fechar" id="perfil_fechar" type="button" aria-label="Fechar perfil">
+            <i class="fa-regular fa-circle-xmark"></i>
         </button>
-        <button id="btn-perfil-usuario">
-            <i class="fa-solid fa-user" style="color: rgb(255, 255, 255);"></i>
+        <div class="perfil_topo">
+            <i class="fa-solid fa-user perfil_avatar"></i>
+            <div class="perfil_topo_texto">
+                <strong id="perfil_nome"></strong>
+                <span id="perfil_email"></span>
+            </div>
+        </div>
+        <div class="perfil_info">
+            <div class="perfil_info_item">
+                <i class="fa-regular fa-building"></i>
+                <div>
+                    <span class="perfil_rotulo">Empresa</span>
+                    <span class="perfil_valor" id="perfil_empresa"></span>
+                </div>
+            </div>
+            <div class="perfil_info_item">
+                <i class="fa-regular fa-address-card"></i>
+                <div>
+                    <span class="perfil_rotulo">Nível de acesso</span>
+                    <span class="perfil_valor" id="perfil_nivel"></span>
+                </div>
+            </div>
+            <div class="perfil_info_item">
+                <i class="fa-solid fa-key"></i>
+                <div>
+                    <span class="perfil_rotulo">Permissões adicionais</span>
+                    <span class="perfil_valor" id="perfil_permissoes"></span>
+                </div>
+            </div>
+        </div>
+        <button class="perfil_sair" id="perfil_sair" type="button">
+            <i class="fa-solid fa-right-from-bracket"></i>
+            Logout
+        </button>
+    `;
+
+    document.getElementById('perfil_nome').textContent = usuario.nome || '';
+    document.getElementById('perfil_email').textContent = usuario.email || '';
+    document.getElementById('perfil_empresa').textContent = usuario.nomeEmpresa || '';
+    document.getElementById('perfil_nivel').textContent = nivelUsuario(usuario);
+    document.getElementById('perfil_permissoes').textContent =
+        permissoes.length > 0 ? permissoes.join(', ') : 'Nenhuma';
+
+    document.getElementById('perfil_fechar').addEventListener('click', fecharPopupPerfil);
+    document.getElementById('perfil_sair').addEventListener('click', limparSessao);
+
+    document.addEventListener('click', function (evento) {
+        const botaoPerfil = document.getElementById('btn_perfil_usuario');
+        const clicouFora = !popup.contains(evento.target) &&
+            !(botaoPerfil && botaoPerfil.contains(evento.target));
+
+        if (clicouFora) {
+            fecharPopupPerfil();
+        }
+    });
+}
+
+function montarNavbarLogada(usuario) {
+    const navbarLogin = document.getElementById('navbar_login');
+
+    if (!navbarLogin) {
+        return;
+    }
+
+    navbarLogin.innerHTML = `
+        <button class="navbar_botao navbar_botao_destaque" id="btn_painel" type="button">
+            Acessar painel
+        </button>
+        <button class="navbar_botao navbar_botao_perfil" id="btn_perfil_usuario" type="button">
+            <i class="fa-solid fa-user"></i>
             Perfil
         </button>
     `;
 
-    const btnPerfil = document.getElementById('btn-perfil-usuario');
-
-    btnPerfil.addEventListener('click', function () {
-        if (popupPerfil.classList.contains('active')) {
-            popupPerfil.classList.remove('active');
-            return;
-        }
-
-        const permissoes = Array.isArray(usuario.permissoes)
-            ? usuario.permissoes
-            : [];
-
-        popupPerfil.innerHTML = `
-            <i id="btn-fechar-perfil" class="fa-regular fa-circle-xmark"></i>
-            <div class="content-perfil">
-                <div class="content-perfil-top">
-                    <i class="fa-solid fa-user"></i>
-                    <div class="perfil-top-text">
-                        <h5>${usuario.nome}</h5>
-                        <h6>${usuario.email}</h6>
-                    </div>
-                </div>
-
-                <div class="content-perfil-bottom">
-                    <div class="perfil-bottom-info">
-                        <div class="info-box-text">
-                            <i class="fa-regular fa-building"></i>
-                            <span>
-                                <h6>Empresa</h6>
-                                <h5>${usuario.nomeEmpresa}</h5>
-                            </span>
-                        </div>
-
-                        <div class="info-box-text">
-                            <i class="fa-regular fa-address-card"></i>
-                            <span>
-                                <h6>Nível de acesso</h6>
-                                <h5>${nivelUsuario(usuario)}</h5>
-                            </span>
-                        </div>
-                    </div>
-
-                    <div class="perfil-bottom-info">
-                        <span>
-                            <h6>Permissões adicionais</h6>
-                            <h5>${permissoes.length > 0 ? permissoes.join(', ') : 'Nenhuma'}</h5>
-                        </span>
-                    </div>
-
-                    <div class="perfil-bottom-btn">
-                        <button onclick="limparSessao()">
-                            <i class="fa-solid fa-right-from-bracket"></i>
-                            Logout
-                        </button>
-                    </div>
-                </div>
-            </div>
-        `;
-
-        popupPerfil.classList.add('active');
-
-        const btnFechar = document.getElementById('btn-fechar-perfil');
-        btnFechar.addEventListener('click', function () {
-            popupPerfil.classList.remove('active');
-        });
+    document.getElementById('btn_painel').addEventListener('click', function () {
+        redirecionar('inicio');
     });
+
+    document.getElementById('btn_perfil_usuario').addEventListener('click', alternarPopupPerfil);
+
+    montarPopupPerfil(usuario);
 }
 
 function validarSessao() {
-    const caminhoPagina = window.location.pathname;
-    const paginaProtegida = caminhoPagina.includes('hardwares.html') ||
-        caminhoPagina.includes('usuarios.html');
+    if (sessaoValidada) {
+        return;
+    }
+
+    sessaoValidada = true;
+
     const usuario = lerDadosSessao();
 
     if (!usuario) {
-        if (paginaProtegida) {
-            window.location.href = '../public/login.html';
+        if (!paginaPublica()) {
+            redirecionar('login');
         }
         return;
     }
 
-    atualizarLinkUsuarios(usuario);
-    montarPerfilUsuario(usuario);
+    if (paginaPublica()) {
+        montarNavbarLogada(usuario);
+    }
 }
 
 function limparSessao() {
     localStorage.clear();
-    window.location = '../public/main.html';
-}
-
-function dadosUser() {
-    return lerDadosSessao();
+    sessionStorage.clear();
+    redirecionar('home');
 }
 
 function aguardar() {
@@ -193,3 +219,5 @@ function finalizarAguardar(texto) {
         divErrosLogin.innerHTML = texto;
     }
 }
+
+validarSessao();
