@@ -1,12 +1,3 @@
-function lerUsuarioLogado() {
-    try {
-        const texto = localStorage.getItem('usuarioLogado');
-        return texto ? JSON.parse(texto) : null;
-    } catch (erro) {
-        return null;
-    }
-}
-
 function nivelUsuarioAtualEhRoot(usuario) {
     const nivel = usuario.nomeNivelAcesso || usuario.nomePermissao;
     return nivel === 'Root';
@@ -24,7 +15,7 @@ function mostrarEstado(texto, tipo) {
     const elemento = document.getElementById('mensagem-estado');
 
     elemento.textContent = texto;
-    elemento.className = 'mensagem-estado' + (tipo ? ' ' + tipo : '');
+    elemento.className = 'mensagem_estado' + (tipo ? ' ' + tipo : '');
 }
 
 function criarCelula(texto, classe) {
@@ -61,7 +52,7 @@ function nomeAmigavelPermissao(nome) {
 
 function criarSeletorNivel(usuario) {
     const seletor = document.createElement('select');
-    seletor.className = 'seletor-permissao';
+    seletor.className = 'seletor_permissao';
 
     const opcaoAdministrador = document.createElement('option');
     opcaoAdministrador.value = 'Administrador';
@@ -86,12 +77,12 @@ function criarSeletorNivel(usuario) {
 
 function criarListaPermissoes(usuario, permissoesDisponiveis) {
     const caixa = document.createElement('div');
-    caixa.className = 'lista-permissoes-usuario';
+    caixa.className = 'lista_permissoes_usuario';
 
     for (let i = 0; i < permissoesDisponiveis.length; i++) {
         const permissao = permissoesDisponiveis[i];
         const rotulo = document.createElement('label');
-        rotulo.className = 'item-permissao-usuario';
+        rotulo.className = 'item_permissao_usuario';
 
         const checkbox = document.createElement('input');
         checkbox.type = 'checkbox';
@@ -123,7 +114,7 @@ function coletarIdsPermissoes(caixaPermissoes) {
 function criarLinhaUsuario(usuario, atual, permissoesDisponiveis) {
     const linha = document.createElement('tr');
     linha.appendChild(criarCelula(usuario.nome));
-    linha.appendChild(criarCelula(usuario.email, 'email-usuario'));
+    linha.appendChild(criarCelula(usuario.email, 'email_usuario'));
 
     const celulaNivel = document.createElement('td');
     const seletorNivel = criarSeletorNivel(usuario);
@@ -138,7 +129,7 @@ function criarLinhaUsuario(usuario, atual, permissoesDisponiveis) {
     const celulaAcao = document.createElement('td');
     const botaoSalvar = document.createElement('button');
     botaoSalvar.type = 'button';
-    botaoSalvar.className = 'btn-salvar-permissao';
+    botaoSalvar.className = 'btn_salvar_permissao';
     botaoSalvar.textContent = 'Salvar';
 
     const ehUsuarioAtual = Number(usuario.idUsuario) === Number(atual.id);
@@ -281,10 +272,10 @@ function carregarDadosTela(atual) {
 }
 
 (function iniciarTelaUsuarios() {
-    const usuario = lerUsuarioLogado();
+    const usuario = lerDadosSessao();
 
     if (!usuario || !usuario.id || !usuario.idEmpresa) {
-        window.location.replace('../public/login.html');
+        window.location.replace(rotas.login);
         return;
     }
 
@@ -302,16 +293,12 @@ function carregarDadosTela(atual) {
         mostrarAvisoAcesso('Você não possui permissão para acessar o gerenciamento de usuários.');
 
         window.setTimeout(function () {
-            window.location.replace('./hardwares.html');
+            window.location.replace(rotas.hardwares);
         }, 2500);
         return;
     }
 
     document.getElementById('painel-usuarios').hidden = false;
-
-    if (typeof validarSessao === 'function') {
-        validarSessao();
-    }
 
     carregarDadosTela(usuario);
 })();

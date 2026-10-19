@@ -2,7 +2,7 @@ document.addEventListener('DOMContentLoaded', function () {
   // 1. Validar se a sessão está ativa
   var usuario = lerDadosSessao();
   if (!usuario) {
-    window.location.href = './login.html';
+    redirecionar('login');
     return;
   }
 
