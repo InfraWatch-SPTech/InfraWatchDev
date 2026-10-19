@@ -2,7 +2,7 @@
 var express = require("express");
 var router = express.Router();
 
-var relatorioController = require("../controllers/relatorioController");
+var relatorioController = require("../controllers/relatoriosController");
 
 router.get("/buscar", function (req, res) {
     relatorioController.buscarRelatorios(req, res);

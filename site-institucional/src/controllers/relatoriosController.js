@@ -1,4 +1,4 @@
-let relatorioModel = require("../models/relatorioModel");
+let relatorioModel = require("../models/relatoriosModel");
 
 function cadastrarRelatorio(req, res) {
     let titulo = req.body.titulo;
