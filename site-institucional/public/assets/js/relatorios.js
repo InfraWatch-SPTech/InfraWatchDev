@@ -157,9 +157,9 @@
                 let botaoEditar = document.createElement("a");
 
                 botaoEditar.className = "botao_acao";
-                botaoEditar.href =
-                    "./editar-relatorio.html?idRelatorio=" +
-                    encodeURIComponent(relatorio.idRelatorio);
+                // botaoEditar.href =
+                //     "./editar-relatorio.html?idRelatorio=" +
+                //     encodeURIComponent(relatorio.idRelatorio);
 
                 botaoEditar.innerHTML =
                     '<i class="fa-solid fa-pen"></i> Editar';
@@ -223,12 +223,12 @@
 
             let titulo = document.getElementById("titulo").value.trim();
             let data = document.getElementById("data").value;
-            let idEquipamento = selectServidor.value;
+            // let idEquipamento = selectServidor.value;
 
             let descricao = document.getElementById("detalhes")
                 .value.trim();
 
-            if (!titulo || !data || !idEquipamento || !descricao) {
+            if (!titulo || !data || !descricao) {
                 mensagemCadastro.textContent =
                     "Preencha todos os campos.";
 
@@ -238,8 +238,8 @@
             let dados = {
                 titulo: titulo,
                 descricao: descricao,
-                dataRel: data + " 00:00:00",
-                idEquipamento: idEquipamento
+                dataRel: data + " 00:00:00"
+                // idEquipamento: idEquipamento
             };
 
             botaoEnviar.disabled = true;

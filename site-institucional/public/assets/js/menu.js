@@ -1,11 +1,11 @@
 var menuItens = [
     { rota: 'inicio', icone: 'fa-house', texto: 'Início' },
     { rota: 'dashboard_empresa', icone: 'fa-chart-line', texto: 'Dashboard empresa' },
-    { rota: 'dashboard_servidor', icone: 'fa-server', texto: 'Dashboard servidor' },
+    // { rota: 'dashboard_servidor', icone: 'fa-server', texto: 'Dashboard servidor' },
     { rota: 'hardwares', icone: 'fa-gear', texto: 'Gerenciar servidores' },
     { rota: 'usuarios', icone: 'fa-users', texto: 'Gerenciar funcionários', restrito: true },
     { rota: 'criar_relatorio', icone: 'fa-file-circle-plus', texto: 'Criar relatório' },
-    { rota: 'lista_relatorios', icone: 'fa-file-lines', texto: 'Visualizar relatórios' },
+    // { rota: 'lista_relatorios', icone: 'fa-file-lines', texto: 'Visualizar relatórios' },
     { rota: 'plataformas_externas', icone: 'fa-plug', texto: 'Plataformas externas' }
 ];
 
@@ -97,14 +97,6 @@ function montarMenu() {
     }
 
     let linksHeaderHtml = '';
-
-    for (let i = 0; i < headerItens.length; i++) {
-        linksHeaderHtml += `
-            <li>
-                <a class="header_link" href="${rotas[headerItens[i].rota]}" data-rota="${headerItens[i].rota}">${headerItens[i].texto}</a>
-            </li>
-        `;
-    }
 
     document.body.insertAdjacentHTML('afterbegin', `
         <header class="header_principal">
