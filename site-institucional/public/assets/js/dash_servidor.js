@@ -408,63 +408,6 @@ function iniciar_selecao_geral() {
     });
 }
 
-/* menu lateral */
-
-function iniciar_menu() {
-    const botao_menu = document.getElementById('botao_menu');
-    const botao_fechar = document.getElementById('menu_fechar');
-    const menu = document.getElementById('menu_lateral');
-    const fundo = document.getElementById('menu_fundo');
-
-    function abrir_menu() {
-        menu.classList.add('menu_aberto');
-        fundo.classList.add('menu_aberto');
-        menu.setAttribute('aria-hidden', 'false');
-        botao_menu.setAttribute('aria-expanded', 'true');
-        document.body.classList.add('menu_travado');
-        botao_fechar.focus();
-    }
-
-    function fechar_menu() {
-        menu.classList.remove('menu_aberto');
-        fundo.classList.remove('menu_aberto');
-        menu.setAttribute('aria-hidden', 'true');
-        botao_menu.setAttribute('aria-expanded', 'false');
-        document.body.classList.remove('menu_travado');
-        botao_menu.focus();
-    }
-
-    botao_menu.addEventListener('click', function () {
-        if (menu.classList.contains('menu_aberto')) {
-            fechar_menu();
-        } else {
-            abrir_menu();
-        }
-    });
-
-    botao_fechar.addEventListener('click', fechar_menu);
-    fundo.addEventListener('click', fechar_menu);
-
-    document.addEventListener('keydown', function (evento) {
-        if (evento.key === 'Escape' && menu.classList.contains('menu_aberto')) {
-            fechar_menu();
-        }
-    });
-}
-
-function sair() {
-    sessionStorage.clear();
-    redirecionamento_login();
-}
-
-function iniciar_sair() {
-    document.getElementById('btn_sair').addEventListener('click', sair);
-    document.getElementById('menu_sair').addEventListener('click', function (evento) {
-        evento.preventDefault();
-        sair();
-    });
-}
-
 function iniciar() {
     const dados = carregar_dados();
 
@@ -477,8 +420,6 @@ function iniciar() {
     renderizar_historico(dados.historico);
     renderizar_incidentes(dados.incidentes);
     iniciar_selecao_geral();
-    iniciar_menu();
-    iniciar_sair();
 }
 
 iniciar();

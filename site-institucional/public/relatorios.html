@@ -5,7 +5,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>…</title>
+    <title>InfraWatch.Dev - Relatórios</title>
     <link rel="icon" type="image/png" href="./assets/midias/main-icon-image.png">
     <link rel="stylesheet" href="./assets/css/global.css">
     <link rel="stylesheet" href="./assets/css/menu.css">
@@ -15,106 +15,22 @@
 
 <body>
 
-    <div class="tela-painel">
+<main class="area_formulario">
 
-        <aside class="menu-lateral">
-
-            <div class="topo-menu">
-                <button class="botao-menu" id="botao-menu" type="button">
-                    <i class="fa-solid fa-bars"></i>
-                </button>
-            </div>
-
-            <nav class="navegacao-menu">
-                <ul>
-                    <li>
-                        <a href="./main.html">
-                            <i class="fa-solid fa-house"></i>
-                            <span>Home</span>
-                        </a>
-                    </li>
-
-                    <li>
-                        <a href="./servidores.html">
-                            <i class="fa-solid fa-server"></i>
-                            <span>Servidores</span>
-                        </a>
-                    </li>
-
-                    <li>
-                        <a href="./funcionarios.html">
-                            <i class="fa-solid fa-users"></i>
-                            <span>Gerenciar funcionários</span>
-                        </a>
-                    </li>
-
-                    <li>
-                        <a href="./gerenciar-servidores.html">
-                            <i class="fa-solid fa-gear"></i>
-                            <span>Gerenciar servidores</span>
-                        </a>
-                    </li>
-
-                    <li class="item-ativo">
-                        <a href="#cadastro">
-                            <i class="fa-solid fa-file-circle-plus"></i>
-                            <span>Criar relatório</span>
-                        </a>
-                    </li>
-
-                    <li>
-                        <a href="#relatorios">
-                            <i class="fa-solid fa-file-lines"></i>
-                            <span>Visualizar relatórios</span>
-                        </a>
-                    </li>
-                </ul>
-            </nav>
-
-            <div class="rodape-menu">
-                <span class="titulo-suporte">Suporte</span>
-                <a href="#suporte" class="link-suporte">
-                    Precisa de ajuda?
-                </a>
-            </div>
-
-        </aside>
-
-        <div class="conteudo-principal">
-
-            <header class="cabecalho-topo">
-
-                <div class="saudacao-usuario">
-                    <span>Olá gerente!</span>
-                </div>
-
-                <div class="dados-usuario">
-                    <span class="nome-empresa">InfraWatch.Dev</span>
-
-                    <div class="perfil-usuario">
-                        <i class="fa-solid fa-circle-user"></i>
-                        <span>Gerente</span>
-                    </div>
-                </div>
-
-            </header>
-
-            <main class="area-formulario">
-
-                <div class="caixa-formulario">
+                <div class="caixa_formulario">
 
                     <!-- CADASTRO DE RELATÓRIO -->
 
                     <section id="cadastro">
 
-                        <h1 class="titulo-formulario">
+                        <h1 class="titulo_formulario">
                             CRIAR RELATÓRIO
                         </h1>
 
-                        <form class="formulario-relatorio"
+                        <form class="formulario_relatorio"
                             id="form-relatorio">
 
-                            <div class="linha-tres-campos">
+                            <div class="linha_tres_campos">
 
                                 <div class="campo">
                                     <label for="titulo">
@@ -148,7 +64,7 @@
                                         Equipamento
                                     </label>
 
-                                    <div class="caixa-selecao">
+                                    <div class="caixa_selecao">
                                         <select
                                             id="servidor"
                                             name="servidor"
@@ -159,13 +75,13 @@
                                             </option>
                                         </select>
 
-                                        <i class="fa-solid fa-chevron-down icone-seta"></i>
+                                        <i class="fa-solid fa-chevron-down icone_seta"></i>
                                     </div>
                                 </div>
 
                             </div>
 
-                            <div class="linha-campo-unico">
+                            <div class="linha_campo_unico">
                                 <div class="campo">
                                     <label for="detalhes">
                                         Relatório detalhado
@@ -183,7 +99,7 @@
 
                             <p id="mensagem-relatorio" class="mensagem"></p>
 
-                            <div class="linha-botoes">
+                            <div class="linha_botoes">
                                 <button type="submit" id="botao-enviar">
                                     <i class="fa-solid fa-floppy-disk"></i>
                                     Cadastrar relatório
@@ -196,16 +112,16 @@
 
                     <!-- LISTAGEM DE RELATÓRIOS -->
 
-                    <section id="relatorios" class="secao-relatorios">
+                    <section id="relatorios" class="secao_relatorios">
 
-                        <h2 class="titulo-formulario">
+                        <h2 class="titulo_formulario">
                             RELATÓRIOS CADASTRADOS
                         </h2>
 
                         <input
                             type="text"
                             id="filtro"
-                            class="filtro-relatorios"
+                            class="filtro_relatorios"
                             placeholder="Pesquisar por título ou equipamento..."
                         >
 
@@ -213,9 +129,9 @@
                             Carregando relatórios...
                         </p>
 
-                        <div class="lista-relatorios">
+                        <div class="lista_relatorios">
 
-                            <table class="tabela-relatorios">
+                            <table class="tabela_relatorios">
 
                                 <thead>
                                     <tr>
@@ -239,352 +155,10 @@
 
             </main>
 
-        </div>
-
-    </div>
-
-    <script src="../public/assets/js/sessao.js" defer></script>
-    <script src="../public/assets/js/redirecionamento.js"></script>
-
-    <script>
-        let formulario = document.getElementById("form-relatorio");
-        let selectServidor = document.getElementById("servidor");
-        let mensagemCadastro = document.getElementById("mensagem-relatorio");
-        let botaoEnviar = document.getElementById("botao-enviar");
-
-        let listaRelatorios = document.getElementById("lista-relatorios");
-        let mensagemLista = document.getElementById("mensagem");
-        let filtro = document.getElementById("filtro");
-
-        let relatorios = [];
-
-        function carregarServidores() {
-            let idEmpresa = sessionStorage.ID_EMPRESA;
-
-            if (!idEmpresa) {
-                mensagemCadastro.textContent =
-                    "Empresa não identificada. Entre novamente no sistema.";
-
-                selectServidor.innerHTML =
-                    '<option value="">Empresa não identificada</option>';
-
-                return;
-            }
-
-            fetch("/relatorios/servidores/" +
-                encodeURIComponent(idEmpresa))
-                .then(function (resposta) {
-                    if (!resposta.ok) {
-                        throw new Error("Erro HTTP: " + resposta.status);
-                    }
-
-                    return resposta.json();
-                })
-                .then(function (servidores) {
-                    selectServidor.innerHTML =
-                        '<option value="" selected disabled>Selecione um equipamento</option>';
-
-                    if (!Array.isArray(servidores) ||
-                        servidores.length === 0) {
-                        mensagemCadastro.textContent =
-                            "Nenhum equipamento disponível para esta empresa.";
-                        return;
-                    }
-
-                    for (let i = 0; i < servidores.length; i++) {
-                        let servidor = servidores[i];
-                        let opcao = document.createElement("option");
-
-                        opcao.value = servidor.idEquipamento;
-                        opcao.textContent = servidor.nomeEquipamento;
-
-                        selectServidor.appendChild(opcao);
-                    }
-
-                    mensagemCadastro.textContent = "";
-                })
-                .catch(function (erro) {
-                    console.log("Erro ao carregar equipamentos:", erro);
-
-                    mensagemCadastro.textContent =
-                        "Erro ao carregar equipamentos. Verifique o backend.";
-                });
-        }
-
-        function formatarData(data) {
-            if (!data) {
-                return "-";
-            }
-
-            let dataTexto = String(data).substring(0, 10);
-            let partes = dataTexto.split("-");
-
-            if (partes.length !== 3) {
-                return dataTexto;
-            }
-
-            return partes[2] + "/" + partes[1] + "/" + partes[0];
-        }
-
-        function criarCelula(valor, classe) {
-            let celula = document.createElement("td");
-
-            celula.textContent =
-                valor == null || valor === "" ? "-" : String(valor);
-
-            if (classe) {
-                celula.className = classe;
-            }
-
-            return celula;
-        }
-
-        function mostrarRelatorios() {
-            let pesquisa = filtro.value.toLowerCase().trim();
-
-            let encontrados = relatorios.filter(function (relatorio) {
-                let titulo = String(relatorio.titulo || "").toLowerCase();
-
-                let equipamento = String(
-                    relatorio.nomeEquipamento || ""
-                ).toLowerCase();
-
-                return titulo.includes(pesquisa) ||
-                    equipamento.includes(pesquisa);
-            });
-
-            listaRelatorios.innerHTML = "";
-
-            if (encontrados.length === 0) {
-                mensagemLista.textContent = relatorios.length === 0
-                    ? "Nenhum relatório cadastrado."
-                    : "Nenhum relatório corresponde à pesquisa.";
-
-                return;
-            }
-
-            mensagemLista.textContent = "";
-
-            for (let i = 0; i < encontrados.length; i++) {
-                let relatorio = encontrados[i];
-                let linha = document.createElement("tr");
-
-                linha.appendChild(criarCelula(relatorio.titulo));
-
-                linha.appendChild(criarCelula(
-                    formatarData(
-                        relatorio.data_rel || relatorio.dataRel
-                    )
-                ));
-
-                linha.appendChild(criarCelula(
-                    relatorio.nomeEquipamento
-                ));
-
-                linha.appendChild(criarCelula(
-                    relatorio.descricao,
-                    "descricao-relatorio"
-                ));
-
-                let celulaAcoes = document.createElement("td");
-                let acoes = document.createElement("div");
-
-                acoes.className = "acoes";
-
-                let botaoEditar = document.createElement("a");
-
-                botaoEditar.className = "botao-acao";
-                botaoEditar.href =
-                    "./editar-relatorio.html?idRelatorio=" +
-                    encodeURIComponent(relatorio.idRelatorio);
-
-                botaoEditar.innerHTML =
-                    '<i class="fa-solid fa-pen"></i> Editar';
-
-                let botaoExcluir = document.createElement("button");
-
-                botaoExcluir.type = "button";
-                botaoExcluir.className =
-                    "botao-acao botao-excluir";
-
-                botaoExcluir.textContent = "Excluir";
-
-                botaoExcluir.setAttribute(
-                    "data-id",
-                    relatorio.idRelatorio
-                );
-
-                acoes.appendChild(botaoEditar);
-                acoes.appendChild(botaoExcluir);
-
-                celulaAcoes.appendChild(acoes);
-                linha.appendChild(celulaAcoes);
-
-                listaRelatorios.appendChild(linha);
-            }
-        }
-
-        function carregarRelatorios() {
-            mensagemLista.textContent = "Carregando relatórios...";
-
-            fetch("/relatorios/buscar")
-                .then(function (resposta) {
-                    if (!resposta.ok) {
-                        throw new Error("Erro HTTP: " + resposta.status);
-                    }
-
-                    return resposta.json();
-                })
-                .then(function (dados) {
-                    if (!Array.isArray(dados)) {
-                        throw new Error(
-                            "A API não retornou uma lista de relatórios."
-                        );
-                    }
-
-                    relatorios = dados;
-                    mostrarRelatorios();
-                })
-                .catch(function (erro) {
-                    console.log("Erro ao carregar relatórios:", erro);
-
-                    listaRelatorios.innerHTML = "";
-
-                    mensagemLista.textContent =
-                        "Erro ao carregar relatórios. Verifique o backend.";
-                });
-        }
-
-        formulario.addEventListener("submit", function (evento) {
-            evento.preventDefault();
-
-            let titulo = document.getElementById("titulo").value.trim();
-            let data = document.getElementById("data").value;
-            let idEquipamento = selectServidor.value;
-
-            let descricao = document.getElementById("detalhes")
-                .value.trim();
-
-            if (!titulo || !data || !idEquipamento || !descricao) {
-                mensagemCadastro.textContent =
-                    "Preencha todos os campos.";
-
-                return;
-            }
-
-            let dados = {
-                titulo: titulo,
-                descricao: descricao,
-                dataRel: data + " 00:00:00",
-                idEquipamento: idEquipamento
-            };
-
-            botaoEnviar.disabled = true;
-
-            mensagemCadastro.textContent = "Salvando relatório...";
-
-            fetch("/relatorios/cadastrar", {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json"
-                },
-                body: JSON.stringify(dados)
-            })
-                .then(function (resposta) {
-                    if (!resposta.ok) {
-                        return resposta.text().then(function (texto) {
-                            throw new Error(
-                                texto || "Erro HTTP: " + resposta.status
-                            );
-                        });
-                    }
-
-                    return resposta.json();
-                })
-                .then(function () {
-                    mensagemCadastro.textContent =
-                        "Relatório cadastrado com sucesso!";
-
-                    formulario.reset();
-
-                    carregarServidores();
-                    carregarRelatorios();
-
-                    document.getElementById("relatorios")
-                        .scrollIntoView({ behavior: "smooth" });
-                })
-                .catch(function (erro) {
-                    console.log("Erro ao cadastrar relatório:", erro);
-
-                    mensagemCadastro.textContent =
-                        "Não foi possível cadastrar o relatório.";
-
-                })
-                .finally(function () {
-                    botaoEnviar.disabled = false;
-                });
-        });
-
-        function excluirRelatorio(idRelatorio, botao) {
-            let confirmar = confirm(
-                "Deseja realmente excluir este relatório?"
-            );
-
-            if (!confirmar) {
-                return;
-            }
-
-            botao.disabled = true;
-
-            fetch("/relatorios/deletar/" +
-                encodeURIComponent(idRelatorio), {
-                    method: "DELETE"
-                })
-                .then(function (resposta) {
-                    if (!resposta.ok) {
-                        throw new Error("Erro HTTP: " + resposta.status);
-                    }
-
-                    alert("Relatório excluído com sucesso!");
-
-                    carregarRelatorios();
-                })
-                .catch(function (erro) {
-                    console.log("Erro ao excluir relatório:", erro);
-
-                    alert("Não foi possível excluir o relatório.");
-
-                    botao.disabled = false;
-                });
-        }
-
-        filtro.addEventListener("input", function () {
-            mostrarRelatorios();
-        });
-
-        listaRelatorios.addEventListener("click", function (evento) {
-            let botao = evento.target.closest("button[data-id]");
-
-            if (!botao) {
-                return;
-            }
-
-            excluirRelatorio(
-                botao.getAttribute("data-id"),
-                botao
-            );
-        });
-
-        let botaoMenu = document.getElementById("botao-menu");
-        let menuLateral = document.querySelector(".menu-lateral");
-
-        botaoMenu.addEventListener("click", function () {
-            menuLateral.classList.toggle("menu-recolhido");
-        });
-
-        carregarServidores();
-        carregarRelatorios();
-    </script>
+    <script src="./assets/js/redirecionamento.js"></script>
+    <script src="./assets/js/sessao.js"></script>
+    <script src="./assets/js/menu.js"></script>
+    <script src="./assets/js/relatorios.js"></script>
 
 </body>
 

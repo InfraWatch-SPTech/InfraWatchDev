@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>…</title>
+    <title>InfraWatch - Configuração do Jira</title>
     <link rel="icon" type="image/png" href="./assets/midias/main-icon-image.png">
     <link rel="stylesheet" href="./assets/css/global.css">
     <link rel="stylesheet" href="./assets/css/menu.css">
@@ -13,37 +13,14 @@
 </head>
 
 <body>
-    <header class="cabecalho">
-        <div class="cabecalho-esquerda">
-            <button class="btn-menu" type="button" aria-label="Abrir menu">
-                <i class="fa-solid fa-bars"></i>
-            </button>
 
-            <a class="logo" href="#">
-                Infra<span>Watch</span>
-            </a>
-        </div>
-
-        <div class="cabecalho-direita">
-            <span class="nome-usuario">Mariana Soares</span>
-
-            <button class="btn-perfil" type="button" aria-label="Abrir perfil">
-                <i class="fa-regular fa-user"></i>
-            </button>
-
-            <button class="btn-sair" type="button" aria-label="Sair da conta">
-                <i class="fa-solid fa-arrow-right-from-bracket"></i>
-            </button>
-        </div>
-    </header>
-
-    <main class="conteudo-principal">
-        <section class="secao-integracao">
+<main class="conteudo_principal">
+        <section class="secao_integracao">
             <h1>Receber alertas via plataformas externas</h1>
 
-            <div class="painel-integracao">
-                <div class="coluna-informacoes">
-                    <article class="caixa-informacao">
+            <div class="painel_integracao">
+                <div class="coluna_informacoes">
+                    <article class="caixa_informacao">
                         <h2>Token de API</h2>
                         <p>
                             O Token de API é o código que permite criar uma Issue no Jira
@@ -60,8 +37,8 @@
                         </ol>
                     </article>
 
-                    <article class="caixa-informacao">
-                        <h2 class="titulo-azul">Teste de credenciais</h2>
+                    <article class="caixa_informacao">
+                        <h2 class="titulo_azul">Teste de credenciais</h2>
                         <p>
                             Após atualizar suas credenciais, é importante que você as
                             <strong>teste para garantir a efetividade dos alertas.</strong>
@@ -71,16 +48,16 @@
 
                         <p>Você pode testá-las clicando no botão abaixo:</p>
 
-                        <button class="btn-contorno" type="button">
+                        <button class="btn_contorno" type="button">
                             Testar credenciais
                         </button>
                     </article>
                 </div>
 
-                <form class="formulario-jira">
+                <form class="formulario_jira">
                     <h2>Configurar Jira</h2>
 
-                    <div class="grupo-campo">
+                    <div class="grupo_campo">
                         <label for="email-jira">Seu e-mail do Jira</label>
                         <input
                             type="email"
@@ -88,7 +65,7 @@
                             placeholder="ana.reis@sptech.school">
                     </div>
 
-                    <div class="grupo-campo">
+                    <div class="grupo_campo">
                         <label for="link-jira">Link do espaço Jira</label>
                         <input
                             type="url"
@@ -96,7 +73,7 @@
                             placeholder="https://infra-watch.atlassian.net/">
                     </div>
 
-                    <div class="grupo-campo">
+                    <div class="grupo_campo">
                         <label for="token-jira">Token de API</label>
                         <input
                             type="password"
@@ -104,7 +81,7 @@
                             placeholder="Digite seu token de API">
                     </div>
 
-                    <button class="btn-salvar" type="submit">
+                    <button class="btn_salvar" type="submit">
                         <i class="fa-brands fa-jira"></i>
                         Salvar
                     </button>
@@ -112,6 +89,11 @@
             </div>
         </section>
     </main>
+
+    <script src="./assets/js/redirecionamento.js"></script>
+    <script src="./assets/js/sessao.js"></script>
+    <script src="./assets/js/menu.js"></script>
+
 </body>
 
 </html>

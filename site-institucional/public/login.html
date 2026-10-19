@@ -1,10 +1,10 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="pt-br">
 
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>…</title>
+    <title>InfraWatch.Dev - Login</title>
     <link rel="icon" type="image/png" href="./assets/midias/main-icon-image.png">
     <link rel="stylesheet" href="./assets/css/global.css">
     <link rel="stylesheet" href="./assets/css/login.css">
@@ -12,29 +12,30 @@
 </head>
 
 <body>
-    <button id="btn-home" onclick="redirecionamento_home()">
+
+<button id="btn-home" onclick="redirecionar('home')">
         <i class="fa-solid fa-arrow-left"></i>
         Home
     </button>
 
-    <div class="pagina-log">
+    <div class="pagina_log">
         <div class="autenticar">
-            <button type="button" class="autenticar-btn active" id="tab-entrar">
+            <button type="button" class="autenticar_btn active" id="tab-entrar">
                 Entrar
             </button>
-            <button type="button" class="autenticar-btn" id="tab-cadastrar">
+            <button type="button" class="autenticar_btn" id="tab-cadastrar">
                 Cadastre-se
             </button>
         </div>
 
-        <div class="login-card" id="contentLogin">
-            <div class="login-esquerda">
-                <div class="login-logo">
+        <div class="login_card" id="contentLogin">
+            <div class="login_esquerda">
+                <div class="login_logo">
                     <h1>Infra<span>Watch</span></h1>
                 </div>
 
-                <div class="login-esquerda-content">
-                    <div class="login-esquerda-text">
+                <div class="login_esquerda_content">
+                    <div class="login_esquerda_text">
                         <h2>
                             Controle total dos seus
                             sistemas,
@@ -42,7 +43,7 @@
                             cliente perceba</span>
                         </h2>
                     </div>
-                    <div class="login-esquerda-description">
+                    <div class="login_esquerda_description">
                         <h6>
                             Acesse o painel para acompanhar em tempo
                             real a saúde da sua infraestrutura
@@ -51,9 +52,9 @@
                 </div>
             </div>
 
-            <div class="login-direita">
-                <form class="formulario-login" id="form-login">
-                    <div class="formulario-login-title">
+            <div class="login_direita">
+                <form class="formulario_login" id="form-login">
+                    <div class="formulario_login_title">
                         <h2>Acesse sua conta</h2>
                         <span>Entre para acompanhar seus painéis de monitoramento.</span>
                     </div>
@@ -68,7 +69,7 @@
                         <input type="password" id="input-senha" name="senha" placeholder="********" required>
                     </div>
 
-                    <a href="#" class="esqueci-a-senha">
+                    <a href="#" class="esqueci_a_senha">
                         Esqueci minha senha
                     </a>
 
@@ -82,6 +83,10 @@
         </div>
 
     </div>
+
+    <script src="./assets/js/redirecionamento.js"></script>
+    <script src="./assets/js/sessao.js"></script>
+    <script src="./assets/js/login.js"></script>
+
 </body>
-<script src="./assets/js/login.js"></script>
 </html>

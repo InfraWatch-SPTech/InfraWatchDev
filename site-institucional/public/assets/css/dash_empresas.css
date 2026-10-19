@@ -1,13 +1,5 @@
-@import url(./global.css);
-@import url(./navbar.css);
-
-
-* {
-    background-color: var(--bg-dark);
-}
-
 /* GERAL */
-.container-dash-empresa {
+.container_dash_empresa {
     display: flex;
     align-items: center;
     justify-content: center;
@@ -18,7 +10,7 @@
     gap: 25px;
 }
 
-.container-dash-empresa .content {
+.container_dash_empresa .content {
     display: flex;
     align-items: center;
     justify-content: center;
@@ -26,11 +18,8 @@
     height: auto;
 }
 
-
-
-
 /* INFORMAÇÕES DO USUÁRIO */
-.container-dash-empresa .content-header {
+.container_dash_empresa .content_header {
     display: flex;
     flex-direction: row;
     justify-content: space-between;
@@ -39,57 +28,54 @@
     height: auto;
 }
 
-.content-header .infos-usuario {
+.content_header .infos_usuario {
     display: flex;
     flex-direction: column;
     justify-content: center;
     align-items: flex-start;
 }
 
-.content-header .infos-usuario .subtitulo-user{
+.content_header .infos_usuario .subtitulo_user {
     text-transform: uppercase;
     font-weight: 300;
     font-size: 14px;
 }
 
-.content-header .infos-usuario .user-nome{
+.content_header .infos_usuario .user_nome {
     text-transform: uppercase;
     font-weight: 800;
     font-size: 32px;
 }
 
-.content-header .infos-usuario .user-cargo{
+.content_header .infos_usuario .user_cargo {
     text-transform: capitalize;
     font-weight: 300;
     font-size: 14px;
     color: var(--cor-azul-contraste2);
 }
 
-.content-header .infos-empresa {
+.content_header .infos_empresa {
     display: flex;
     flex-direction: column;
     justify-content: center;
     align-items: flex-end;
 }
 
-.content-header .infos-empresa .subtitulo-bem-vindo {
+.content_header .infos_empresa .subtitulo_bem_vindo {
     text-transform: capitalize;
     font-weight: 300;
     font-size: 14px;
-    color: var(--cor-cinza-padrao);
+    color: var(--cor-azul-apagado);
 }
 
-.content-header .infos-empresa .user-empresa {
+.content_header .infos_empresa .user_empresa {
     font-weight: 800;
     font-size: 32px;
     color: var(--cor-azul-contraste2);
 }
 
-
-
-
 /* GERAL GRÁFICOS E KPIS */
-.container-dash-empresa .content-dashboard {
+.container_dash_empresa .content_dashboard {
     display: flex;
     flex-direction: column;
     justify-content: center;
@@ -99,18 +85,15 @@
     gap: 20px;
 }
 
-.titulo-pagina {
+.titulo_pagina {
     font-weight: 300;
     font-size: 16px;
     text-transform: uppercase;
-    color: var(--cor-cinza-padrao);
+    color: var(--cor-azul-apagado);
 }
 
-
-
-
 /* KPIS */
-.content-dashboard .content-dashboard-kpis {
+.content_dashboard .content_dashboard_kpis {
     width: 100%;
     height: auto;
     display: flex;
@@ -118,7 +101,7 @@
     justify-content: space-between;
 }
 
-.content-dashboard .content-dashboard-kpis .kpi-box {
+.content_dashboard .content_dashboard_kpis .kpi_box {
     background-color: var(--cor-azul-contraste);
     display: flex;
     flex-direction: row;
@@ -127,12 +110,12 @@
     width: 17vw;
     height: 15vh;
     border-radius: 10px;
-    border: 1px solid var(--cor-cinza-padrao);
+    border: 1px solid var(--cor-azul-apagado);
     padding: 1%;
     gap: 5px;   
 }
 
-.content-dashboard-kpis .kpi-box .icon {
+.content_dashboard_kpis .kpi_box .icon {
     background-color: transparent;
     width: 2.5vw;
     height: 8vh;
@@ -142,7 +125,7 @@
     background-size: contain;
 }
 
-.content-dashboard-kpis .kpi-box .infos-kpis {
+.content_dashboard_kpis .kpi_box .infos_kpis {
     background-color: transparent;
     display: flex;
     flex-direction: column;
@@ -152,40 +135,37 @@
     align-items: flex-start;
 }
 
-.content-dashboard-kpis .kpi-box .infos-kpis .infos-kpis-nome{
+.content_dashboard_kpis .kpi_box .infos_kpis .infos_kpis_nome {
     background-color: transparent;
     font-size: 15px;
     font-weight: 300;
     text-transform: capitalize;
 }
 
-.content-dashboard-kpis .kpi-box .infos-kpis .infos-kpis-principal {
+.content_dashboard_kpis .kpi_box .infos_kpis .infos_kpis_principal {
     background-color: transparent;
     font-size: 32px;
     font-weight: 800;
     text-transform: uppercase;
 }
 
-.content-dashboard-kpis .kpi-box .infos-kpis .infos-kpis-principal span {
+.content_dashboard_kpis .kpi_box .infos_kpis .infos_kpis_principal span {
     background-color: transparent;
 }
 
-.content-dashboard-kpis .kpi-box .infos-kpis .infos-kpis-secundaria {
+.content_dashboard_kpis .kpi_box .infos_kpis .infos_kpis_secundaria {
     background-color: transparent;
     font-size: 15px;
     font-weight: 300;
     text-transform: capitalize;
 }
 
-.content-dashboard-kpis .kpi-box .infos-kpis .infos-kpis-secundaria span {
+.content_dashboard_kpis .kpi_box .infos_kpis .infos_kpis_secundaria span {
     background-color: transparent;
 }
 
-
-
-
 /* GRÁFICOS */
-.content-dashboard .content-dashboard-graficos {
+.content_dashboard .content_dashboard_graficos {
     width: 100%;
     height: 60vh;
     display: flex;
@@ -195,27 +175,27 @@
     margin-bottom: 2%;
 }
 
-.content-dashboard .content-dashboard-graficos .box-graficos {
+.content_dashboard .content_dashboard_graficos .box_graficos {
     background-color: var(--cor-azul-contraste);
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
     border-radius: 10px;
-    border: 1px solid var(--cor-cinza-padrao);
+    border: 1px solid var(--cor-azul-apagado);
     padding: 0px 3%;
     height: auto;
 }
 
-.content-dashboard .content-dashboard-graficos .left {
+.content_dashboard .content_dashboard_graficos .left {
     width: 51vw;
 }
 
-.content-dashboard .content-dashboard-graficos .right {
+.content_dashboard .content_dashboard_graficos .right {
     width: 39vw;
 }
 
-.content-dashboard .content-dashboard-graficos .content-dashboard-graficos-div {
+.content_dashboard .content_dashboard_graficos .content_dashboard_graficos_div {
     display: flex;
     flex-direction: column;
     justify-content: space-between;
@@ -223,29 +203,29 @@
     background-color: transparent;
 }
 
-.content-dashboard .content-dashboard-graficos .content-dashboard-graficos-div .grafico-saldo-indisp {
+.content_dashboard .content_dashboard_graficos .content_dashboard_graficos_div .grafico_saldo_indisp {
     height: 17vh;
     display: flex;
     align-items: flex-start;
 }
 
-.content-dashboard-graficos .content-dashboard-graficos-div .grafico-saldo-indisp .infos-kpis-nome {
+.content_dashboard_graficos .content_dashboard_graficos_div .grafico_saldo_indisp .infos_kpis_nome {
     background-color: transparent;
     font-size: 15px;
     font-weight: 300;
     text-transform: capitalize;
 }
 
-.content-dashboard-graficos .content-dashboard-graficos-div .grafico-saldo-indisp .grafic-disp-limite-max {
+.content_dashboard_graficos .content_dashboard_graficos_div .grafico_saldo_indisp .grafic_disp_limite_max {
     background-color: transparent;
     font-size: 12px;
     font-weight: 300;
     text-transform: capitalize;
     align-self: flex-end;
-    color: var(--cor-cinza-padrao);
+    color: var(--cor-azul-apagado);
 }
 
-.content-dashboard-graficos .content-dashboard-graficos-div .grafico-saldo-indisp .infos-grafic-status {
+.content_dashboard_graficos .content_dashboard_graficos_div .grafico_saldo_indisp .infos_grafic_status {
     display: flex;
     flex-direction: row;
     justify-content: space-between;
@@ -259,27 +239,27 @@
 
 }
 
-.content-dashboard-graficos-div .grafico-saldo-indisp .infos-grafic-status #grafic-disp-restante {
+.content_dashboard_graficos_div .grafico_saldo_indisp .infos_grafic_status #grafic-disp-restante {
     color: var(--cor-amarelo-atencao);
     background-color: transparent;
 }
 
-.content-dashboard-graficos-div .grafico-saldo-indisp .infos-grafic-status #grafic-disp-consumido {
+.content_dashboard_graficos_div .grafico_saldo_indisp .infos_grafic_status #grafic-disp-consumido {
     color: var(--cor-verde-ativo);
     background-color: transparent;
 }
 
-.content-dashboard .content-dashboard-graficos .content-dashboard-graficos-div .grafico-disp-tempo {
+.content_dashboard .content_dashboard_graficos .content_dashboard_graficos_div .grafico_disp_tempo {
     height: 41vh;
     display: flex;
 }
 
-.content-dashboard .content-dashboard-graficos .content-dashboard-graficos-div .grafico-incidentes-pservidor {
+.content_dashboard .content_dashboard_graficos .content_dashboard_graficos_div .grafico_incidentes_pservidor {
     height: 34vh;
     display: flex;
 }
 
-.content-dashboard .content-dashboard-graficos .content-dashboard-graficos-div .grafico-incidentes-pcomponente {
+.content_dashboard .content_dashboard_graficos .content_dashboard_graficos_div .grafico_incidentes_pcomponente {
     height: 24vh;
     display: flex;
     flex-direction: row;
@@ -288,7 +268,7 @@
     padding: 4%;
 }
 
-.content-dashboard-graficos .content-dashboard-graficos-div .grafico-incidentes-pcomponente .gipc-titulo-totais {
+.content_dashboard_graficos .content_dashboard_graficos_div .grafico_incidentes_pcomponente .gipc_titulo_totais {
     display: flex;
     flex-direction: column;
     justify-content: space-between;
@@ -298,14 +278,14 @@
     background-color: transparent;
 }
 
-.content-dashboard-graficos .content-dashboard-graficos-div .grafico-incidentes-pcomponente .gipc-titulo-totais .infos-grafic-content-titulo {
+.content_dashboard_graficos .content_dashboard_graficos_div .grafico_incidentes_pcomponente .gipc_titulo_totais .infos_grafic_content_titulo {
     text-transform: uppercase;
     font-size: 16px;
     font-weight: 900;
     background-color: transparent;
 }
 
-.content-dashboard-graficos .content-dashboard-graficos-div .grafico-incidentes-pcomponente .gipc-titulo-totais .infos-grafic-content-subtitulo {
+.content_dashboard_graficos .content_dashboard_graficos_div .grafico_incidentes_pcomponente .gipc_titulo_totais .infos_grafic_content_subtitulo {
     display: flex;
     flex-direction: column;
     align-items: flex-start;
@@ -313,21 +293,21 @@
     background-color: transparent;
 }
 
-.content-dashboard-graficos .content-dashboard-graficos-div .grafico-incidentes-pcomponente .gipc-titulo-totais .infos-grafic-content-subtitulo .infos-kpis-nome {
+.content_dashboard_graficos .content_dashboard_graficos_div .grafico_incidentes_pcomponente .gipc_titulo_totais .infos_grafic_content_subtitulo .infos_kpis_nome {
     background-color: transparent;
     font-size: 15px;
     font-weight: 300;
     text-transform: capitalize;
 }
 
-.content-dashboard-graficos .content-dashboard-graficos-div .grafico-incidentes-pcomponente .gipc-titulo-totais .infos-grafic-content-subtitulo .infos-grafic-alertas-totais {
+.content_dashboard_graficos .content_dashboard_graficos_div .grafico_incidentes_pcomponente .gipc_titulo_totais .infos_grafic_content_subtitulo .infos_grafic_alertas_totais {
     background-color: transparent;
     font-size: 40px;
     color: var(--cor-vermelho-inativo);
     font-weight: 800;
 }
 
-.content-dashboard-graficos .content-dashboard-graficos-div .grafico-incidentes-pcomponente .gipc-graficos-pcomponente {
+.content_dashboard_graficos .content_dashboard_graficos_div .grafico_incidentes_pcomponente .gipc_graficos_pcomponente {
     display: flex;
     flex-direction: row;
     justify-content: space-between;
@@ -337,7 +317,7 @@
     background-color: transparent;
 }
 
-.content-dashboard-graficos .content-dashboard-graficos-div .grafico-incidentes-pcomponente .gipc-graficos-pcomponente .grafico-comps {
+.content_dashboard_graficos .content_dashboard_graficos_div .grafico_incidentes_pcomponente .gipc_graficos_pcomponente .grafico_comps {
     display: flex;
     flex-direction: column;
     justify-content: space-between;
@@ -347,7 +327,7 @@
     background-color: transparent;
 }
 
-.content-dashboard-graficos .content-dashboard-graficos-div .grafico-incidentes-pcomponente .gipc-graficos-pcomponente .grafico-comps h2 {
+.content_dashboard_graficos .content_dashboard_graficos_div .grafico_incidentes_pcomponente .gipc_graficos_pcomponente .grafico_comps h2 {
     font-size: 16px;
     font-weight: 800;
     text-transform: uppercase;
@@ -355,7 +335,7 @@
     background-color: transparent;
 }
 
-.content-dashboard-graficos .content-dashboard-graficos-div .grafico-incidentes-pcomponente .gipc-graficos-pcomponente .grafico-comps p {
+.content_dashboard_graficos .content_dashboard_graficos_div .grafico_incidentes_pcomponente .gipc_graficos_pcomponente .grafico_comps p {
     font-size: 12px;
     font-weight: 800;
     text-transform: capitalize;
@@ -363,7 +343,7 @@
     background-color: transparent;
 }
 
-.content-list-server {
+.content_list_server {
     display: flex;
     flex-direction: column;
     align-items: flex-start;
@@ -372,17 +352,17 @@
     height: auto;
 }
 
-.content-list-server .content-list-server-box {
+.content_list_server .content_list_server_box {
     background-color: var(--cor-azul-contraste);
     width: 100%;
     height: auto;
     margin-top: 2%;
     border-radius: 10px;
-    border: 1px solid var(--cor-cinza-padrao);
+    border: 1px solid var(--cor-azul-apagado);
     padding: 1%;
 }
 
-.content-list-server .content-list-server-box .server-box {
+.content_list_server .content_list_server_box .server_box {
     background-color: transparent;
     padding: 1%;
     display: flex;
@@ -391,50 +371,50 @@
     justify-content: space-between;
 }
 
-.content-list-server .content-list-server-box hr {
-    border: 1px solid var(--cor-cinza-padrao);
+.content_list_server .content_list_server_box hr {
+    border: 1px solid var(--cor-azul-apagado);
     width: 100%;
 }
 
-.content-list-server .content-list-server-box .server-box input[type="checkbox"] {
+.content_list_server .content_list_server_box .server_box input[type="checkbox"] {
     appearance: none;
     width: 20px;
     height: 20px;
     background-color: var(--cor-azul-contraste);
-    border: 1px solid var(--cor-cinza-padrao);
+    border: 1px solid var(--cor-azul-apagado);
     border-radius: 2px;
     display: flex;
     align-items: center;
     justify-content: center;
 }
 
-.content-list-server .content-list-server-box .server-box input[type="checkbox"]:checked {
+.content_list_server .content_list_server_box .server_box input[type="checkbox"]:checked {
     background-color: var(--cor-azul-contraste2);
     border: none;
     transform: scale(0.9);
 }
 
-.content-list-server .content-list-server-box .server-box input[type="checkbox"]:checked::after {
+.content_list_server .content_list_server_box .server_box input[type="checkbox"]:checked::after {
     content: "✓";
     color: var(--cor-branco-default);
     font-size: 20px;
 }
 
-.content-list-server .content-list-server-box .server-box .acoes {
+.content_list_server .content_list_server_box .server_box .acoes {
     width: 8vw;
     height: 4vh;
     display: flex;
     align-items: center;
     justify-content: center;
 }
-.content-list-server .content-list-server-box .server-box p {
+.content_list_server .content_list_server_box .server_box p {
     background-color: transparent;
     text-transform: uppercase;
     font-size: 12px;
     width: 12vw;
 }
 
-.content-list-server .content-list-server-box .server-box .btn-ver {
+.content_list_server .content_list_server_box .server_box .btn_ver {
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -452,7 +432,7 @@
     transition: all ease-in-out 0.3s;
 }
 
-.content-list-server .content-list-server-box .server-box .btn-ver:hover {
+.content_list_server .content_list_server_box .server_box .btn_ver:hover {
     border: 2px solid var(--cor-azul-contraste2);
     background-color: var(--cor-azul-contraste2);
     border-radius: 5vw;
@@ -460,11 +440,11 @@
     transform: scale(0.9);
     font-weight: 800;
 }
-.content-list-server .content-list-server-box .container-server-box {
+.content_list_server .content_list_server_box .container_server_box {
     background-color: transparent;
 }
 
-.server-box-vazio {
+.server_box_vazio {
     width: 100%;
     height: 6vh;
     display: flex;
@@ -473,17 +453,17 @@
     background-color: transparent;
 }
 
-.server-box-vazio p {
-    color: var(--cor-cinza-padrao);
+.server_box_vazio p {
+    color: var(--cor-azul-apagado);
     background-color: transparent;
 }
 
-.server-box-vazio p {
-    color: var(--cor-cinza-padrao);
+.server_box_vazio p {
+    color: var(--cor-azul-apagado);
     background-color: transparent;
 }
 
-.sem-servidores {
+.sem_servidores {
     display: flex;
     flex-direction: row;
     justify-content: space-between;
@@ -495,7 +475,7 @@
     border-radius: 10px;
 }
 
-.sem-servidores h3 {
+.sem_servidores h3 {
     background-color: transparent;
     color: var(--cor-azul-contraste);
     font-size: 32px;
@@ -504,7 +484,7 @@
     font-weight: 800;
 }
 
-.sem-servidores p {
+.sem_servidores p {
     background-color: transparent;
     color: var(--cor-azul-contraste);
     font-size: 16px;
@@ -512,7 +492,7 @@
     font-weight: 300;
 }
 
-.sem-servidores a {
+.sem_servidores a {
     background-color: var(--cor-azul-contraste2);
     color: var(--cor-azul-contraste);
     border: 2px solid var(--cor-azul-contraste);
@@ -528,25 +508,25 @@
     transition: all ease-in-out 0.3s;
 }
 
-.sem-servidores a:hover {
+.sem_servidores a:hover {
     border-radius: 100px;
     background-color: var(--cor-azul-contraste);
     color: var(--cor-azul-contraste2);
     font-weight: 800;
 }
 
-.cor-vermelha {
+.cor_vermelha {
     color: var(--cor-vermelho-inativo) !important;
 }
 
-.cor-amarela {
+.cor_amarela {
     color: var(--cor-amarelo-atencao) !important;
 }
 
-.cor-verde {
+.cor_verde {
     color: var(--cor-verde-ativo) !important;
 }
 
-.cor-padrao {
+.cor_padrao {
     color: var(--cor-branco-default) !important;
 }

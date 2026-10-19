@@ -558,20 +558,20 @@ if (sInativos > 1) {
     kpiInativos.innerHTML = `${sInativos} Servidores Inativos`;
     kpiAtivos.innerHTML = `${sAtivos}`;
     kpiTotais.innerHTML = `${sTotais}`;
-    kpiInativos.classList.add('cor-vermelha')
-    kpiInativos.classList.remove('cor-verde')
+    kpiInativos.classList.add('cor_vermelha')
+    kpiInativos.classList.remove('cor_verde')
 } else if (sInativos > 0) {
     kpiInativos.innerHTML = `${sInativos} Servidor Inativo`;
     kpiAtivos.innerHTML = `${sAtivos}`;
     kpiTotais.innerHTML = `${sTotais}`;
-    kpiInativos.classList.add('cor-vermelha')
-    kpiInativos.classList.remove('cor-verde')
+    kpiInativos.classList.add('cor_vermelha')
+    kpiInativos.classList.remove('cor_verde')
 } else {
     kpiInativos.innerHTML = `Nenhum servidor inativo`;
     kpiAtivos.innerHTML = `${sAtivos}`;
     kpiTotais.innerHTML = `${sTotais}`;
-    kpiInativos.classList.add('cor-verde')
-    kpiInativos.classList.remove('cor-vermelha')
+    kpiInativos.classList.add('cor_verde')
+    kpiInativos.classList.remove('cor_vermelha')
 }
 
 
@@ -583,68 +583,68 @@ idDowntime.innerHTML = `${qtdConsumido}`
 if (tempDispAnualPercent > 65) {
     cor_consumido = '#FF5C5C'
 
-    idConsumido.classList.add('cor-vermelha')
-    idConsumido.classList.remove('cor-verde')
-    idConsumido.classList.remove('cor-amarela')
-    idConsumido.classList.remove('cor-padrao')
+    idConsumido.classList.add('cor_vermelha')
+    idConsumido.classList.remove('cor_verde')
+    idConsumido.classList.remove('cor_amarela')
+    idConsumido.classList.remove('cor_padrao')
 
     idDowntimeComparada.innerHTML = `ATENÇÃO: ${tempDispAnualPercent}% do limite`
-    idDowntimeComparada.classList.add('cor-vermelha')
-    idDowntimeComparada.classList.remove('cor-verde')
-    idDowntimeComparada.classList.remove('cor-amarela')
-    idDowntimeComparada.classList.remove('cor-padrao')
+    idDowntimeComparada.classList.add('cor_vermelha')
+    idDowntimeComparada.classList.remove('cor_verde')
+    idDowntimeComparada.classList.remove('cor_amarela')
+    idDowntimeComparada.classList.remove('cor_padrao')
 } else if (tempDispAnualPercent > 30) {
     cor_consumido = '#F5C542'
 
-    idConsumido.classList.add('cor-amarela')
-    idConsumido.classList.remove('cor-vermelha')
-    idConsumido.classList.remove('cor-verde')
-    idConsumido.classList.remove('cor-padrao')
+    idConsumido.classList.add('cor_amarela')
+    idConsumido.classList.remove('cor_vermelha')
+    idConsumido.classList.remove('cor_verde')
+    idConsumido.classList.remove('cor_padrao')
 
     idDowntimeComparada.innerHTML = `${tempDispAnualPercent}% do limite`
-    idDowntimeComparada.classList.add('cor-amarela')
-    idDowntimeComparada.classList.remove('cor-vermelha')
-    idDowntimeComparada.classList.remove('cor-verde')
-    idDowntimeComparada.classList.remove('cor-padrao')
+    idDowntimeComparada.classList.add('cor_amarela')
+    idDowntimeComparada.classList.remove('cor_vermelha')
+    idDowntimeComparada.classList.remove('cor_verde')
+    idDowntimeComparada.classList.remove('cor_padrao')
 } else if (tempDispAnualPercent > 10) {
     cor_consumido = '#5178F9'
 
-    idConsumido.classList.add('cor-padrao')
-    idConsumido.classList.remove('cor-verde')
-    idConsumido.classList.remove('cor-amarela')
-    idConsumido.classList.remove('cor-vermelha')
+    idConsumido.classList.add('cor_padrao')
+    idConsumido.classList.remove('cor_verde')
+    idConsumido.classList.remove('cor_amarela')
+    idConsumido.classList.remove('cor_vermelha')
 
     idDowntimeComparada.innerHTML = `${tempDispAnualPercent}% do limite`
-    idDowntimeComparada.classList.add('cor-padrao')
-    idDowntimeComparada.classList.remove('cor-verde')
-    idDowntimeComparada.classList.remove('cor-amarela')
-    idDowntimeComparada.classList.remove('cor-vermelha')
+    idDowntimeComparada.classList.add('cor_padrao')
+    idDowntimeComparada.classList.remove('cor_verde')
+    idDowntimeComparada.classList.remove('cor_amarela')
+    idDowntimeComparada.classList.remove('cor_vermelha')
 } else if (tempDispAnualPercent <= 10 && tempDispAnualPercent > 0) {
     cor_consumido = '#3DDC84'
 
-    idConsumido.classList.add('cor-verde')
-    idConsumido.classList.remove('cor-padrao')
-    idConsumido.classList.remove('cor-amarela')
-    idConsumido.classList.remove('cor-vermelha')
+    idConsumido.classList.add('cor_verde')
+    idConsumido.classList.remove('cor_padrao')
+    idConsumido.classList.remove('cor_amarela')
+    idConsumido.classList.remove('cor_vermelha')
 
     idDowntimeComparada.innerHTML = `${tempDispAnualPercent}% do limite`
-    idDowntimeComparada.classList.add('cor-verde')
-    idDowntimeComparada.classList.remove('cor-padrao')
-    idDowntimeComparada.classList.remove('cor-amarela')
-    idDowntimeComparada.classList.remove('cor-vermelha')
+    idDowntimeComparada.classList.add('cor_verde')
+    idDowntimeComparada.classList.remove('cor_padrao')
+    idDowntimeComparada.classList.remove('cor_amarela')
+    idDowntimeComparada.classList.remove('cor_vermelha')
 } else {
     cor_consumido = '#3DDC84'
 
-    idConsumido.classList.add('cor-verde')
-    idConsumido.classList.remove('cor-padrao')
-    idConsumido.classList.remove('cor-amarela')
-    idConsumido.classList.remove('cor-vermelha')
+    idConsumido.classList.add('cor_verde')
+    idConsumido.classList.remove('cor_padrao')
+    idConsumido.classList.remove('cor_amarela')
+    idConsumido.classList.remove('cor_vermelha')
 
     idDowntimeComparada.innerHTML = `Nenhuma indisponibilidade`
-    idDowntimeComparada.classList.add('cor-verde')
-    idDowntimeComparada.classList.remove('cor-padrao')
-    idDowntimeComparada.classList.remove('cor-amarela')
-    idDowntimeComparada.classList.remove('cor-vermelha')
+    idDowntimeComparada.classList.add('cor_verde')
+    idDowntimeComparada.classList.remove('cor_padrao')
+    idDowntimeComparada.classList.remove('cor_amarela')
+    idDowntimeComparada.classList.remove('cor_vermelha')
 }
 
 
@@ -671,26 +671,26 @@ if (kpiMttrHoras < 1) {
 }
 
 if (mttrPercent > 0) {
-    kpiMttr.classList.add('cor-verde')
-    kpiMttr.classList.remove('cor-vermelha')
+    kpiMttr.classList.add('cor_verde')
+    kpiMttr.classList.remove('cor_vermelha')
 
     kpiMttrPerc.innerHTML = `${mttrPercent}% mais rápida`
-    kpiMttrPerc.classList.add('cor-verde')
-    kpiMttrPerc.classList.remove('cor-vermelha')
+    kpiMttrPerc.classList.add('cor_verde')
+    kpiMttrPerc.classList.remove('cor_vermelha')
 } else if (mttrPercent < 0) {
-    kpiMttr.classList.add('cor-vermelha')
-    kpiMttr.classList.remove('cor-verde')
+    kpiMttr.classList.add('cor_vermelha')
+    kpiMttr.classList.remove('cor_verde')
 
     kpiMttrPerc.innerHTML = `${mttrPercent}% mais lenta`
-    kpiMttrPerc.classList.add('cor-vermelha')
-    kpiMttrPerc.classList.remove('cor-verde')
+    kpiMttrPerc.classList.add('cor_vermelha')
+    kpiMttrPerc.classList.remove('cor_verde')
 } else {
-    kpiMttr.classList.remove('cor-vermelha')
-    kpiMttr.classList.remove('cor-verde')
+    kpiMttr.classList.remove('cor_vermelha')
+    kpiMttr.classList.remove('cor_verde')
 
     kpiMttrPerc.innerHTML = `Permanece igual`
-    kpiMttrPerc.classList.remove('cor-vermelha')
-    kpiMttrPerc.classList.remove('cor-verde')
+    kpiMttrPerc.classList.remove('cor_vermelha')
+    kpiMttrPerc.classList.remove('cor_verde')
 }
 
 
@@ -710,33 +710,33 @@ kpiDispExterna.innerHTML = `${dispExternaPercent}%`
 
 if (dispExternaPercent < 90.00) {
     kpiDispStatus.innerHTML = `Status: Crítico`
-    kpiDispExterna.classList.add('cor-vermelha')
-    kpiDispExterna.classList.remove('cor-amarela')
-    kpiDispExterna.classList.remove('cor-verde')
-    kpiDispStatus.classList.add('cor-vermelha')
-    kpiDispStatus.classList.remove('cor-amarela')
-    kpiDispStatus.classList.remove('cor-verde')
+    kpiDispExterna.classList.add('cor_vermelha')
+    kpiDispExterna.classList.remove('cor_amarela')
+    kpiDispExterna.classList.remove('cor_verde')
+    kpiDispStatus.classList.add('cor_vermelha')
+    kpiDispStatus.classList.remove('cor_amarela')
+    kpiDispStatus.classList.remove('cor_verde')
 } else if (dispExternaPercent < 99.90) {
     kpiDispStatus.innerHTML = `Status: Moderado`
-    kpiDispExterna.classList.add('cor-amarela')
-    kpiDispExterna.classList.remove('cor-vermelha')
-    kpiDispExterna.classList.remove('cor-verde')
-    kpiDispStatus.classList.add('cor-amarela')
-    kpiDispStatus.classList.remove('cor-vermelha')
-    kpiDispStatus.classList.remove('cor-verde')
+    kpiDispExterna.classList.add('cor_amarela')
+    kpiDispExterna.classList.remove('cor_vermelha')
+    kpiDispExterna.classList.remove('cor_verde')
+    kpiDispStatus.classList.add('cor_amarela')
+    kpiDispStatus.classList.remove('cor_vermelha')
+    kpiDispStatus.classList.remove('cor_verde')
 } else {
     kpiDispStatus.innerHTML = `Status: Bom`
-    kpiDispExterna.classList.add('cor-verde')
-    kpiDispExterna.classList.remove('cor-amarela')
-    kpiDispExterna.classList.remove('cor-vermelha')
-    kpiDispStatus.classList.add('cor-verde')
-    kpiDispStatus.classList.remove('cor-amarela')
-    kpiDispStatus.classList.remove('cor-vermelha')
+    kpiDispExterna.classList.add('cor_verde')
+    kpiDispExterna.classList.remove('cor_amarela')
+    kpiDispExterna.classList.remove('cor_vermelha')
+    kpiDispStatus.classList.add('cor_verde')
+    kpiDispStatus.classList.remove('cor_amarela')
+    kpiDispStatus.classList.remove('cor_vermelha')
 }
 
 
 // KPI -- ALERTAS ATIVOS
-kpiAlertasTotais = document.getElementsByClassName('kpi-alertas-ativos');
+kpiAlertasTotais = document.getElementsByClassName('kpi_alertas_ativos');
 
 for (let i = 0; i < kpiAlertasTotais.length; i++) {
     kpiAlertasTotais[i].innerHTML = `${alertasTotaisComp}`;
@@ -746,10 +746,10 @@ kpiAlertasCriticos = document.getElementById('kpi-qtd-alertas-criticos');
 
 if (totalAlertasCriticos > 0) {
     kpiAlertasCriticos.innerHTML = `${totalAlertasCriticos} alertas críticos`
-    kpiAlertasCriticos.classList.remove('cor-verde')
-    kpiAlertasCriticos.classList.add('cor-vermelha')
+    kpiAlertasCriticos.classList.remove('cor_verde')
+    kpiAlertasCriticos.classList.add('cor_vermelha')
 } else {
     kpiAlertasCriticos.innerHTML = `Nenhum alerta crítico ativo`
-    kpiAlertasCriticos.classList.remove('cor-vermelha')
-    kpiAlertasCriticos.classList.add('cor-verde')
+    kpiAlertasCriticos.classList.remove('cor_vermelha')
+    kpiAlertasCriticos.classList.add('cor_verde')
 }
