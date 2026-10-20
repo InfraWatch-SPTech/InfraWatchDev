@@ -162,9 +162,9 @@ function cadastrarHardware() {
     let descricao = document.getElementById('input-descricao-hardware').value.trim();
     let componentes = coletarComponentesSelecionados();
 
-    if (!validarComponentes(componentes)) {
+    /*if (!validarComponentes(componentes)) {
         return;
-    }
+    }*/
 
     if (nome === '') {
         alert('Preencha o nome do dispositivo.');
@@ -205,9 +205,9 @@ function cadastrarHardware() {
                 document.getElementById('select-tipo-hardware').value = '';
                 document.getElementById('input-localizacao-hardware').value = '';
                 document.getElementById('input-descricao-hardware').value = '';
-                document.getElementById('input-limite-cpu-hardware').value = 80;
-                document.getElementById('input-limite-ram-hardware').value = 80;
-                document.getElementById('input-limite-disco-hardware').value = 80;
+                document.getElementById('input-limite-cpu-hardware').value = '';
+                document.getElementById('input-limite-ram-hardware').value = '';
+                document.getElementById('input-limite-disco-hardware').value = '';
             } else {
                 response.text().then(function (mensagemErro) {
                     alert('Não foi possível cadastrar o hardware: ' + mensagemErro);
@@ -224,12 +224,19 @@ function coletarComponentesSelecionadosEditar() {
     let checkboxes = document.querySelectorAll('.checkbox_componente_editar:checked');
     let componentes = [];
 
-    for (let i = 0; i < checkboxes.length; i++) {
+    for (let i = 0; i < checkboxes.length; i++)
+    {
+        let linha = i.closest('.linha_componente');
+        let campos = linha.querySelectorAll('.campo_alerta input');
+
         let checkbox = checkboxes[i];
+
         componentes.push({
             nome: checkbox.dataset.nome,
             tipo: checkbox.dataset.tipo,
-            descricao: checkbox.dataset.descricao
+            descricao: checkbox.dataset.descricao,
+            limiteAtencao: Number(campos[0].value),
+            limiteCritico: Number(campos[1].value)
         });
     }
 
@@ -254,19 +261,36 @@ function abrirModalEditar(idEquipamento) {
     document.getElementById('select-editar-tipo-hardware').value = equipamento.tipoEquipamento || '';
     document.getElementById('input-editar-localizacao-hardware').value = equipamento.localizacao || '';
     document.getElementById('input-editar-descricao-hardware').value = equipamento.descricaoEquipamento || '';
-    document.getElementById('input-editar-limite-cpu-hardware').value = equipamento.limiteCpu ?? 80;
-    document.getElementById('input-editar-limite-ram-hardware').value = equipamento.limiteRam ?? 80;
-    document.getElementById('input-editar-limite-disco-hardware').value = equipamento.limiteDisco ?? 80;
 
     //lista de tipos de componente que esse equipamento já tem pra marcar os checkbox correspondentes
     let tiposComponentesAtuais = linhasDoEquipamento
+
         .map(function (linha) { return linha.tipoComponente; })
         .filter(function (tipo) { return !!tipo; });
 
     let checkboxesEditar = document.querySelectorAll('.checkbox_componente_editar');
-    for (let i = 0; i < checkboxesEditar.length; i++) {
+
+    for (let i = 0; i < checkboxesEditar.length; i++)
+    {
         let checkbox = checkboxesEditar[i];
-        checkbox.checked = tiposComponentesAtuais.indexOf(checkbox.dataset.tipo) !== -1;
+        let tipoCheckbox = checkbox.dataset.tipo.toUpperCase();
+
+        let componenteSalvo = linhasDoEquipamento.find(function(linha)
+        {
+            return linha.tipoComponente &&
+                linha.tipoComponente.toUpperCase() === tipoCheckbox;
+        });
+
+        checkbox.checked = Boolean(componenteSalvo);
+
+        if (componenteSalvo)
+            {
+            let linha = checkbox.closest('.linha_componente');
+            let campos = linha.querySelectorAll('.campo_alerta input');
+
+            campos[0].value = Number(componenteSalvo.limiteAtencao);
+            campos[1].value = Number(componenteSalvo.limiteCritico);
+        }
     }
 
     document.querySelector('.sobreposicao_modal_editar').classList.add('modal_aberto');
@@ -285,7 +309,8 @@ function salvarEdicaoHardware() {
     let componentes = coletarComponentesSelecionadosEditar();
     let limites = coletarLimites(true);
 
-    if (!limites) {
+    if (!validarComponentes(componentes))
+        {
         return;
     }
 
@@ -309,10 +334,7 @@ function salvarEdicaoHardware() {
         descricao: descricao,
         idUsuario: dadosUsuario.id,
         idEmpresa: idEmpresa,
-        componentes: componentes,
-        limiteCpu: limites.limiteCpu,
-        limiteRam: limites.limiteRam,
-        limiteDisco: limites.limiteDisco
+        componentes: componentes
     };
 
     fetch(`/hardwares/atualizar/${idEquipamento}`, {
@@ -405,6 +427,15 @@ const btnCancelar = document.querySelector('.btn_cancelar');
 const btnSalvar = document.querySelector('.btn_salvar');
 
 function abrirModal() {
+    checkboxesCadastro.forEach(function (checkbox)
+    {
+        // CPU, RAM e Disco selecionados por padrão.
+        checkbox.checked = ['CPU', 'RAM', 'Armazenamento']
+            .includes(checkbox.dataset.tipo);
+
+        atualizarLimitesCadastro(checkbox);
+    });
+
     modalOverlay.classList.add('modal_aberto');
 }
 
@@ -611,3 +642,53 @@ function modalVisualizar(idEquipamento) {
 }
 
 buscarEquipamentosEmpresa(idEmpresa)
+
+
+/*
+Controla os limites dos componentes no cadastro
+
+Marcado: preenche com os valores padrão
+Desmarcado: limpa e desabilita os campos
+Marcado novamente: restaura os padrões */
+
+const PADRAO_ATENCAO = 75;
+const PADRAO_CRITICO = 85;
+
+function atualizarLimitesCadastro(checkbox) {
+    const linha = checkbox.closest('.linha_componente');
+
+    const inputAtencao = linha.querySelector('.limite_atencao');
+    const inputCritico = linha.querySelector('.limite_critico');
+
+    if (checkbox.checked)
+    {
+        inputAtencao.value = PADRAO_ATENCAO;
+        inputCritico.value = PADRAO_CRITICO;
+
+        inputAtencao.disabled = false;
+        inputCritico.disabled = false;
+    }
+    
+    else
+    {
+        inputAtencao.value = '';
+        inputCritico.value = '';
+
+        inputAtencao.disabled = true;
+        inputCritico.disabled = true;
+    }
+}
+
+// Seleciona apenas os checkboxes do modal de cadastro
+const checkboxesCadastro = document.querySelectorAll('#modal-cadastrar .checkbox_componente');
+
+checkboxesCadastro.forEach(function (checkbox)
+{
+    // Ajusta os campos assim que a página carrega
+    atualizarLimitesCadastro(checkbox);
+
+    // Atualiza os limites sempre que marcar ou desmarcar
+    checkbox.addEventListener('change', function () {
+        atualizarLimitesCadastro(checkbox);
+    });
+});
