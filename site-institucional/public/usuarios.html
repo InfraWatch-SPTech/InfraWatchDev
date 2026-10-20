@@ -4,51 +4,30 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="icon" type="image/png" href="../public/assets/midias/main-icon-image.png">
-    <link rel="stylesheet" href="../public/assets/css/usuarios.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.3.1/css/all.min.css"
-        integrity="sha512-QeR2VH+lsBE5LSAe1Q5EnTBbe7XTBubt8dG93Y7gidSgdMCr8nVqKcfKAMyN96SV8KDbZVTDXChatu5G2KQGzg=="
-        crossorigin="anonymous" referrerpolicy="no-referrer" />
     <title>InfraWatch.Dev - Usuários</title>
+    <link rel="icon" type="image/png" href="./assets/midias/main-icon-image.png">
+    <link rel="stylesheet" href="./assets/css/global.css">
+    <link rel="stylesheet" href="./assets/css/menu.css">
+    <link rel="stylesheet" href="./assets/css/usuarios.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.3.1/css/all.min.css" integrity="sha512-QeR2VH+lsBE5LSAe1Q5EnTBbe7XTBubt8dG93Y7gidSgdMCr8nVqKcfKAMyN96SV8KDbZVTDXChatu5G2KQGzg==" crossorigin="anonymous" referrerpolicy="no-referrer">
 </head>
 
 <body>
-    <header>
-        <div class="navbar">
-            <div class="nav-logo">
-                <h1>Infra<span>Watch</span></h1>
-            </div>
-            <div class="nav-links">
-                <ul>
-                    <li><a href="./main.html">Home</a></li>
-                    <li><a href="./sobrenos.html">Sobre-nós</a></li>
-                    <li><a href="./sobrenos.html#contato">Contato</a></li>
-                </ul>
-            </div>
-            <div class="nav-login">
-                <button id="btn-logar" onclick="redirecionamento_login()">Entrar</button>
-                <button id="btn-cadastrar" onclick="redirecionamento_login()">Cadastrar-se</button>
-            </div>
-            <div class="popup-perfil"></div>
-        </div>
-    </header>
 
-    <div class="divisao-nav"></div>
-
-    <main>
-        <section class="container-usuarios" id="painel-usuarios" hidden>
-            <div class="cabecalho-usuarios">
+<main>
+        <section class="container_usuarios" id="painel-usuarios" hidden>
+            <div class="cabecalho_usuarios">
                 <div>
-                    <span class="rotulo-usuarios">ADMINISTRAÇÃO</span>
+                    <span class="rotulo_usuarios">ADMINISTRAÇÃO</span>
                     <h2>Usuários da empresa</h2>
                     <p>Defina o nível de acesso e as permissões adicionais de cada usuário.</p>
                 </div>
             </div>
 
-            <p class="mensagem-estado" id="mensagem-estado" role="status" aria-live="polite"></p>
+            <p class="mensagem_estado" id="mensagem-estado" role="status" aria-live="polite"></p>
 
-            <div class="caixa-tabela-usuarios">
-                <table class="tabela-usuarios">
+            <div class="caixa_tabela_usuarios">
+                <table class="tabela_usuarios">
                     <thead>
                         <tr>
                             <th>USUÁRIO</th>
@@ -63,16 +42,18 @@
             </div>
         </section>
 
-        <section class="aviso-acesso" id="aviso-acesso" role="alert" hidden>
+        <section class="aviso_acesso" id="aviso-acesso" role="alert" hidden>
             <h2>Acesso restrito</h2>
             <p id="texto-aviso-acesso">Esta página está disponível somente para administradores.</p>
             <p>Você será redirecionado em instantes.</p>
         </section>
     </main>
 
-    <script src="../public/assets/js/redirecionamento.js" defer></script>
-    <script src="../public/assets/js/sessao.js" defer></script>
-    <script src="../public/assets/js/usuarios.js" defer></script>
+    <script src="./assets/js/redirecionamento.js"></script>
+    <script src="./assets/js/sessao.js"></script>
+    <script src="./assets/js/menu.js"></script>
+    <script src="./assets/js/usuarios.js"></script>
+
 </body>
 
 </html>

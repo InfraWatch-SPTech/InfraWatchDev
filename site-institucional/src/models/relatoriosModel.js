@@ -1,18 +1,16 @@
 let database = require("../database/config");
 
-function cadastrarRelatorio(titulo, descricao, dataRel, idEquipamento) {
+function cadastrarRelatorio(titulo, descricao, dataRel) {
     let instrucaoSql = `
         INSERT INTO relatorio (
             titulo,
             descricao,
-            data_rel,
-            equipamento_idEquipamento
+            data_rel
         )
         VALUES (
             '${titulo}',
             '${descricao}',
-            '${dataRel}',
-            ${idEquipamento}
+            '${dataRel}'
         );
     `;
 
@@ -25,12 +23,8 @@ function buscarRelatorios() {
             r.idRelatorio,
             r.titulo,
             r.descricao,
-            r.data_rel,
-            r.equipamento_idEquipamento,
-            e.nome AS nomeEquipamento
+            r.data_rel
         FROM relatorio r
-        INNER JOIN equipamento e
-            ON r.equipamento_idEquipamento = e.idEquipamento
         ORDER BY r.data_rel DESC;
     `;
 
@@ -43,12 +37,8 @@ function buscarRelatorioPorId(idRelatorio) {
             r.idRelatorio,
             r.titulo,
             r.descricao,
-            r.data_rel,
-            r.equipamento_idEquipamento,
-            e.nome AS nomeEquipamento
+            r.data_rel
         FROM relatorio r
-        INNER JOIN equipamento e
-            ON r.equipamento_idEquipamento = e.idEquipamento
         WHERE r.idRelatorio = ${idRelatorio};
     `;
 
@@ -59,15 +49,13 @@ function atualizarRelatorio(
     idRelatorio,
     titulo,
     descricao,
-    dataRel,
-    idEquipamento
+    dataRel
 ) {
     let instrucaoSql = `
         UPDATE relatorio
         SET titulo = '${titulo}',
             descricao = '${descricao}',
             data_rel = '${dataRel}',
-            equipamento_idEquipamento = ${idEquipamento}
         WHERE idRelatorio = ${idRelatorio};
     `;
 

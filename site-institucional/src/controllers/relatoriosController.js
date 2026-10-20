@@ -1,19 +1,19 @@
-let relatorioModel = require("../models/relatorioModel");
+let relatorioModel = require("../models/relatoriosModel");
 
 function cadastrarRelatorio(req, res) {
     let titulo = req.body.titulo;
     let descricao = req.body.descricao;
     let dataRel = req.body.dataRel;
-    let idEquipamento = req.body.idEquipamento;
+    // let idEquipamento = req.body.idEquipamento;
 
-    if (!titulo || !descricao || !dataRel || !idEquipamento) {
+    if (!titulo || !descricao || !dataRel) {
         return res.status(400).send(
             "Preencha o título, a descrição, a data e o equipamento."
         );
     }
 
     relatorioModel
-        .cadastrarRelatorio(titulo, descricao, dataRel, idEquipamento)
+        .cadastrarRelatorio(titulo, descricao, dataRel)
         .then(function (resultado) {
             res.status(201).json(resultado);
         })
@@ -58,9 +58,9 @@ function atualizarRelatorio(req, res) {
     let titulo = req.body.titulo;
     let descricao = req.body.descricao;
     let dataRel = req.body.dataRel;
-    let idEquipamento = req.body.idEquipamento;
+    // let idEquipamento = req.body.idEquipamento;
 
-    if (!titulo || !descricao || !dataRel || !idEquipamento) {
+    if (!titulo || !descricao || !dataRel) {
         return res.status(400).send(
             "Preencha o título, a descrição, a data e o equipamento."
         );
@@ -71,8 +71,7 @@ function atualizarRelatorio(req, res) {
             idRelatorio,
             titulo,
             descricao,
-            dataRel,
-            idEquipamento
+            dataRel
         )
         .then(function (resultado) {
             res.status(200).json(resultado);

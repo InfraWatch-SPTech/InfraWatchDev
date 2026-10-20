@@ -1,38 +1,31 @@
-function dadosUser() {
-    const usuarioTexto = localStorage.getItem('usuarioLogado');
-    const usuarioLogado = JSON.parse(usuarioTexto);
-
-    return usuarioLogado;
-}
-
 let dadosUsuario = dadosUser();
 let idEmpresa = dadosUsuario.idEmpresa;
 let ultimaListaEquipamentos = [];
 
 function mapearClasseStatus(status) {
     if (status === "Ativo" || status === "Online") {
-        return "status-ativo";
+        return "status_ativo";
     } else if (status === "Manutenção") {
-        return "status-atencao";
+        return "status_atencao";
     } else {
-        return "status-inativo";
+        return "status_inativo";
     }
 }
 
 function montarLinhaTabela(equipamento) {
     return `
         <tr>
-            <td class="celula-dispositivo">
-                <div class="icone-dispositivo">
+            <td class="celula_dispositivo">
+                <div class="icone_dispositivo">
                     <i class="fa-solid fa-server" style="color: rgb(255, 255, 255);"></i>
                 </div>
-                <div class="info-dispositivo">
+                <div class="info_dispositivo">
                     <strong>${equipamento.nomeEquipamento}</strong>
                     <span>ID: HW-${String(equipamento.idEquipamento).padStart(4, '0')}</span>
                 </div>
             </td>
             <td>${equipamento.tipoEquipamento || '-'}</td>
-            <td class="celula-componentes">${equipamento.nomeComponente || '-'}</td>
+            <td class="celula_componentes">${equipamento.nomeComponente || '-'}</td>
             <td>${equipamento.localizacao || '-'}</td>
             <td>
                 <span class="status ${mapearClasseStatus(equipamento.statusEquipamento)}">
@@ -40,15 +33,15 @@ function montarLinhaTabela(equipamento) {
                 </span>
             </td>
             <td>-</td>
-            <td class="celula-acoes">
+            <td class="celula_acoes">
                 <!-- ao clicar, abre o modal de edição já preenchido com os dados deste equipamento -->
-                <button class="btn-icone btn-visualizar" onclick="modalVisualizar(${equipamento.idEquipamento})" title="Visualizar">
+                <button class="btn_icone btn_visualizar" onclick="modalVisualizar(${equipamento.idEquipamento})" title="Visualizar">
                     <i class="fa-regular fa-eye" style="color: rgb(255, 255, 255);"></i>  
                 </button>
-                <button class="btn-icone btn-editar" onclick="abrirModalEditar(${equipamento.idEquipamento})" title="Editar">
+                <button class="btn_icone btn_editar" onclick="abrirModalEditar(${equipamento.idEquipamento})" title="Editar">
                     <i class="fa-solid fa-pen-to-square" style="color: rgb(255, 255, 255);"></i>
                 </button>
-                <button class="btn-icone btn-excluir ${equipamento.idEquipamento}" onclick="deletarEquipamento(${equipamento.idEmpresa}, ${equipamento.idEquipamento})" title="Excluir">
+                <button class="btn_icone btn_excluir ${equipamento.idEquipamento}" onclick="deletarEquipamento(${equipamento.idEmpresa}, ${equipamento.idEquipamento})" title="Excluir">
                     <i class="fa-solid fa-trash" style="color: rgb(255, 255, 255);"></i>
                 </button>
             </td>
@@ -115,15 +108,15 @@ function buscarEquipamentosEmpresa(idEmpresa)
 
 function coletarComponentesSelecionados() {
     let checkboxes = document.querySelectorAll(
-        '#modal-cadastrar .checkbox-componente:checked'
+        '#modal-cadastrar .checkbox_componente:checked'
     );
 
     let componentes = [];
 
     for (let checkbox of checkboxes) {
-        let linha = checkbox.closest('.linha-componente');
+        let linha = checkbox.closest('.linha_componente');
 
-        let campos = linha.querySelectorAll('.campo-alerta input');
+        let campos = linha.querySelectorAll('.campo_alerta input');
 
         componentes.push({
             nome: checkbox.dataset.nome,
@@ -207,7 +200,7 @@ function cadastrarHardware() {
         .then(function (response) {
             if (response.ok) {
                 buscarEquipamentosEmpresa(idEmpresa);
-                document.querySelector('.sobreposicao-modal').classList.remove('modal-aberto');
+                document.querySelector('.sobreposicao_modal').classList.remove('modal_aberto');
                 document.getElementById('input-nome-hardware').value = '';
                 document.getElementById('select-tipo-hardware').value = '';
                 document.getElementById('input-localizacao-hardware').value = '';
@@ -228,7 +221,7 @@ function cadastrarHardware() {
 }
 
 function coletarComponentesSelecionadosEditar() {
-    let checkboxes = document.querySelectorAll('.checkbox-componente-editar:checked');
+    let checkboxes = document.querySelectorAll('.checkbox_componente_editar:checked');
     let componentes = [];
 
     for (let i = 0; i < checkboxes.length; i++) {
@@ -270,17 +263,17 @@ function abrirModalEditar(idEquipamento) {
         .map(function (linha) { return linha.tipoComponente; })
         .filter(function (tipo) { return !!tipo; });
 
-    let checkboxesEditar = document.querySelectorAll('.checkbox-componente-editar');
+    let checkboxesEditar = document.querySelectorAll('.checkbox_componente_editar');
     for (let i = 0; i < checkboxesEditar.length; i++) {
         let checkbox = checkboxesEditar[i];
         checkbox.checked = tiposComponentesAtuais.indexOf(checkbox.dataset.tipo) !== -1;
     }
 
-    document.querySelector('.sobreposicao-modal-editar').classList.add('modal-aberto');
+    document.querySelector('.sobreposicao_modal_editar').classList.add('modal_aberto');
 }
 
 function fecharModalEditar() {
-    document.querySelector('.sobreposicao-modal-editar').classList.remove('modal-aberto');
+    document.querySelector('.sobreposicao_modal_editar').classList.remove('modal_aberto');
 }
 
 function salvarEdicaoHardware() {
@@ -350,8 +343,8 @@ let lidarComFechar;
 function deletarEquipamento(idEmpresa, idEquipamento) {
     const btnFecharModal = document.getElementById('btn-fechar-modal-deletar');
     const btnDeletarHardware = document.getElementById('btn-deletar-hardware');
-    const modalDeletarHardware = document.querySelector('.modal-deletar');
-    const modalOverlayDeletarHardware = document.querySelector('.modal-overlay-deletar');
+    const modalDeletarHardware = document.querySelector('.modal_deletar');
+    const modalOverlayDeletarHardware = document.querySelector('.modal_overlay_deletar');
     const h2AvisoModal = document.getElementById('aviso-deletar');
 
     btnDeletarHardware.removeEventListener('click', lidarComDeletar);
@@ -405,18 +398,18 @@ function deletarEquipamento(idEmpresa, idEquipamento) {
     btnFecharModal.addEventListener('click', lidarComFechar);
 }
 
-const modalOverlay = document.querySelector('.sobreposicao-modal');
+const modalOverlay = document.querySelector('.sobreposicao_modal');
 const btnAbrir = document.getElementById('btn-novo-hardware');
-const btnFechar = document.querySelector('.fechar-modal');
-const btnCancelar = document.querySelector('.btn-cancelar');
-const btnSalvar = document.querySelector('.btn-salvar');
+const btnFechar = document.querySelector('.fechar_modal');
+const btnCancelar = document.querySelector('.btn_cancelar');
+const btnSalvar = document.querySelector('.btn_salvar');
 
 function abrirModal() {
-    modalOverlay.classList.add('modal-aberto');
+    modalOverlay.classList.add('modal_aberto');
 }
 
 function fecharModal() {
-    modalOverlay.classList.remove('modal-aberto');
+    modalOverlay.classList.remove('modal_aberto');
 }
 
 btnAbrir.addEventListener('click', abrirModal);
@@ -444,10 +437,10 @@ document.addEventListener('keydown', function (evento) {
 });
 
 // Mesma lógica do modal de cadastro , só que no modal de EDIÇÃO
-const modalOverlayEditar = document.querySelector('.sobreposicao-modal-editar');
-const btnFecharEditar = document.querySelector('.fechar-modal-editar');
-const btnCancelarEditar = document.querySelector('.btn-cancelar-editar');
-const btnSalvarEditar = document.querySelector('.btn-salvar-editar');
+const modalOverlayEditar = document.querySelector('.sobreposicao_modal_editar');
+const btnFecharEditar = document.querySelector('.fechar_modal_editar');
+const btnCancelarEditar = document.querySelector('.btn_cancelar_editar');
+const btnSalvarEditar = document.querySelector('.btn_salvar_editar');
 
 btnFecharEditar.addEventListener('click', fecharModalEditar);
 btnCancelarEditar.addEventListener('click', fecharModalEditar);
@@ -490,11 +483,11 @@ function aplicarPermissoes() {
         btnAdicionarHardware.style.display = podeCadastrar ? 'block' : 'none';
     }
 
-    document.querySelectorAll('.btn-editar').forEach(function (botao) {
+    document.querySelectorAll('.btn_editar').forEach(function (botao) {
         botao.style.display = podeEditar ? 'inline-flex' : 'none';
     });
 
-    document.querySelectorAll('.btn-excluir').forEach(function (botao) {
+    document.querySelectorAll('.btn_excluir').forEach(function (botao) {
         botao.style.display = podeExcluir ? 'inline-flex' : 'none';
     });
 }
@@ -520,8 +513,8 @@ function modalVisualizar(idEquipamento) {
 
                 console.log(jsonComponentes)
 
-                const modalVisualizar = document.querySelector('.modal-visualizar');
-                const modalOverlay = document.querySelector('.modal-overlay-deletar')
+                const modalVisualizar = document.querySelector('.modal_visualizar');
+                const modalOverlay = document.querySelector('.modal_overlay_deletar')
 
                 modalOverlay.style.display = 'flex';
                 modalVisualizar.style.display = 'flex';
@@ -531,65 +524,65 @@ function modalVisualizar(idEquipamento) {
                 <button id="btn-fechar-modal-visualizar">
                             <i class="fa-regular fa-circle-xmark"></i>
                         </button>
-                        <div class="modal-visualizar-title">
-                            <div class="visualizar-title-icon">
+                        <div class="modal_visualizar_title">
+                            <div class="visualizar_title_icon">
                                 <i class="fa-solid fa-display" style="color: rgb(255, 255, 255);"></i>
                             </div>
-                            <div class="visualizar-title-text">
+                            <div class="visualizar_title_text">
                                 <span>Equipamento</span>
                                 <h3>${jsonEquipamentos[0].nomeEquipamento}</h3>
                                 <h6>ID: HW-${jsonEquipamentos[0].idEquipamento}</h6>
                             </div>
                         </div>
-                        <div class="modal-visualizar-topic">
+                        <div class="modal_visualizar_topic">
                             <span>
                                 <i class="fa-solid fa-circle-info"></i>
                                 Informações
                             </span>
                         </div>
-                        <div class="modal-visualizar-info">
-                            <div class="visualizar-info-row">
-                                <div class="info-row-item">
-                                    <div class="info-row-item-icon">
+                        <div class="modal_visualizar_info">
+                            <div class="visualizar_info_row">
+                                <div class="info_row_item">
+                                    <div class="info_row_item_icon">
                                         <i class="fa-solid fa-tv"></i>
                                     </div>
-                                    <div class="info-row-item-text border-lateral">
+                                    <div class="info_row_item_text border_lateral">
                                         <span>Tipo</span>
                                         <h3>${jsonEquipamentos[0].tipoEquipamento}</h3>
                                     </div>
                                 </div>
-                                <div class="info-row-item">
-                                    <div class="info-row-item-icon">
+                                <div class="info_row_item">
+                                    <div class="info_row_item_icon">
                                         <i class="fa-solid fa-location-dot"></i>
                                     </div>
-                                    <div class="info-row-item-text">
+                                    <div class="info_row_item_text">
                                         <span>Localização</span>
                                         <h3>${jsonEquipamentos[0].localizacao}</h3>
                                     </div>
                                 </div>
                             </div>
-                            <div class="visualizar-info-row">
-                                <div class="info-row-item">
-                                    <div class="info-row-item-icon">
+                            <div class="visualizar_info_row">
+                                <div class="info_row_item">
+                                    <div class="info_row_item_icon">
                                         <i class="fa-solid fa-microchip"></i>
                                     </div>
-                                    <div class="info-row-item-text border-lateral">
+                                    <div class="info_row_item_text border_lateral">
                                         <span>Componentes Monitorados</span>
                                         <h3>${jsonComponentes.join(', ')}</h3>
                                     </div>
                                 </div>
-                                <div class="info-row-item">
-                                    <div class="info-row-item-icon">
+                                <div class="info_row_item">
+                                    <div class="info_row_item_icon">
                                         <i class="fa-solid fa-signal"></i>
                                     </div>
-                                    <div class="info-row-item-text">
+                                    <div class="info_row_item_text">
                                         <span>Status</span>
                                         <h3>${jsonEquipamentos[0].statusEquipamento}</h3>
                                     </div>
                                 </div>
                             </div>
                         </div>
-                        <div class="modal-visualizar-rowbar">
+                        <div class="modal_visualizar_rowbar">
                             <button id="fechar-modal-visualizar">
                                 Fechar
                             </button>

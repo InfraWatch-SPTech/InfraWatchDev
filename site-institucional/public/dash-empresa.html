@@ -1,198 +1,158 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="pt-br">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="./assets/css/dash_empresas.css">
     <title>Dashboard Empresa</title>
+    <link rel="icon" type="image/png" href="./assets/midias/main-icon-image.png">
+    <link rel="stylesheet" href="./assets/css/global.css">
+    <link rel="stylesheet" href="./assets/css/menu.css">
+    <link rel="stylesheet" href="./assets/css/dash_empresas.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.3.1/css/all.min.css" integrity="sha512-QeR2VH+lsBE5LSAe1Q5EnTBbe7XTBubt8dG93Y7gidSgdMCr8nVqKcfKAMyN96SV8KDbZVTDXChatu5G2KQGzg==" crossorigin="anonymous" referrerpolicy="no-referrer">
 </head>
-<body onload="validarSessao()">
-    <header>
-        <div class="navbar">
-            <div class="nav-logo">
-                <h1>
-                    Infra<span>Watch</span>
-                </h1> 
-            </div>
-            <div class="nav-links">
-                <ul>
-                    <li>
-                        <a href="./main.html">Home</a>
-                    </li>
-                    <li>
-                        <a href="./sobrenos.html">
-                            Sobre-nós
-                        </a>
-                    </li>
-                    <li>
-                        <a href="./sobrenos.html#contato">
-                            Contato
-                        </a>
-                    </li>
-                    <li>
-                        <a href="./dash-empresa.html">
-                            Dashboard Empresa
-                        </a>
-                    </li>
-                </ul>
-            </div>
-            <div class="nav-login">
-                <button id="btn-logar" onclick="redirecionamento_login()">
-                    Entrar
-                </button>
-                <button id="btn-cadastrar" onclick="redirecionamento_login()">
-                    Cadastrar-se
-                </button>
-            </div>
-            <div class="popup-perfil">
+<body>
 
+<main class="container_dash_empresa">
+
+        <div class="content content_header">
+            <div class="infos_usuario">
+                <p class="subtitulo_user">Usuário</p>
+                <h2 id="user-nome" class="user_nome">$Usuario</h2>
+                <h5 id="user-cargo" class="user_cargo">$Cargo</h5>
             </div>
-        </div>
-    </header>
-
-    <div class="divisao-nav" style="height: 9vh; width: 100%;"></div>
-
-    <main class="container-dash-empresa">
-
-        <div class="content content-header">
-            <div class="infos-usuario">
-                <p class="subtitulo-user">Usuário</p>
-                <h2 id="user-nome" class="user-nome">$Usuario</h2>
-                <h5 id="user-cargo" class="user-cargo">$Cargo</h5>
-            </div>
-            <div class="infos-empresa">
-                <p class="subtitulo-bem-vindo">Bem-vindo(a) de volta!</p>
-                <h2 id="user-empresa" class="user-empresa">$Empresa</h2>
+            <div class="infos_empresa">
+                <p class="subtitulo_bem_vindo">Bem-vindo(a) de volta!</p>
+                <h2 id="user-empresa" class="user_empresa">$Empresa</h2>
             </div>
         </div>
 
-        <div class="content content-dashboard">
-            <p class="titulo-pagina">status de todos os servidores monitorados</p>
-            <div class="content-dashboard-kpis" id="content-dash-kpis">
+        <div class="content content_dashboard">
+            <p class="titulo_pagina">status de todos os servidores monitorados</p>
+            <div class="content_dashboard_kpis" id="content-dash-kpis">
 
-                <div class="kpi-box">
+                <div class="kpi_box">
                     <div class="icon">
                         <!-- Ícone da KPI -->   
                     </div>
-                    <div class="infos-kpis">
-                        <p class="infos-kpis-nome">Servidores Ativos</p>
-                        <p class="infos-kpis-principal">
+                    <div class="infos_kpis">
+                        <p class="infos_kpis_nome">Servidores Ativos</p>
+                        <p class="infos_kpis_principal">
                             <span id="kpi-s-ativos">$$</span>
                             /
                             <span id="kpi-s-totais">$$</span>
                         </p>
-                        <p class="infos-kpis-secundaria">
+                        <p class="infos_kpis_secundaria">
                             <span id="kpi-s-inativos">$ servidores inativos</span>
                         </p>
                     </div>
                 </div>
 
-                <div class="kpi-box">
+                <div class="kpi_box">
                     <div class="icon">
                         <!-- Ícone da KPI -->
                     </div>
-                    <div class="infos-kpis">
-                        <p class="infos-kpis-nome">Tempo em Downtime</p>
-                        <p class="infos-kpis-principal">
+                    <div class="infos_kpis">
+                        <p class="infos_kpis_nome">Tempo em Downtime</p>
+                        <p class="infos_kpis_principal">
                             <span id="kpi-t-downtime">$$</span>
                         </p>
-                        <p class="infos-kpis-secundaria">
+                        <p class="infos_kpis_secundaria">
                             <span id="kpi-d-comparado">$% acima do limite</span>
                         </p>
                     </div>
                 </div>
 
-                <div class="kpi-box">
+                <div class="kpi_box">
                     <div class="icon">
                         <!-- Ícone da KPI -->
                     </div>
-                    <div class="infos-kpis">
-                        <p class="infos-kpis-nome">Tempo Médio de Resolução</p>
-                        <p class="infos-kpis-principal">
+                    <div class="infos_kpis">
+                        <p class="infos_kpis_nome">Tempo Médio de Resolução</p>
+                        <p class="infos_kpis_principal">
                             <span id="kpi-t-mttd">$$</span>
                         </p>
-                        <p class="infos-kpis-secundaria">
+                        <p class="infos_kpis_secundaria">
                             <span id="kpi-p-comparada">$% mais rápido</span>
                         </p>
                     </div>
                 </div>
 
-                <div class="kpi-box">
+                <div class="kpi_box">
                     <div class="icon">
                         <!-- Ícone da KPI -->
                     </div>
-                    <div class="infos-kpis">
-                        <p class="infos-kpis-nome">Disponibilidade Externa</p>
-                        <p class="infos-kpis-principal" id="kpi-d-externa">$$</p>
-                        <p class="infos-kpis-secundaria" id="kpi-de-status">$$</p>
+                    <div class="infos_kpis">
+                        <p class="infos_kpis_nome">Disponibilidade Externa</p>
+                        <p class="infos_kpis_principal" id="kpi-d-externa">$$</p>
+                        <p class="infos_kpis_secundaria" id="kpi-de-status">$$</p>
                     </div>
                 </div>
 
-                <div class="kpi-box">
+                <div class="kpi_box">
                     <div class="icon">
                         <!-- Ícone da KPI -->
                     </div>
-                    <div class="infos-kpis">
-                        <p class="infos-kpis-nome">Alertas Ativos</p>
-                        <p class="infos-kpis-principal">
-                            <span class="kpi-alertas-ativos">$$</span>
+                    <div class="infos_kpis">
+                        <p class="infos_kpis_nome">Alertas Ativos</p>
+                        <p class="infos_kpis_principal">
+                            <span class="kpi_alertas_ativos">$$</span>
                         </p>
-                        <p class="infos-kpis-secundaria">
+                        <p class="infos_kpis_secundaria">
                             <span id="kpi-qtd-alertas-criticos">$ alertas críticos</span>
                         </p>
                     </div>
                 </div>
 
             </div>
-            <div class="content-dashboard-graficos" id="content-dash-graficos">
+            <div class="content_dashboard_graficos" id="content-dash-graficos">
 
-                <div class="content-dashboard-graficos-div">
+                <div class="content_dashboard_graficos_div">
 
-                    <div class="box-graficos left grafico-saldo-indisp">
-                        <p class="infos-kpis-nome">Orçamento de Insdisponibilidade Restante (Anual)</p>
-                        <p class="grafic-disp-limite-max">Limite máximo: 8h46m</p>
+                    <div class="box_graficos left grafico_saldo_indisp">
+                        <p class="infos_kpis_nome">Orçamento de Insdisponibilidade Restante (Anual)</p>
+                        <p class="grafic_disp_limite_max">Limite máximo: 8h46m</p>
                         <canvas id="grafico-indisp-saldo" style="max-width: 100%; max-height: 50px; background-color: transparent;" id="grafico-indisponibilidade"></canvas>
-                        <div class="infos-grafic-status">
+                        <div class="infos_grafic_status">
                             <p id="grafic-disp-consumido">Consumido: $$</p>
                             <p id="grafic-disp-restante">Restam: $$</p>
                         </div>
                     </div>
 
-                    <div class="box-graficos left grafico-disp-tempo">
+                    <div class="box_graficos left grafico_disp_tempo">
                         <canvas id="grafico-disp-tempo" style="width: 100%; height: 85%; background-color: transparent;"></canvas>
                     </div>
 
                 </div>
 
-                <div class="content-dashboard-graficos-div">
+                <div class="content_dashboard_graficos_div">
                     
-                    <div class="box-graficos right grafico-incidentes-pservidor">
+                    <div class="box_graficos right grafico_incidentes_pservidor">
                         <canvas id="grafico-incidentes-pservidor" style="width: 100%; height: 85%; background-color: transparent;"></canvas>
                     </div>
 
-                    <div class="box-graficos right grafico-incidentes-pcomponente">
+                    <div class="box_graficos right grafico_incidentes_pcomponente">
 
-                        <div class="gipc-titulo-totais">
-                            <p class="infos-grafic-content-titulo">quantidade de alertas por componente</p>
+                        <div class="gipc_titulo_totais">
+                            <p class="infos_grafic_content_titulo">quantidade de alertas por componente</p>
 
-                            <div class="infos-grafic-content-subtitulo">
-                                <p class="infos-kpis-nome">Alertas totais</p>
-                                <p class="infos-grafic-alertas-totais kpi-alertas-ativos">$</p>
+                            <div class="infos_grafic_content_subtitulo">
+                                <p class="infos_kpis_nome">Alertas totais</p>
+                                <p class="infos_grafic_alertas_totais kpi_alertas_ativos">$</p>
                             </div>
                         </div>
 
-                        <div class="gipc-graficos-pcomponente">
-                            <div class="grafico-comps">
+                        <div class="gipc_graficos_pcomponente">
+                            <div class="grafico_comps">
                                 <h2 id="comp-1">Cpu</h2>
                                 <canvas id="grafico-comps1" style="background-color: transparent; max-width: 110px; max-height: 110px;"></canvas>
                                 <p>Total: <span id="qtd-comp1">$$</span></p>
                             </div>
-                            <div class="grafico-comps">
+                            <div class="grafico_comps">
                                 <h2 id="comp-2">Ram</h2>
                                 <canvas id="grafico-comps2" style="background-color: transparent; max-width: 110px; max-height: 110px;"></canvas>
                                 <p>Total: <span id="qtd-comp2">$$</span></p>
                             </div>
-                            <div class="grafico-comps" >
+                            <div class="grafico_comps" >
                                 <h2 id="comp-3">Disco</h2>
                                 <canvas id="grafico-comps3" style="background-color: transparent; max-width: 110px; max-height: 110px;"></canvas>
                                 <p>Total: <span id="qtd-comp3">$$</span></p>
@@ -205,10 +165,10 @@
 
             </div>
 
-            <div class="content-list-server">
-                <p class="titulo-pagina">meus servidores</p>
-                <div class="content-list-server-box" id="container-server-box-vazio">
-                    <div class="server-box">
+            <div class="content_list_server">
+                <p class="titulo_pagina">meus servidores</p>
+                <div class="content_list_server_box" id="container-server-box-vazio">
+                    <div class="server_box">
                         <input type="checkbox">
                         <p style="font-weight: 800; color: var(--cor-cinza-padrao); font-size: 14px;">nome</p>
                         <p style="font-weight: 800; color: var(--cor-cinza-padrao); font-size: 14px;">status</p>
@@ -217,7 +177,7 @@
                         <p style="font-weight: 800; color: var(--cor-cinza-padrao); font-size: 14px;">localização</p>
                         <p style="font-weight: 800; color: var(--cor-cinza-padrao); font-size: 14px;" class="acoes">ações</p>
                     </div>
-                    <div class="container-server-box" id="corpo-tabela-hardwares"></div>
+                    <div class="container_server_box" id="corpo-tabela-hardwares"></div>
                 </div>
             </div>
         </div>
@@ -226,9 +186,12 @@
     <footer>
         <!-- COLOCAR FOOTER AQUI -->
     </footer>
-</body>
-<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-<script>
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="./assets/js/redirecionamento.js"></script>
+    <script src="./assets/js/sessao.js"></script>
+    <script src="./assets/js/menu.js"></script>
+    <script>
     let usuario = JSON.parse(localStorage.usuarioLogado);
     let idEmpresa = usuario.idEmpresa;
     let nomeEmpresa = usuario.nomeEmpresa;
@@ -270,26 +233,26 @@
         for (let i in equipamentosAgrupados) {
             corpoTabela.innerHTML += `
             <hr>
-                <div class="server-box">
+                <div class="server_box">
                     <input type="checkbox" value="${equipamentosAgrupados[i].idEquipamento}">
                     <p>${equipamentosAgrupados[i].nomeEquipamento}</p>
-                    <p class="stts-equip">${equipamentosAgrupados[i].statusEquipamento}</p>
+                    <p class="stts_equip">${equipamentosAgrupados[i].statusEquipamento}</p>
                     <p>${equipamentosAgrupados[i].nomeComponente}</p>
                     <p>${equipamentosAgrupados[i].ipEquipamento}</p>
                     <p>${equipamentosAgrupados[i].localizacao}</p>
-                    <a href="#" class="btn-ver" value="${equipamentosAgrupados[i].idEquipamento}">ver-➔</a>
+                    <a href="./dashboard-servidor.html?idEquipamento=${equipamentosAgrupados[i].idEquipamento}" class="btn_ver">ver-➔</a>
                 </div>
             `
             stringSttsEquip.push(equipamentosAgrupados[i].statusEquipamento)
         }
 
     
-        let sttsEquip = document.getElementsByClassName('stts-equip')
+        let sttsEquip = document.getElementsByClassName('stts_equip')
         for (let i = 0; i < sttsEquip.length; i++) {
             if (stringSttsEquip[i].toUpperCase() == 'ONLINE') {
-                sttsEquip[i].classList.add('cor-verde');
+                sttsEquip[i].classList.add('cor_verde');
             } else {
-                sttsEquip[i].classList.add('cor-vermelha');
+                sttsEquip[i].classList.add('cor_vermelha');
             }
         }
         
@@ -299,17 +262,17 @@
 
         if (Object.keys(equipamentosAgrupados).length === 0) {
             containerServers.innerHTML = `
-                <div class="server-box-vazio">
+                <div class="server_box_vazio">
                     <p>Nenhum servidor encontrado</p>
                 </div>
             `
             containerKpis.innerHTML = `
-                <div class="sem-servidores">
+                <div class="sem_servidores">
                     <div style="display:flex; flex-direction:column; align-items:flex-start; background-color:transparent;">
                         <h3>Nenhum servidor encontrado</h3>
                         <p>Cadastre um servidor para iniciar o monitoramento!</p>
                     </div>
-                    <a href="#">Cadastrar Servidor ➔</a>
+                    <a href="./hardwares.html">Cadastrar Servidor ➔</a>
                 </div>
             `
             containerGraficos.style.display = 'none';
@@ -347,7 +310,7 @@
     buscarEquipamentosEmpresa(idEmpresa);
 
 </script>
-<script defer src="../public/assets/js/dash-e-kpi-graficos.js"></script>
-<script src="../public/assets/js/sessao.js" defer></script>
-<script src="../public/assets/js/redirecionamento.js"></script>
+    <script src="./assets/js/dash-e-kpi-graficos.js"></script>
+
+</body>
 </html>

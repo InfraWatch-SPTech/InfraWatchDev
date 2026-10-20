@@ -10,36 +10,36 @@ let btnCadastro = document.getElementById('tab-cadastrar');
 btnEntrar.classList.add('active');
 
 btnCadastro.addEventListener('click', ()=>{
-    containerLogin.classList.add('fade-out');
+    containerLogin.classList.add('fade_out');
 
     setTimeout(() => {
         containerLogin.innerHTML = 
         `
-            <div class="login-esquerda">
-                <div class="login-logo">
+            <div class="login_esquerda">
+                <div class="login_logo">
                     <h1>Infra<span>Watch</span></h1>
                 </div>
-                <div class="login-esquerda-content">
-                    <div class="login-esquerda-text">
+                <div class="login_esquerda_content">
+                    <div class="login_esquerda_text">
                         <h2>
                             Controle total dos seus sistemas,
                             <span>antes que o cliente perceba</span>
                         </h2>
                     </div>
-                    <div class="login-esquerda-description">
+                    <div class="login_esquerda_description">
                         <h6>Acesse o painel para acompanhar em tempo real a saúde da sua infraestrutura</h6>
                     </div>
                 </div>
             </div>
 
-            <div class="login-direita">
-                <form class="formulario-login formulario-cadastro" id="form-login">
-                    <div class="formulario-login-title">
+            <div class="login_direita">
+                <form class="formulario_login formulario_cadastro" id="form-login">
+                    <div class="formulario_login_title">
                         <h2>Crie sua Conta</h2>
                         <span>Comece a monitorar sua infraestrutura em poucos minutos</span>
                     </div>
 
-                    <div class="input-row">
+                    <div class="input_row">
                         <div class="inputs">
                             <label for="input-nome">Nome</label>
                             <input type="text" id="input-nome" name="nome" placeholder="Seu nome" required>
@@ -61,7 +61,7 @@ btnCadastro.addEventListener('click', ()=>{
                         <input type="text" id="input-empresa" name="empresa" placeholder="Código da instituição" required>
                     </div>
                     
-                    <div class="input-row">
+                    <div class="input_row">
                         <div class="inputs">
                             <label for="input-senha-cad">Senha</label>
                             <input type="password" id="input-senha-cad" name="senha" placeholder="********" required minlength="8">
@@ -86,37 +86,37 @@ btnCadastro.addEventListener('click', ()=>{
         btnCadastro.classList.add('active');
         btnEntrar.classList.remove('active');
 
-        containerLogin.classList.remove('fade-out');
+        containerLogin.classList.remove('fade_out');
     }, 250); 
 });
 
 btnEntrar.addEventListener('click', ()=>{
-    containerLogin.classList.add('fade-out');
+    containerLogin.classList.add('fade_out');
 
     setTimeout(() => {
         containerLogin.innerHTML = 
         `
-            <div class="login-esquerda">
-                <div class="login-logo">
+            <div class="login_esquerda">
+                <div class="login_logo">
                     <h1>Infra<span>Watch</span></h1>
                 </div>
 
-                <div class="login-esquerda-content">
-                    <div class="login-esquerda-text">
+                <div class="login_esquerda_content">
+                    <div class="login_esquerda_text">
                         <h2>
                             Controle total dos seus sistemas,
                             <span>antes que o cliente perceba</span>
                         </h2>
                     </div>
-                    <div class="login-esquerda-description">
+                    <div class="login_esquerda_description">
                         <h6>Acesse o painel para acompanhar em tempo real a saúde da sua infraestrutura</h6>
                     </div>
                 </div>
             </div>
 
-            <div class="login-direita">
-                <form class="formulario-login" id="form-login">
-                    <div class="formulario-login-title">
+            <div class="login_direita">
+                <form class="formulario_login" id="form-login">
+                    <div class="formulario_login_title">
                         <h2>Acesse sua conta</h2>
                         <span>Entre para acompanhar seus painéis de monitoramento.</span>
                     </div>
@@ -131,7 +131,7 @@ btnEntrar.addEventListener('click', ()=>{
                         <input type="password" id="input-senha" name="senha" placeholder="********" required>
                     </div>
 
-                    <a href="#" class="esqueci-a-senha">Esqueci minha senha</a>
+                    <a href="#" class="esqueci_a_senha">Esqueci minha senha</a>
 
                     <button type="submit" id="btn-entrar-plataforma">
                         Entrar na plataforma
@@ -145,7 +145,7 @@ btnEntrar.addEventListener('click', ()=>{
         btnCadastro.classList.remove('active');
         btnEntrar.classList.add('active');
 
-        containerLogin.classList.remove('fade-out');
+        containerLogin.classList.remove('fade_out');
     }, 250);
 });
 
@@ -243,7 +243,7 @@ function entrar() {
                 localStorage.setItem('usuarioLogado', JSON.stringify(usuario));
 
                 alert(`Login realizado com sucesso! Bem-vindo(a), ${usuario.nome}!`);
-                window.location.href = "/inicio";
+                redirecionar('inicio');
             });
         } else {
             return resposta.text().then(function (erroMsg) {
@@ -262,7 +262,7 @@ document.addEventListener('submit', function(e) {
     if (e.target && e.target.id === 'form-login') {
         e.preventDefault();
 
-        if (e.target.classList.contains('formulario-cadastro')) {
+        if (e.target.classList.contains('formulario_cadastro')) {
             cadastrar();
         } else {
             entrar();

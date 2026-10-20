@@ -1,16 +1,22 @@
-function redirecionamento_login(){
-    window.location.href = "../public/login.html";
-}
+var rotas = {
+    home: './main.html',
+    login: './login.html',
+    sobre_nos: './sobrenos.html',
+    contato: './sobrenos.html#contato',
+    inicio: './pagina-inicial.html',
+    dashboard_empresa: './dash-empresa.html',
+    dashboard_servidor: './dashboard-servidor.html',
+    hardwares: './hardwares.html',
+    usuarios: './usuarios.html',
+    criar_relatorio: './relatorios.html#cadastro',
+    lista_relatorios: './relatorios.html#relatorios',
+    plataformas_externas: './plataformas_externas.html'
+};
 
-function redirecionamento_home(){
-    window.location.href = "../public/main.html";
-}
+function redirecionar(nome) {
+    if (!rotas[nome]) {
+        return;
+    }
 
-function redirecionamento_cadastroServidor(){
-    window.location.href = "../public/hardwares.html";
+    window.location.href = rotas[nome];
 }
-
-function redirecionamento_gerUsuarios(){
-    window.location.href = "../public/usuarios.html";
-}
-function redirecionamento_paginaInicial() { window.location.href = "/inicio"; }

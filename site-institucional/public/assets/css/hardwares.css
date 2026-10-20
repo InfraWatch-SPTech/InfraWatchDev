@@ -1,136 +1,104 @@
-@import url("https://fonts.googleapis.com/css2?family=Allerta&family=Allerta+Stencil&display=swap");
-
 /*Responsividade*/
 
 @media (max-width: 1547px) {
 
-    .container-hardwares .cabecalho-hardwares .cabecalho-hardwares-direita #btn-novo-hardware {
+    .container_hardwares .cabecalho_hardwares .cabecalho_hardwares_direita #btn-novo-hardware {
         min-width: 16vw;
     }
 
-    .navbar .popup-perfil.active {
-        min-width: 20vw;
-    }
-
-    .navbar .popup-perfil.active .content-perfil .content-perfil-top i {
-        padding: 0.3rem 2rem;
-    }
-
-    .container-hardwares .caixa-tabela-hardwares .tabela-hardwares tbody tr td .celula-dispositivo .info-dispositivo strong {
+    .container_hardwares .caixa_tabela_hardwares .tabela_hardwares tbody tr td .celula_dispositivo .info_dispositivo strong {
         display: inline-block;
     }
 }
 
 @media (max-width: 1301px) {
 
-    .container-hardwares .caixa-tabela-hardwares .tabela-hardwares tbody tr td {
+    .container_hardwares .caixa_tabela_hardwares .tabela_hardwares tbody tr td {
         font-size: 0.8rem;
         white-space: nowrap;
     }
 
-    .container-hardwares .caixa-tabela-hardwares .tabela-hardwares tbody tr td .celula-dispositivo .info-dispositivo strong {
+    .container_hardwares .caixa_tabela_hardwares .tabela_hardwares tbody tr td .celula_dispositivo .info_dispositivo strong {
         display: inline-block;
     }
 }
 
 @media (max-width: 1145px) {
 
-    .container-hardwares .cabecalho-hardwares .cabecalho-hardwares-direita #btn-novo-hardware {
+    .container_hardwares .cabecalho_hardwares .cabecalho_hardwares_direita #btn-novo-hardware {
         font-size: 0.8rem;
         min-width: 22vw;
     }
 
-    .container-hardwares .cabecalho-hardwares .cabecalho-hardwares-esquerda h2 {
+    .container_hardwares .cabecalho_hardwares .cabecalho_hardwares_esquerda h2 {
         font-size: 2rem;
     }
 
-    .container-hardwares .cabecalho-hardwares .cabecalho-hardwares-esquerda h6 {
+    .container_hardwares .cabecalho_hardwares .cabecalho_hardwares_esquerda h6 {
         font-size: 0.9rem;
         max-width: 60%;
     }
 
-    .container-hardwares .cabecalho-hardwares .cabecalho-hardwares-direita {
+    .container_hardwares .cabecalho_hardwares .cabecalho_hardwares_direita {
         flex-direction: column;
         gap: 2vh;
-    }
-
-    .navbar .popup-perfil.active {
-        top: 90%;
-        min-width: 24vw;
     }
 }
 
 @media (max-height: 900px) {
 
-    .caixa-tabela-hardwares {
+    .caixa_tabela_hardwares {
         height: 55vh;
     }
 
-    .sobreposicao-modal,
-    .sobreposicao-modal-editar {
+    .sobreposicao_modal,
+    .sobreposicao_modal_editar {
         align-items: center !important;
-    }
-
-    .navbar .popup-perfil.active {
-        min-width: 30vw;
     }
 }
 
 @media (max-width: 900px) {
 
-    .navbar .popup-perfil.active {
-        min-width: 30vw;
-    }
-
-    .cabecalho-hardwares {
+    .cabecalho_hardwares {
         flex-direction: column;
         align-items: flex-start;
         gap: 2vh;
     }
 
-    .cabecalho-hardwares-direita {
+    .cabecalho_hardwares_direita {
         width: 100%;
         flex-direction: column !important;
         align-items: stretch;
     }
 
-    .busca-hardwares,
+    .busca_hardwares,
     #btn-novo-hardware {
         width: 100% !important;
     }
 
-    .corpo-modal {
+    .corpo_modal {
         flex-direction: column;
     }
 
-    .coluna-modal {
+    .coluna_modal {
         width: 100%;
     }
 }
 
 @media (max-width: 760px) {
 
-    .navbar {
-        height: auto;
-        min-height: 14vh;
-        padding: 1rem;
-        flex-direction: column;
-        justify-content: center;
-        gap: 1rem;
-    }
-
-    .rodape-hardwares {
+    .rodape_hardwares {
         flex-direction: column;
         gap: 1.5vh;
         align-items: flex-start;
     }
 
-    .rodape-hardwares .contagem-resultados {
+    .rodape_hardwares .contagem_resultados {
         font-size: 0.8rem;
         max-width: none;
     }
 
-    .container-hardwares .cabecalho-hardwares .cabecalho-hardwares-direita #btn-novo-hardware {
+    .container_hardwares .cabecalho_hardwares .cabecalho_hardwares_direita #btn-novo-hardware {
         font-size: 0.7rem;
         width: 100%;
     }
@@ -141,58 +109,51 @@
     }
 }
 
-@media (max-width: 700px) {
-
-    .navbar .popup-perfil.active {
-        min-width: 60vw;
-    }
-}
-
 @media (max-width: 650px) {
 
-    .container-hardwares .cabecalho-hardwares .cabecalho-hardwares-direita #btn-novo-hardware {
+    .container_hardwares .cabecalho_hardwares .cabecalho_hardwares_direita #btn-novo-hardware {
         font-size: 0.85rem;
         width: 100%;
     }
 
-    .container-hardwares .cabecalho-hardwares .cabecalho-hardwares-esquerda h2 {
+    .container_hardwares .cabecalho_hardwares .cabecalho_hardwares_esquerda h2 {
         font-size: 1.4rem;
         max-width: 100%;
     }
 
-    .container-hardwares .cabecalho-hardwares .cabecalho-hardwares-esquerda h6 {
+    .container_hardwares .cabecalho_hardwares .cabecalho_hardwares_esquerda h6 {
         font-size: 0.8rem;
         max-width: 100%;
     }
 
-    .container-hardwares {
+    .container_hardwares {
         width: 94%;
         padding: 3vh 0;
         gap: 3vh;
     }
 
-    .grade-checkbox {
+    .grade_checkbox {
         grid-template-columns: 1fr;
     }
 
-    .modal-cadastro {
+    .modal_cadastro {
         width: 96%;
     }
 
-    .cabecalho-modal,
-    .corpo-modal,
-    .rodape-modal {
+    .cabecalho_modal,
+    .corpo_modal,
+    .rodape_modal {
         padding: 1rem;
     }
 
-    .rodape-modal {
+    .rodape_modal {
         flex-direction: column-reverse;
     }
 
-    .btn-cancelar,
-    .btn-cancelar-editar,
-    .btn-salvar,
-    .btn-salvar-editar {
+    .btn_cancelar,
+    .btn_cancelar_editar,
+    .btn_salvar,
+    .btn_salvar_editar {
         width: 100%;
         text-align: center;
     }
@@ -200,329 +161,25 @@
 
 @media (max-width: 900px) {
 
-    #modal-cadastrar .corpo-modal,
-    #modal-editar .corpo-modal {
+    #modal-cadastrar .corpo_modal,
+    #modal-editar .corpo_modal {
         grid-template-columns: 1fr !important;
         gap: 25px !important;
     }
 
-    #modal-cadastrar .modal-cadastro,
-    #modal-editar .modal-cadastro {
+    #modal-cadastrar .modal_cadastro,
+    #modal-editar .modal_cadastro {
         padding: 24px;
         max-height: 90vh;
     }
 
-    #modal-cadastrar .grade-checkbox,
-    #modal-editar .grade-checkbox {
+    #modal-cadastrar .grade_checkbox,
+    #modal-editar .grade_checkbox {
         height: 320px !important;
     }
 }
 
 /*Estilos da página e dos modais*/
-
-* {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
-}
-
-:root {
-    --font-padrao: "Allerta", sans-serif;
-    --font-logo: "Allerta Stencil", sans-serif;
-    --cor-preto-default: #1E1E1E;
-    --cor-branco-default: #ffff;
-    --cor-azul-contraste: #170F38;
-    --cor-azul-contraste2: #5178F9;
-    --cor-azul-apagado: #5C6288;
-    --cor-verde-ativo: #3DDC84;
-    --cor-amarelo-atencao: #F5C542;
-    --cor-vermelho-inativo: #FF5C5C;
-}
-
-/*Barra de navegação*/
-
-.navbar {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    position: fixed;
-    top: 0;
-    left: 0;
-    z-index: 1000;
-    width: 100%;
-    min-height: 9vh;
-    padding: 0.8rem 5%;
-    background-color: #0e0921;
-    border-bottom: 1px solid rgba(255, 255, 255, 0.116);
-}
-
-.nav-logo h1 {
-    font-size: 1.6rem;
-    font-family: var(--font-logo);
-    font-weight: 500;
-    color: var(--cor-branco-default);
-    border-bottom: 1px solid rgba(255, 255, 255, 0);
-    border-radius: 0.2rem;
-    cursor: pointer;
-    transition: 0.3s;
-}
-
-.nav-logo h1 span {
-    color: var(--cor-azul-contraste2);
-}
-
-.nav-logo h1:hover {
-    border-bottom: 1px solid rgba(255, 255, 255, 0.4);
-}
-
-.nav-links ul {
-    display: flex;
-    gap: 2.8vw;
-    list-style: none;
-}
-
-.nav-links ul li {
-    font-size: 1rem;
-    font-family: var(--font-padrao);
-    color: var(--cor-branco-default);
-    cursor: pointer;
-    transition: 0.3s;
-}
-
-.nav-links ul li a {
-    color: inherit;
-    text-decoration: none;
-}
-
-.nav-links ul li:hover {
-    color: rgba(255, 255, 255, 0.56);
-}
-
-.nav-login {
-    display: flex;
-    align-items: center;
-    gap: 1rem;
-    position: relative;
-}
-
-.nav-login button {
-    font-family: var(--font-padrao);
-    font-size: 0.9rem;
-    color: var(--cor-branco-default);
-    cursor: pointer;
-    transition: 0.3s;
-}
-
-.nav-login #btn-logar {
-    padding: 0.3rem 1rem;
-    background-color: transparent;
-    border: 1px solid rgba(255, 255, 255, 0);
-    border-radius: 0.3rem;
-}
-
-.nav-login #btn-logar:hover {
-    border: 1px solid rgba(255, 255, 255, 0.6);
-}
-
-.nav-login #btn-cadastrar {
-    padding: 0.3rem 0.7rem;
-    background-color: var(--cor-azul-contraste2);
-    border: 1px solid var(--cor-azul-contraste);
-    border-radius: 0.3rem;
-}
-
-.nav-login #btn-cadastrar:hover {
-    background-color: #5178f9b3;
-}
-
-/*comportamento login LOGADO*/
-
-#btn-pagina-empresa {
-    padding: 0.2rem 1rem;
-    border: 1px solid rgba(255, 255, 255, 0.172);
-    background-color: var(--cor-azul-contraste2);
-    border-radius: 0.3rem;
-    transition: 0.3s;
-}
-
-#btn-pagina-empresa:hover {
-    background-color: #5178f9b3;
-}
-
-#btn-perfil-usuario {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 1vw;
-    background-color: transparent;
-    border: 1px solid rgba(255, 255, 255, 0.283);
-    padding: 0.35rem 1.4rem;
-    border-radius: 0.3rem;
-    transition: 0.3s;
-}
-
-#btn-perfil-usuario:hover {
-    border-color: var(--cor-azul-contraste2);
-}
-
-/*Container Pai na Navbar*/
-
-.nav-login {
-    display: flex;
-    align-items: center;
-    gap: 1rem;
-    position: relative;
-}
-
-.popup-perfil {
-    display: none !important;
-    position: absolute;
-    top: 80%;
-    right: 2.8%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    flex-direction: column;
-    height: 22vh;
-    width: 16%;
-    background-color: var(--cor-azul-contraste);
-    border-radius: 0.3rem;
-    z-index: 100000;
-    color: white;
-}
-
-.popup-perfil.active {
-    display: flex !important;
-}
-
-#btn-fechar-perfil {
-    position: absolute;
-    right: 3%;
-    top: 6%;
-    cursor: pointer;
-    transition: 0.3s;
-}
-
-#btn-fechar-perfil:hover {
-    color: rgba(255, 0, 0, 0.293) !important;
-}
-
-.content-perfil {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    flex-direction: column;
-    gap: 1vh;
-    height: 80%;
-    width: 90%;
-}
-
-.content-perfil-top {
-    display: flex;
-    align-items: center;
-    justify-content: flex-start;
-    width: 90%;
-    height: 40%;
-    gap: 0.8vw;
-}
-
-.perfil-top-text {
-    display: flex;
-    justify-content: space-evenly;
-    align-items: flex-start;
-    flex-direction: column;
-    gap: 0.2vw;
-}
-
-.perfil-top-text h6,
-.perfil-top-text h5 {
-    text-align: left;
-    padding: 0rem 0rem;
-    font-family: var(--font-padrao);
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    max-width: 80%;
-}
-
-.content-perfil-top .fa-user {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 2rem;
-    height: 7vh;
-    min-width: 3.5vw;
-    border: 1px solid var(--cor-azul-contraste2);
-    border-radius: 50%;
-}
-
-.content-perfil-bottom {
-    display: flex;
-    align-items: center;
-    justify-content: flex-start;
-    flex-direction: column;
-    width: 90%;
-    height: 60%;
-    border-top: 1px solid black;
-}
-
-.perfil-bottom-info {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    height: 70%;
-    width: 90%;
-}
-
-.info-box-text {
-    display: flex;
-    align-items: center;
-    justify-content: flex-start;
-    gap: 0.6vw;
-    font-family: var(--font-padrao);
-}
-
-.info-box-text span h6 {
-    color: rgba(255, 255, 255, 0.692);
-}
-
-.info-box-text span h5 {
-    font-weight: 400;
-}
-
-.empresa-limit h5 {
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    max-width: 80%;
-}
-
-.perfil-bottom-btn {
-    display: flex;
-    align-items: center;
-    justify-content: space-around;
-    gap: 0.6vw;
-    height: 30%;
-    width: 90%;
-}
-
-.content-perfil-bottom button {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 0.4vw;
-    padding: 0.4rem 0.9rem;
-    background-color: var(--cor-azul-contraste);
-    color: white;
-    border: 1px solid var(--cor-azul-contraste2);
-    border-radius: 0.3rem;
-    cursor: pointer;
-    transition: 0.3s;
-}
-
-.content-perfil-bottom button:hover {
-    background-color: #5178f9e6;
-}
 
 main {
     display: flex;
@@ -531,12 +188,12 @@ main {
     width: 100%;
     height: auto;
     min-height: 91vh;
-    background-color: #0e0921;
+    background-color: var(--bg-dark);
 }
 
 /*Área principal de hardwares*/
 
-.container-hardwares {
+.container_hardwares {
     display: flex;
     align-items: flex-start;
     justify-content: flex-start;
@@ -547,14 +204,14 @@ main {
     padding: 5vh 0;
 }
 
-.cabecalho-hardwares {
+.cabecalho_hardwares {
     display: flex;
     align-items: center;
     justify-content: space-between;
     width: 100%;
 }
 
-.cabecalho-hardwares-esquerda {
+.cabecalho_hardwares_esquerda {
     display: flex;
     align-items: flex-start;
     justify-content: center;
@@ -562,35 +219,35 @@ main {
     gap: 0.8vh;
 }
 
-.rotulo-hardwares {
+.rotulo_hardwares {
     font-size: 1rem;
     font-family: var(--font-padrao);
     font-weight: 600;
     color: var(--cor-azul-contraste2);
 }
 
-.cabecalho-hardwares-esquerda h2 {
+.cabecalho_hardwares_esquerda h2 {
     font-size: 2rem;
     font-family: var(--font-padrao);
     font-weight: 600;
     color: var(--cor-branco-default);
 }
 
-.cabecalho-hardwares-esquerda h6 {
+.cabecalho_hardwares_esquerda h6 {
     font-size: 1rem;
     font-weight: 600;
     font-family: var(--font-padrao);
     color: var(--cor-azul-apagado);
 }
 
-.cabecalho-hardwares-direita {
+.cabecalho_hardwares_direita {
     display: flex;
     align-items: center;
     justify-content: center;
     gap: 1vw;
 }
 
-.busca-hardwares {
+.busca_hardwares {
     display: flex;
     align-items: center;
     justify-content: flex-start;
@@ -602,12 +259,12 @@ main {
     border-radius: 0.3rem;
 }
 
-.busca-hardwares img {
+.busca_hardwares img {
     width: 1rem;
     height: 1rem;
 }
 
-.busca-hardwares input {
+.busca_hardwares input {
     width: 100%;
     background: transparent;
     border: none;
@@ -617,7 +274,7 @@ main {
     color: var(--cor-branco-default);
 }
 
-.busca-hardwares input::placeholder {
+.busca_hardwares input::placeholder {
     color: var(--cor-azul-apagado);
 }
 
@@ -650,7 +307,7 @@ main {
 
 /*Tabela de hardwares*/
 
-.caixa-tabela-hardwares {
+.caixa_tabela_hardwares {
     width: 100%;
     max-height: 58vh;
     overflow-x: auto;
@@ -659,17 +316,17 @@ main {
     border-radius: 0.6rem;
 }
 
-.tabela-hardwares {
+.tabela_hardwares {
     width: 100%;
     min-width: 60rem;
     border-collapse: collapse;
 }
 
-.tabela-hardwares thead tr {
+.tabela_hardwares thead tr {
     border-bottom: 1px solid rgba(255, 255, 255, 0.116);
 }
 
-.tabela-hardwares th {
+.tabela_hardwares th {
     padding: 1.2rem;
     text-align: left;
     white-space: nowrap;
@@ -679,7 +336,7 @@ main {
     color: var(--cor-azul-contraste2);
 }
 
-.tabela-hardwares td {
+.tabela_hardwares td {
     padding: 1rem 1.2rem;
     vertical-align: middle;
     font-family: var(--font-padrao);
@@ -688,72 +345,72 @@ main {
     border-bottom: 1px solid rgba(255, 255, 255, 0.116);
 }
 
-.tabela-hardwares tbody tr:last-child td {
+.tabela_hardwares tbody tr:last-child td {
     border-bottom: none;
 }
 
-.tabela-hardwares tbody tr {
+.tabela_hardwares tbody tr {
     transition: 0.3s;
 }
 
-.tabela-hardwares tbody tr:hover {
+.tabela_hardwares tbody tr:hover {
     background-color: rgba(255, 255, 255, 0.03);
 }
 
-.celula-dispositivo {
+.celula_dispositivo {
     display: flex;
     align-items: center;
     justify-content: flex-start;
     gap: 0.8vw;
 }
 
-.icone-dispositivo {
+.icone_dispositivo {
     display: flex;
     align-items: center;
     justify-content: center;
     width: 2.4rem;
     height: 2.4rem;
-    background-color: #0e0921;
+    background-color: var(--bg-dark);
     border-radius: 0.3rem;
     color: var(--cor-azul-contraste2);
     font-size: 1rem;
 }
 
-.icone-dispositivo img {
+.icone_dispositivo img {
     width: 1rem;
     height: 1rem;
 }
 
-.info-dispositivo {
+.info_dispositivo {
     display: flex;
     align-items: flex-start;
     justify-content: center;
     flex-direction: column;
 }
 
-.info-dispositivo strong {
+.info_dispositivo strong {
     font-family: var(--font-padrao);
     font-size: 0.9rem;
     color: var(--cor-branco-default);
 }
 
-.info-dispositivo span {
+.info_dispositivo span {
     font-family: var(--font-padrao);
     font-size: 0.75rem;
     color: var(--cor-azul-apagado);
 }
 
-.celula-componentes img {
+.celula_componentes img {
     width: 0.9rem;
     height: 0.9rem;
 }
 
-.celula-componentes img[src*="bateria"] {
+.celula_componentes img[src*="bateria"] {
     width: 0.8rem;
     height: 0.8rem;
 }
 
-.celula-componentes img[src*="wifi"] {
+.celula_componentes img[src*="wifi"] {
     width: 0.8rem;
     height: 0.8rem;
 }
@@ -773,32 +430,32 @@ main {
     height: 0.5rem;
 }
 
-.status-ativo {
+.status_ativo {
     color: var(--cor-verde-ativo);
 }
 
-.status-atencao {
+.status_atencao {
     color: var(--cor-amarelo-atencao);
 }
 
-.status-inativo {
+.status_inativo {
     color: var(--cor-vermelho-inativo);
 }
 
-.celula-acoes {
+.celula_acoes {
     display: flex;
     align-items: center;
     justify-content: flex-start;
     gap: 0.6vw;
 }
 
-.btn-icone {
+.btn_icone {
     display: flex;
     align-items: center;
     justify-content: center;
     width: 2.2rem;
     height: 2.2rem;
-    background-color: #0e0921;
+    background-color: var(--bg-dark);
     border: 1px solid rgba(255, 255, 255, 0);
     border-radius: 0.3rem;
     color: var(--cor-branco-default);
@@ -806,34 +463,34 @@ main {
     transition: 0.3s;
 }
 
-.btn-icone img {
+.btn_icone img {
     width: 1rem;
     height: 1rem;
 }
 
-.btn-icone:hover {
+.btn_icone:hover {
     border: 1px solid var(--cor-azul-contraste2);
     color: var(--cor-azul-contraste2);
 }
 
-.btn-excluir img {
+.btn_excluir img {
     width: 1rem;
     height: 1rem;
 }
 
-.btn-excluir:hover {
+.btn_excluir:hover {
     border: 1px solid var(--cor-vermelho-inativo);
     color: var(--cor-vermelho-inativo);
 }
 
-.rodape-hardwares {
+.rodape_hardwares {
     display: flex;
     align-items: center;
     justify-content: space-between;
     width: 100%;
 }
 
-.contagem-resultados {
+.contagem_resultados {
     font-family: var(--font-padrao);
     font-size: 0.85rem;
     color: var(--cor-azul-apagado);
@@ -846,8 +503,8 @@ main {
     gap: 0.4vw;
 }
 
-.seta-pagina,
-.numero-pagina {
+.seta_pagina,
+.numero_pagina {
     display: flex;
     align-items: center;
     justify-content: center;
@@ -863,28 +520,28 @@ main {
     transition: 0.3s;
 }
 
-.seta-pagina img {
+.seta_pagina img {
     width: 0.8rem;
     height: 0.8rem;
 }
 
-.seta-pagina:hover,
-.numero-pagina:hover {
+.seta_pagina:hover,
+.numero_pagina:hover {
     border: 1px solid var(--cor-azul-contraste2);
 }
 
-.pagina-ativa {
+.pagina_ativa {
     background-color: var(--cor-azul-contraste2);
     border: 1px solid var(--cor-azul-contraste2);
     color: var(--cor-branco-default);
 }
 
-.pontos-pagina {
+.pontos_pagina {
     font-family: var(--font-padrao);
     color: var(--cor-azul-apagado);
 }
 
-.por-pagina {
+.por_pagina {
     display: flex;
     align-items: center;
     justify-content: center;
@@ -899,20 +556,20 @@ main {
     cursor: pointer;
 }
 
-.por-pagina img {
+.por_pagina img {
     width: 0.75rem;
     height: 0.75rem;
 }
 
-.seletor-modal img {
+.seletor_modal img {
     width: 0.75rem;
     height: 0.75rem;
 }
 
 /*Modais de cadastro e edição*/
 
-.sobreposicao-modal,
-.sobreposicao-modal-editar {
+.sobreposicao_modal,
+.sobreposicao_modal_editar {
     display: none;
     align-items: center;
     justify-content: center;
@@ -926,12 +583,12 @@ main {
     background-color: transparent;
 }
 
-.sobreposicao-modal.modal-aberto,
-.sobreposicao-modal-editar.modal-aberto {
+.sobreposicao_modal.modal_aberto,
+.sobreposicao_modal_editar.modal_aberto {
     display: flex;
 }
 
-.modal-cadastro {
+.modal_cadastro {
     display: flex;
     align-items: flex-start;
     justify-content: flex-start;
@@ -945,7 +602,7 @@ main {
     border-radius: 0.6rem;
 }
 
-.cabecalho-modal {
+.cabecalho_modal {
     display: flex;
     align-items: center;
     justify-content: space-between;
@@ -954,7 +611,7 @@ main {
     border-bottom: 1px solid rgba(255, 255, 255, 0.116);
 }
 
-.cabecalho-modal h2 {
+.cabecalho_modal h2 {
     font-family: var(--font-padrao);
     font-weight: 600;
     font-size: 1.3rem;
@@ -963,8 +620,8 @@ main {
 
 /*Botão de fechar no cabeçalho de cadastro e edição*/
 
-.fechar-modal,
-.fechar-modal-editar {
+.fechar_modal,
+.fechar_modal_editar {
     display: flex;
     align-items: center;
     justify-content: center;
@@ -976,17 +633,17 @@ main {
     transition: 0.3s;
 }
 
-.fechar-modal img {
+.fechar_modal img {
     width: 1.1rem;
     height: 1.1rem;
 }
 
-.fechar-modal:hover,
-.fechar-modal-editar:hover {
+.fechar_modal:hover,
+.fechar_modal_editar:hover {
     color: var(--cor-branco-default);
 }
 
-.corpo-modal {
+.corpo_modal {
     display: flex;
     align-items: flex-start;
     justify-content: space-between;
@@ -995,7 +652,7 @@ main {
     padding: 1.6rem;
 }
 
-.coluna-modal {
+.coluna_modal {
     display: flex;
     align-items: flex-start;
     justify-content: flex-start;
@@ -1004,20 +661,20 @@ main {
     gap: 1.6vh;
 }
 
-.titulo-coluna-modal {
+.titulo_coluna_modal {
     font-family: var(--font-padrao);
     font-size: 0.8rem;
     font-weight: 600;
     color: var(--cor-azul-contraste2);
 }
 
-.descricao-coluna-modal {
+.descricao_coluna_modal {
     font-family: var(--font-padrao);
     font-size: 0.82rem;
     color: var(--cor-azul-apagado);
 }
 
-.campo-modal {
+.campo_modal {
     display: flex;
     align-items: flex-start;
     justify-content: center;
@@ -1026,7 +683,7 @@ main {
     gap: 0.8vh;
 }
 
-.campo-modal label {
+.campo_modal label {
     font-family: var(--font-padrao);
     font-size: 0.85rem;
     font-weight: 600;
@@ -1037,41 +694,41 @@ main {
     color: var(--cor-azul-contraste2);
 }
 
-.campo-modal input,
-.campo-modal textarea,
-.seletor-modal select {
+.campo_modal input,
+.campo_modal textarea,
+.seletor_modal select {
     width: 100%;
     padding: 0.7rem 1rem;
     font-family: var(--font-padrao);
     font-size: 0.88rem;
     color: var(--cor-branco-default);
-    background-color: #0e0921;
+    background-color: var(--bg-dark);
     border: 1px solid rgba(255, 255, 255, 0.116);
     border-radius: 0.3rem;
     outline: none;
 }
 
-.campo-modal input::placeholder,
-.campo-modal textarea::placeholder {
+.campo_modal input::placeholder,
+.campo_modal textarea::placeholder {
     color: var(--cor-azul-apagado);
 }
 
-.campo-modal textarea {
+.campo_modal textarea {
     height: 5rem;
     resize: vertical;
 }
 
-.seletor-modal {
+.seletor_modal {
     position: relative;
     width: 100%;
 }
 
-.seletor-modal select {
+.seletor_modal select {
     appearance: none;
     cursor: pointer;
 }
 
-.seletor-modal i {
+.seletor_modal i {
     position: absolute;
     top: 50%;
     right: 1rem;
@@ -1080,27 +737,27 @@ main {
     color: var(--cor-azul-apagado);
 }
 
-.grade-checkbox {
+.grade_checkbox {
     display: grid;
     grid-template-columns: 1fr 1fr;
     width: 100%;
     gap: 1vh 1vw;
 }
 
-.item-checkbox {
+.item_checkbox {
     display: flex;
     align-items: center;
     justify-content: flex-start;
     gap: 0.7vw;
     padding: 0.8rem;
-    background-color: #0e0921;
+    background-color: var(--bg-dark);
     border: 1px solid rgba(255, 255, 255, 0.116);
     border-radius: 0.3rem;
     cursor: pointer;
     transition: 0.3s;
 }
 
-.item-checkbox.ic-disabled {
+.item_checkbox.ic_disabled {
     display: flex;
     align-items: center;
     justify-content: flex-start;
@@ -1113,17 +770,17 @@ main {
     transition: 0.3s;
 }
 
-.item-checkbox.ic-disabled strong,
-.item-checkbox.ic-disabled span {
+.item_checkbox.ic_disabled strong,
+.item_checkbox.ic_disabled span {
     color: rgba(238, 237, 235, 0.224);
 }
 
-.item-checkbox > img {
+.item_checkbox > img {
     width: 0.95rem;
     height: 0.95rem;
 }
 
-.texto-checkbox {
+.texto_checkbox {
     display: flex;
     align-items: flex-start;
     justify-content: center;
@@ -1132,26 +789,26 @@ main {
     gap: 0.2vh;
 }
 
-.texto-checkbox strong {
+.texto_checkbox strong {
     font-family: var(--font-padrao);
     font-size: 0.82rem;
     color: var(--cor-branco-default);
 }
 
-.texto-checkbox span {
+.texto_checkbox span {
     font-family: var(--font-padrao);
     font-size: 0.72rem;
     color: var(--cor-azul-apagado);
 }
 
-.item-checkbox input[type="checkbox"] {
+.item_checkbox input[type="checkbox"] {
     width: 1.1rem;
     height: 1.1rem;
     accent-color: var(--cor-azul-contraste2);
     cursor: pointer;
 }
 
-.rodape-modal {
+.rodape_modal {
     display: flex;
     align-items: center;
     justify-content: flex-end;
@@ -1163,10 +820,10 @@ main {
 
 /*rodapé: cancelar/salvar no modal de cadastro e edição*/
 
-.btn-cancelar,
-.btn-cancelar-editar,
-.btn-salvar,
-.btn-salvar-editar {
+.btn_cancelar,
+.btn_cancelar_editar,
+.btn_salvar,
+.btn_salvar_editar {
     padding: 0.7rem 1.6rem;
     font-family: var(--font-padrao);
     font-size: 0.9rem;
@@ -1176,31 +833,31 @@ main {
     transition: 0.3s;
 }
 
-.btn-cancelar,
-.btn-cancelar-editar {
+.btn_cancelar,
+.btn_cancelar_editar {
     background-color: transparent;
     color: var(--cor-branco-default);
     border: 1px solid rgba(255, 255, 255, 0.116);
 }
 
-.btn-cancelar:hover,
-.btn-cancelar-editar:hover {
+.btn_cancelar:hover,
+.btn_cancelar_editar:hover {
     background-color: rgba(255, 255, 255, 0.06);
 }
 
-.btn-salvar,
-.btn-salvar-editar {
+.btn_salvar,
+.btn_salvar_editar {
     background-color: var(--cor-azul-contraste2);
     border: 1px solid var(--cor-azul-contraste);
     color: var(--cor-branco-default);
 }
 
-.btn-salvar:hover,
-.btn-salvar-editar:hover {
+.btn_salvar:hover,
+.btn_salvar_editar:hover {
     background-color: #5178f9b3;
 }
 
-.modal-overlay-deletar {
+.modal_overlay_deletar {
     position: absolute;
     display: none;
     top: 0;
@@ -1211,11 +868,11 @@ main {
     z-index: 200000;
 }
 
-.modal-overlay-deletar.active {
+.modal_overlay_deletar.active {
     display: flex;
 }
 
-.modal-deletar {
+.modal_deletar {
     position: absolute;
     display: none;
     align-items: center;
@@ -1233,17 +890,17 @@ main {
     z-index: 300000;
 }
 
-.modal-deletar.active {
+.modal_deletar.active {
     display: flex;
 }
 
-.modal-deletar-top {
+.modal_deletar_top {
     display: flex;
     align-items: center;
     justify-content: center;
 }
 
-.modal-deletar-top h2 {
+.modal_deletar_top h2 {
     font-family: var(--font-padrao);
     font-weight: 500;
     font-size: 1.2rem;
@@ -1252,14 +909,14 @@ main {
     color: white;
 }
 
-.modal-deletar-bottom {
+.modal_deletar_bottom {
     display: flex;
     align-content: center;
     justify-content: center;
     gap: 1vw;
 }
 
-.modal-deletar-bottom button {
+.modal_deletar_bottom button {
     padding: 0.3rem 1.5rem;
     font-family: var(--font-padrao);
     color: white;
@@ -1286,7 +943,7 @@ main {
     border-color: rgb(246, 244, 244);
 }
 
-.modal-visualizar {
+.modal_visualizar {
     position: absolute;
     display: none;
     align-items: center;
@@ -1304,27 +961,27 @@ main {
     z-index: 300000;
 }
 
-.modal-visualizar-title {
+.modal_visualizar_title {
     display: flex;
     align-items: center;
     justify-content: flex-start;
     gap: 3vw;
     height: 25%;
     width: 95%;
-    border-bottom: 2px solid #0e0921;
+    border-bottom: 2px solid var(--bg-dark);
 }
 
-.visualizar-title-icon {
+.visualizar_title_icon {
     padding: 1rem;
     background-color: var(--cor-azul-contraste2);
     border-radius: 10%;
 }
 
-.visualizar-title-icon i {
+.visualizar_title_icon i {
     font-size: 2rem;
 }
 
-.visualizar-title-text {
+.visualizar_title_text {
     display: flex;
     align-items: flex-start;
     justify-content: center;
@@ -1333,26 +990,26 @@ main {
     text-align: left;
 }
 
-.visualizar-title-text span {
+.visualizar_title_text span {
     font-family: var(--font-padrao);
     font-size: 0.8rem;
     font-weight: 400;
     color: var(--cor-azul-apagado);
 }
 
-.visualizar-title-text h3 {
+.visualizar_title_text h3 {
     font-family: var(--font-padrao);
     color: white;
 }
 
-.visualizar-title-text h6 {
+.visualizar_title_text h6 {
     font-family: var(--font-padrao);
     font-size: 0.75rem;
     font-weight: 300;
     color: rgba(255, 255, 255, 0.561);
 }
 
-.modal-visualizar-topic {
+.modal_visualizar_topic {
     display: flex;
     align-items: center;
     justify-content: flex-start;
@@ -1361,14 +1018,14 @@ main {
     width: 95%;
 }
 
-.modal-visualizar-topic span {
+.modal_visualizar_topic span {
     padding: 0.3rem;
     font-family: var(--font-padrao);
     color: white;
     border-bottom: 2px solid var(--cor-azul-contraste2);
 }
 
-.modal-visualizar-info {
+.modal_visualizar_info {
     display: flex;
     align-items: center;
     justify-content: center;
@@ -1378,7 +1035,7 @@ main {
     width: 95%;
 }
 
-.visualizar-info-row {
+.visualizar_info_row {
     display: flex;
     align-items: center;
     justify-content: space-evenly;
@@ -1386,7 +1043,7 @@ main {
     height: 45%;
 }
 
-.info-row-item {
+.info_row_item {
     display: flex;
     align-items: center;
     justify-content: flex-start;
@@ -1395,7 +1052,7 @@ main {
     height: 100%;
 }
 
-.info-row-item-icon {
+.info_row_item_icon {
     display: flex;
     align-items: center;
     justify-content: center;
@@ -1403,12 +1060,12 @@ main {
     height: 30%;
 }
 
-.info-row-item-icon i {
+.info_row_item_icon i {
     font-size: 2rem;
     color: white;
 }
 
-.info-row-item-text {
+.info_row_item_text {
     display: flex;
     align-items: flex-start;
     justify-content: flex-start;
@@ -1418,11 +1075,11 @@ main {
     width: 80%;
 }
 
-.border-lateral {
+.border_lateral {
     border-right: 1px solid var(--cor-preto-default);
 }
 
-.info-row-item-text span {
+.info_row_item_text span {
     font-family: var(--font-padrao);
     font-size: 0.8rem;
     font-weight: 400;
@@ -1430,23 +1087,23 @@ main {
     color: var(--cor-azul-apagado);
 }
 
-.info-row-item-text h3 {
+.info_row_item_text h3 {
     font-family: var(--font-padrao);
     font-weight: 400;
     color: white;
 }
 
-.modal-visualizar-rowbar {
+.modal_visualizar_rowbar {
     display: flex;
     align-items: flex-end;
     justify-content: flex-end;
     gap: 1vw;
     height: 10%;
     width: 100%;
-    border-top: 2px solid #0e0921;
+    border-top: 2px solid var(--bg-dark);
 }
 
-.modal-visualizar-rowbar button {
+.modal_visualizar_rowbar button {
     padding: 0.3rem 1rem;
     background-color: var(--cor-azul-contraste);
     border: 1px solid white;
@@ -1457,7 +1114,7 @@ main {
     transition: 0.3s;
 }
 
-.modal-visualizar-rowbar button:hover {
+.modal_visualizar_rowbar button:hover {
     border-color: var(--cor-azul-contraste2);
 }
 
@@ -1491,8 +1148,8 @@ main {
 
 /*Estrutura principal*/
 
-#modal-cadastrar .modal-cadastro,
-#modal-editar .modal-cadastro {
+#modal-cadastrar .modal_cadastro,
+#modal-editar .modal_cadastro {
     width: 100%;
     max-width: 1100px;
     height: auto;
@@ -1500,15 +1157,15 @@ main {
     margin: 0;
     padding: 30px 38px 22px;
     overflow: hidden;
-    background-color: #0e0921;
+    background-color: var(--bg-dark);
     border: none;
     border-radius: 8px;
 }
 
 /*Duas colunas*/
 
-#modal-cadastrar .corpo-modal,
-#modal-editar .corpo-modal {
+#modal-cadastrar .corpo_modal,
+#modal-editar .corpo_modal {
     display: grid;
     grid-template-columns: 40% minmax(0, 1fr);
     gap: 8%;
@@ -1521,8 +1178,8 @@ main {
 
 /*Organização das colunas*/
 
-#modal-cadastrar .coluna-modal,
-#modal-editar .coluna-modal {
+#modal-cadastrar .coluna_modal,
+#modal-editar .coluna_modal {
     display: flex;
     flex-direction: column;
     align-items: stretch;
@@ -1533,31 +1190,31 @@ main {
 
 /*Títulos*/
 
-#modal-cadastrar .titulo-coluna-modal,
-#modal-editar .titulo-coluna-modal {
+#modal-cadastrar .titulo_coluna_modal,
+#modal-editar .titulo_coluna_modal {
     display: block;
     width: fit-content;
     padding-bottom: 9px;
     margin-bottom: 8px;
-    color: #ffffff;
+    color: var(--cor-branco-default);
     font-size: 14px;
     font-weight: 600;
-    border-bottom: 1px solid #5178F9;
+    border-bottom: 1px solid var(--cor-azul-contraste2);
 }
 
 /*Campos gerais*/
 
-#modal-cadastrar .campo-modal,
-#modal-editar .campo-modal {
+#modal-cadastrar .campo_modal,
+#modal-editar .campo_modal {
     display: flex;
     flex-direction: column;
     gap: 7px;
     width: 100%;
 }
 
-#modal-cadastrar .campo-modal label,
-#modal-editar .campo-modal label {
-    color: #5178F9;
+#modal-cadastrar .campo_modal label,
+#modal-editar .campo_modal label {
+    color: var(--cor-azul-contraste2);
     font-size: 10px;
     font-weight: 500;
     text-transform: uppercase;
@@ -1572,30 +1229,30 @@ main {
 
 /*Inputs*/
 
-#modal-cadastrar .campo-modal input,
-#modal-cadastrar .seletor-modal select,
-#modal-editar .campo-modal input,
-#modal-editar .seletor-modal select {
+#modal-cadastrar .campo_modal input,
+#modal-cadastrar .seletor_modal select,
+#modal-editar .campo_modal input,
+#modal-editar .seletor_modal select {
     width: 100%;
     height: 35px;
     padding: 8px 12px;
-    background-color: #170F38;
+    background-color: var(--cor-azul-contraste);
     border: none;
     border-radius: 10px;
-    color: #ffffff;
+    color: var(--cor-branco-default);
     font-size: 12px;
     outline: none;
 }
 
 /*Descrição*/
 
-#modal-cadastrar .campo-modal textarea,
-#modal-editar .campo-modal textarea {
+#modal-cadastrar .campo_modal textarea,
+#modal-editar .campo_modal textarea {
     width: 100%;
     height: 140px;
     min-height: 140px;
     padding: 12px;
-    background-color: #170F38;
+    background-color: var(--cor-azul-contraste);
     border: none;
     border-radius: 10px;
     color: white;
@@ -1606,19 +1263,19 @@ main {
 
 /*Foco nos campos*/
 
-#modal-cadastrar .campo-modal input:focus,
-#modal-cadastrar .campo-modal textarea:focus,
-#modal-cadastrar .seletor-modal select:focus,
-#modal-editar .campo-modal input:focus,
-#modal-editar .campo-modal textarea:focus,
-#modal-editar .seletor-modal select:focus {
-    box-shadow: 0 0 0 1px #5178F9;
+#modal-cadastrar .campo_modal input:focus,
+#modal-cadastrar .campo_modal textarea:focus,
+#modal-cadastrar .seletor_modal select:focus,
+#modal-editar .campo_modal input:focus,
+#modal-editar .campo_modal textarea:focus,
+#modal-editar .seletor_modal select:focus {
+    box-shadow: 0 0 0 1px var(--cor-azul-contraste2);
 }
 
 /*Cardápio de componentes*/
 
-#modal-cadastrar .grade-checkbox,
-#modal-editar .grade-checkbox {
+#modal-cadastrar .grade_checkbox,
+#modal-editar .grade_checkbox {
     display: flex;
     flex-direction: column;
     gap: 16px;
@@ -1633,15 +1290,15 @@ main {
     position: relative;
 }
 
-#modal-cadastrar .item-checkbox,
-#modal-editar .item-checkbox {
+#modal-cadastrar .item_checkbox,
+#modal-editar .item_checkbox {
     display: flex;
     align-items: center;
     gap: 12px;
     width: 100%;
     min-height: 66px;
     padding: 12px;
-    background-color: #170F38;
+    background-color: var(--cor-azul-contraste);
     border: 1px solid #34304f;
     border-radius: 14px;
     cursor: pointer;
@@ -1649,54 +1306,54 @@ main {
 
 /*Ícones*/
 
-#modal-cadastrar .item-checkbox i,
-#modal-editar .item-checkbox i {
+#modal-cadastrar .item_checkbox i,
+#modal-editar .item_checkbox i {
     font-size: 20px;
-    color: #5C6288 !important;
+    color: var(--cor-azul-apagado) !important;
 }
 
 /*Textos*/
 
-#modal-cadastrar .texto-checkbox,
-#modal-editar .texto-checkbox {
+#modal-cadastrar .texto_checkbox,
+#modal-editar .texto_checkbox {
     min-width: 0;
 }
 
-#modal-cadastrar .texto-checkbox strong,
-#modal-editar .texto-checkbox strong {
+#modal-cadastrar .texto_checkbox strong,
+#modal-editar .texto_checkbox strong {
     color: white;
     font-size: 11px;
 }
 
-#modal-cadastrar .texto-checkbox span,
-#modal-editar .texto-checkbox span {
-    color: #5C6288;
+#modal-cadastrar .texto_checkbox span,
+#modal-editar .texto_checkbox span {
+    color: var(--cor-azul-apagado);
     font-size: 9px;
 }
 
 /*Selecionados*/
 
-#modal-cadastrar .item-checkbox:has(input:checked) {
-    background-color: #5178F9;
-    border-color: #5178F9;
+#modal-cadastrar .item_checkbox:has(input:checked) {
+    background-color: var(--cor-azul-contraste2);
+    border-color: var(--cor-azul-contraste2);
 }
 
-#modal-cadastrar .item-checkbox:has(input:checked) i {
+#modal-cadastrar .item_checkbox:has(input:checked) i {
     color: white !important;
 }
 
-#modal-cadastrar .item-checkbox input[type="checkbox"] {
+#modal-cadastrar .item_checkbox input[type="checkbox"] {
     order: -1;
     width: 17px;
     height: 17px;
     flex-shrink: 0;
-    accent-color: #5178F9;
+    accent-color: var(--cor-azul-contraste2);
 }
 
 /*Rodapé*/
 
-#modal-cadastrar .rodape-modal,
-#modal-editar .rodape-modal {
+#modal-cadastrar .rodape_modal,
+#modal-editar .rodape_modal {
     display: flex;
     justify-content: flex-end;
     gap: 14px;
@@ -1708,10 +1365,10 @@ main {
 
 /*Botões*/
 
-#modal-cadastrar .btn-salvar,
-#modal-cadastrar .btn-cancelar,
-#modal-editar .btn-salvar-editar,
-#modal-editar .btn-cancelar-editar {
+#modal-cadastrar .btn_salvar,
+#modal-cadastrar .btn_cancelar,
+#modal-editar .btn_salvar_editar,
+#modal-editar .btn_cancelar_editar {
     width: auto;
     min-width: 95px;
     padding: 9px 22px;
@@ -1721,20 +1378,20 @@ main {
 
 /*Salvar*/
 
-#modal-cadastrar .btn-salvar,
-#modal-editar .btn-salvar-editar {
-    background-color: #5178F9;
-    border: 1px solid #5178F9;
+#modal-cadastrar .btn_salvar,
+#modal-editar .btn_salvar_editar {
+    background-color: var(--cor-azul-contraste2);
+    border: 1px solid var(--cor-azul-contraste2);
     color: white;
 }
 
 /*Cancelar*/
 
-#modal-cadastrar .btn-cancelar,
-#modal-editar .btn-cancelar-editar {
+#modal-cadastrar .btn_cancelar,
+#modal-editar .btn_cancelar_editar {
     background-color: transparent;
-    border: 1px solid #5178F9;
-    color: #5178F9;
+    border: 1px solid var(--cor-azul-contraste2);
+    color: var(--cor-azul-contraste2);
 }
 
 /*Responsividade*/
@@ -1745,8 +1402,8 @@ main {
 
 /*Componentes e gatilhos de alerta*/
 
-#modal-cadastrar .linha-componente,
-#modal-editar .linha-componente {
+#modal-cadastrar .linha_componente,
+#modal-editar .linha_componente {
     display: flex;
     align-items: center;
     gap: 0;
@@ -1757,8 +1414,8 @@ main {
 
 /*Checkbox circular*/
 
-#modal-cadastrar .linha-componente .checkbox-componente,
-#modal-editar .linha-componente .checkbox-componente-editar {
+#modal-cadastrar .linha_componente .checkbox_componente,
+#modal-editar .linha_componente .checkbox_componente_editar {
     appearance: none;
     flex: 0 0 17px;
     width: 17px;
@@ -1770,16 +1427,16 @@ main {
     cursor: pointer;
 }
 
-#modal-cadastrar .linha-componente .checkbox-componente:checked,
-#modal-editar .linha-componente .checkbox-componente-editar:checked {
-    background-color: #5178F9;
-    border-color: #5178F9;
+#modal-cadastrar .linha_componente .checkbox_componente:checked,
+#modal-editar .linha_componente .checkbox_componente_editar:checked {
+    background-color: var(--cor-azul-contraste2);
+    border-color: var(--cor-azul-contraste2);
 }
 
 /*Card azul*/
 
-#modal-cadastrar .linha-componente .item-checkbox,
-#modal-editar .linha-componente .item-checkbox {
+#modal-cadastrar .linha_componente .item_checkbox,
+#modal-editar .linha_componente .item_checkbox {
     display: flex;
     align-items: center;
     justify-content: flex-start;
@@ -1790,7 +1447,7 @@ main {
     height: 90px;
     padding: 12px;
     margin: 0;
-    background-color: #0e0921;
+    background-color: var(--bg-dark);
     border: 1px solid #34304f;
     border-radius: 22px;
     position: relative;
@@ -1800,38 +1457,38 @@ main {
 
 /*Card selecionado*/
 
-#modal-cadastrar .linha-componente
+#modal-cadastrar .linha_componente
 
-.checkbox-componente:checked + .item-checkbox,
-#modal-editar .linha-componente
+.checkbox_componente:checked + .item_checkbox,
+#modal-editar .linha_componente
 
-.checkbox-componente-editar:checked + .item-checkbox {
-    background-color: #5178F9;
-    border-color: #5178F9;
+.checkbox_componente_editar:checked + .item_checkbox {
+    background-color: var(--cor-azul-contraste2);
+    border-color: var(--cor-azul-contraste2);
 }
 
 /*Ícone*/
 
-#modal-cadastrar .linha-componente .item-checkbox i,
-#modal-editar .linha-componente .item-checkbox i {
+#modal-cadastrar .linha_componente .item_checkbox i,
+#modal-editar .linha_componente .item_checkbox i {
     flex-shrink: 0;
-    color: #5C6288 !important;
+    color: var(--cor-azul-apagado) !important;
     font-size: 23px;
 }
 
-#modal-cadastrar .linha-componente
+#modal-cadastrar .linha_componente
 
-.checkbox-componente:checked + .item-checkbox i,
-#modal-editar .linha-componente
+.checkbox_componente:checked + .item_checkbox i,
+#modal-editar .linha_componente
 
-.checkbox-componente-editar:checked + .item-checkbox i {
+.checkbox_componente_editar:checked + .item_checkbox i {
     color: white !important;
 }
 
 /*Nome do componente*/
 
-#modal-cadastrar .linha-componente .item-checkbox span,
-#modal-editar .linha-componente .item-checkbox span {
+#modal-cadastrar .linha_componente .item_checkbox span,
+#modal-editar .linha_componente .item_checkbox span {
     display: block;
     flex: 1;
     min-width: 0;
@@ -1841,22 +1498,22 @@ main {
     line-height: 1.4;
     white-space: normal;
     overflow-wrap: break-word;
-    color: #5C6288;
+    color: var(--cor-azul-apagado);
 }
 
-#modal-cadastrar .linha-componente
+#modal-cadastrar .linha_componente
 
-.checkbox-componente:checked + .item-checkbox span,
-#modal-editar .linha-componente
+.checkbox_componente:checked + .item_checkbox span,
+#modal-editar .linha_componente
 
-.checkbox-componente-editar:checked + .item-checkbox span {
+.checkbox_componente_editar:checked + .item_checkbox span {
     color: white;
 }
 
 /*Área dos alertas*/
 
-#modal-cadastrar .alertas-componente,
-#modal-editar .alertas-componente {
+#modal-cadastrar .alertas_componente,
+#modal-editar .alertas_componente {
     display: flex;
     align-items: center;
     justify-content: space-evenly;
@@ -1866,15 +1523,15 @@ main {
     height: 90px;
     padding: 10px 12px 10px 22px;
     margin-left: -12px;
-    background-color: #170F38;
-    border: 1px solid #5C6288;
+    background-color: var(--cor-azul-contraste);
+    border: 1px solid var(--cor-azul-apagado);
     border-radius: 0 22px 22px 0;
 }
 
 /*Cada campo*/
 
-#modal-cadastrar .campo-alerta,
-#modal-editar .campo-alerta {
+#modal-cadastrar .campo_alerta,
+#modal-editar .campo_alerta {
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -1886,8 +1543,8 @@ main {
 
 /*Títulos*/
 
-#modal-cadastrar .campo-alerta label,
-#modal-editar .campo-alerta label {
+#modal-cadastrar .campo_alerta label,
+#modal-editar .campo_alerta label {
     font-family: var(--font-padrao);
     color: white;
     font-size: 10px;
@@ -1896,14 +1553,14 @@ main {
 
 /*Inputs*/
 
-#modal-cadastrar .campo-alerta input,
-#modal-editar .campo-alerta input {
+#modal-cadastrar .campo_alerta input,
+#modal-editar .campo_alerta input {
     width: 85%;
     height: 23px;
     min-width: 0;
     padding: 2px 5px;
-    background-color: #0e0921;
-    border: 1px solid #5C6288;
+    background-color: var(--bg-dark);
+    border: 1px solid var(--cor-azul-apagado);
     border-radius: 20px;
     font-family: var(--font-padrao);
     color: white;
@@ -1914,19 +1571,19 @@ main {
 
 /*Exemplos*/
 
-#modal-cadastrar .campo-alerta small,
-#modal-editar .campo-alerta small {
+#modal-cadastrar .campo_alerta small,
+#modal-editar .campo_alerta small {
     font-family: var(--font-padrao);
-    color: #5C6288;
+    color: var(--cor-azul-apagado);
     font-size: 9px;
 }
 
 /*Remove setas dos inputs numéricos*/
 
-#modal-cadastrar .campo-alerta input::-webkit-inner-spin-button,
-#modal-cadastrar .campo-alerta input::-webkit-outer-spin-button,
-#modal-editar .campo-alerta input::-webkit-inner-spin-button,
-#modal-editar .campo-alerta input::-webkit-outer-spin-button {
+#modal-cadastrar .campo_alerta input::-webkit-inner-spin-button,
+#modal-cadastrar .campo_alerta input::-webkit-outer-spin-button,
+#modal-editar .campo_alerta input::-webkit-inner-spin-button,
+#modal-editar .campo_alerta input::-webkit-outer-spin-button {
     -webkit-appearance: none;
     margin: 0;
 }
@@ -1938,9 +1595,9 @@ main {
 
 /*Foco*/
 
-#modal-cadastrar .campo-alerta input:focus,
-#modal-editar .campo-alerta input:focus {
-    border-color: #5178F9;
+#modal-cadastrar .campo_alerta input:focus,
+#modal-editar .campo_alerta input:focus {
+    border-color: var(--cor-azul-contraste2);
 }
 
 /*Fonte padronizada no modal de cadastro*/
@@ -1957,7 +1614,7 @@ main {
 
 /*Container principal*/
 
-#modal-cadastrar .linha-componente {
+#modal-cadastrar .linha_componente {
     display: flex;
     align-items: center;
     gap: 0;
@@ -1968,45 +1625,45 @@ main {
 
 /*Card azul*/
 
-#modal-cadastrar .linha-componente .item-checkbox {
+#modal-cadastrar .linha_componente .item_checkbox {
     position: relative;
     z-index: 2;
     margin: 0;
     height: 90px;
     border-radius: 22px;
-    border: 1px solid #5C6288;
+    border: 1px solid var(--cor-azul-apagado);
     flex-shrink: 0;
 }
 
 /*Área roxa - continuação do card*/
 
-#modal-cadastrar .linha-componente .alertas-componente {
+#modal-cadastrar .linha_componente .alertas_componente {
     position: relative;
     z-index: 1;
     height: 90px;
     margin-left: -22px;
     padding-left: 34px;
-    border: 1px solid #5C6288;
+    border: 1px solid var(--cor-azul-apagado);
     border-left: none;
     border-radius: 0 22px 22px 0;
-    background-color: #170F38;
+    background-color: var(--cor-azul-contraste);
 }
 
 /*Remove qualquer espaçamento entre os cards*/
 
-#modal-cadastrar .linha-componente .item-checkbox,
-#modal-cadastrar .linha-componente .alertas-componente {
+#modal-cadastrar .linha_componente .item_checkbox,
+#modal-cadastrar .linha_componente .alertas_componente {
     box-sizing: border-box;
 }
 
 /*Seta do select - tipo de dispositivo*/
 
-#modal-cadastrar .seletor-modal {
+#modal-cadastrar .seletor_modal {
     position: relative;
     width: 100%;
 }
 
-#modal-cadastrar .seletor-modal select {
+#modal-cadastrar .seletor_modal select {
     appearance: none;
     -webkit-appearance: none;
     -moz-appearance: none;
@@ -2017,26 +1674,26 @@ main {
 
 /*Seta personalizada*/
 
-#modal-cadastrar .seletor-modal::after {
+#modal-cadastrar .seletor_modal::after {
     content: "";
     position: absolute;
     right: 15px;
     top: 50%;
     width: 7px;
     height: 7px;
-    border-right: 2px solid #ffffff;
-    border-bottom: 2px solid #ffffff;
+    border-right: 2px solid var(--cor-branco-default);
+    border-bottom: 2px solid var(--cor-branco-default);
     transform: translateY(-70%) rotate(45deg);
     pointer-events: none;
 }
 
 /*Botão de fechar o modal de cadastro*/
 
-#modal-cadastrar .modal-cadastro {
+#modal-cadastrar .modal_cadastro {
     position: relative;
 }
 
-#modal-cadastrar .cabecalho-modal {
+#modal-cadastrar .cabecalho_modal {
     display: block;
     position: absolute;
     top: 12px;
@@ -2052,13 +1709,13 @@ main {
 
 /*Esconde apenas o título antigo*/
 
-#modal-cadastrar .cabecalho-modal h2 {
+#modal-cadastrar .cabecalho_modal h2 {
     display: none;
 }
 
 /*Botão X*/
 
-#modal-cadastrar .fechar-modal {
+#modal-cadastrar .fechar_modal {
     display: flex;
     align-items: center;
     justify-content: center;
@@ -2067,26 +1724,26 @@ main {
     padding: 0;
     background: transparent;
     border: none;
-    color: #5C6288;
+    color: var(--cor-azul-apagado);
     font-size: 24px;
     cursor: pointer;
 }
 
-#modal-cadastrar .fechar-modal:hover {
-    color: #ffffff;
+#modal-cadastrar .fechar_modal:hover {
+    color: var(--cor-branco-default);
 }
 
 /*Cabeçalho - cadastro e edição*/
 
-#modal-cadastrar .modal-cadastro,
-#modal-editar .modal-cadastro {
+#modal-cadastrar .modal_cadastro,
+#modal-editar .modal_cadastro {
     position: relative;
 }
 
 /*Posicionamento do cabeçalho*/
 
-#modal-cadastrar .cabecalho-modal,
-#modal-editar .cabecalho-modal {
+#modal-cadastrar .cabecalho_modal,
+#modal-editar .cabecalho_modal {
     display: block;
     position: absolute;
     top: 12px;
@@ -2102,15 +1759,15 @@ main {
 
 /*Esconde o título antigo*/
 
-#modal-cadastrar .cabecalho-modal h2,
-#modal-editar .cabecalho-modal h2 {
+#modal-cadastrar .cabecalho_modal h2,
+#modal-editar .cabecalho_modal h2 {
     display: none;
 }
 
 /*Botão X*/
 
-#modal-cadastrar .fechar-modal,
-#modal-editar .fechar-modal-editar {
+#modal-cadastrar .fechar_modal,
+#modal-editar .fechar_modal_editar {
     display: flex;
     align-items: center;
     justify-content: center;
@@ -2119,7 +1776,7 @@ main {
     padding: 0;
     background: transparent;
     border: none;
-    color: #5C6288;
+    color: var(--cor-azul-apagado);
     font-size: 24px;
     cursor: pointer;
 }
@@ -2128,7 +1785,7 @@ main {
 
 /*Mesmo X do modal de edição*/
 
-#modal-cadastrar .fechar-modal {
+#modal-cadastrar .fechar_modal {
     display: flex;
     align-items: center;
     justify-content: center;
@@ -2137,20 +1794,19 @@ main {
     padding: 0;
     background: transparent;
     border: none;
-    color: #5C6288;
+    color: var(--cor-azul-apagado);
     font-size: 16px;
     font-weight: 400;
     cursor: pointer;
 }
 
-
 /*Mesma seta do select de cadastro na edição*/
-#modal-editar .seletor-modal {
+#modal-editar .seletor_modal {
     position: relative;
     width: 100%;
 }
 
-#modal-editar .seletor-modal select {
+#modal-editar .seletor_modal select {
     appearance: none;
     -webkit-appearance: none;
     -moz-appearance: none;
@@ -2160,7 +1816,7 @@ main {
 }
 
 /*Seta para baixo*/
-#modal-editar .seletor-modal::after {
+#modal-editar .seletor_modal::after {
     content: "";
     position: absolute;
     right: 15px;
@@ -2174,8 +1830,8 @@ main {
 }
 
 /*Cabeçalho do cardápio de componentes cadastro e edição*/
-#modal-cadastrar .cabecalho-componentes,
-#modal-editar .cabecalho-componentes {
+#modal-cadastrar .cabecalho_componentes,
+#modal-editar .cabecalho_componentes {
     display: grid;
     grid-template-columns: 44% 1fr;
     align-items: center;
@@ -2187,13 +1843,13 @@ main {
 }
 
 /*Textos do cabeçalho*/
-#modal-cadastrar .cabecalho-componentes span,
-#modal-editar .cabecalho-componentes span {
+#modal-cadastrar .cabecalho_componentes span,
+#modal-editar .cabecalho_componentes span {
     display: block;
     font-family: var(--font-padrao);
     font-size: 10px;
     font-weight: 600;
-    color: #5178F9;
+    color: var(--cor-azul-contraste2);
     text-align: center;
     text-transform: uppercase;
     white-space: nowrap;

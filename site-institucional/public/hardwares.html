@@ -4,72 +4,27 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="icon" type="image/png" href="../public/assets/midias/main-icon-image.png">
-    <link rel="stylesheet" href="../public/assets/css/hardwares.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.3.1/css/all.min.css"
-        integrity="sha512-QeR2VH+lsBE5LSAe1Q5EnTBbe7XTBubt8dG93Y7gidSgdMCr8nVqKcfKAMyN96SV8KDbZVTDXChatu5G2KQGzg=="
-        crossorigin="anonymous" referrerpolicy="no-referrer" />
-
     <title>InfraWatch.Dev - Hardwares</title>
+    <link rel="icon" type="image/png" href="./assets/midias/main-icon-image.png">
+    <link rel="stylesheet" href="./assets/css/global.css">
+    <link rel="stylesheet" href="./assets/css/menu.css">
+    <link rel="stylesheet" href="./assets/css/hardwares.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.3.1/css/all.min.css" integrity="sha512-QeR2VH+lsBE5LSAe1Q5EnTBbe7XTBubt8dG93Y7gidSgdMCr8nVqKcfKAMyN96SV8KDbZVTDXChatu5G2KQGzg==" crossorigin="anonymous" referrerpolicy="no-referrer">
 </head>
 
-<body onload="validarSessao()">
-    <header>
-        <div class="navbar">
-            <div class="nav-logo">
-                <h1>
-                    Infra<span>Watch</span>
-                </h1> 
-            </div>
-            <div class="nav-links">
-                <ul>
-                    <li>
-                        <a href="./main.html">Home</a>
-                    </li>
-                    <li>
-                        <a href="./sobrenos.html">
-                            Sobre-nós
-                        </a>
-                    </li>
-                    <li>
-                        <a href="./sobrenos.html#contato">
-                            Contato
-                        </a>
-                    </li>
-                    <li>
-                        <a href="./dash-empresa.html">
-                            Dashboard Empresa
-                        </a>
-                    </li>
-                </ul>
-            </div>
-            <div class="nav-login">
-                <button id="btn-logar" onclick="redirecionamento_login()">
-                    Entrar
-                </button>
-                <button id="btn-cadastrar" onclick="redirecionamento_login()">
-                    Cadastrar-se
-                </button>
-            </div>
-            <div class="popup-perfil">
+<body>
 
-            </div>
-        </div>
-    </header>
+<main>
+        <div class="container_hardwares">
 
-    <div class="divisao-nav" style="height: 9vh; width: 100%;"></div>
-
-    <main>
-        <div class="container-hardwares">
-
-            <div class="cabecalho-hardwares">
-                <div class="cabecalho-hardwares-esquerda">
-                    <span class="rotulo-hardwares">HARDWARES</span>
+            <div class="cabecalho_hardwares">
+                <div class="cabecalho_hardwares_esquerda">
+                    <span class="rotulo_hardwares">HARDWARES</span>
                     <h2>Hardwares Cadastrados</h2>
                     <h6>Gerencie os dispositivos de hardware monitorados na sua empresa.</h6>
                 </div>
-                <div class="cabecalho-hardwares-direita">
-                    <div class="busca-hardwares">
+                <div class="cabecalho_hardwares_direita">
+                    <div class="busca_hardwares">
                         <i class="fa-solid fa-magnifying-glass" style="color: rgb(255, 255, 255);"></i>
                         <input type="text" placeholder="Buscar hardware...">
                     </div>
@@ -80,8 +35,8 @@
                 </div>
             </div>
 
-            <div class="caixa-tabela-hardwares">
-                <table class="tabela-hardwares">
+            <div class="caixa_tabela_hardwares">
+                <table class="tabela_hardwares">
                     <thead>
                         <tr>
                             <th>NOME DO DISPOSITIVO</th>
@@ -97,32 +52,32 @@
                 </table>
             </div>
 
-            <div class="rodape-hardwares">
+            <div class="rodape_hardwares">
 
             </div>
         </div>
     </main>
 
     <!-- MODAL DE CADASTRO -->
-    <div class="sobreposicao-modal" id="modal-cadastrar">
-        <div class="modal-cadastro">
-            <div class="cabecalho-modal">
+    <div class="sobreposicao_modal" id="modal-cadastrar">
+        <div class="modal_cadastro">
+            <div class="cabecalho_modal">
                 <h2>Cadastrar Novo Hardware</h2>
-                <button class="fechar-modal">×</button>
+                <button class="fechar_modal">×</button>
             </div>
 
-            <div class="corpo-modal">
-                <div class="coluna-modal">
-                    <span class="titulo-coluna-modal">CADASTRAR NOVO HARDWARE</span>
+            <div class="corpo_modal">
+                <div class="coluna_modal">
+                    <span class="titulo_coluna_modal">CADASTRAR NOVO HARDWARE</span>
 
-                    <div class="campo-modal">
+                    <div class="campo_modal">
                         <label>Nome do dispositivo <span class="obrigatorio">*</span></label>
                         <input type="text" id="input-nome-hardware" placeholder="Ex: SRV-01">
                     </div>
 
-                    <div class="campo-modal">
+                    <div class="campo_modal">
                         <label>Tipo de dispositivo <span class="obrigatorio">*</span></label>
-                        <div class="seletor-modal">
+                        <div class="seletor_modal">
                             <select id="select-tipo-hardware">
                                 <option value="">Selecione o tipo</option>
                                 <option value="Servidor">Servidor</option>
@@ -136,54 +91,54 @@
                         </div>
                     </div>
 
-                    <div class="campo-modal">
+                    <div class="campo_modal">
                         <label>Localização / Setor <span class="obrigatorio">*</span></label>
                         <input type="text" id="input-localizacao-hardware" placeholder="Ex: TI / Sala de Servidores">
                     </div>
 
-                    <div class="campo-modal">
+                    <div class="campo_modal">
                         <label>Descrição (opcional)</label>
                         <textarea id="input-descricao-hardware" placeholder="Informações adicionais sobre o dispositivo"></textarea>
                     </div>
                 </div>
 
                 
-                <div class="coluna-modal">
-                    <span class="titulo-coluna-modal">CARDÁPIO DE COMPONENTES</span>
-                    <div class="grade-checkbox">
+                <div class="coluna_modal">
+                    <span class="titulo_coluna_modal">CARDÁPIO DE COMPONENTES</span>
+                    <div class="grade_checkbox">
 
                         <!-- Cabeçalho do cardápio -->
-                        <div class="cabecalho-componentes">
+                        <div class="cabecalho_componentes">
                             <span>COMPONENTES</span>
                             <span>GATILHOS DE ALERTA</span>
                         </div>
                         
                         <!-- CPU -->
-                        <div class="linha-componente">
-                            <input type="checkbox" class="checkbox-componente"
+                        <div class="linha_componente">
+                            <input type="checkbox" class="checkbox_componente"
                                 data-nome="Processador"
                                 data-tipo="CPU"
                                 data-descricao="Uso, temperatura e performance"
                                 id="check-cpu" checked>
 
-                            <label class="item-checkbox" for="check-cpu">
+                            <label class="item_checkbox" for="check-cpu">
                                 <i class="fa-solid fa-microchip"></i>
                                 <span>CPU / Processador</span>
                             </label>
 
-                            <div class="alertas-componente">
-                                <div class="campo-alerta">
+                            <div class="alertas_componente">
+                                <div class="campo_alerta">
                                     <label for="atencao-cpu">ATENÇÃO</label>
                                     <input type="number" id="atencao-cpu"
-                                        class="limite-atencao"
+                                        class="limite_atencao"
                                         value="75" min="1" max="100" step="0.1">
                                     <small>Ex: 75.0</small>
                                 </div>
 
-                                <div class="campo-alerta">
+                                <div class="campo_alerta">
                                     <label for="critico-cpu">CRÍTICO</label>
                                     <input type="number" id="critico-cpu"
-                                        class="limite-critico"
+                                        class="limite_critico"
                                         value="85" min="1" max="100" step="0.1">
                                     <small>Ex: 85.0</small>
                                 </div>
@@ -191,31 +146,31 @@
                         </div>
 
                         <!-- MEMÓRIA RAM -->
-                        <div class="linha-componente">
-                            <input type="checkbox" class="checkbox-componente"
+                        <div class="linha_componente">
+                            <input type="checkbox" class="checkbox_componente"
                                 data-nome="Memória RAM"
                                 data-tipo="RAM"
                                 data-descricao="Uso de memória e swap"
                                 id="check-ram" checked>
 
-                            <label class="item-checkbox" for="check-ram">
+                            <label class="item_checkbox" for="check-ram">
                                 <i class="fa-solid fa-memory"></i>
                                 <span>Memória RAM</span>
                             </label>
 
-                            <div class="alertas-componente">
-                                <div class="campo-alerta">
+                            <div class="alertas_componente">
+                                <div class="campo_alerta">
                                     <label for="atencao-ram">ATENÇÃO</label>
                                     <input type="number" id="atencao-ram"
-                                        class="limite-atencao"
+                                        class="limite_atencao"
                                         value="75" min="1" max="100" step="0.1">
                                     <small>Ex: 75.0</small>
                                 </div>
 
-                                <div class="campo-alerta">
+                                <div class="campo_alerta">
                                     <label for="critico-ram">CRÍTICO</label>
                                     <input type="number" id="critico-ram"
-                                        class="limite-critico"
+                                        class="limite_critico"
                                         value="85" min="1" max="100" step="0.1">
                                     <small>Ex: 85.0</small>
                                 </div>
@@ -223,31 +178,31 @@
                         </div>
 
                         <!-- DISCO -->
-                        <div class="linha-componente">
-                            <input type="checkbox" class="checkbox-componente"
+                        <div class="linha_componente">
+                            <input type="checkbox" class="checkbox_componente"
                                 data-nome="Disco"
                                 data-tipo="Armazenamento"
                                 data-descricao="Uso, espaço livre e saúde"
                                 id="check-disco" checked>
 
-                            <label class="item-checkbox" for="check-disco">
+                            <label class="item_checkbox" for="check-disco">
                                 <i class="fa-solid fa-database"></i>
                                 <span>Disco / Armazenamento</span>
                             </label>
 
-                            <div class="alertas-componente">
-                                <div class="campo-alerta">
+                            <div class="alertas_componente">
+                                <div class="campo_alerta">
                                     <label for="atencao-disco">ATENÇÃO</label>
                                     <input type="number" id="atencao-disco"
-                                        class="limite-atencao"
+                                        class="limite_atencao"
                                         value="75" min="1" max="100" step="0.1">
                                     <small>Ex: 75.0</small>
                                 </div>
 
-                                <div class="campo-alerta">
+                                <div class="campo_alerta">
                                     <label for="critico-disco">CRÍTICO</label>
                                     <input type="number" id="critico-disco"
-                                        class="limite-critico"
+                                        class="limite_critico"
                                         value="85" min="1" max="100" step="0.1">
                                     <small>Ex: 85.0</small>
                                 </div>
@@ -255,31 +210,31 @@
                         </div>
 
                         <!-- REDE -->
-                        <div class="linha-componente">
-                            <input type="checkbox" class="checkbox-componente"
+                        <div class="linha_componente">
+                            <input type="checkbox" class="checkbox_componente"
                                 data-nome="Rede"
                                 data-tipo="Rede"
                                 data-descricao="Tráfego, banda e conexões"
                                 id="check-rede">
 
-                            <label class="item-checkbox" for="check-rede">
+                            <label class="item_checkbox" for="check-rede">
                                 <i class="fa-solid fa-wifi"></i>
                                 <span>Rede</span>
                             </label>
 
-                            <div class="alertas-componente">
-                                <div class="campo-alerta">
+                            <div class="alertas_componente">
+                                <div class="campo_alerta">
                                     <label for="atencao-rede">ATENÇÃO</label>
                                     <input type="number" id="atencao-rede"
-                                        class="limite-atencao"
+                                        class="limite_atencao"
                                         value="75" min="1" max="100" step="0.1">
                                     <small>Ex: 75.0</small>
                                 </div>
 
-                                <div class="campo-alerta">
+                                <div class="campo_alerta">
                                     <label for="critico-rede">CRÍTICO</label>
                                     <input type="number" id="critico-rede"
-                                        class="limite-critico"
+                                        class="limite_critico"
                                         value="85" min="1" max="100" step="0.1">
                                     <small>Ex: 85.0</small>
                                 </div>
@@ -287,31 +242,31 @@
                         </div>
 
                         <!-- TEMPERATURA -->
-                        <div class="linha-componente">
-                            <input type="checkbox" class="checkbox-componente"
+                        <div class="linha_componente">
+                            <input type="checkbox" class="checkbox_componente"
                                 data-nome="Temperatura"
                                 data-tipo="Temperatura"
                                 data-descricao="Monitoramento térmico"
                                 id="check-temperatura">
 
-                            <label class="item-checkbox" for="check-temperatura">
+                            <label class="item_checkbox" for="check-temperatura">
                                 <i class="fa-solid fa-temperature-quarter"></i>
                                 <span>Temperatura</span>
                             </label>
 
-                            <div class="alertas-componente">
-                                <div class="campo-alerta">
+                            <div class="alertas_componente">
+                                <div class="campo_alerta">
                                     <label for="atencao-temperatura">ATENÇÃO</label>
                                     <input type="number" id="atencao-temperatura"
-                                        class="limite-atencao"
+                                        class="limite_atencao"
                                         value="75" step="0.1">
                                     <small>Ex: 75.0</small>
                                 </div>
 
-                                <div class="campo-alerta">
+                                <div class="campo_alerta">
                                     <label for="critico-temperatura">CRÍTICO</label>
                                     <input type="number" id="critico-temperatura"
-                                        class="limite-critico"
+                                        class="limite_critico"
                                         value="85" step="0.1">
                                     <small>Ex: 85.0</small>
                                 </div>
@@ -329,41 +284,41 @@
 
             </div>
 
-            <div class="rodape-modal">
-                <button class="btn-cancelar">Cancelar</button>
-                <button class="btn-salvar">Salvar Hardware</button>
+            <div class="rodape_modal">
+                <button class="btn_cancelar">Cancelar</button>
+                <button class="btn_salvar">Salvar Hardware</button>
             </div>
         </div>
     </div>
 
     
     <!-- MODAL DE EDIÇÃO -->
-    <div class="sobreposicao-modal-editar" id="modal-editar">
-        <div class="modal-cadastro">
+    <div class="sobreposicao_modal_editar" id="modal-editar">
+        <div class="modal_cadastro">
 
-            <div class="cabecalho-modal">
+            <div class="cabecalho_modal">
                 <h2>Editar Hardware</h2>
-                <button class="fechar-modal-editar">×</button>
+                <button class="fechar_modal_editar">×</button>
             </div>
 
             <input type="hidden" id="input-editar-id-hardware">
             <input type="hidden" id="input-editar-id-empresa">
 
-            <div class="corpo-modal">
+            <div class="corpo_modal">
 
-                <div class="coluna-modal">
-                    <span class="titulo-coluna-modal">
+                <div class="coluna_modal">
+                    <span class="titulo_coluna_modal">
                         CADASTRAR NOVO HARDWARE
                     </span>
 
-                    <div class="campo-modal">
+                    <div class="campo_modal">
                         <label>Nome do dispositivo <span class="obrigatorio">*</span></label>
                         <input type="text" id="input-editar-nome-hardware" placeholder="Ex: SRV-01">
                     </div>
 
-                    <div class="campo-modal">
+                    <div class="campo_modal">
                         <label>Tipo de dispositivo <span class="obrigatorio">*</span></label>
-                        <div class="seletor-modal">
+                        <div class="seletor_modal">
                             <select id="select-editar-tipo-hardware">
                                 <option value="">Selecione o tipo</option>
                                 <option value="Servidor">Servidor</option>
@@ -377,49 +332,49 @@
                         </div>
                     </div>
 
-                    <div class="campo-modal">
+                    <div class="campo_modal">
                         <label>Localização / Setor <span class="obrigatorio">*</span></label>
                         <input type="text" id="input-editar-localizacao-hardware" placeholder="Ex: TI / Sala de Servidores">
                     </div>
 
-                    <div class="campo-modal">
+                    <div class="campo_modal">
                         <label>Descrição (opcional)</label>
                         <textarea id="input-editar-descricao-hardware" placeholder="Informações adicionais"></textarea>
                     </div>
                 </div>
 
                 <!-- COMPONENTES -->
-                <div class="coluna-modal">
-                    <span class="titulo-coluna-modal">
+                <div class="coluna_modal">
+                    <span class="titulo_coluna_modal">
                         CARDÁPIO DE COMPONENTES
                     </span>
 
-                    <div class="grade-checkbox">
+                    <div class="grade_checkbox">
 
-                        <div class="cabecalho-componentes">
+                        <div class="cabecalho_componentes">
                             <span>COMPONENTES</span>
                             <span>GATILHOS DE ALERTA</span>
                         </div>
 
                         <!-- CPU -->
-                        <div class="linha-componente">
-                            <input type="checkbox" class="checkbox-componente checkbox-componente-editar"
+                        <div class="linha_componente">
+                            <input type="checkbox" class="checkbox_componente checkbox_componente_editar"
                                 data-nome="Processador" data-tipo="CPU"
                                 data-descricao="Uso, temperatura e performance"
                                 id="editar-check-cpu">
 
-                            <label class="item-checkbox" for="editar-check-cpu">
+                            <label class="item_checkbox" for="editar-check-cpu">
                                 <i class="fa-solid fa-microchip"></i>
                                 <span>CPU / Processador</span>
                             </label>
 
-                            <div class="alertas-componente">
-                                <div class="campo-alerta">
+                            <div class="alertas_componente">
+                                <div class="campo_alerta">
                                     <label>ATENÇÃO</label>
                                     <input type="number" id="editar-atencao-cpu" value="70" min="1" max="100" step="1">
                                     <small>Ex: 70</small>
                                 </div>
-                                <div class="campo-alerta">
+                                <div class="campo_alerta">
                                     <label>CRÍTICO</label>
                                     <input type="number" id="editar-critico-cpu" value="80" min="1" max="100" step="1">
                                     <small>Ex: 80</small>
@@ -428,24 +383,24 @@
                         </div>
 
                         <!-- RAM -->
-                        <div class="linha-componente">
-                            <input type="checkbox" class="checkbox-componente checkbox-componente-editar"
+                        <div class="linha_componente">
+                            <input type="checkbox" class="checkbox_componente checkbox_componente_editar"
                                 data-nome="Memória RAM" data-tipo="RAM"
                                 data-descricao="Uso de memória e swap"
                                 id="editar-check-ram">
 
-                            <label class="item-checkbox" for="editar-check-ram">
+                            <label class="item_checkbox" for="editar-check-ram">
                                 <i class="fa-solid fa-memory"></i>
                                 <span>Memória RAM</span>
                             </label>
 
-                            <div class="alertas-componente">
-                                <div class="campo-alerta">
+                            <div class="alertas_componente">
+                                <div class="campo_alerta">
                                     <label>ATENÇÃO</label>
                                     <input type="number" id="editar-atencao-ram" value="70" min="1" max="100" step="1">
                                     <small>Ex: 70</small>
                                 </div>
-                                <div class="campo-alerta">
+                                <div class="campo_alerta">
                                     <label>CRÍTICO</label>
                                     <input type="number" id="editar-critico-ram" value="80" min="1" max="100" step="1">
                                     <small>Ex: 80</small>
@@ -454,24 +409,24 @@
                         </div>
 
                         <!-- DISCO -->
-                        <div class="linha-componente">
-                            <input type="checkbox" class="checkbox-componente checkbox-componente-editar"
+                        <div class="linha_componente">
+                            <input type="checkbox" class="checkbox_componente checkbox_componente_editar"
                                 data-nome="Disco" data-tipo="Armazenamento"
                                 data-descricao="Uso, espaço livre e saúde"
                                 id="editar-check-disco">
 
-                            <label class="item-checkbox" for="editar-check-disco">
+                            <label class="item_checkbox" for="editar-check-disco">
                                 <i class="fa-solid fa-database"></i>
                                 <span>Disco / Armazenamento</span>
                             </label>
 
-                            <div class="alertas-componente">
-                                <div class="campo-alerta">
+                            <div class="alertas_componente">
+                                <div class="campo_alerta">
                                     <label>ATENÇÃO</label>
                                     <input type="number" id="editar-atencao-disco" value="70" min="1" max="100" step="1">
                                     <small>Ex: 70</small>
                                 </div>
-                                <div class="campo-alerta">
+                                <div class="campo_alerta">
                                     <label>CRÍTICO</label>
                                     <input type="number" id="editar-critico-disco" value="80" min="1" max="100" step="1">
                                     <small>Ex: 80</small>
@@ -480,24 +435,24 @@
                         </div>
 
                         <!-- REDE -->
-                        <div class="linha-componente">
-                            <input type="checkbox" class="checkbox-componente checkbox-componente-editar"
+                        <div class="linha_componente">
+                            <input type="checkbox" class="checkbox_componente checkbox_componente_editar"
                                 data-nome="Rede" data-tipo="Rede"
                                 data-descricao="Tráfego, banda e conexões"
                                 id="editar-check-rede">
 
-                            <label class="item-checkbox" for="editar-check-rede">
+                            <label class="item_checkbox" for="editar-check-rede">
                                 <i class="fa-solid fa-wifi"></i>
                                 <span>Rede</span>
                             </label>
 
-                            <div class="alertas-componente">
-                                <div class="campo-alerta">
+                            <div class="alertas_componente">
+                                <div class="campo_alerta">
                                     <label>ATENÇÃO</label>
                                     <input type="number" id="editar-atencao-rede" value="70" step="1">
                                     <small>Ex: 70</small>
                                 </div>
-                                <div class="campo-alerta">
+                                <div class="campo_alerta">
                                     <label>CRÍTICO</label>
                                     <input type="number" id="editar-critico-rede" value="80" step="1">
                                     <small>Ex: 80</small>
@@ -506,24 +461,24 @@
                         </div>
 
                         <!-- TEMPERATURA -->
-                        <div class="linha-componente">
-                            <input type="checkbox" class="checkbox-componente checkbox-componente-editar"
+                        <div class="linha_componente">
+                            <input type="checkbox" class="checkbox_componente checkbox_componente_editar"
                                 data-nome="Temperatura" data-tipo="Temperatura"
                                 data-descricao="Monitoramento térmico"
                                 id="editar-check-temperatura">
 
-                            <label class="item-checkbox" for="editar-check-temperatura">
+                            <label class="item_checkbox" for="editar-check-temperatura">
                                 <i class="fa-solid fa-temperature-quarter"></i>
                                 <span>Temperatura</span>
                             </label>
 
-                            <div class="alertas-componente">
-                                <div class="campo-alerta">
+                            <div class="alertas_componente">
+                                <div class="campo_alerta">
                                     <label>ATENÇÃO</label>
                                     <input type="number" id="editar-atencao-temperatura" value="70" step="1">
                                     <small>Ex: 70</small>
                                 </div>
-                                <div class="campo-alerta">
+                                <div class="campo_alerta">
                                     <label>CRÍTICO</label>
                                     <input type="number" id="editar-critico-temperatura" value="80" step="1">
                                     <small>Ex: 80</small>
@@ -541,24 +496,23 @@
                 </div>
             </div>
 
-            <div class="rodape-modal">
-                <button class="btn-cancelar-editar">Cancelar</button>
-                <button class="btn-salvar-editar">Salvar Alterações</button>
+            <div class="rodape_modal">
+                <button class="btn_cancelar_editar">Cancelar</button>
+                <button class="btn_salvar_editar">Salvar Alterações</button>
             </div>
 
         </div>
     </div>
 
-
-    <div class="modal-overlay-deletar">
+    <div class="modal_overlay_deletar">
 
     </div>
 
-    <div class="modal-deletar">
-        <div class="modal-deletar-top">
+    <div class="modal_deletar">
+        <div class="modal_deletar_top">
             <h2 id="aviso-deletar">Você tem certeza que deseja DELETAR o hardware de ID: </h2>
         </div>
-        <div class="modal-deletar-bottom">
+        <div class="modal_deletar_bottom">
             <button id="btn-fechar-modal-deletar">
                 Cancelar
             </button>
@@ -568,14 +522,15 @@
         </div>
     </div>
 
-    <div class="modal-visualizar">n
+    <div class="modal_visualizar">n
 
     </div>
+
+    <script src="./assets/js/redirecionamento.js"></script>
+    <script src="./assets/js/sessao.js"></script>
+    <script src="./assets/js/menu.js"></script>
+    <script src="./assets/js/hardwares.js"></script>
 
 </body>
 
 </html>
-
-<script src="../public/assets/js/hardwares.js" defer></script>
-<script src="../public/assets/js/sessao.js" defer></script>
-<script src="../public/assets/js/redirecionamento.js"></script>

@@ -2,7 +2,7 @@ document.addEventListener('DOMContentLoaded', function () {
   // 1. Validar se a sessão está ativa
   var usuario = lerDadosSessao();
   if (!usuario) {
-    window.location.href = './login.html';
+    redirecionar('login');
     return;
   }
 
@@ -28,8 +28,8 @@ function buscarMétricasIniciais(idEmpresa, idUsuario) {
     return [];
   })
   .then(function (equipamentos) {
-    var qtdAlertas = 0;
-    var qtdCriticos = 0;
+    var qtdAlertas = 24;
+    var qtdCriticos = 3;
     
     equipamentos.forEach(function (eq) {
       if (eq.statusEquipamento === 'Atenção' || eq.statusEquipamento === 'Manutenção') {
