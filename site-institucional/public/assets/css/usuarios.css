@@ -76,8 +76,15 @@ main {
     color: white;
     font: inherit;
     cursor: pointer;
+    transition: all ease-in-out 0.3s;
 }
 .btn_salvar_permissao:disabled { opacity: 0.55; cursor: not-allowed; }
+
+.btn_salvar_permissao:hover {
+    background-color: var(--cor-azul-contraste);
+    border: 1px solid var(--cor-azul-contraste2);
+    color: var(--cor-azul-contraste2);
+}
 
 .lista_permissoes_usuario {
     display: flex;
@@ -88,14 +95,33 @@ main {
 
 .item_permissao_usuario {
     display: flex;
+    background-color: var(--cor-azul-contraste);
+    padding: 1vh;
     align-items: center;
+    justify-content: center;
     gap: 0.5rem;
     color: var(--cor-branco-default);
+    transition: all ease-in-out 0.3s;
     cursor: pointer;
 }
 
+.item_permissao_usuario:hover {
+    color: var(--cor-azul-contraste2);
+    border-radius: 100px;
+    transform: scale(1.05);
+}
+
 .item_permissao_usuario input {
-    accent-color: var(--cor-azul-contraste2);
+    display: none;
+}
+
+.item_permissao_usuario:has(input:checked) {
+    accent-color: var(--cor-azul-contraste);
+    background-color: var(--cor-azul-contraste2);
+}
+
+.item_permissao_usuario:has(input:checked):hover {
+    color: var(--cor-branco-default);
 }
 
 .item_permissao_usuario:has(input:disabled) {
@@ -114,6 +140,66 @@ main {
 }
 .aviso_acesso h2 { margin-bottom: 1rem; }
 .aviso_acesso p { margin-top: 0.5rem; color: var(--cor-texto-apagado); }
+
+.cor-verde {
+    background-color: var(--cor-verde-ativo);
+    transform: scale(1.1);
+    border: none;
+    color: var(--bg-dark);
+}
+
+.caixa-permissoes {
+    display: none;
+}
+
+.mostrar-caixa-permissoes {
+    margin-top: 5vh;
+    position: fixed;
+    display: flex;
+    flex-direction: column;
+    background-color: var(--cor-azul-contraste);
+    padding: 2vh;
+    gap: 1.5vh;
+    max-height: 38vh;
+    flex-wrap: wrap;
+    border: 1px solid var(--cor-azul-apagado);
+    transition: all ease-in-out 0.3s;
+    z-index: 1000;
+}
+
+.btn-editar-permissoes {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: var(--cor-azul-contraste2);
+    color: white;
+    width: 8vw;
+    height: 4vh;
+    border: none;
+    font-family: var(--font-padrao);
+    font-size: 14px;
+    font-weight: 400;
+    transition: all ease-in-out 0.3s;
+}
+
+.btn-editar-permissoes:hover {
+    background-color: var(--cor-azul-contraste);
+    border: 1px solid var(--cor-azul-contraste2);
+    color: var(--cor-azul-contraste2);
+    border-radius: 100px;
+}
+
+.fechar-style {
+    background-color: var(--cor-vermelho-inativo);
+    color: var(--bg-dark);
+    transition: all ease-in-out 0.3s;
+}
+
+.fechar-style:hover {
+    background-color: var(--cor-azul-contraste);
+    border: 1px solid var(--cor-vermelho-inativo);
+    color: var(--cor-vermelho-inativo);
+}
 
 @media (max-width: 760px) {
     main { padding: 2rem 4%; }
