@@ -189,6 +189,8 @@ main {
     border-radius: 100px;
 }
 
+.btn-editar-permissoes:disabled { opacity: 0.55; cursor: not-allowed; }
+
 .fechar-style {
     background-color: var(--cor-vermelho-inativo);
     color: var(--bg-dark);

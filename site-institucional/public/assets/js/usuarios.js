@@ -75,7 +75,7 @@ function criarSeletorNivel(usuario) {
     return seletor;
 }
 
-function criarListaPermissoes(usuario, permissoesDisponiveis) {
+function criarListaPermissoes(usuario, permissoesDisponiveis, atual) {
     const caixa = document.createElement('div');
     caixa.className = 'lista_permissoes_usuario';
 
@@ -116,6 +116,18 @@ function criarListaPermissoes(usuario, permissoesDisponiveis) {
         }
     });
 
+    const ehUsuarioAtual = Number(usuario.idUsuario) === Number(atual.id);
+    const ehRoot = usuario.nomeNivelAcesso === 'Root';
+    const permissoesAtuais = Array.isArray(atual.permissoes)
+        ? atual.permissoes
+        : [];
+    const podeGerenciar = nivelUsuarioAtualEhRoot(atual) ||
+        permissoesAtuais.includes('USUARIOS_GERENCIAR');
+
+    if (ehUsuarioAtual || ehRoot || !podeGerenciar) {
+        botao.disabled = true;
+    }
+
     return caixa;
 }
 
@@ -141,7 +153,7 @@ function criarLinhaUsuario(usuario, atual, permissoesDisponiveis) {
     linha.appendChild(celulaNivel);
 
     const celulaPermissoes = document.createElement('td');
-    const caixaPermissoes = criarListaPermissoes(usuario, permissoesDisponiveis);
+    const caixaPermissoes = criarListaPermissoes(usuario, permissoesDisponiveis, atual);
     celulaPermissoes.appendChild(caixaPermissoes);
     linha.appendChild(celulaPermissoes);
 
