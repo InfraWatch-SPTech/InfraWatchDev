@@ -530,3 +530,15 @@
 .cor_padrao {
     color: var(--cor-branco-default) !important;
 }
+
+.content_list_server .content_list_server_box .server_box .col_centro {
+    text-align: center;
+}
+
+.texto_forte {
+    font-weight: 800;
+}
+
+.cor_apagada {
+    color: var(--cor-azul-apagado) !important;
+}
