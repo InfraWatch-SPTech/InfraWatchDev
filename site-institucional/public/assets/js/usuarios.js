@@ -75,26 +75,57 @@ function criarSeletorNivel(usuario) {
     return seletor;
 }
 
-function criarListaPermissoes(usuario, permissoesDisponiveis) {
+function criarListaPermissoes(usuario, permissoesDisponiveis, atual) {
     const caixa = document.createElement('div');
     caixa.className = 'lista_permissoes_usuario';
+
+    const caixaPermissoes = document.createElement('div');
+    caixaPermissoes.className = 'caixa-permissoes';
+    caixa.appendChild(caixaPermissoes);
 
     for (let i = 0; i < permissoesDisponiveis.length; i++) {
         const permissao = permissoesDisponiveis[i];
         const rotulo = document.createElement('label');
         rotulo.className = 'item_permissao_usuario';
-
+    
         const checkbox = document.createElement('input');
         checkbox.type = 'checkbox';
         checkbox.value = String(permissao.idPermissao);
         checkbox.checked = usuario.idsPermissoes.includes(permissao.idPermissao);
-
+    
         const texto = document.createElement('span');
         texto.textContent = nomeAmigavelPermissao(permissao.nome);
-
+    
         rotulo.appendChild(checkbox);
         rotulo.appendChild(texto);
-        caixa.appendChild(rotulo);
+        caixaPermissoes.appendChild(rotulo);
+    }
+
+    const botao = document.createElement('button');
+    botao.classList.add('btn-editar-permissoes');
+    botao.innerText = 'Editar';
+    caixa.appendChild(botao);
+
+    botao.addEventListener('click', function() {
+        caixaPermissoes.classList.toggle('mostrar-caixa-permissoes')
+        botao.classList.toggle('fechar-style')
+        if (caixaPermissoes.classList.contains('mostrar-caixa-permissoes')) {
+            botao.innerText = "Fechar";
+        } else {
+            botao.innerText = "Editar";
+        }
+    });
+
+    const ehUsuarioAtual = Number(usuario.idUsuario) === Number(atual.id);
+    const ehRoot = usuario.nomeNivelAcesso === 'Root';
+    const permissoesAtuais = Array.isArray(atual.permissoes)
+        ? atual.permissoes
+        : [];
+    const podeGerenciar = nivelUsuarioAtualEhRoot(atual) ||
+        permissoesAtuais.includes('USUARIOS_GERENCIAR');
+
+    if (ehUsuarioAtual || ehRoot || !podeGerenciar) {
+        botao.disabled = true;
     }
 
     return caixa;
@@ -122,7 +153,7 @@ function criarLinhaUsuario(usuario, atual, permissoesDisponiveis) {
     linha.appendChild(celulaNivel);
 
     const celulaPermissoes = document.createElement('td');
-    const caixaPermissoes = criarListaPermissoes(usuario, permissoesDisponiveis);
+    const caixaPermissoes = criarListaPermissoes(usuario, permissoesDisponiveis, atual);
     celulaPermissoes.appendChild(caixaPermissoes);
     linha.appendChild(celulaPermissoes);
 
@@ -198,6 +229,13 @@ function criarLinhaUsuario(usuario, atual, permissoesDisponiveis) {
                     'Acesso de ' + usuario.nome + ' atualizado com sucesso.',
                     'sucesso'
                 );
+
+                botaoSalvar.classList.toggle('cor-verde')
+                botaoSalvar.innerHTML = 'Salvo!'
+                setTimeout(() => {
+                    botaoSalvar.classList.toggle('cor-verde')
+                    botaoSalvar.innerHTML = 'Salvar'
+                }, 1000);
             })
             .catch(function (erro) {
                 mostrarEstado(erro.message || 'Erro ao alterar o acesso.', 'erro');

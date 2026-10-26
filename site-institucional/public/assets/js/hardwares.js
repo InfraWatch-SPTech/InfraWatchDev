@@ -162,9 +162,9 @@ function cadastrarHardware() {
     let descricao = document.getElementById('input-descricao-hardware').value.trim();
     let componentes = coletarComponentesSelecionados();
 
-    if (!validarComponentes(componentes)) {
-        return;
-    }
+    // if (!validarComponentes(componentes)) {
+    //     return;
+    // }
 
     if (nome === '') {
         alert('Preencha o nome do dispositivo.');
