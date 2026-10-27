@@ -93,12 +93,14 @@
                         <!-- Ícone da KPI -->
                     </div>
                     <div class="infos_kpis">
-                        <p class="infos_kpis_nome">Alertas Ativos</p>
+                        <p class="infos_kpis_nome">Servidores Críticos Agora</p>
                         <p class="infos_kpis_principal">
-                            <span class="kpi_alertas_ativos">$$</span>
+                            <span id="kpi-s-criticos">$$</span>
+                            de
+                            <span id="kpi-s-monitorados">$$</span>
                         </p>
                         <p class="infos_kpis_secundaria">
-                            <span id="kpi-qtd-alertas-criticos">$ alertas críticos</span>
+                            <span id="kpi-s-criticos-status">$$</span>
                         </p>
                     </div>
                 </div>
@@ -166,16 +168,16 @@
             </div>
 
             <div class="content_list_server">
-                <p class="titulo_pagina">meus servidores</p>
+                <p class="titulo_pagina">servidores em alerta</p>
                 <div class="content_list_server_box" id="container-server-box-vazio">
                     <div class="server_box">
-                        <input type="checkbox">
+                        <input type="checkbox" id="marcar-todos-servidores">
                         <p style="font-weight: 800; color: var(--cor-cinza-padrao); font-size: 14px;">nome</p>
-                        <p style="font-weight: 800; color: var(--cor-cinza-padrao); font-size: 14px;">status</p>
-                        <p style="font-weight: 800; color: var(--cor-cinza-padrao); font-size: 14px;">componentes</p>
-                        <p style="font-weight: 800; color: var(--cor-cinza-padrao); font-size: 14px;">ip</p>
-                        <p style="font-weight: 800; color: var(--cor-cinza-padrao); font-size: 14px;">localização</p>
-                        <p style="font-weight: 800; color: var(--cor-cinza-padrao); font-size: 14px;" class="acoes">ações</p>
+                        <p class="col_centro" style="font-weight: 800; color: var(--cor-cinza-padrao); font-size: 14px;">média cpu</p>
+                        <p class="col_centro" style="font-weight: 800; color: var(--cor-cinza-padrao); font-size: 14px;">média ram</p>
+                        <p class="col_centro" style="font-weight: 800; color: var(--cor-cinza-padrao); font-size: 14px;">média disco</p>
+                        <p class="col_centro" style="font-weight: 800; color: var(--cor-cinza-padrao); font-size: 14px;">status</p>
+                        <p style="font-weight: 800; color: var(--cor-cinza-padrao); font-size: 14px;" class="acoes">ver</p>
                     </div>
                     <div class="container_server_box" id="corpo-tabela-hardwares"></div>
                 </div>
@@ -211,73 +213,28 @@
     // LISTA DE SERVIDORES --------------------------------------------------
     // ----------------------------------------------------------------------
     function renderizarTabela(equipamentos) {
-        let corpoTabela = document.getElementById('corpo-tabela-hardwares');
-        corpoTabela.innerHTML = '';
+    let containerServers = document.getElementById('container-server-box-vazio');
+    let containerKpis = document.getElementById('content-dash-kpis');
+    let containerGraficos = document.getElementById('content-dash-graficos');
 
-        let equipamentosAgrupados = {};
-
-        for (let i = 0; i < equipamentos.length; i++) {
-            let equipamento = equipamentos[i];
-            let id = equipamento.idEquipamento;
-
-            if (!equipamentosAgrupados[id]) {
-                equipamentosAgrupados[id] = equipamento;
-                equipamentosAgrupados[id].nomeComponente = equipamento.nomeComponente;
-            } else {
-                equipamentosAgrupados[id].nomeComponente += ", " + equipamento.nomeComponente;
-            }
-        }
-
-        let stringSttsEquip = [];
-
-        for (let i in equipamentosAgrupados) {
-            corpoTabela.innerHTML += `
-            <hr>
-                <div class="server_box">
-                    <input type="checkbox" value="${equipamentosAgrupados[i].idEquipamento}">
-                    <p>${equipamentosAgrupados[i].nomeEquipamento}</p>
-                    <p class="stts_equip">${equipamentosAgrupados[i].statusEquipamento}</p>
-                    <p>${equipamentosAgrupados[i].nomeComponente}</p>
-                    <p>${equipamentosAgrupados[i].ipEquipamento}</p>
-                    <p>${equipamentosAgrupados[i].localizacao}</p>
-                    <a href="./dashboard-servidor.html?idEquipamento=${equipamentosAgrupados[i].idEquipamento}" class="btn_ver">ver-➔</a>
+    if (equipamentos.length === 0) {
+        containerServers.innerHTML = `
+            <div class="server_box_vazio">
+                <p>Nenhum servidor encontrado</p>
+            </div>
+        `
+        containerKpis.innerHTML = `
+            <div class="sem_servidores">
+                <div style="display:flex; flex-direction:column; align-items:flex-start; background-color:transparent;">
+                    <h3>Nenhum servidor encontrado</h3>
+                    <p>Cadastre um servidor para iniciar o monitoramento!</p>
                 </div>
-            `
-            stringSttsEquip.push(equipamentosAgrupados[i].statusEquipamento)
-        }
-
-    
-        let sttsEquip = document.getElementsByClassName('stts_equip')
-        for (let i = 0; i < sttsEquip.length; i++) {
-            if (stringSttsEquip[i].toUpperCase() == 'ONLINE') {
-                sttsEquip[i].classList.add('cor_verde');
-            } else {
-                sttsEquip[i].classList.add('cor_vermelha');
-            }
-        }
-        
-        let containerServers = document.getElementById('container-server-box-vazio');
-        let containerKpis = document.getElementById('content-dash-kpis');
-        let containerGraficos = document.getElementById('content-dash-graficos');
-
-        if (Object.keys(equipamentosAgrupados).length === 0) {
-            containerServers.innerHTML = `
-                <div class="server_box_vazio">
-                    <p>Nenhum servidor encontrado</p>
-                </div>
-            `
-            containerKpis.innerHTML = `
-                <div class="sem_servidores">
-                    <div style="display:flex; flex-direction:column; align-items:flex-start; background-color:transparent;">
-                        <h3>Nenhum servidor encontrado</h3>
-                        <p>Cadastre um servidor para iniciar o monitoramento!</p>
-                    </div>
-                    <a href="./hardwares.html">Cadastrar Servidor ➔</a>
-                </div>
-            `
-            containerGraficos.style.display = 'none';
-        }
+                <a href="./hardwares.html">Cadastrar Servidor ➔</a>
+            </div>
+        `
+        containerGraficos.style.display = 'none';
     }
+}
 
     function buscarEquipamentosEmpresa(idEmpresa) {
         fetch(`/hardwares/buscarEq/${idEmpresa}?idUsuario=${idUsuario}`, { cache: 'no-store' })

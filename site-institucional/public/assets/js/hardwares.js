@@ -165,6 +165,9 @@ function cadastrarHardware() {
     /*if (!validarComponentes(componentes)) {
         return;
     }*/
+    // if (!validarComponentes(componentes)) {
+    //     return;
+    // }
 
     if (nome === '') {
         alert('Preencha o nome do dispositivo.');
