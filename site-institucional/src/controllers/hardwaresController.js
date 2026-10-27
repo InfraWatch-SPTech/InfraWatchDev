@@ -358,6 +358,7 @@ function atualizarEquipamento(req, res)
     var tipo = req.body.tipo;
     var localizacao = req.body.localizacao;
     var descricao = req.body.descricao || "";
+    var componentes = req.body.componentes || [];
 
     if (!validarComponentesCadastro(componentes, res)) {
         return;
@@ -432,7 +433,7 @@ function atualizarEquipamento(req, res)
                 return null;
             }
 
-            return hardwaresModel.cadastrarComponentes(
+            return hardwaresModel.cadastrarComponentesComLimites(
                 componentes,
                 idEquipamento
             );

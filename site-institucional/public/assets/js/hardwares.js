@@ -32,7 +32,7 @@ function montarLinhaTabela(equipamento) {
                     ${equipamento.statusEquipamento || '-'}
                 </span>
             </td>
-            <td>-</td>
+            <td>${equipamento.ultimaAtualizacao ? new Date(equipamento.ultimaAtualizacao).toLocaleString('pt-BR').slice(0, -3) : '-'}</td>
             <td class="celula_acoes">
                 <!-- ao clicar, abre o modal de edição já preenchido com os dados deste equipamento -->
                 <button class="btn_icone btn_visualizar" onclick="modalVisualizar(${equipamento.idEquipamento})" title="Visualizar">
@@ -60,10 +60,11 @@ function renderizarTabela(equipamentos) {
         let id = equipamento.idEquipamento;
 
         if (!equipamentosAgrupados[id]) {
-            equipamentosAgrupados[id] = equipamento;
-            equipamentosAgrupados[id].nomeComponente = equipamento.nomeComponente;
+            equipamentosAgrupados[id] = { ...equipamento };
         } else {
-            equipamentosAgrupados[id].nomeComponente += ", " + equipamento.nomeComponente;
+            if (equipamento.nomeComponente) {
+                equipamentosAgrupados[id].nomeComponente += ", " + equipamento.nomeComponente;
+            }
         }
     }
 
@@ -87,7 +88,7 @@ function buscarEquipamentosEmpresa(idEmpresa)
                     response.json().then(function (equipamentos) {
                         if (equipamentos && equipamentos.length > 0) {
                             ultimaListaEquipamentos = equipamentos;
-                            renderizarTabela(equipamentos);
+                            document.getElementById('input-buscar-hardware').dispatchEvent(new Event('input'));
                         } else {
                             ultimaListaEquipamentos = [];
                             renderizarTabela([]);
@@ -229,10 +230,10 @@ function coletarComponentesSelecionadosEditar() {
 
     for (let i = 0; i < checkboxes.length; i++)
     {
-        let linha = i.closest('.linha_componente');
-        let campos = linha.querySelectorAll('.campo_alerta input');
-
         let checkbox = checkboxes[i];
+
+        let linha = checkbox.closest('.linha_componente');
+        let campos = linha.querySelectorAll('.campo_alerta input');
 
         componentes.push({
             nome: checkbox.dataset.nome,
@@ -286,14 +287,23 @@ function abrirModalEditar(idEquipamento) {
 
         checkbox.checked = Boolean(componenteSalvo);
 
-        if (componenteSalvo)
-            {
-            let linha = checkbox.closest('.linha_componente');
-            let campos = linha.querySelectorAll('.campo_alerta input');
+        let linha = checkbox.closest('.linha_componente');
+        let campos = linha.querySelectorAll('.campo_alerta input');
 
+        if (componenteSalvo)
+        {
             campos[0].value = Number(componenteSalvo.limiteAtencao);
             campos[1].value = Number(componenteSalvo.limiteCritico);
         }
+
+        else
+        {
+            campos[0].value = '';
+            campos[1].value = '';
+        }
+
+        campos[0].disabled = !checkbox.checked;
+        campos[1].disabled = !checkbox.checked;
     }
 
     document.querySelector('.sobreposicao_modal_editar').classList.add('modal_aberto');
@@ -311,11 +321,6 @@ function salvarEdicaoHardware() {
     let descricao = document.getElementById('input-editar-descricao-hardware').value.trim();
     let componentes = coletarComponentesSelecionadosEditar();
     let limites = coletarLimites(true);
-
-    if (!validarComponentes(componentes))
-        {
-        return;
-    }
 
     if (nome === '') {
         alert('Preencha o nome do dispositivo.');
@@ -694,4 +699,35 @@ checkboxesCadastro.forEach(function (checkbox)
     checkbox.addEventListener('change', function () {
         atualizarLimitesCadastro(checkbox);
     });
+});
+
+document.querySelectorAll('.checkbox_componente_editar').forEach(function(checkbox) {
+    checkbox.addEventListener('change', function() {
+        let linha = checkbox.closest('.linha_componente');
+        let campos = linha.querySelectorAll('.campo_alerta input');
+
+        campos[0].value = checkbox.checked ? PADRAO_ATENCAO : '';
+        campos[1].value = checkbox.checked ? PADRAO_CRITICO : '';
+
+        campos[0].disabled = !checkbox.checked;
+        campos[1].disabled = !checkbox.checked;
+    });
+});
+
+document.getElementById('input-buscar-hardware').addEventListener('input', function() {
+
+    let busca = this.value.toLowerCase().trim();
+
+    let equipamentosFiltrados = ultimaListaEquipamentos.filter(function(equipamento) {
+
+        return (
+            (equipamento.nomeEquipamento || '').toLowerCase().includes(busca) ||
+            (equipamento.tipoEquipamento || '').toLowerCase().includes(busca) ||
+            (equipamento.localizacao || '').toLowerCase().includes(busca)
+        );
+
+    });
+
+    renderizarTabela(equipamentosFiltrados);
+
 });
