@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="pt-br">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -8,11 +9,14 @@
     <link rel="stylesheet" href="./assets/css/global.css">
     <link rel="stylesheet" href="./assets/css/menu.css">
     <link rel="stylesheet" href="./assets/css/dash_empresas.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.3.1/css/all.min.css" integrity="sha512-QeR2VH+lsBE5LSAe1Q5EnTBbe7XTBubt8dG93Y7gidSgdMCr8nVqKcfKAMyN96SV8KDbZVTDXChatu5G2KQGzg==" crossorigin="anonymous" referrerpolicy="no-referrer">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.3.1/css/all.min.css"
+        integrity="sha512-QeR2VH+lsBE5LSAe1Q5EnTBbe7XTBubt8dG93Y7gidSgdMCr8nVqKcfKAMyN96SV8KDbZVTDXChatu5G2KQGzg=="
+        crossorigin="anonymous" referrerpolicy="no-referrer">
 </head>
+
 <body>
 
-<main class="container_dash_empresa">
+    <main class="container_dash_empresa">
 
         <div class="content content_header">
             <div class="infos_usuario">
@@ -32,7 +36,7 @@
 
                 <div class="kpi_box">
                     <div class="icon">
-                        <!-- Ícone da KPI -->   
+                        <!-- Ícone da KPI -->
                     </div>
                     <div class="infos_kpis">
                         <p class="infos_kpis_nome">Servidores Ativos</p>
@@ -93,14 +97,12 @@
                         <!-- Ícone da KPI -->
                     </div>
                     <div class="infos_kpis">
-                        <p class="infos_kpis_nome">Servidores Críticos Agora</p>
+                        <p class="infos_kpis_nome">Alertas nas Últimas 24h</p>
                         <p class="infos_kpis_principal">
-                            <span id="kpi-s-criticos">$$</span>
-                            de
-                            <span id="kpi-s-monitorados">$$</span>
+                            <span id="kpi-a24-total">$$</span>
                         </p>
                         <p class="infos_kpis_secundaria">
-                            <span id="kpi-s-criticos-status">$$</span>
+                            <span id="kpi-a24-comparacao">$$</span>
                         </p>
                     </div>
                 </div>
@@ -113,7 +115,9 @@
                     <div class="box_graficos left grafico_saldo_indisp">
                         <p class="infos_kpis_nome">Orçamento de Insdisponibilidade Restante (Anual)</p>
                         <p class="grafic_disp_limite_max">Limite máximo: 8h46m</p>
-                        <canvas id="grafico-indisp-saldo" style="max-width: 100%; max-height: 50px; background-color: transparent;" id="grafico-indisponibilidade"></canvas>
+                        <canvas id="grafico-indisp-saldo"
+                            style="max-width: 100%; max-height: 50px; background-color: transparent;"
+                            id="grafico-indisponibilidade"></canvas>
                         <div class="infos_grafic_status">
                             <p id="grafic-disp-consumido">Consumido: $$</p>
                             <p id="grafic-disp-restante">Restam: $$</p>
@@ -121,15 +125,17 @@
                     </div>
 
                     <div class="box_graficos left grafico_disp_tempo">
-                        <canvas id="grafico-disp-tempo" style="width: 100%; height: 85%; background-color: transparent;"></canvas>
+                        <canvas id="grafico-disp-tempo"
+                            style="width: 100%; height: 85%; background-color: transparent;"></canvas>
                     </div>
 
                 </div>
 
                 <div class="content_dashboard_graficos_div">
-                    
+
                     <div class="box_graficos right grafico_incidentes_pservidor">
-                        <canvas id="grafico-incidentes-pservidor" style="width: 100%; height: 85%; background-color: transparent;"></canvas>
+                        <canvas id="grafico-incidentes-pservidor"
+                            style="width: 100%; height: 85%; background-color: transparent;"></canvas>
                     </div>
 
                     <div class="box_graficos right grafico_incidentes_pcomponente">
@@ -146,17 +152,20 @@
                         <div class="gipc_graficos_pcomponente">
                             <div class="grafico_comps">
                                 <h2 id="comp-1">Cpu</h2>
-                                <canvas id="grafico-comps1" style="background-color: transparent; max-width: 110px; max-height: 110px;"></canvas>
+                                <canvas id="grafico-comps1"
+                                    style="background-color: transparent; max-width: 110px; max-height: 110px;"></canvas>
                                 <p>Total: <span id="qtd-comp1">$$</span></p>
                             </div>
                             <div class="grafico_comps">
                                 <h2 id="comp-2">Ram</h2>
-                                <canvas id="grafico-comps2" style="background-color: transparent; max-width: 110px; max-height: 110px;"></canvas>
+                                <canvas id="grafico-comps2"
+                                    style="background-color: transparent; max-width: 110px; max-height: 110px;"></canvas>
                                 <p>Total: <span id="qtd-comp2">$$</span></p>
                             </div>
-                            <div class="grafico_comps" >
+                            <div class="grafico_comps">
                                 <h2 id="comp-3">Disco</h2>
-                                <canvas id="grafico-comps3" style="background-color: transparent; max-width: 110px; max-height: 110px;"></canvas>
+                                <canvas id="grafico-comps3"
+                                    style="background-color: transparent; max-width: 110px; max-height: 110px;"></canvas>
                                 <p>Total: <span id="qtd-comp3">$$</span></p>
                             </div>
                         </div>
@@ -173,11 +182,16 @@
                     <div class="server_box">
                         <input type="checkbox" id="marcar-todos-servidores">
                         <p style="font-weight: 800; color: var(--cor-cinza-padrao); font-size: 14px;">nome</p>
-                        <p class="col_centro" style="font-weight: 800; color: var(--cor-cinza-padrao); font-size: 14px;">média cpu</p>
-                        <p class="col_centro" style="font-weight: 800; color: var(--cor-cinza-padrao); font-size: 14px;">média ram</p>
-                        <p class="col_centro" style="font-weight: 800; color: var(--cor-cinza-padrao); font-size: 14px;">média disco</p>
-                        <p class="col_centro" style="font-weight: 800; color: var(--cor-cinza-padrao); font-size: 14px;">status</p>
-                        <p style="font-weight: 800; color: var(--cor-cinza-padrao); font-size: 14px;" class="acoes">ver</p>
+                        <p class="col_centro"
+                            style="font-weight: 800; color: var(--cor-cinza-padrao); font-size: 14px;">média cpu</p>
+                        <p class="col_centro"
+                            style="font-weight: 800; color: var(--cor-cinza-padrao); font-size: 14px;">média ram</p>
+                        <p class="col_centro"
+                            style="font-weight: 800; color: var(--cor-cinza-padrao); font-size: 14px;">média disco</p>
+                        <p class="col_centro"
+                            style="font-weight: 800; color: var(--cor-cinza-padrao); font-size: 14px;">status</p>
+                        <p style="font-weight: 800; color: var(--cor-cinza-padrao); font-size: 14px;" class="acoes">ver
+                        </p>
                     </div>
                     <div class="container_server_box" id="corpo-tabela-hardwares"></div>
                 </div>
@@ -194,36 +208,36 @@
     <script src="./assets/js/sessao.js"></script>
     <script src="./assets/js/menu.js"></script>
     <script>
-    let usuario = JSON.parse(localStorage.usuarioLogado);
-    let idEmpresa = usuario.idEmpresa;
-    let nomeEmpresa = usuario.nomeEmpresa;
-    let cargo = usuario.nomeNivelAcesso;
-    let nome = usuario.nome;
-    let idUsuario = usuario.id;
-    
-    let iptNome = document.getElementById('user-nome');
-    let iptCargo = document.getElementById('user-cargo');
-    let iptEmpresa = document.getElementById('user-empresa');
+        let usuario = JSON.parse(localStorage.usuarioLogado);
+        let idEmpresa = usuario.idEmpresa;
+        let nomeEmpresa = usuario.nomeEmpresa;
+        let cargo = usuario.nomeNivelAcesso;
+        let nome = usuario.nome;
+        let idUsuario = usuario.id;
 
-    iptNome.innerHTML = `${nome}`;
-    iptCargo.innerHTML = `${cargo}`;
-    iptEmpresa.innerHTML = `${nomeEmpresa}`;
+        let iptNome = document.getElementById('user-nome');
+        let iptCargo = document.getElementById('user-cargo');
+        let iptEmpresa = document.getElementById('user-empresa');
 
-    // ----------------------------------------------------------------------
-    // LISTA DE SERVIDORES --------------------------------------------------
-    // ----------------------------------------------------------------------
-    function renderizarTabela(equipamentos) {
-    let containerServers = document.getElementById('container-server-box-vazio');
-    let containerKpis = document.getElementById('content-dash-kpis');
-    let containerGraficos = document.getElementById('content-dash-graficos');
+        iptNome.innerHTML = `${nome}`;
+        iptCargo.innerHTML = `${cargo}`;
+        iptEmpresa.innerHTML = `${nomeEmpresa}`;
 
-    if (equipamentos.length === 0) {
-        containerServers.innerHTML = `
+        // ----------------------------------------------------------------------
+        // LISTA DE SERVIDORES --------------------------------------------------
+        // ----------------------------------------------------------------------
+        function renderizarTabela(equipamentos) {
+            let containerServers = document.getElementById('container-server-box-vazio');
+            let containerKpis = document.getElementById('content-dash-kpis');
+            let containerGraficos = document.getElementById('content-dash-graficos');
+
+            if (equipamentos.length === 0) {
+                containerServers.innerHTML = `
             <div class="server_box_vazio">
                 <p>Nenhum servidor encontrado</p>
             </div>
         `
-        containerKpis.innerHTML = `
+                containerKpis.innerHTML = `
             <div class="sem_servidores">
                 <div style="display:flex; flex-direction:column; align-items:flex-start; background-color:transparent;">
                     <h3>Nenhum servidor encontrado</h3>
@@ -232,42 +246,43 @@
                 <a href="./hardwares.html">Cadastrar Servidor ➔</a>
             </div>
         `
-        containerGraficos.style.display = 'none';
-    }
-}
-
-    function buscarEquipamentosEmpresa(idEmpresa) {
-        fetch(`/hardwares/buscarEq/${idEmpresa}?idUsuario=${idUsuario}`, { cache: 'no-store' })
-        .then(function (response) {
-            if (response.ok) {
-                if (response.status === 204) {
-                    renderizarTabela([]);
-                } else {
-                    response.json().then(function (equipamentos) {
-                        if (equipamentos && equipamentos.length > 0) {
-                            ultimaListaEquipamentos = equipamentos;
-                            renderizarTabela(equipamentos);
-                        } else {
-                            ultimaListaEquipamentos = [];
-                            renderizarTabela([]);
-                        }
-                    }).catch(function () {
-                        renderizarTabela([]);
-                    });
-                }
-            } else {
-                renderizarTabela([]);
+                containerGraficos.style.display = 'none';
             }
-        })
-        .catch(function (error) {
-            console.error(`Erro na obtenção dos equipamentos: ${error.message}`);
-        });
-    }
+        }
 
-    buscarEquipamentosEmpresa(idEmpresa);
+        function buscarEquipamentosEmpresa(idEmpresa) {
+            fetch(`/hardwares/buscarEq/${idEmpresa}?idUsuario=${idUsuario}`, { cache: 'no-store' })
+                .then(function (response) {
+                    if (response.ok) {
+                        if (response.status === 204) {
+                            renderizarTabela([]);
+                        } else {
+                            response.json().then(function (equipamentos) {
+                                if (equipamentos && equipamentos.length > 0) {
+                                    ultimaListaEquipamentos = equipamentos;
+                                    renderizarTabela(equipamentos);
+                                } else {
+                                    ultimaListaEquipamentos = [];
+                                    renderizarTabela([]);
+                                }
+                            }).catch(function () {
+                                renderizarTabela([]);
+                            });
+                        }
+                    } else {
+                        renderizarTabela([]);
+                    }
+                })
+                .catch(function (error) {
+                    console.error(`Erro na obtenção dos equipamentos: ${error.message}`);
+                });
+        }
 
-</script>
+        buscarEquipamentosEmpresa(idEmpresa);
+
+    </script>
     <script src="./assets/js/dash-e-kpi-graficos.js"></script>
 
 </body>
+
 </html>

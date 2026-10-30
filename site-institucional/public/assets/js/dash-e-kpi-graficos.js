@@ -629,22 +629,22 @@ if (kpiMttrHoras < 1) {
 }
 
 if (mttrPercent > 0) {
-    kpiMttr.classList.add('cor_verde')
-    kpiMttr.classList.remove('cor_vermelha')
+    // kpiMttr.classList.add('cor_verde')
+    // kpiMttr.classList.remove('cor_vermelha')
 
     kpiMttrPerc.innerHTML = `${mttrPercent}% mais rápida`
     kpiMttrPerc.classList.add('cor_verde')
     kpiMttrPerc.classList.remove('cor_vermelha')
 } else if (mttrPercent < 0) {
-    kpiMttr.classList.add('cor_vermelha')
-    kpiMttr.classList.remove('cor_verde')
+    // kpiMttr.classList.add('cor_vermelha')
+    // kpiMttr.classList.remove('cor_verde')
 
     kpiMttrPerc.innerHTML = `${mttrPercent}% mais lenta`
     kpiMttrPerc.classList.add('cor_vermelha')
     kpiMttrPerc.classList.remove('cor_verde')
 } else {
-    kpiMttr.classList.remove('cor_vermelha')
-    kpiMttr.classList.remove('cor_verde')
+    // kpiMttr.classList.remove('cor_vermelha')
+    // kpiMttr.classList.remove('cor_verde')
 
     kpiMttrPerc.innerHTML = `Permanece igual`
     kpiMttrPerc.classList.remove('cor_vermelha')
@@ -668,37 +668,79 @@ kpiDispExterna.innerHTML = `${dispExternaPercent}%`
 
 if (dispExternaPercent < 90.00) {
     kpiDispStatus.innerHTML = `Status: Crítico`
-    kpiDispExterna.classList.add('cor_vermelha')
-    kpiDispExterna.classList.remove('cor_amarela')
-    kpiDispExterna.classList.remove('cor_verde')
+    // kpiDispExterna.classList.add('cor_vermelha')
+    // kpiDispExterna.classList.remove('cor_amarela')
+    // kpiDispExterna.classList.remove('cor_verde')
     kpiDispStatus.classList.add('cor_vermelha')
     kpiDispStatus.classList.remove('cor_amarela')
     kpiDispStatus.classList.remove('cor_verde')
 } else if (dispExternaPercent < 99.90) {
     kpiDispStatus.innerHTML = `Status: Moderado`
-    kpiDispExterna.classList.add('cor_amarela')
-    kpiDispExterna.classList.remove('cor_vermelha')
-    kpiDispExterna.classList.remove('cor_verde')
+    // kpiDispExterna.classList.add('cor_amarela')
+    // kpiDispExterna.classList.remove('cor_vermelha')
+    // kpiDispExterna.classList.remove('cor_verde')
     kpiDispStatus.classList.add('cor_amarela')
     kpiDispStatus.classList.remove('cor_vermelha')
     kpiDispStatus.classList.remove('cor_verde')
 } else {
     kpiDispStatus.innerHTML = `Status: Bom`
-    kpiDispExterna.classList.add('cor_verde')
-    kpiDispExterna.classList.remove('cor_amarela')
-    kpiDispExterna.classList.remove('cor_vermelha')
+    // kpiDispExterna.classList.add('cor_verde')
+    // kpiDispExterna.classList.remove('cor_amarela')
+    // kpiDispExterna.classList.remove('cor_vermelha')
     kpiDispStatus.classList.add('cor_verde')
     kpiDispStatus.classList.remove('cor_amarela')
     kpiDispStatus.classList.remove('cor_vermelha')
 }
 
 
-// KPI -- ALERTAS TOTAIS (card de componentes)
-kpiAlertasTotais = document.getElementsByClassName('kpi_alertas_ativos');
+// ----------------------------------------------------------------------
+// KPI -- ALERTAS NAS ÚLTIMAS 24H ---------------------------------------
+// ----------------------------------------------------------------------
 
-for (let i = 0; i < kpiAlertasTotais.length; i++) {
-    kpiAlertasTotais[i].innerHTML = `${alertasTotaisComp}`;
+const alertas24h = [
+    {
+        'qtdAtual': 18,
+        'qtdAnterior': 15
+    }
+]
+
+function atualizarKpiAlertas24h(dados) {
+    let kpiTotal = document.getElementById('kpi-a24-total');
+    let kpiComparacao = document.getElementById('kpi-a24-comparacao');
+
+    kpiTotal.innerHTML = `${dados.qtdAtual}`;
+
+    if (dados.qtdAnterior == 0) {
+        if (dados.qtdAtual == 0) {
+            kpiComparacao.innerHTML = `Nenhum alerta registrado`;
+            // aplicarCor(kpiTotal, 'cor_verde');
+            aplicarCor(kpiComparacao, 'cor_verde');
+        } else {
+            kpiComparacao.innerHTML = `Sem alertas no dia anterior`;
+            // aplicarCor(kpiTotal, 'cor_vermelha');
+            aplicarCor(kpiComparacao, 'cor_vermelha');
+        }
+        return;
+    }
+
+    let variacao = Math.round(((dados.qtdAtual - dados.qtdAnterior) * 100) / dados.qtdAnterior);
+
+    if (variacao > 0) {
+        kpiComparacao.innerHTML = `${variacao}% a mais que ontem`;
+        // aplicarCor(kpiTotal, 'cor_vermelha');
+        aplicarCor(kpiComparacao, 'cor_vermelha');
+    } else if (variacao < 0) {
+        kpiComparacao.innerHTML = `↓ ${Math.abs(variacao)}% a menos que ontem`;
+        // aplicarCor(kpiTotal, 'cor_verde');
+        aplicarCor(kpiComparacao, 'cor_verde');
+    } else {
+        kpiComparacao.innerHTML = `Igual a ontem`;
+        // aplicarCor(kpiTotal, 'cor_padrao');
+        aplicarCor(kpiComparacao, 'cor_padrao');
+    }
 }
+
+atualizarKpiAlertas24h(alertas24h[0]);
 
 // ----------------------------------------------------------------------
 // RANKING DE SERVIDORES EM ALERTA E KPI DE CRÍTICOS --------------------
