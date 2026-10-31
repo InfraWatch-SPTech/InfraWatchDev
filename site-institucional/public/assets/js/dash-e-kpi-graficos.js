@@ -285,10 +285,26 @@ tratarAlertasPorComponente(alertasPorComponente);
 qtdComp1 = document.getElementById('qtd-comp1');
 qtdComp2 = document.getElementById('qtd-comp2');
 qtdComp3 = document.getElementById('qtd-comp3');
+alertasAtivosComps = document.getElementById('kpi_alertas_ativos');
 
 qtdComp1.innerHTML = `${qtdTotalAlertas[0]}`;
 qtdComp2.innerHTML = `${qtdTotalAlertas[1]}`;
 qtdComp3.innerHTML = `${qtdTotalAlertas[2]}`;
+alertasAtivosComps.innerHTML = `${qtdAlertasAtivos[0] + qtdAlertasAtivos[1] + qtdAlertasAtivos[2]}`;
+
+const qtdAlertasComp1 = {
+  id: 'qtdAlertasComp1',
+  afterDraw(chart) {
+    const { ctx, chartArea: { left, right, top, bottom } } = chart;
+    ctx.save();
+    ctx.font = '800 28px allerta';
+    ctx.fillStyle = '#FF5C5C';
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'middle';
+    ctx.fillText(qtdAlertasAtivos[0], (left + right) / 2, (top + bottom) / 2);
+    ctx.restore();
+  }
+};
 
 const ctx_comp1 = document.getElementById('grafico-comps1');
 
@@ -303,9 +319,11 @@ new Chart(ctx_comp1, {
             borderWidth: 0
         }]
     },
+    plugins: [qtdAlertasComp1],
     options: {
         responsive: true,
         maintainAspectRatio: false,
+        cutout: '55%',
         plugins: {
                 title: {
                     display: false
@@ -318,6 +336,20 @@ new Chart(ctx_comp1, {
 });
 
 
+
+const qtdAlertasComp2 = {
+  id: 'qtdAlertasComp1',
+  afterDraw(chart) {
+    const { ctx, chartArea: { left, right, top, bottom } } = chart;
+    ctx.save();
+    ctx.font = '800 28px allerta';
+    ctx.fillStyle = '#FF5C5C';
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'middle';
+    ctx.fillText(qtdAlertasAtivos[1], (left + right) / 2, (top + bottom) / 2);
+    ctx.restore();
+  }
+};
 
 const ctx_comp2 = document.getElementById('grafico-comps2');
 
@@ -332,9 +364,11 @@ new Chart(ctx_comp2, {
             borderWidth: 0
         }]
     },
+    plugins: [qtdAlertasComp2],
     options: {
         responsive: true,
         maintainAspectRatio: false,
+        cutout: '55%',
         plugins: {
                 title: {
                     display: false
@@ -347,6 +381,20 @@ new Chart(ctx_comp2, {
 });
 
 
+
+const qtdAlertasComp3 = {
+  id: 'qtdAlertasComp1',
+  afterDraw(chart) {
+    const { ctx, chartArea: { left, right, top, bottom } } = chart;
+    ctx.save();
+    ctx.font = '800 28px allerta';
+    ctx.fillStyle = '#FF5C5C';
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'middle';
+    ctx.fillText(qtdAlertasAtivos[2], (left + right) / 2, (top + bottom) / 2);
+    ctx.restore();
+  }
+};
 const ctx_comp3 = document.getElementById('grafico-comps3');
 
 new Chart(ctx_comp3, {
@@ -360,9 +408,11 @@ new Chart(ctx_comp3, {
             borderWidth: 0
         }]
     },
+    plugins: [qtdAlertasComp3],
     options: {
         responsive: true,
         maintainAspectRatio: false,
+        cutout: '55%',
         plugins: {
             title: {
                 display: false

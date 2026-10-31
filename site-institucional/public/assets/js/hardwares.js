@@ -429,8 +429,6 @@ function deletarEquipamento(idEmpresa, idEquipamento) {
 }
 
 const modalOverlay = document.querySelector('.sobreposicao_modal');
-const btnAbrir = document.getElementById('btn-novo-hardware');
-const btnFechar = document.querySelector('.fechar_modal');
 const btnCancelar = document.querySelector('.btn_cancelar');
 const btnSalvar = document.querySelector('.btn_salvar');
 
@@ -451,8 +449,6 @@ function fecharModal() {
     modalOverlay.classList.remove('modal_aberto');
 }
 
-btnAbrir.addEventListener('click', abrirModal);
-btnFechar.addEventListener('click', fecharModal);
 
 if(btnCancelar){
     btnCancelar.addEventListener('click', fecharModal);
