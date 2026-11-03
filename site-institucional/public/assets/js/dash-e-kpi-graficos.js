@@ -725,12 +725,12 @@ if (dispExternaPercent < 90.00) {
     kpiDispStatus.classList.remove('cor_amarela')
     kpiDispStatus.classList.remove('cor_verde')
 } else if (dispExternaPercent < 99.90) {
-    kpiDispStatus.innerHTML = `Status: Moderado`
+    kpiDispStatus.innerHTML = `Status: Critico`
     // kpiDispExterna.classList.add('cor_amarela')
     // kpiDispExterna.classList.remove('cor_vermelha')
     // kpiDispExterna.classList.remove('cor_verde')
-    kpiDispStatus.classList.add('cor_amarela')
-    kpiDispStatus.classList.remove('cor_vermelha')
+    kpiDispStatus.classList.remove('cor_amarela')
+    kpiDispStatus.classList.add('cor_vermelha')
     kpiDispStatus.classList.remove('cor_verde')
 } else {
     kpiDispStatus.innerHTML = `Status: Bom`
