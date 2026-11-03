@@ -28,7 +28,7 @@ function buscarMétricasIniciais(idEmpresa, idUsuario) {
     return [];
   })
   .then(function (equipamentos) {
-    var qtdAlertas = 24;
+    var qtdAlertas = 6;
     var qtdCriticos = 3;
     
     equipamentos.forEach(function (eq) {
