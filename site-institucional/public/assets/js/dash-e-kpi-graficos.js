@@ -4,11 +4,9 @@
 
 // Definição do json de consumo
 const incidentesServidor = [
-    { 'nome': 'Principal', 'qtd_incidentes': 12 },
-    { 'nome': 'Backup', 'qtd_incidentes': 2 },
-    { 'nome': 'Switch Central', 'qtd_incidentes': 20 },
-    { 'nome': 'Web XPTO', 'qtd_incidentes': 8 },
-    { 'nome': 'Notebook Financeiro', 'qtd_incidentes': 1 }
+    { 'nome': 'Servidor Principal', 'qtd_incidentes': 3 },
+    { 'nome': 'Servidor Backup', 'qtd_incidentes': 2 },
+    { 'nome': 'Switch Central', 'qtd_incidentes': 1 }
 ]
 
 // Variáveis de tratamento
@@ -242,20 +240,20 @@ new Chart(ctx_disp, {
 const alertasPorComponente = [
     {
         'componente': 'cpu',
-        'qtd_alertas_ativos': 11,
-        'qtd_alertas_totais': 48,
+        'qtd_alertas_ativos': 3,
+        'qtd_alertas_totais': 3,
         'qtd_alertas_criticos': 2
     },
     {
         'componente': 'ram',
-        'qtd_alertas_ativos': 10,
-        'qtd_alertas_totais': 27,
-        'qtd_alertas_criticos': 1
+        'qtd_alertas_ativos': 3,
+        'qtd_alertas_totais': 3,
+        'qtd_alertas_criticos': 2
     },
     {
         'componente': 'disco',
-        'qtd_alertas_ativos': 3,
-        'qtd_alertas_totais': 34,
+        'qtd_alertas_ativos':0,
+        'qtd_alertas_totais': 0,
         'qtd_alertas_criticos': 0
     }
 ]
@@ -314,7 +312,7 @@ new Chart(ctx_comp1, {
         labels: ['Em alerta', 'Qtd Total'],
         datasets: [{
             label: false,
-            data: [qtdAlertasAtivos[0], qtdTotalAlertas[0]],
+            data: [qtdAlertasAtivos[0], qtdTotalAlertas[0] - qtdAlertasAtivos[0]],
             backgroundColor: ["#FF5C5C", '#291C58'],
             borderWidth: 0
         }]
@@ -359,7 +357,7 @@ new Chart(ctx_comp2, {
         labels: ['Em alerta', 'Qtd Total'],
         datasets: [{
             label: false,
-            data: [qtdAlertasAtivos[1], qtdTotalAlertas[1]],
+            data: [qtdAlertasAtivos[1], qtdTotalAlertas[0] - qtdAlertasAtivos[0]],
             backgroundColor: ["#FF5C5C", '#291C58'],
             borderWidth: 0
         }]
@@ -403,7 +401,7 @@ new Chart(ctx_comp3, {
     labels: ['Em alerta', 'Qtd Total'],
         datasets: [{
             label: false,
-            data: [qtdAlertasAtivos[2], qtdTotalAlertas[2]],
+            data: [qtdAlertasAtivos[2], qtdTotalAlertas[0] - qtdAlertasAtivos[0]],
             backgroundColor: ["#FF5C5C", '#291C58'],
             borderWidth: 0
         }]
@@ -549,8 +547,8 @@ options: {
 // KPI -- SERVIDORES ATIVOS
 const servidoresAtivos = [
     {
-        'qtdServidoresAtivos': 22,
-        'qtdServidoresTotais': 25
+        'qtdServidoresAtivos': 2,
+        'qtdServidoresTotais': 3
     }
 ]
 
@@ -725,12 +723,12 @@ if (dispExternaPercent < 90.00) {
     kpiDispStatus.classList.remove('cor_amarela')
     kpiDispStatus.classList.remove('cor_verde')
 } else if (dispExternaPercent < 99.90) {
-    kpiDispStatus.innerHTML = `Status: Moderado`
+    kpiDispStatus.innerHTML = `Status: Critico`
     // kpiDispExterna.classList.add('cor_amarela')
     // kpiDispExterna.classList.remove('cor_vermelha')
     // kpiDispExterna.classList.remove('cor_verde')
-    kpiDispStatus.classList.add('cor_amarela')
-    kpiDispStatus.classList.remove('cor_vermelha')
+    kpiDispStatus.classList.remove('cor_amarela')
+    kpiDispStatus.classList.add('cor_vermelha')
     kpiDispStatus.classList.remove('cor_verde')
 } else {
     kpiDispStatus.innerHTML = `Status: Bom`
@@ -749,8 +747,8 @@ if (dispExternaPercent < 90.00) {
 
 const alertas24h = [
     {
-        'qtdAtual': 18,
-        'qtdAnterior': 15
+        'qtdAtual': 6,
+        'qtdAnterior': 10
     }
 ]
 
