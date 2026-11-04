@@ -530,3 +530,155 @@
 .cor_padrao {
     color: var(--cor-branco-default) !important;
 }
+
+.content_list_server .content_list_server_box .server_box .col_centro {
+    text-align: center;
+}
+
+.texto_forte {
+    font-weight: 800;
+}
+
+.cor_apagada {
+    color: var(--cor-azul-apagado) !important;
+}
+
+@media (max-width: 1200px) {
+    .content_dashboard .content_dashboard_kpis {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 16px;
+    }
+
+    .content_dashboard_kpis .kpi_box {
+        width: auto;
+        height: auto;
+        min-height: 15vh;
+    }
+
+    .content_dashboard_kpis .kpi_box .icon {
+        width: 40px;
+    }
+}
+
+@media (max-width: 1000px) {
+    .content_dashboard .content_dashboard_kpis {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+    .content_dashboard .content_dashboard_graficos {
+        flex-direction: column;
+        height: auto;
+        gap: 20px;
+    }
+
+    .content_dashboard .content_dashboard_graficos .content_dashboard_graficos_div {
+        width: 100%;
+        height: auto;
+        gap: 20px;
+    }
+
+    .content_dashboard .content_dashboard_graficos .left,
+    .content_dashboard .content_dashboard_graficos .right {
+        width: 100%;
+        box-sizing: border-box;
+    }
+
+    .content_dashboard .content_dashboard_graficos .content_dashboard_graficos_div .grafico_saldo_indisp {
+        height: auto;
+        padding: 16px 3%;
+    }
+
+    .content_dashboard .content_dashboard_graficos .content_dashboard_graficos_div .grafico_disp_tempo {
+        height: 320px;
+    }
+
+    .content_dashboard .content_dashboard_graficos .content_dashboard_graficos_div .grafico_incidentes_pservidor {
+        height: 300px;
+    }
+
+    .content_dashboard .content_dashboard_graficos .content_dashboard_graficos_div .grafico_incidentes_pcomponente {
+        height: auto;
+    }
+
+    .content_list_server .content_list_server_box {
+        overflow-x: auto;
+        box-sizing: border-box;
+    }
+
+    .content_list_server .content_list_server_box .server_box,
+    .content_list_server .content_list_server_box .container_server_box {
+        min-width: 700px;
+    }
+
+    .content_list_server .content_list_server_box .server_box p {
+        width: 110px;
+    }
+
+    .content_list_server .content_list_server_box .server_box .acoes,
+    .content_list_server .content_list_server_box .server_box .btn_ver {
+        width: 90px;
+    }
+}
+
+@media (max-width: 600px) {
+    .container_dash_empresa {
+        margin: 5% 4%;
+    }
+
+    .container_dash_empresa .content_header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 16px;
+    }
+
+    .content_header .infos_empresa {
+        align-items: flex-start;
+    }
+
+    .content_header .infos_usuario .user_nome,
+    .content_header .infos_empresa .user_empresa {
+        font-size: 24px;
+    }
+
+    .content_dashboard .content_dashboard_kpis {
+        grid-template-columns: 1fr;
+    }
+
+    .content_dashboard_graficos .content_dashboard_graficos_div .grafico_incidentes_pcomponente {
+        flex-direction: column;
+        gap: 20px;
+    }
+
+    .content_dashboard_graficos .content_dashboard_graficos_div .grafico_incidentes_pcomponente .gipc_titulo_totais,
+    .content_dashboard_graficos .content_dashboard_graficos_div .grafico_incidentes_pcomponente .gipc_graficos_pcomponente {
+        width: 100%;
+        height: auto;
+    }
+
+    .content_dashboard_graficos .content_dashboard_graficos_div .grafico_incidentes_pcomponente .gipc_titulo_totais {
+        gap: 12px;
+    }
+
+    .sem_servidores {
+        flex-direction: column;
+        align-items: flex-start;
+        height: auto;
+        gap: 20px;
+    }
+
+    .sem_servidores h3 {
+        font-size: 22px;
+        max-width: 100%;
+    }
+
+    .sem_servidores p {
+        max-width: 100%;
+    }
+
+    .sem_servidores a {
+        width: 100%;
+        height: 6vh;
+        font-size: 16px;
+    }
+}

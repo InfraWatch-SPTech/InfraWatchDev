@@ -32,7 +32,7 @@ function montarLinhaTabela(equipamento) {
                     ${equipamento.statusEquipamento || '-'}
                 </span>
             </td>
-            <td>-</td>
+            <td>${equipamento.ultimaAtualizacao ? new Date(equipamento.ultimaAtualizacao).toLocaleString('pt-BR').slice(0, -3) : '-'}</td>
             <td class="celula_acoes">
                 <!-- ao clicar, abre o modal de edição já preenchido com os dados deste equipamento -->
                 <button class="btn_icone btn_visualizar" onclick="modalVisualizar(${equipamento.idEquipamento})" title="Visualizar">
@@ -60,10 +60,11 @@ function renderizarTabela(equipamentos) {
         let id = equipamento.idEquipamento;
 
         if (!equipamentosAgrupados[id]) {
-            equipamentosAgrupados[id] = equipamento;
-            equipamentosAgrupados[id].nomeComponente = equipamento.nomeComponente;
+            equipamentosAgrupados[id] = { ...equipamento };
         } else {
-            equipamentosAgrupados[id].nomeComponente += ", " + equipamento.nomeComponente;
+            if (equipamento.nomeComponente) {
+                equipamentosAgrupados[id].nomeComponente += ", " + equipamento.nomeComponente;
+            }
         }
     }
 
@@ -87,7 +88,7 @@ function buscarEquipamentosEmpresa(idEmpresa)
                     response.json().then(function (equipamentos) {
                         if (equipamentos && equipamentos.length > 0) {
                             ultimaListaEquipamentos = equipamentos;
-                            renderizarTabela(equipamentos);
+                            document.getElementById('input-buscar-hardware').dispatchEvent(new Event('input'));
                         } else {
                             ultimaListaEquipamentos = [];
                             renderizarTabela([]);
@@ -162,9 +163,12 @@ function cadastrarHardware() {
     let descricao = document.getElementById('input-descricao-hardware').value.trim();
     let componentes = coletarComponentesSelecionados();
 
-    if (!validarComponentes(componentes)) {
+    /*if (!validarComponentes(componentes)) {
         return;
-    }
+    }*/
+    // if (!validarComponentes(componentes)) {
+    //     return;
+    // }
 
     if (nome === '') {
         alert('Preencha o nome do dispositivo.');
@@ -205,9 +209,9 @@ function cadastrarHardware() {
                 document.getElementById('select-tipo-hardware').value = '';
                 document.getElementById('input-localizacao-hardware').value = '';
                 document.getElementById('input-descricao-hardware').value = '';
-                document.getElementById('input-limite-cpu-hardware').value = 80;
-                document.getElementById('input-limite-ram-hardware').value = 80;
-                document.getElementById('input-limite-disco-hardware').value = 80;
+                document.getElementById('input-limite-cpu-hardware').value = '';
+                document.getElementById('input-limite-ram-hardware').value = '';
+                document.getElementById('input-limite-disco-hardware').value = '';
             } else {
                 response.text().then(function (mensagemErro) {
                     alert('Não foi possível cadastrar o hardware: ' + mensagemErro);
@@ -224,12 +228,19 @@ function coletarComponentesSelecionadosEditar() {
     let checkboxes = document.querySelectorAll('.checkbox_componente_editar:checked');
     let componentes = [];
 
-    for (let i = 0; i < checkboxes.length; i++) {
+    for (let i = 0; i < checkboxes.length; i++)
+    {
         let checkbox = checkboxes[i];
+
+        let linha = checkbox.closest('.linha_componente');
+        let campos = linha.querySelectorAll('.campo_alerta input');
+
         componentes.push({
             nome: checkbox.dataset.nome,
             tipo: checkbox.dataset.tipo,
-            descricao: checkbox.dataset.descricao
+            descricao: checkbox.dataset.descricao,
+            limiteAtencao: Number(campos[0].value),
+            limiteCritico: Number(campos[1].value)
         });
     }
 
@@ -254,19 +265,45 @@ function abrirModalEditar(idEquipamento) {
     document.getElementById('select-editar-tipo-hardware').value = equipamento.tipoEquipamento || '';
     document.getElementById('input-editar-localizacao-hardware').value = equipamento.localizacao || '';
     document.getElementById('input-editar-descricao-hardware').value = equipamento.descricaoEquipamento || '';
-    document.getElementById('input-editar-limite-cpu-hardware').value = equipamento.limiteCpu ?? 80;
-    document.getElementById('input-editar-limite-ram-hardware').value = equipamento.limiteRam ?? 80;
-    document.getElementById('input-editar-limite-disco-hardware').value = equipamento.limiteDisco ?? 80;
 
     //lista de tipos de componente que esse equipamento já tem pra marcar os checkbox correspondentes
     let tiposComponentesAtuais = linhasDoEquipamento
+
         .map(function (linha) { return linha.tipoComponente; })
         .filter(function (tipo) { return !!tipo; });
 
     let checkboxesEditar = document.querySelectorAll('.checkbox_componente_editar');
-    for (let i = 0; i < checkboxesEditar.length; i++) {
+
+    for (let i = 0; i < checkboxesEditar.length; i++)
+    {
         let checkbox = checkboxesEditar[i];
-        checkbox.checked = tiposComponentesAtuais.indexOf(checkbox.dataset.tipo) !== -1;
+        let tipoCheckbox = checkbox.dataset.tipo.toUpperCase();
+
+        let componenteSalvo = linhasDoEquipamento.find(function(linha)
+        {
+            return linha.tipoComponente &&
+                linha.tipoComponente.toUpperCase() === tipoCheckbox;
+        });
+
+        checkbox.checked = Boolean(componenteSalvo);
+
+        let linha = checkbox.closest('.linha_componente');
+        let campos = linha.querySelectorAll('.campo_alerta input');
+
+        if (componenteSalvo)
+        {
+            campos[0].value = Number(componenteSalvo.limiteAtencao);
+            campos[1].value = Number(componenteSalvo.limiteCritico);
+        }
+
+        else
+        {
+            campos[0].value = '';
+            campos[1].value = '';
+        }
+
+        campos[0].disabled = !checkbox.checked;
+        campos[1].disabled = !checkbox.checked;
     }
 
     document.querySelector('.sobreposicao_modal_editar').classList.add('modal_aberto');
@@ -284,10 +321,6 @@ function salvarEdicaoHardware() {
     let descricao = document.getElementById('input-editar-descricao-hardware').value.trim();
     let componentes = coletarComponentesSelecionadosEditar();
     let limites = coletarLimites(true);
-
-    if (!limites) {
-        return;
-    }
 
     if (nome === '') {
         alert('Preencha o nome do dispositivo.');
@@ -309,10 +342,7 @@ function salvarEdicaoHardware() {
         descricao: descricao,
         idUsuario: dadosUsuario.id,
         idEmpresa: idEmpresa,
-        componentes: componentes,
-        limiteCpu: limites.limiteCpu,
-        limiteRam: limites.limiteRam,
-        limiteDisco: limites.limiteDisco
+        componentes: componentes
     };
 
     fetch(`/hardwares/atualizar/${idEquipamento}`, {
@@ -399,12 +429,19 @@ function deletarEquipamento(idEmpresa, idEquipamento) {
 }
 
 const modalOverlay = document.querySelector('.sobreposicao_modal');
-const btnAbrir = document.getElementById('btn-novo-hardware');
-const btnFechar = document.querySelector('.fechar_modal');
 const btnCancelar = document.querySelector('.btn_cancelar');
 const btnSalvar = document.querySelector('.btn_salvar');
 
 function abrirModal() {
+    checkboxesCadastro.forEach(function (checkbox)
+    {
+        // CPU, RAM e Disco selecionados por padrão.
+        checkbox.checked = ['CPU', 'RAM', 'Armazenamento']
+            .includes(checkbox.dataset.tipo);
+
+        atualizarLimitesCadastro(checkbox);
+    });
+
     modalOverlay.classList.add('modal_aberto');
 }
 
@@ -412,8 +449,6 @@ function fecharModal() {
     modalOverlay.classList.remove('modal_aberto');
 }
 
-btnAbrir.addEventListener('click', abrirModal);
-btnFechar.addEventListener('click', fecharModal);
 
 if(btnCancelar){
     btnCancelar.addEventListener('click', fecharModal);
@@ -611,3 +646,84 @@ function modalVisualizar(idEquipamento) {
 }
 
 buscarEquipamentosEmpresa(idEmpresa)
+
+
+/*
+Controla os limites dos componentes no cadastro
+
+Marcado: preenche com os valores padrão
+Desmarcado: limpa e desabilita os campos
+Marcado novamente: restaura os padrões */
+
+const PADRAO_ATENCAO = 75;
+const PADRAO_CRITICO = 85;
+
+function atualizarLimitesCadastro(checkbox) {
+    const linha = checkbox.closest('.linha_componente');
+
+    const inputAtencao = linha.querySelector('.limite_atencao');
+    const inputCritico = linha.querySelector('.limite_critico');
+
+    if (checkbox.checked)
+    {
+        inputAtencao.value = PADRAO_ATENCAO;
+        inputCritico.value = PADRAO_CRITICO;
+
+        inputAtencao.disabled = false;
+        inputCritico.disabled = false;
+    }
+    
+    else
+    {
+        inputAtencao.value = '';
+        inputCritico.value = '';
+
+        inputAtencao.disabled = true;
+        inputCritico.disabled = true;
+    }
+}
+
+// Seleciona apenas os checkboxes do modal de cadastro
+const checkboxesCadastro = document.querySelectorAll('#modal-cadastrar .checkbox_componente');
+
+checkboxesCadastro.forEach(function (checkbox)
+{
+    // Ajusta os campos assim que a página carrega
+    atualizarLimitesCadastro(checkbox);
+
+    // Atualiza os limites sempre que marcar ou desmarcar
+    checkbox.addEventListener('change', function () {
+        atualizarLimitesCadastro(checkbox);
+    });
+});
+
+document.querySelectorAll('.checkbox_componente_editar').forEach(function(checkbox) {
+    checkbox.addEventListener('change', function() {
+        let linha = checkbox.closest('.linha_componente');
+        let campos = linha.querySelectorAll('.campo_alerta input');
+
+        campos[0].value = checkbox.checked ? PADRAO_ATENCAO : '';
+        campos[1].value = checkbox.checked ? PADRAO_CRITICO : '';
+
+        campos[0].disabled = !checkbox.checked;
+        campos[1].disabled = !checkbox.checked;
+    });
+});
+
+document.getElementById('input-buscar-hardware').addEventListener('input', function() {
+
+    let busca = this.value.toLowerCase().trim();
+
+    let equipamentosFiltrados = ultimaListaEquipamentos.filter(function(equipamento) {
+
+        return (
+            (equipamento.nomeEquipamento || '').toLowerCase().includes(busca) ||
+            (equipamento.tipoEquipamento || '').toLowerCase().includes(busca) ||
+            (equipamento.localizacao || '').toLowerCase().includes(busca)
+        );
+
+    });
+
+    renderizarTabela(equipamentosFiltrados);
+
+});

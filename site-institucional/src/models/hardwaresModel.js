@@ -113,6 +113,8 @@ function buscarEquipamentosEmpresa(idEmpresa, tiposPermitidos) {
             cp.nome AS nomeComponente,
             cp.tipo AS tipoComponente,
             cp.descricao AS descricaoComponente,
+            pa.limite_atencao AS limiteAtencao,
+            pa.limite_critico AS limiteCritico,
             eq.idEquipamento,
             eq.nome AS nomeEquipamento,
             eq.tipo AS tipoEquipamento,
@@ -120,6 +122,7 @@ function buscarEquipamentosEmpresa(idEmpresa, tiposPermitidos) {
             eq.status AS statusEquipamento,
             eq.localizacao,
             eq.descricao AS descricaoEquipamento,
+            eq.ultimaAtualizacao,
             COALESCE(alertas.limiteCpu, 80) AS limiteCpu,
             COALESCE(alertas.limiteRam, 80) AS limiteRam,
             COALESCE(alertas.limiteDisco, 80) AS limiteDisco,
@@ -163,9 +166,9 @@ function buscarTipoEquipamento(idEquipamento, idEmpresa) {
 function cadastrarEquipamento(nome, tipo, localizacao, descricao, fkEmpresa) {
     var instrucaoSql = `
         INSERT INTO equipamento
-            (nome, tipo, status, localizacao, descricao, fkEmpresa)
+            (nome, tipo, status, localizacao, descricao, fkEmpresa, ultimaAtualizacao)
         VALUES
-            ('${nome}', '${tipo}', 'Ativo', '${localizacao}', '${descricao}', ${fkEmpresa});
+            ('${nome}', '${tipo}', 'Ativo', '${localizacao}', '${descricao}', ${fkEmpresa}, NOW());
     `;
 
     return database.executar(instrucaoSql);
@@ -264,12 +267,15 @@ function buscarEquipamentoPorId(idEquipamento, idEmpresa) {
             cp.nome AS nomeComponente,
             cp.tipo AS tipoComponente,
             cp.descricao AS descricaoComponente,
+            pa.limite_atencao AS limiteAtencao,
+            pa.limite_critico AS limiteCritico,
             eq.idEquipamento,
             eq.nome AS nomeEquipamento,
             eq.tipo AS tipoEquipamento,
             eq.status AS statusEquipamento,
             eq.localizacao,
             eq.descricao AS descricaoEquipamento,
+            eq.ultimaAtualizacao,
             COALESCE(alertas.limiteCpu, 80) AS limiteCpu,
             COALESCE(alertas.limiteRam, 80) AS limiteRam,
             COALESCE(alertas.limiteDisco, 80) AS limiteDisco,
@@ -305,7 +311,8 @@ function atualizarEquipamento(idEquipamento, idEmpresa, nome, tipo, localizacao,
         SET nome = '${nome}',
             tipo = '${tipo}',
             localizacao = '${localizacao}',
-            descricao = '${descricao}'
+            descricao = '${descricao}',
+            ultimaAtualizacao = NOW()
         WHERE idEquipamento = ${idEquipamento}
             AND fkEmpresa = ${idEmpresa};
     `;

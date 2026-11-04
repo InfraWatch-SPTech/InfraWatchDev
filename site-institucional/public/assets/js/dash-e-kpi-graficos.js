@@ -4,50 +4,26 @@
 
 // Definição do json de consumo
 const incidentesServidor = [
-    {
-        'nome': 'Principal',
-        'qtd_incidentes': 12,
-        'qtd_resolvidos': 5
-    },
-    {
-        'nome': 'Backup',
-        'qtd_incidentes': 2,
-        'qtd_resolvidos': 1
-    },
-    {
-        'nome': 'Switch Central',
-        'qtd_incidentes': 20,
-        'qtd_resolvidos': 10
-    },
-    {
-        'nome': 'Web XPTO',
-        'qtd_incidentes': 8,
-        'qtd_resolvidos': 3
-    },
-    {
-        'nome': 'Notebook Financeiro',
-        'qtd_incidentes': 1,
-        'qtd_resolvidos': 0
-    }
+    { 'nome': 'Servidor Principal', 'qtd_incidentes': 3 },
+    { 'nome': 'Servidor Backup', 'qtd_incidentes': 2 },
+    { 'nome': 'Switch Central', 'qtd_incidentes': 1 }
 ]
 
 // Variáveis de tratamento
 let nomeServidores = [];
 let qtdIncidentes = [];
-let qtdResolvidos = [];
-let incidentesTotais = 0;
 
 // Função de tratamento
 function tratarIncidentesServidor(incidentesServidor) {
-    for (let i = 0; i < incidentesServidor.length; i++) {
-        nomeServidores.push(incidentesServidor[i].nome.toUpperCase());
-        qtdIncidentes.push(incidentesServidor[i].qtd_incidentes);
-        qtdResolvidos.push(incidentesServidor[i].qtd_resolvidos);
-        if (incidentesTotais < incidentesServidor[i].qtd_incidentes) {
-            incidentesTotais = incidentesServidor[i].qtd_incidentes;
-        }
+    let ordenados = incidentesServidor.slice().sort(function (a, b) {
+        return b.qtd_incidentes - a.qtd_incidentes;
+    });
+    let limite = Math.min(ordenados.length, 7);
+
+    for (let i = 0; i < limite; i++) {
+        nomeServidores.push(ordenados[i].nome.toUpperCase());
+        qtdIncidentes.push(ordenados[i].qtd_incidentes);
     }
-    return nomeServidores, qtdIncidentes, qtdResolvidos, incidentesTotais;
 }
 tratarIncidentesServidor(incidentesServidor);
 
@@ -56,27 +32,16 @@ const ctx_serv = document.getElementById('grafico-incidentes-pservidor');
 new Chart(ctx_serv, {
     type: 'bar',
     data: {
-    labels: nomeServidores,
-    datasets: [
-        {
-            label: 'Incidentes',
-            data: qtdIncidentes,
-            borderWidth: 0,
-            backgroundColor: '#FF5C5C' ,
-            grouped: false,
-            order: 2,
-            borderRadius: 5
-        },
-        {
-            label: 'Resolvidos',
-            data: qtdResolvidos,
-            borderWidth: 0,
-            backgroundColor: '#3DDC84',
-            grouped: false,
-            order: 1,
-            borderRadius: 5
-        }
-    ]
+        labels: nomeServidores,
+        datasets: [
+            {
+                label: 'Incidentes hoje',
+                data: qtdIncidentes,
+                borderWidth: 0,
+                backgroundColor: '#FF5C5C',
+                borderRadius: 5
+            }
+        ]
     },
     options: {
         responsive: true,
@@ -87,18 +52,18 @@ new Chart(ctx_serv, {
                 },
                 ticks: {
                     color: '#eaeaf3',
-                    font: { family: 'allerta',  size: 10, weight: 'normal' }
+                    font: { family: 'allerta', size: 10, weight: 'normal' }
                 }
             },
             y: {
                 beginAtZero: true,
                 min: 0,
-                max: incidentesTotais,
                 grid: {
                     display: false
                 },
                 ticks: {
                     color: '#eaeaf3',
+                    precision: 0,
                     font: { size: 14, weight: 'bold' }
                 },
                 border: {
@@ -111,7 +76,7 @@ new Chart(ctx_serv, {
         plugins: {
             title: {
                 display: true,
-                text: 'Número de Incidentes por Servidor',
+                text: 'Incidentes Registrados por Servidor (Hoje)',
                 color: '#eaeaf3',
                 position: 'top',
                 font: { family: 'allerta', size: 16, weight: 'normal' },
@@ -119,16 +84,7 @@ new Chart(ctx_serv, {
                 align: 'center'
             },
             legend: {
-                display: true,
-                position: 'top',
-                align: 'end',
-                labels: {
-                    color: '#eaeaf3',
-                    borderRadius: 10,
-                    boxWidth: 15,
-                    boxHeight: 15,
-                    font: { family: 'allerta', size: 14 }
-                }
+                display: false
             }
         }
     }
@@ -284,20 +240,20 @@ new Chart(ctx_disp, {
 const alertasPorComponente = [
     {
         'componente': 'cpu',
-        'qtd_alertas_ativos': 11,
-        'qtd_alertas_totais': 48,
+        'qtd_alertas_ativos': 3,
+        'qtd_alertas_totais': 3,
         'qtd_alertas_criticos': 2
     },
     {
         'componente': 'ram',
-        'qtd_alertas_ativos': 10,
-        'qtd_alertas_totais': 27,
-        'qtd_alertas_criticos': 1
+        'qtd_alertas_ativos': 3,
+        'qtd_alertas_totais': 3,
+        'qtd_alertas_criticos': 2
     },
     {
         'componente': 'disco',
-        'qtd_alertas_ativos': 3,
-        'qtd_alertas_totais': 34,
+        'qtd_alertas_ativos':0,
+        'qtd_alertas_totais': 0,
         'qtd_alertas_criticos': 0
     }
 ]
@@ -327,10 +283,26 @@ tratarAlertasPorComponente(alertasPorComponente);
 qtdComp1 = document.getElementById('qtd-comp1');
 qtdComp2 = document.getElementById('qtd-comp2');
 qtdComp3 = document.getElementById('qtd-comp3');
+alertasAtivosComps = document.getElementById('kpi_alertas_ativos');
 
 qtdComp1.innerHTML = `${qtdTotalAlertas[0]}`;
 qtdComp2.innerHTML = `${qtdTotalAlertas[1]}`;
 qtdComp3.innerHTML = `${qtdTotalAlertas[2]}`;
+alertasAtivosComps.innerHTML = `${qtdAlertasAtivos[0] + qtdAlertasAtivos[1] + qtdAlertasAtivos[2]}`;
+
+const qtdAlertasComp1 = {
+  id: 'qtdAlertasComp1',
+  afterDraw(chart) {
+    const { ctx, chartArea: { left, right, top, bottom } } = chart;
+    ctx.save();
+    ctx.font = '800 28px allerta';
+    ctx.fillStyle = '#FF5C5C';
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'middle';
+    ctx.fillText(qtdAlertasAtivos[0], (left + right) / 2, (top + bottom) / 2);
+    ctx.restore();
+  }
+};
 
 const ctx_comp1 = document.getElementById('grafico-comps1');
 
@@ -340,14 +312,16 @@ new Chart(ctx_comp1, {
         labels: ['Em alerta', 'Qtd Total'],
         datasets: [{
             label: false,
-            data: [qtdAlertasAtivos[0], qtdTotalAlertas[0]],
+            data: [qtdAlertasAtivos[0], qtdTotalAlertas[0] - qtdAlertasAtivos[0]],
             backgroundColor: ["#FF5C5C", '#291C58'],
             borderWidth: 0
         }]
     },
+    plugins: [qtdAlertasComp1],
     options: {
         responsive: true,
         maintainAspectRatio: false,
+        cutout: '55%',
         plugins: {
                 title: {
                     display: false
@@ -360,6 +334,20 @@ new Chart(ctx_comp1, {
 });
 
 
+
+const qtdAlertasComp2 = {
+  id: 'qtdAlertasComp1',
+  afterDraw(chart) {
+    const { ctx, chartArea: { left, right, top, bottom } } = chart;
+    ctx.save();
+    ctx.font = '800 28px allerta';
+    ctx.fillStyle = '#FF5C5C';
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'middle';
+    ctx.fillText(qtdAlertasAtivos[1], (left + right) / 2, (top + bottom) / 2);
+    ctx.restore();
+  }
+};
 
 const ctx_comp2 = document.getElementById('grafico-comps2');
 
@@ -369,14 +357,16 @@ new Chart(ctx_comp2, {
         labels: ['Em alerta', 'Qtd Total'],
         datasets: [{
             label: false,
-            data: [qtdAlertasAtivos[1], qtdTotalAlertas[1]],
+            data: [qtdAlertasAtivos[1], qtdTotalAlertas[0] - qtdAlertasAtivos[0]],
             backgroundColor: ["#FF5C5C", '#291C58'],
             borderWidth: 0
         }]
     },
+    plugins: [qtdAlertasComp2],
     options: {
         responsive: true,
         maintainAspectRatio: false,
+        cutout: '55%',
         plugins: {
                 title: {
                     display: false
@@ -389,6 +379,20 @@ new Chart(ctx_comp2, {
 });
 
 
+
+const qtdAlertasComp3 = {
+  id: 'qtdAlertasComp1',
+  afterDraw(chart) {
+    const { ctx, chartArea: { left, right, top, bottom } } = chart;
+    ctx.save();
+    ctx.font = '800 28px allerta';
+    ctx.fillStyle = '#FF5C5C';
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'middle';
+    ctx.fillText(qtdAlertasAtivos[2], (left + right) / 2, (top + bottom) / 2);
+    ctx.restore();
+  }
+};
 const ctx_comp3 = document.getElementById('grafico-comps3');
 
 new Chart(ctx_comp3, {
@@ -397,14 +401,16 @@ new Chart(ctx_comp3, {
     labels: ['Em alerta', 'Qtd Total'],
         datasets: [{
             label: false,
-            data: [qtdAlertasAtivos[2], qtdTotalAlertas[2]],
+            data: [qtdAlertasAtivos[2], qtdTotalAlertas[0] - qtdAlertasAtivos[0]],
             backgroundColor: ["#FF5C5C", '#291C58'],
             borderWidth: 0
         }]
     },
+    plugins: [qtdAlertasComp3],
     options: {
         responsive: true,
         maintainAspectRatio: false,
+        cutout: '55%',
         plugins: {
             title: {
                 display: false
@@ -541,8 +547,8 @@ options: {
 // KPI -- SERVIDORES ATIVOS
 const servidoresAtivos = [
     {
-        'qtdServidoresAtivos': 22,
-        'qtdServidoresTotais': 25
+        'qtdServidoresAtivos': 2,
+        'qtdServidoresTotais': 3
     }
 ]
 
@@ -671,22 +677,22 @@ if (kpiMttrHoras < 1) {
 }
 
 if (mttrPercent > 0) {
-    kpiMttr.classList.add('cor_verde')
-    kpiMttr.classList.remove('cor_vermelha')
+    // kpiMttr.classList.add('cor_verde')
+    // kpiMttr.classList.remove('cor_vermelha')
 
     kpiMttrPerc.innerHTML = `${mttrPercent}% mais rápida`
     kpiMttrPerc.classList.add('cor_verde')
     kpiMttrPerc.classList.remove('cor_vermelha')
 } else if (mttrPercent < 0) {
-    kpiMttr.classList.add('cor_vermelha')
-    kpiMttr.classList.remove('cor_verde')
+    // kpiMttr.classList.add('cor_vermelha')
+    // kpiMttr.classList.remove('cor_verde')
 
     kpiMttrPerc.innerHTML = `${mttrPercent}% mais lenta`
     kpiMttrPerc.classList.add('cor_vermelha')
     kpiMttrPerc.classList.remove('cor_verde')
 } else {
-    kpiMttr.classList.remove('cor_vermelha')
-    kpiMttr.classList.remove('cor_verde')
+    // kpiMttr.classList.remove('cor_vermelha')
+    // kpiMttr.classList.remove('cor_verde')
 
     kpiMttrPerc.innerHTML = `Permanece igual`
     kpiMttrPerc.classList.remove('cor_vermelha')
@@ -697,7 +703,7 @@ if (mttrPercent > 0) {
 // KPI -- DISPONIBILIDADE EXTERNA
 const dispExterna = [
     {
-        'dispExternaPercent': 99.5
+        'dispExternaPercent': 99.9
     }
 ]
 
@@ -710,46 +716,236 @@ kpiDispExterna.innerHTML = `${dispExternaPercent}%`
 
 if (dispExternaPercent < 90.00) {
     kpiDispStatus.innerHTML = `Status: Crítico`
-    kpiDispExterna.classList.add('cor_vermelha')
-    kpiDispExterna.classList.remove('cor_amarela')
-    kpiDispExterna.classList.remove('cor_verde')
+    // kpiDispExterna.classList.add('cor_vermelha')
+    // kpiDispExterna.classList.remove('cor_amarela')
+    // kpiDispExterna.classList.remove('cor_verde')
     kpiDispStatus.classList.add('cor_vermelha')
     kpiDispStatus.classList.remove('cor_amarela')
     kpiDispStatus.classList.remove('cor_verde')
 } else if (dispExternaPercent < 99.90) {
-    kpiDispStatus.innerHTML = `Status: Moderado`
-    kpiDispExterna.classList.add('cor_amarela')
-    kpiDispExterna.classList.remove('cor_vermelha')
-    kpiDispExterna.classList.remove('cor_verde')
-    kpiDispStatus.classList.add('cor_amarela')
-    kpiDispStatus.classList.remove('cor_vermelha')
+    kpiDispStatus.innerHTML = `Status: Critico`
+    // kpiDispExterna.classList.add('cor_amarela')
+    // kpiDispExterna.classList.remove('cor_vermelha')
+    // kpiDispExterna.classList.remove('cor_verde')
+    kpiDispStatus.classList.remove('cor_amarela')
+    kpiDispStatus.classList.add('cor_vermelha')
     kpiDispStatus.classList.remove('cor_verde')
 } else {
     kpiDispStatus.innerHTML = `Status: Bom`
-    kpiDispExterna.classList.add('cor_verde')
-    kpiDispExterna.classList.remove('cor_amarela')
-    kpiDispExterna.classList.remove('cor_vermelha')
+    // kpiDispExterna.classList.add('cor_verde')
+    // kpiDispExterna.classList.remove('cor_amarela')
+    // kpiDispExterna.classList.remove('cor_vermelha')
     kpiDispStatus.classList.add('cor_verde')
     kpiDispStatus.classList.remove('cor_amarela')
     kpiDispStatus.classList.remove('cor_vermelha')
 }
 
 
-// KPI -- ALERTAS ATIVOS
-kpiAlertasTotais = document.getElementsByClassName('kpi_alertas_ativos');
+// ----------------------------------------------------------------------
+// KPI -- ALERTAS NAS ÚLTIMAS 24H ---------------------------------------
+// ----------------------------------------------------------------------
 
-for (let i = 0; i < kpiAlertasTotais.length; i++) {
-    kpiAlertasTotais[i].innerHTML = `${alertasTotaisComp}`;
+const alertas24h = [
+    {
+        'qtdAtual': 6,
+        'qtdAnterior': 10
+    }
+]
+
+function atualizarKpiAlertas24h(dados) {
+    let kpiTotal = document.getElementById('kpi-a24-total');
+    let kpiComparacao = document.getElementById('kpi-a24-comparacao');
+
+    kpiTotal.innerHTML = `${dados.qtdAtual}`;
+
+    if (dados.qtdAnterior == 0) {
+        if (dados.qtdAtual == 0) {
+            kpiComparacao.innerHTML = `Nenhum alerta registrado`;
+            // aplicarCor(kpiTotal, 'cor_verde');
+            aplicarCor(kpiComparacao, 'cor_verde');
+        } else {
+            kpiComparacao.innerHTML = `Sem alertas no dia anterior`;
+            // aplicarCor(kpiTotal, 'cor_vermelha');
+            aplicarCor(kpiComparacao, 'cor_vermelha');
+        }
+        return;
+    }
+
+    let variacao = Math.round(((dados.qtdAtual - dados.qtdAnterior) * 100) / dados.qtdAnterior);
+
+    if (variacao > 0) {
+        kpiComparacao.innerHTML = `${variacao}% a mais que ontem`;
+        // aplicarCor(kpiTotal, 'cor_vermelha');
+        aplicarCor(kpiComparacao, 'cor_vermelha');
+    } else if (variacao < 0) {
+        kpiComparacao.innerHTML = `↓ ${Math.abs(variacao)}% a menos que ontem`;
+        // aplicarCor(kpiTotal, 'cor_verde');
+        aplicarCor(kpiComparacao, 'cor_verde');
+    } else {
+        kpiComparacao.innerHTML = `Igual a ontem`;
+        // aplicarCor(kpiTotal, 'cor_padrao');
+        aplicarCor(kpiComparacao, 'cor_padrao');
+    }
 }
 
-kpiAlertasCriticos = document.getElementById('kpi-qtd-alertas-criticos');
+atualizarKpiAlertas24h(alertas24h[0]);
 
-if (totalAlertasCriticos > 0) {
-    kpiAlertasCriticos.innerHTML = `${totalAlertasCriticos} alertas críticos`
-    kpiAlertasCriticos.classList.remove('cor_verde')
-    kpiAlertasCriticos.classList.add('cor_vermelha')
-} else {
-    kpiAlertasCriticos.innerHTML = `Nenhum alerta crítico ativo`
-    kpiAlertasCriticos.classList.remove('cor_vermelha')
-    kpiAlertasCriticos.classList.add('cor_verde')
+// ----------------------------------------------------------------------
+// RANKING DE SERVIDORES EM ALERTA E KPI DE CRÍTICOS --------------------
+// ----------------------------------------------------------------------
+
+const limitesMetricas = {
+    cpu: { moderado: 70, critico: 85 },
+    ram: { moderado: 70, critico: 85 },
+    disco: { moderado: 75, critico: 90 }
+};
+
+const minutosSemComunicacao = 5;
+const mostrarSomenteEmAlerta = true;
+
+// Definição do json de consumo (médias dos últimos 15 minutos)
+const mediaServidores = [
+    { 'idEquipamento': 1, 'nome': 'Principal', 'cpu': 89.5, 'ram': 55, 'disco': 10, 'minutosSemDados': 0 },
+    { 'idEquipamento': 2, 'nome': 'Backup', 'cpu': 35, 'ram': 30, 'disco': 85, 'minutosSemDados': 1 },
+    { 'idEquipamento': 3, 'nome': 'Switch Central', 'cpu': 72, 'ram': 35, 'disco': 78, 'minutosSemDados': 0 },
+    { 'idEquipamento': 4, 'nome': 'Web XPTO', 'cpu': 12, 'ram': 75, 'disco': 40, 'minutosSemDados': 2 },
+    { 'idEquipamento': 5, 'nome': 'Notebook Financeiro', 'cpu': 12, 'ram': 35, 'disco': 78, 'minutosSemDados': 0 },
+    { 'idEquipamento': 6, 'nome': 'Servidor Pix', 'cpu': 85, 'ram': 75, 'disco': 35, 'minutosSemDados': 1 },
+    { 'idEquipamento': 7, 'nome': 'Servidor Boleto', 'cpu': 15, 'ram': 25, 'disco': 35, 'minutosSemDados': 0 },
+    { 'idEquipamento': 8, 'nome': 'Servidor Legado', 'cpu': 20, 'ram': 30, 'disco': 45, 'minutosSemDados': 1 }
+]
+
+const rotulosStatus = ['Normal', 'Moderado', 'Crítico', 'Sem dados'];
+const coresStatus = ['cor_verde', 'cor_amarela', 'cor_vermelha', 'cor_apagada'];
+const coresMetrica = ['cor_verde', 'cor_amarela', 'cor_vermelha'];
+
+function classificarMetrica(tipo, valor) {
+    if (valor >= limitesMetricas[tipo].critico) return 2;
+    if (valor >= limitesMetricas[tipo].moderado) return 1;
+    return 0;
 }
+
+function calcularPrioridade(servidor) {
+    let niveis = [
+        classificarMetrica('cpu', servidor.cpu),
+        classificarMetrica('ram', servidor.ram),
+        classificarMetrica('disco', servidor.disco)
+    ];
+    let pior = 0;
+    let qtdCriticas = 0;
+
+    for (let i = 0; i < niveis.length; i++) {
+        if (niveis[i] > pior) pior = niveis[i];
+        if (niveis[i] == 2) qtdCriticas++;
+    }
+
+    if (servidor.minutosSemDados >= minutosSemComunicacao) pior = 3;
+
+    servidor.niveis = niveis;
+    servidor.status = pior;
+    servidor.qtdCriticas = qtdCriticas;
+    servidor.maiorValor = Math.max(servidor.cpu, servidor.ram, servidor.disco);
+}
+
+function ordenarRanking(lista) {
+    for (let i = 0; i < lista.length; i++) {
+        calcularPrioridade(lista[i]);
+    }
+    lista.sort(function (a, b) {
+        if (b.status != a.status) return b.status - a.status;
+        if (b.qtdCriticas != a.qtdCriticas) return b.qtdCriticas - a.qtdCriticas;
+        return b.maiorValor - a.maiorValor;
+    });
+    return lista;
+}
+
+function renderizarRanking(lista) {
+    let corpo = document.getElementById('corpo-tabela-hardwares');
+    corpo.innerHTML = '';
+    let qtdLinhas = 0;
+
+    for (let i = 0; i < lista.length; i++) {
+        let s = lista[i];
+        if (mostrarSomenteEmAlerta && s.status == 0) continue;
+        qtdLinhas++;
+
+        corpo.innerHTML += `
+            <hr>
+            <div class="server_box">
+                <input type="checkbox" class="check_servidor" value="${s.idEquipamento}">
+                <p>${s.nome}</p>
+                <p class="col_centro ${coresMetrica[s.niveis[0]]}">${s.cpu}%</p>
+                <p class="col_centro ${coresMetrica[s.niveis[1]]}">${s.ram}%</p>
+                <p class="col_centro ${coresMetrica[s.niveis[2]]}">${s.disco}%</p>
+                <p class="col_centro ${coresStatus[s.status]} ${s.status >= 2 ? 'texto_forte' : ''}">${rotulosStatus[s.status]}</p>
+                <a href="./dashboard-servidor.html?idEquipamento=${s.idEquipamento}" class="btn_ver">ver-➔</a>
+            </div>
+        `
+    }
+
+    if (qtdLinhas == 0) {
+        corpo.innerHTML = `
+            <div class="server_box_vazio">
+                <p>Nenhum servidor em alerta</p>
+            </div>
+        `
+    }
+}
+
+function configurarMarcarTodos() {
+    let marcarTodos = document.getElementById('marcar-todos-servidores');
+
+    marcarTodos.addEventListener('change', function () {
+        let checks = document.getElementsByClassName('check_servidor');
+        for (let i = 0; i < checks.length; i++) {
+            checks[i].checked = marcarTodos.checked;
+        }
+    });
+}
+
+function aplicarCor(elemento, cor) {
+    let todas = ['cor_verde', 'cor_amarela', 'cor_vermelha', 'cor_apagada'];
+    for (let i = 0; i < todas.length; i++) {
+        elemento.classList.remove(todas[i]);
+    }
+    elemento.classList.add(cor);
+}
+
+function atualizarKpiCriticos(lista) {
+    let criticos = 0;
+    let moderados = 0;
+
+    for (let i = 0; i < lista.length; i++) {
+        if (lista[i].status >= 2) {
+            criticos++;
+        } else if (lista[i].status == 1) {
+            moderados++;
+        }
+    }
+
+    let kpiCriticos = document.getElementById('kpi-s-criticos');
+    let kpiMonitorados = document.getElementById('kpi-s-monitorados');
+    let kpiCriticosStatus = document.getElementById('kpi-s-criticos-status');
+
+    kpiCriticos.innerHTML = `${criticos}`;
+    kpiMonitorados.innerHTML = `${lista.length}`;
+
+    if (criticos > 0) {
+        kpiCriticosStatus.innerHTML = `Requer atenção imediata`;
+        aplicarCor(kpiCriticos, 'cor_vermelha');
+        aplicarCor(kpiCriticosStatus, 'cor_vermelha');
+    } else if (moderados > 0) {
+        kpiCriticosStatus.innerHTML = `${moderados} em atenção`;
+        aplicarCor(kpiCriticos, 'cor_verde');
+        aplicarCor(kpiCriticosStatus, 'cor_amarela');
+    } else {
+        kpiCriticosStatus.innerHTML = `Tudo sob controle`;
+        aplicarCor(kpiCriticos, 'cor_verde');
+        aplicarCor(kpiCriticosStatus, 'cor_verde');
+    }
+}
+
+const rankingServidores = ordenarRanking(mediaServidores);
+renderizarRanking(rankingServidores);
+configurarMarcarTodos();
+atualizarKpiCriticos(rankingServidores);

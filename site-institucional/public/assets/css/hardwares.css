@@ -1656,6 +1656,47 @@ main {
     box-sizing: border-box;
 }
 
+/* EDIÇÃO - Unifica o card do componente com os alertas */
+
+#modal-editar .linha_componente {
+    display: flex;
+    align-items: center;
+    gap: 0;
+    position: relative;
+    height: 90px;
+    min-height: 90px;
+}
+
+/* Card azul */
+#modal-editar .linha_componente .item_checkbox {
+    position: relative;
+    z-index: 2;
+    margin: 0;
+    height: 90px;
+    border-radius: 22px;
+    border: 1px solid var(--cor-azul-apagado);
+    flex-shrink: 0;
+}
+
+/* Área roxa - continuação do card */
+#modal-editar .linha_componente .alertas_componente {
+    position: relative;
+    z-index: 1;
+    height: 90px;
+    margin-left: -22px;
+    padding-left: 34px;
+    border: 1px solid var(--cor-azul-apagado);
+    border-left: none;
+    border-radius: 0 22px 22px 0;
+    background-color: var(--cor-azul-contraste);
+}
+
+/* Mantém as dimensões consistentes */
+#modal-editar .linha_componente .item_checkbox,
+#modal-editar .linha_componente .alertas_componente {
+    box-sizing: border-box;
+}
+
 /*Seta do select - tipo de dispositivo*/
 
 #modal-cadastrar .seletor_modal {

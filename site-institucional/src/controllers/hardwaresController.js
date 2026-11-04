@@ -349,11 +349,8 @@ function buscarEquipamentoPorId(req, res) {
         });
 }
 
-function atualizarEquipamento(req, res) {
-    if (!validarLimites(req, res)) {
-        return;
-    }
-
+function atualizarEquipamento(req, res)
+{
     var idEquipamento = converterId(req.params.idEquipamento);
     var idUsuario = converterId(req.body.idUsuario);
     var idEmpresa = converterId(req.body.idEmpresa);
@@ -362,9 +359,10 @@ function atualizarEquipamento(req, res) {
     var localizacao = req.body.localizacao;
     var descricao = req.body.descricao || "";
     var componentes = req.body.componentes || [];
-    var limiteCpu = req.body.limiteCpu;
-    var limiteRam = req.body.limiteRam;
-    var limiteDisco = req.body.limiteDisco;
+
+    if (!validarComponentesCadastro(componentes, res)) {
+        return;
+    }
 
     if (!idEquipamento || !idUsuario || !idEmpresa) {
         return res.status(400).send("Informe equipamento, usuário e empresa válidos.");
@@ -435,12 +433,9 @@ function atualizarEquipamento(req, res) {
                 return null;
             }
 
-            return hardwaresModel.cadastrarComponentes(
+            return hardwaresModel.cadastrarComponentesComLimites(
                 componentes,
-                idEquipamento,
-                limiteCpu,
-                limiteRam,
-                limiteDisco
+                idEquipamento
             );
         })
         .then(function (resultadoComponentes) {

@@ -187,6 +187,7 @@
 /* BARRA DE BOTÕES RÁPIDOS */
 .barra_botoes_rapidos {
   display: flex;
+  justify-content: space-between;
   gap: 1rem;
   flex-wrap: wrap;
   margin-top: 0.5rem;
