@@ -705,7 +705,7 @@ if (mttrPercent > 0) {
 // KPI -- DISPONIBILIDADE EXTERNA
 const dispExterna = [
     {
-        'dispExternaPercent': 99.5
+        'dispExternaPercent': 99.9
     }
 ]
 
@@ -807,8 +807,8 @@ const mostrarSomenteEmAlerta = true;
 
 // Definição do json de consumo (médias dos últimos 15 minutos)
 const mediaServidores = [
-    { 'idEquipamento': 1, 'nome': 'Principal', 'cpu': 92, 'ram': 35, 'disco': 78, 'minutosSemDados': 0 },
-    { 'idEquipamento': 2, 'nome': 'Backup', 'cpu': 40, 'ram': 88, 'disco': 91, 'minutosSemDados': 1 },
+    { 'idEquipamento': 1, 'nome': 'Principal', 'cpu': 89.5, 'ram': 55, 'disco': 10, 'minutosSemDados': 0 },
+    { 'idEquipamento': 2, 'nome': 'Backup', 'cpu': 35, 'ram': 30, 'disco': 85, 'minutosSemDados': 1 },
     { 'idEquipamento': 3, 'nome': 'Switch Central', 'cpu': 72, 'ram': 35, 'disco': 78, 'minutosSemDados': 0 },
     { 'idEquipamento': 4, 'nome': 'Web XPTO', 'cpu': 12, 'ram': 75, 'disco': 40, 'minutosSemDados': 2 },
     { 'idEquipamento': 5, 'nome': 'Notebook Financeiro', 'cpu': 12, 'ram': 35, 'disco': 78, 'minutosSemDados': 0 },

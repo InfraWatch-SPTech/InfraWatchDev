@@ -13,7 +13,7 @@ const dados_mock = {
         ip: '192.168.1.10',
         funcao: 'Processamento',
         online_desde: '14/09 08:15',
-        online: true
+        online: false
     },
     cpu: [18, 22, 22, 26, 26, 38, 47, 56, 65, 69, 73, 79, 82, 83, 84, 84, 84, 85, 86, 88, 89, 88, 88.5, 89.5],
     ram: [54, 51, 51, 53, 55, 59, 66, 75, 69, 57, 54, 55, 56, 56, 55, 55, 56, 56, 55, 54, 54, 55, 55, 55],
@@ -83,7 +83,7 @@ function classificar(valor, limite) {
     if (valor >= limite) {
         return 'critico';
     }
-    if (valor >= limite * 0.7) {
+    if (valor >= limite * 0.9) {
         return 'alerta';
     }
     return 'ok';

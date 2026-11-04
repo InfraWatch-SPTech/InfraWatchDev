@@ -385,3 +385,82 @@ button {
     height: 14px;
 }
 
+@media (max-width: 1200px) {
+    .kpi_grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 20px;
+    }
+}
+
+@media (max-width: 1000px) {
+    .grafico_grid {
+        grid-template-columns: minmax(0, 1fr);
+        gap: 24px;
+    }
+
+    .pagina_conteudo {
+        padding-top: 32px;
+        gap: 32px;
+    }
+}
+
+@media (max-width: 600px) {
+    .pagina_conteudo {
+        padding: 24px 16px 48px;
+        gap: 24px;
+    }
+
+    .servidor_cabecalho {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 16px;
+    }
+
+    .servidor_icone {
+        width: 72px;
+        height: 72px;
+    }
+
+    .servidor_icone .icone {
+        width: 40px;
+        height: 40px;
+    }
+
+    .servidor_meta {
+        flex-direction: column;
+        gap: 6px;
+    }
+
+    .servidor_meta > span + span {
+        padding-left: 0;
+        border-left: 0;
+    }
+
+    .kpi_grid {
+        grid-template-columns: minmax(0, 1fr);
+    }
+
+    .card_kpi {
+        padding: 18px 20px;
+        gap: 20px;
+    }
+
+    .card_grafico {
+        padding: 20px 16px;
+    }
+
+    .card_grafico_area {
+        height: 240px;
+    }
+
+    .card_historico,
+    .card_incidentes {
+        padding-left: 16px;
+        padding-right: 16px;
+    }
+
+    .btn_novo_relatorio {
+        width: 100%;
+        justify-content: center;
+    }
+}
