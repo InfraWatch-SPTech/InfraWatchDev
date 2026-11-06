@@ -160,6 +160,7 @@ main {
     background-color: var(--cor-azul-contraste);
     padding: 2vh;
     gap: 1.5vh;
+    width: 30vw;
     max-height: 38vh;
     flex-wrap: wrap;
     border: 1px solid var(--cor-azul-apagado);
