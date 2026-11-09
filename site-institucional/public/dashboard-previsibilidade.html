@@ -1,0 +1,54 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Previsibilidade e capacidade | InfraWatch</title>
+  <link rel="stylesheet" href="./assets/css/global.css">
+  <link rel="stylesheet" href="./assets/css/menu.css">
+  <link rel="stylesheet" href="./assets/css/dashboard-previsibilidade.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.3.1/css/all.min.css" integrity="sha512-QeR2VH+lsBE5LSAe1Q5EnTBbe7XTBubt8dG93Y7gidSgdMCr8nVqKcfKAMyN96SV8KDbZVTDXChatu5G2KQGzg==" crossorigin="anonymous" referrerpolicy="no-referrer">
+</head>
+<body>
+  <header class="preview_header">
+    <a class="header_logo" href="./main.html">Infra<span>Watch</span></a>
+    <span class="preview_tag">Prévia da dashboard</span>
+  </header>
+  <main class="previsibilidade">
+    <header class="topo">
+      <div><h1>Previsibilidade e capacidade</h1>
+        <p>Ambiente: Produção (Cluster Pix / Boletos) <span>•</span> Visão preditiva de falhas <span>•</span> Analista responsável: Thiago</p>
+      </div>
+      <div class="sla"><span class="status-ponto"></span>SLA BCB (99,9%): <strong>07h 42m restantes</strong></div>
+    </header>
+
+    <section class="kpis" aria-label="Indicadores principais">
+      <article class="painel kpi"><h2>Status de risco global</h2><strong class="verde">14%</strong><p><b>[ OK ]</b> Baixo risco nas próximas 24h</p></article>
+      <article class="painel kpi"><h2>Próximo ponto crítico</h2><strong class="vermelho">D+5 (13/Nov)</strong><p><b>[ ALERTA ]</b> Saturação CPU (SRV-PIX-01)</p></article>
+      <article class="painel kpi"><h2>Runway mínima de recursos</h2><strong class="amarelo">5 dias</strong><p><b>[ ALERTA ]</b> Processador em nível crítico</p></article>
+      <article class="painel kpi"><h2>Orçamento BCB consumido</h2><strong class="azul">54m / 8h46m</strong><p><b>[ OK ]</b> 10,2% do limite anual</p></article>
+    </section>
+
+    <section class="analises">
+      <article class="bloco tendencia">
+        <h2>1. Tendência e previsão de saturação</h2>
+        <div class="grafico-controles" role="group" aria-label="Componente exibido">
+          <button class="seletor ativo" type="button" data-componente="cpu" aria-pressed="true">CPU</button>
+          <button class="seletor" type="button" data-componente="ram" aria-pressed="false">Memória RAM</button>
+          <button class="seletor" type="button" data-componente="disco" aria-pressed="false">Disco</button>
+        </div>
+        <div class="painel grafico"><div class="grafico-contexto" id="contexto-tendencia"></div><canvas id="grafico-tendencia" aria-label="Histórico, previsão e faixa provável de uso"></canvas></div>
+      </article>
+      <div class="coluna">
+        <article class="bloco"><h2>2. Tempo estimado até o limite</h2><div class="painel grafico barra"><canvas id="grafico-runway" aria-label="Dias restantes até o limite crítico"></canvas><div class="runway-detalhes" id="runway-detalhes"></div></div></article>
+        <article class="bloco"><h2>3. Teste de carga e ponto de ruptura</h2><div class="painel grafico estresse"><p class="grafico-subtitulo">Resposta do sistema conforme aumentam as requisições simultâneas</p><div class="estresse-graficos"><div><span>Uso de CPU (%)</span><canvas id="grafico-estresse-cpu" aria-label="Uso de CPU por volume de requisições"></canvas></div><div><span>Latência p95 (ms)</span><canvas id="grafico-estresse-latencia" aria-label="Latência p95 por volume de requisições"></canvas></div></div><p class="ruptura-nota">Ponto de ruptura estimado: <strong>5.000 req/s</strong></p></div></article>
+      </div>
+    </section>
+
+    <section class="painel linha-tempo"><h2>4. Linha do tempo de eventos preditivos <span>(runway de 30 dias — ações recomendadas para o analista Thiago)</span></h2><div id="eventos" class="eventos"></div></section>
+    <p class="nota"><i class="fa-solid fa-circle-info" aria-hidden="true"></i> Protótipo demonstrativo: dados, projeções e ponto de ruptura são simulados. A faixa provável ilustra incerteza e não representa um modelo estatístico validado.</p>
+  </main>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+  <script src="./assets/js/dashboard-previsibilidade.js"></script>
+</body>
+</html>
