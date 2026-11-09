@@ -19,6 +19,102 @@ const mock = {
   ]
 };
 
+function definirMensagemServidor(texto) {
+  const mensagem=document.getElementById('mensagem-servidor');
+  mensagem.textContent=texto;
+}
+
+function adicionarResumoServidor(rotulo,valor) {
+  const item=document.createElement('span');
+  const titulo=document.createElement('strong');
+  titulo.textContent=`${rotulo}: `;
+  item.append(titulo,document.createTextNode(valor || 'Não informado'));
+  document.getElementById('servidor-resumo').appendChild(item);
+}
+
+function mostrarResumoServidor(servidor) {
+  const resumo=document.getElementById('servidor-resumo');
+  resumo.replaceChildren();
+  adicionarResumoServidor('IP',servidor.ipEquipamento);
+  adicionarResumoServidor('Status',servidor.statusEquipamento);
+  adicionarResumoServidor('Localização',servidor.localizacao);
+}
+
+function carregarServidoresDaEmpresa() {
+  const select=document.getElementById('servidor-em-analise');
+  let usuario;
+  try {
+    usuario=JSON.parse(localStorage.getItem('usuarioLogado') || 'null');
+  } catch (erro) {
+    localStorage.removeItem('usuarioLogado');
+  }
+
+  if(!usuario || !usuario.id || !usuario.idEmpresa){
+    select.replaceChildren(new Option('Entre para carregar seus servidores',''));
+    definirMensagemServidor('A prévia continua disponível sem login. Para consultar a lista da empresa,');
+    const msg=document.getElementById('mensagem-servidor');
+    const link=document.createElement('a');link.href='./login.html';link.textContent='entre no sistema.';msg.append(' ',link);
+    return;
+  }
+
+  const url=`/hardwares/buscarEq/${encodeURIComponent(usuario.idEmpresa)}?idUsuario=${encodeURIComponent(usuario.id)}`;
+  fetch(url,{cache:'no-store'})
+    .then(resposta=>{
+      if(resposta.status===204)return [];
+      if(!resposta.ok){
+        const erro=new Error(resposta.status===403?'Sem permissão para visualizar os servidores desta empresa.':`Não foi possível carregar os servidores (HTTP ${resposta.status}).`);
+        erro.status=resposta.status;
+        throw erro;
+      }
+      return resposta.json();
+    })
+    .then(linhas=>{
+      const unicos=new Map();
+      linhas.forEach(item=>{
+        if(String(item.tipoEquipamento || '').toLocaleLowerCase('pt-BR')==='servidor' && !unicos.has(String(item.idEquipamento))){
+          unicos.set(String(item.idEquipamento),item);
+        }
+      });
+      const servidores=Array.from(unicos.values()).sort((a,b)=>String(a.nomeEquipamento).localeCompare(String(b.nomeEquipamento),'pt-BR'));
+      select.replaceChildren(new Option('Selecione um servidor',''));
+      if(servidores.length===0){
+        select.replaceChildren(new Option('Nenhum servidor disponível',''));
+        definirMensagemServidor('Nenhum servidor foi encontrado para esta empresa ou sua permissão não inclui servidores.');
+        return;
+      }
+      servidores.forEach(servidor=>{
+        const local=servidor.localizacao ? ` · ${servidor.localizacao}` : '';
+        select.add(new Option(`${servidor.nomeEquipamento}${local}`,String(servidor.idEquipamento)));
+      });
+      select.disabled=false;
+      definirMensagemServidor(`${servidores.length} servidor${servidores.length===1?'':'es'} disponível${servidores.length===1?'':'is'} na sua empresa.`);
+      select.addEventListener('change',()=>{
+        const urlAtual=new URL(window.location.href);
+        const servidor=servidores.find(item=>String(item.idEquipamento)===select.value);
+        if(!servidor){
+          urlAtual.searchParams.delete('idEquipamento');
+          window.history.replaceState({},'',urlAtual);
+          document.getElementById('servidor-resumo').innerHTML='<span class="resumo-placeholder">Selecione um servidor para ver os dados de identificação.</span>';
+          definirMensagemServidor(`${servidores.length} servidor${servidores.length===1?'':'es'} disponível${servidores.length===1?'':'is'} na sua empresa.`);
+          return;
+        }
+        mostrarResumoServidor(servidor);
+        urlAtual.searchParams.set('idEquipamento',select.value);
+        window.history.replaceState({},'',urlAtual);
+        definirMensagemServidor('Servidor selecionado. Os gráficos permanecem demonstrativos nesta etapa.');
+      });
+      const idDaUrl=new URLSearchParams(window.location.search).get('idEquipamento');
+      const servidorDaUrl=servidores.find(item=>String(item.idEquipamento)===idDaUrl);
+      if(servidorDaUrl){select.value=idDaUrl;mostrarResumoServidor(servidorDaUrl);definirMensagemServidor('Servidor recuperado da URL. Os gráficos permanecem demonstrativos nesta etapa.');}
+    })
+    .catch(erro=>{
+      select.replaceChildren(new Option('Lista de servidores indisponível',''));
+      definirMensagemServidor(erro.message || 'Erro ao consultar os servidores.');
+    });
+}
+
+carregarServidoresDaEmpresa();
+
 const eixoTexto = '#aaa8ba';
 const eixoComum = {ticks:{color:eixoTexto,maxTicksLimit:8},grid:{color:'rgba(139,134,155,.12)'},border:{color:'#5c6288'}};
 const diasEixo = Array.from({length:45},(_,i)=>i<29?`D-${29-i}`:i===29?'Hoje':`D+${i-29}`);
@@ -75,7 +171,7 @@ const marcadorRuptura={id:'marcadorRuptura',afterDatasetsDraw(chart,args,options
   const x=chart.scales.x.getPixelForValue(index),{ctx,chartArea}=chart;ctx.save();ctx.strokeStyle='#ff5c5c';ctx.lineWidth=1.5;ctx.setLineDash([5,4]);ctx.beginPath();ctx.moveTo(x,chartArea.top);ctx.lineTo(x,chartArea.bottom);ctx.stroke();ctx.restore();
 }};
 function criarGraficoEstresse(id,valores,limite,cor,formatar){
-  return new Chart(document.getElementById(id),{type:'line',plugins:[marcadorRuptura],data:{labels:mock.estresse.acessos.map(v=>v.toLocaleString('pt-BR')),datasets:[{label:'Teste simulado',data:valores,borderColor:cor,backgroundColor:cor,borderWidth:2.2,pointRadius:2.5,pointHoverRadius:5,tension:.25},{label:`Referência (${formatar(limite)})`,data:Array(valores.length).fill(limite),borderColor:'#f5c542',borderDash:[4,4],borderWidth:1.3,pointRadius:0}]},options:{responsive:true,maintainAspectRatio:false,interaction:{mode:'index',intersect:false},plugins:{legend:{display:false},tooltip:{callbacks:{label:c=>`${c.dataset.label}: ${formatar(c.parsed.y)}`}}},scales:{x:{...eixoComum,ticks:{...eixoComum.ticks,maxTicksLimit:7},title:{display:true,text:'Requisições por segundo',color:eixoTexto}},y:{beginAtZero:true,suggestedMax:valores===mock.estresse.cpu?100:600,...eixoComum,ticks:{...eixoComum.ticks,callback:v=>formatar(v)}}}}});
+  return new Chart(document.getElementById(id),{type:'line',plugins:[marcadorRuptura],data:{labels:mock.estresse.acessos.map(v=>v.toLocaleString('pt-BR')),datasets:[{label:'Teste simulado',data:valores,borderColor:cor,backgroundColor:cor,borderWidth:2.2,pointRadius:2.5,pointHoverRadius:5,tension:.25},{label:`Referência (${formatar(limite)})`,data:Array(valores.length).fill(limite),borderColor:'#f5c542',borderDash:[4,4],borderWidth:1.3,pointRadius:0}]},options:{responsive:true,maintainAspectRatio:false,interaction:{mode:'index',intersect:false},plugins:{legend:{display:false},tooltip:{callbacks:{title:items=>`Hoje · ${mock.estresse.acessos[items[0].dataIndex].toLocaleString('pt-BR')} req/s`,label:c=>`${c.dataset.label}: ${formatar(c.parsed.y)}`}}},scales:{x:{...eixoComum,ticks:{...eixoComum.ticks,maxTicksLimit:7,callback:value=>`${mock.estresse.acessos[value].toLocaleString('pt-BR')} req/s`},title:{display:true,text:'Volume de requisições (req/s)',color:eixoTexto}},y:{beginAtZero:true,suggestedMax:valores===mock.estresse.cpu?100:600,...eixoComum,ticks:{...eixoComum.ticks,callback:v=>formatar(v)}}}}});
 }
 criarGraficoEstresse('grafico-estresse-cpu',mock.estresse.cpu,80,'#20baf4',v=>`${v}%`);
 criarGraficoEstresse('grafico-estresse-latencia',mock.estresse.latenciaP95,300,'#ff9f32',v=>`${v} ms`);
