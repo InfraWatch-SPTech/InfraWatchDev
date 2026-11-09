@@ -40,6 +40,60 @@ function mostrarResumoServidor(servidor) {
   adicionarResumoServidor('Localização',servidor.localizacao);
 }
 
+function carregarLimitesCadastrados(servidor,usuario) {
+  const area=document.getElementById('limites-servidor');
+  area.textContent='Carregando limites cadastrados no banco...';
+  const url=`/hardwares/buscarEqId/${encodeURIComponent(servidor.idEquipamento)}?idUsuario=${encodeURIComponent(usuario.id)}&idEmpresa=${encodeURIComponent(usuario.idEmpresa)}`;
+  fetch(url,{cache:'no-store'})
+    .then(resposta=>{
+      if(!resposta.ok)throw new Error(resposta.status===403?'Sem permissão para consultar os limites deste servidor.':`Falha ao consultar os limites (HTTP ${resposta.status}).`);
+      return resposta.json();
+    })
+    .then(componentes=>{
+      area.replaceChildren();
+      const titulo=document.createElement('strong');titulo.textContent='Limites cadastrados:';area.appendChild(titulo);
+      const exibidos=new Set();
+      componentes.forEach(componente=>{
+        const tipo=String(componente.tipoComponente || '').toUpperCase();
+        const nome=tipo==='ARMAZENAMENTO'?'Disco':tipo;
+        if(!['CPU','RAM','Disco'].includes(nome)||exibidos.has(nome))return;
+        exibidos.add(nome);
+        const item=document.createElement('span');
+        const atencao=componente.limiteAtencao==null?'sem limite':`${componente.limiteAtencao}% atenção`;
+        const critico=componente.limiteCritico==null?'sem limite':`${componente.limiteCritico}% crítico`;
+        item.textContent=`${nome}: ${atencao} · ${critico}`;
+        area.appendChild(item);
+      });
+      if(!exibidos.size){
+        const vazio=document.createElement('span');vazio.textContent='Nenhum limite de CPU, RAM ou disco cadastrado para este servidor.';area.appendChild(vazio);
+      }
+    })
+    .catch(erro=>{area.textContent=erro.message || 'Não foi possível consultar os limites cadastrados.';});
+}
+
+let componenteAtivo='cpu';
+let dadosAmostrasPrevisibilidade=null;
+function atualizarAvisoAmostras() {
+  const aviso=document.getElementById('aviso-amostras');
+  const recurso=dadosAmostrasPrevisibilidade && (dadosAmostrasPrevisibilidade.recursos || {})[componenteAtivo];
+  const status=dadosAmostrasPrevisibilidade && (dadosAmostrasPrevisibilidade.status_previsao || {})[componenteAtivo];
+  const amostras=(recurso && recurso.quantidade_amostras) ?? (status && status.quantidade_amostras);
+  aviso.className='aviso-amostras visivel';
+  if(amostras==null){
+    aviso.textContent='Ainda não há contagem de amostras reais conectada à página. A previsão exibida é simulada; a previsão real exige no mínimo 3 amostras.';
+  }else if(Number(amostras)<3){
+    aviso.textContent=`Previsão indisponível para ${componenteAtivo.toUpperCase()}: ${amostras} amostra(s) recebida(s); são necessárias pelo menos 3.`;
+  }else{
+    aviso.className='aviso-amostras visivel ok';
+    aviso.textContent=`${amostras} amostras disponíveis para ${componenteAtivo.toUpperCase()}. A previsão real será habilitada quando os dados do ETL forem conectados aos gráficos.`;
+  }
+}
+window.atualizarStatusAmostrasPrevisibilidade=function(payload){
+  dadosAmostrasPrevisibilidade=payload || null;
+  atualizarAvisoAmostras();
+};
+atualizarAvisoAmostras();
+
 function carregarServidoresDaEmpresa() {
   const select=document.getElementById('servidor-em-analise');
   let usuario;
@@ -95,17 +149,19 @@ function carregarServidoresDaEmpresa() {
           urlAtual.searchParams.delete('idEquipamento');
           window.history.replaceState({},'',urlAtual);
           document.getElementById('servidor-resumo').innerHTML='<span class="resumo-placeholder">Selecione um servidor para ver os dados de identificação.</span>';
+          document.getElementById('limites-servidor').replaceChildren();
           definirMensagemServidor(`${servidores.length} servidor${servidores.length===1?'':'es'} disponível${servidores.length===1?'':'is'} na sua empresa.`);
           return;
         }
         mostrarResumoServidor(servidor);
+        carregarLimitesCadastrados(servidor,usuario);
         urlAtual.searchParams.set('idEquipamento',select.value);
         window.history.replaceState({},'',urlAtual);
         definirMensagemServidor('Servidor selecionado. Os gráficos permanecem demonstrativos nesta etapa.');
       });
       const idDaUrl=new URLSearchParams(window.location.search).get('idEquipamento');
       const servidorDaUrl=servidores.find(item=>String(item.idEquipamento)===idDaUrl);
-      if(servidorDaUrl){select.value=idDaUrl;mostrarResumoServidor(servidorDaUrl);definirMensagemServidor('Servidor recuperado da URL. Os gráficos permanecem demonstrativos nesta etapa.');}
+      if(servidorDaUrl){select.value=idDaUrl;mostrarResumoServidor(servidorDaUrl);carregarLimitesCadastrados(servidorDaUrl,usuario);definirMensagemServidor('Servidor recuperado da URL. Os gráficos permanecem demonstrativos nesta etapa.');}
     })
     .catch(erro=>{
       select.replaceChildren(new Option('Lista de servidores indisponível',''));
@@ -159,6 +215,8 @@ function atualizarTendencia(chave) {
 }
 document.querySelectorAll('[data-componente]').forEach(botao=>botao.addEventListener('click',()=>{
   document.querySelectorAll('[data-componente]').forEach(b=>{b.classList.toggle('ativo',b===botao);b.setAttribute('aria-pressed',String(b===botao));});
+  componenteAtivo=botao.dataset.componente;
+  atualizarAvisoAmostras();
   atualizarTendencia(botao.dataset.componente);
 }));
 atualizarTendencia('cpu');
