@@ -10,16 +10,16 @@
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.3.1/css/all.min.css" integrity="sha512-QeR2VH+lsBE5LSAe1Q5EnTBbe7XTBubt8dG93Y7gidSgdMCr8nVqKcfKAMyN96SV8KDbZVTDXChatu5G2KQGzg==" crossorigin="anonymous" referrerpolicy="no-referrer">
 </head>
 <body>
-  <header class="preview_header">
+  <header class="dashboard_header">
     <a class="header_logo" href="./main.html">Infra<span>Watch</span></a>
-    <span class="preview_tag">Prévia da dashboard</span>
+      <span class="dashboard_tag">Dados de previsibilidade</span>
   </header>
   <main class="previsibilidade">
     <header class="topo">
       <div><h1>Previsibilidade e capacidade</h1>
-        <p>Ambiente: Produção (Cluster Pix / Boletos) <span>•</span> Visão preditiva de falhas <span>•</span> Analista responsável: Thiago</p>
+        <p id="contexto-servidor">Selecione um servidor para carregar os dados de previsibilidade do Gold.</p>
       </div>
-      <div class="sla"><span class="status-ponto"></span>SLA BCB (99,9%): <strong>07h 42m restantes</strong></div>
+      <div class="sla" id="status-sla"><span class="status-ponto"></span><strong id="status-sla-texto">SLA: aguardando dados do Gold</strong></div>
     </header>
 
     <section class="painel seletor-servidor" aria-labelledby="titulo-servidor">
@@ -39,10 +39,10 @@
     <div id="aviso-amostras" class="aviso-amostras" role="status" aria-live="polite"></div>
 
     <section class="kpis" aria-label="Indicadores principais">
-      <article class="painel kpi"><h2>Status de risco global</h2><strong class="verde">14%</strong><p><b>[ OK ]</b> Baixo risco nas próximas 24h</p></article>
-      <article class="painel kpi"><h2>Próximo ponto crítico</h2><strong class="vermelho">D+5 (13/Nov)</strong><p><b>[ ALERTA ]</b> Saturação CPU (SRV-PIX-01)</p></article>
-      <article class="painel kpi"><h2>Próxima revisão necessária</h2><strong class="amarelo">Em 5 dias</strong><p><b>[ ATENÇÃO ]</b> Verifique a capacidade do servidor</p></article>
-      <article class="painel kpi"><h2>Tempo ainda disponível</h2><strong class="azul">8h 46m</strong><p><b>[ OK ]</b> Apenas 54 min usados do limite</p></article>
+      <article class="painel kpi"><h2>Maior utilização atual</h2><strong id="kpi-maior-uso" class="azul">—</strong><p id="kpi-maior-uso-descricao">Selecione um servidor.</p></article>
+      <article class="painel kpi"><h2>Próximo limite crítico</h2><strong id="kpi-proximo-limite" class="azul">N/D</strong><p id="kpi-proximo-limite-descricao">Erro: sem dados do Gold.</p></article>
+      <article class="painel kpi"><h2>Requisições avaliadas</h2><strong id="kpi-requisicoes" class="azul">N/D</strong><p id="kpi-requisicoes-descricao">Erro: sem métricas HTTP no Gold.</p></article>
+      <article class="painel kpi"><h2>SLA / indisponibilidade</h2><strong id="kpi-sla" class="azul">N/D</strong><p id="kpi-sla-descricao">O Gold não fornece essa métrica.</p></article>
     </section>
 
     <section class="analises">
@@ -53,16 +53,47 @@
           <button class="seletor" type="button" data-componente="ram" aria-pressed="false">Memória RAM</button>
           <button class="seletor" type="button" data-componente="disco" aria-pressed="false">Disco</button>
         </div>
-        <div class="painel grafico"><div class="grafico-contexto" id="contexto-tendencia"></div><canvas id="grafico-tendencia" aria-label="Histórico, previsão e faixa provável de uso"></canvas></div>
+        <div class="painel grafico">
+          <div class="grafico-contexto" id="contexto-tendencia"></div>
+          <div class="grafico-visual">
+            <canvas id="grafico-tendencia" aria-label="Histórico e previsão de uso informados pelo Gold"></canvas>
+            <div class="estado-grafico" id="estado-grafico-tendencia" role="status" aria-live="polite" hidden></div>
+          </div>
+        </div>
       </article>
       <div class="coluna">
-        <article class="bloco"><h2>Tempo estimado até o limite</h2><div class="painel grafico barra"><canvas id="grafico-runway" aria-label="Dias restantes até o limite crítico"></canvas><div class="runway-detalhes" id="runway-detalhes"></div></div></article>
-        <article class="bloco"><h2>Teste de carga e ponto de ruptura</h2><div class="painel grafico estresse"><p class="grafico-subtitulo"><span class="periodo-teste">Hoje</span> Resposta do sistema conforme aumentam as requisições simultâneas</p><div class="estresse-graficos"><div class="grafico-estresse"><span>Uso de CPU (%)</span><canvas id="grafico-estresse-cpu" aria-label="Uso de CPU por volume de requisições"></canvas></div><div class="grafico-estresse"><span>Latência p95 (ms)</span><canvas id="grafico-estresse-latencia" aria-label="Latência p95 por volume de requisições"></canvas></div></div><p class="ruptura-nota">Ponto de ruptura estimado: <strong>5.000 req/s</strong></p></div></article>
+        <article class="bloco">
+          <h2>Tempo estimado até o limite</h2>
+          <div class="painel grafico barra">
+            <div class="grafico-visual">
+              <canvas id="grafico-runway" aria-label="Dias restantes até o limite crítico"></canvas>
+              <div class="estado-grafico" id="estado-grafico-runway" role="status" aria-live="polite" hidden></div>
+            </div>
+            <div class="runway-detalhes" id="runway-detalhes"></div>
+          </div>
+        </article>
+        <article class="bloco">
+          <h2>Previsão sob carga HTTP</h2>
+          <div class="painel grafico estresse">
+            <p class="grafico-subtitulo"><span class="periodo-teste" id="periodo-teste">Gold</span> Relação entre o número de requisições, uso de CPU e latência</p>
+            <div class="estresse-graficos">
+              <div class="grafico-estresse">
+                <span>CPU observada e prevista · limite crítico do servidor</span>
+                <div class="grafico-visual"><canvas id="grafico-previsao-cpu" aria-label="Uso de CPU observado e previsto pelo número de requisições"></canvas><div class="estado-grafico" id="estado-grafico-previsao-cpu" role="status" aria-live="polite" hidden></div></div>
+              </div>
+              <div class="grafico-estresse">
+                <span>Latência P95 e P99 observada e prevista</span>
+                <div class="grafico-visual"><canvas id="grafico-previsao-latencia" aria-label="Latências P95 e P99 observadas e previstas pelo número de requisições"></canvas><div class="estado-grafico" id="estado-grafico-previsao-latencia" role="status" aria-live="polite" hidden></div></div>
+              </div>
+            </div>
+            <p class="ruptura-nota" id="resumo-estresse">Erro: sem amostras por requisição no Gold.</p>
+          </div>
+        </article>
       </div>
     </section>
 
-    <section class="painel linha-tempo"><h2>Linha do tempo de eventos preditivos <span>(runway de 30 dias — ações recomendadas para o analista Thiago)</span></h2><div id="eventos" class="eventos"></div></section>
-    <p class="nota"><i class="fa-solid fa-circle-info" aria-hidden="true"></i> Protótipo demonstrativo: dados, projeções e ponto de ruptura são simulados. A faixa provável ilustra incerteza e não representa um modelo estatístico validado.</p>
+    <section class="painel linha-tempo"><h2>Linha do tempo de previsões <span>(eventos derivados das amostras e projeções do Gold)</span></h2><div id="eventos" class="eventos"></div></section>
+    <p class="nota"><i class="fa-solid fa-circle-info" aria-hidden="true"></i> Pontos sólidos representam amostras do Gold; linhas tracejadas representam projeções estatísticas e sua faixa de variação. A zona crítica é calculada com o limite de CPU cadastrado para o servidor.</p>
   </main>
   <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
   <script src="./assets/js/dashboard-previsibilidade.js"></script>

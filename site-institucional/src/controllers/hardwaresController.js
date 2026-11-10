@@ -1,4 +1,5 @@
 var hardwaresModel = require("../models/hardwaresModel");
+var previsibilidadeModel = require("../models/previsibilidadeModel");
 
 function converterId(valor) {
     var numero = Number(valor);
@@ -348,6 +349,92 @@ function buscarEquipamentoPorId(req, res) {
             }
         });
 }
+// conexão e consulta com s3
+
+function buscarDashPrevisibilidade(req, res) {
+    var idEquipamento = converterId(req.params.idEquipamento);
+    var idEmpresa = converterId(req.query.idEmpresa);
+    var idUsuario = converterId(req.query.idUsuario);
+    var acessoAtual;
+
+    if (!idEquipamento || !idEmpresa || !idUsuario) {
+        return res.status(400).send("Informe equipamento, usuário e empresa válidos.");
+    }
+
+    buscarAcesso(idUsuario, idEmpresa, res)
+        .then(function (acesso) {
+            if (!acesso) {
+                return null;
+            }
+
+            if (!podeVisualizarEquipamentos(acesso)) {
+                res.status(403).send("Você não possui permissão para visualizar equipamentos.");
+                return null;
+            }
+
+            acessoAtual = acesso;
+            return hardwaresModel.buscarTipoEquipamento(idEquipamento, idEmpresa);
+        })
+        .then(function (equipamentos) {
+            if (!equipamentos || res.headersSent) {
+                return null;
+            }
+
+            if (equipamentos.length === 0) {
+                res.status(404).send("Servidor não encontrado nesta empresa.");
+                return null;
+            }
+
+            if (equipamentos[0].tipo !== "Servidor") {
+                res.status(404).send("A dashboard de previsibilidade está disponível para servidores.");
+                return null;
+            }
+
+            if (!tipoEstaPermitido(equipamentos[0].tipo, obterTiposPermitidos(acessoAtual))) {
+                res.status(403).send("Você não possui acesso a servidores desta empresa.");
+                return null;
+            }
+
+            return hardwaresModel.buscarEmpresaDoEquipamento(idEquipamento, idEmpresa);
+        })
+        .then(function (empresas) {
+            if (!empresas || res.headersSent) {
+                return null;
+            }
+
+            if (empresas.length === 0) {
+                res.status(404).send("Empresa do servidor não encontrada.");
+                return null;
+            }
+
+            return previsibilidadeModel.buscarArquivoMaisRecente(
+                empresas[0].nomeEmpresa,
+                idEquipamento
+            );
+        })
+        .then(function (resultado) {
+            if (res.headersSent || !resultado) {
+                if (!res.headersSent) {
+                    res.status(404).json({ mensagem: "Ainda não há arquivo dash-previsibilidade no Gold para este servidor." });
+                }
+                return;
+            }
+
+            res.status(200).json(resultado);
+        })
+        .catch(function (erro) {
+            console.error("Erro ao buscar dash-previsibilidade no S3:", erro.name || erro.code || "erro");
+
+            if (!res.headersSent) {
+                var configuracaoS3Ausente = erro.code === "S3_CONFIG_MISSING" || erro.code === "S3_SDK_MISSING";
+                var status = configuracaoS3Ausente ? 503 : 502;
+                var mensagem = configuracaoS3Ausente
+                    ? erro.message
+                    : "Não foi possível consultar os dados de previsibilidade no S3.";
+                res.status(status).json({ mensagem: mensagem });
+            }
+        });
+}
 
 function atualizarEquipamento(req, res)
 {
@@ -558,6 +645,7 @@ module.exports = {
     cadastrarEquipamento,
     buscarEquipamentosEmpresa,
     buscarEquipamentoPorId,
+    buscarDashPrevisibilidade,
     atualizarEquipamento,
     deletarEquipamento
 };

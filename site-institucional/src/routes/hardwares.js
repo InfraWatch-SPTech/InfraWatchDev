@@ -11,6 +11,10 @@ router.get("/buscarEqId/:idEquipamento", function (req, res) {
     hardwaresController.buscarEquipamentoPorId(req, res);
 });
 
+router.get("/dash-previsibilidade/:idEquipamento", function (req, res) {
+    hardwaresController.buscarDashPrevisibilidade(req, res);
+});
+
 router.post("/cadastrar", function (req, res) {
     hardwaresController.cadastrarEquipamento(req, res);
 });
