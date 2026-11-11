@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Histórico e padrões | InfraWatch</title>
+    <link rel="icon" href="./assets/midias/main-icon-image.png">
+    <link rel="stylesheet" href="./assets/css/global.css">
+    <link rel="stylesheet" href="./assets/css/menu.css">
+    <link rel="stylesheet" href="./assets/css/dashboard-padroes.css">
+</head>
+
+<body>
+    <header class="header_principal">
+        <button class="header_botao_menu" id="botao_menu" aria-label="Abrir menu" aria-expanded="false"
+            aria-controls="menu_lateral">☰</button>
+        <a class="header_logo" href="./pagina-inicial.html">Infra<span>Watch</span></a>
+        <div class="header_usuario"><span class="header_empresa">Histórico e padrões</span><span class="modo_dados"
+                id="modo_dados">Demonstração</span></div>
+    </header>
+    <div class="menu_fundo" id="menu_fundo"></div>
+    <nav class="menu_lateral" id="menu_lateral" aria-label="Menu principal" aria-hidden="true" inert>
+        <div class="menu_topo"><span class="menu_marca">Infra<span>Watch</span></span><button class="menu_fechar"
+                id="menu_fechar" aria-label="Fechar menu">×</button></div>
+        <ul class="menu_lista">
+            <li><a class="menu_link" href="./pagina-inicial.html">Início</a></li>
+            <li><a class="menu_link" href="./dash-empresa.html">Dashboard empresa</a></li>
+            <li><a class="menu_link" href="./dashboard-servidor.html">Monitoramento do servidor</a></li>
+            <li><a class="menu_link" href="./dashboard-padroes.html" aria-current="page">Histórico e padrões</a></li>
+        </ul>
+    </nav>
+
+    <main class="pagina_conteudo">
+        <header class="pagina_topo">
+            <div class="titulo_grupo">
+                <div class="servidor_icone" aria-hidden="true">▥</div>
+                <div>
+                    <p class="sobretitulo">Análise do servidor</p>
+                    <h1>Histórico e padrões</h1>
+                    <p class="texto_apoio" id="periodo_texto"></p>
+                </div>
+            </div>
+            <div class="filtros">
+                <label>Servidor<select id="servidor"></select></label>
+                <label>Período<select id="periodo">
+                        <option value="7">Últimos 7 dias</option>
+                        <option value="14">Últimos 14 dias</option>
+                    </select></label>
+                <label class="botao_arquivo"><input id="arquivo_local" type="file"
+                        accept=".json,application/json"></label>
+            </div>
+        </header>
+
+        <div class="faixa_limites"><span><strong></strong></span>
+            <div id="limites"></div>
+        </div>
+        <p id="erro" class="mensagem_erro" role="alert" hidden></p>
+        <p id="estado_dados" class="estado_dados"></p>
+
+        <section class="kpi_grid" aria-label="Resumo do histórico">
+            <article class="card_kpi">
+                <h2>Componente com mais tempo em atenção</h2>
+                <p class="kpi_valor" id="kpi_componente">—</p>
+                <p class="kpi_sub" id="kpi_componente_tempo">—</p>
+            </article>
+            <article class="card_kpi">
+                <div class="kpi_topo">
+                    <h2>Tempo acumulado em atenção</h2><label class="somente_leitor" for="componente_kpi">Componente do
+                        tempo acumulado</label><select id="componente_kpi" class="seletor_componente"></select>
+                </div>
+                <p class="kpi_valor" id="kpi_tempo">—</p>
+                <p class="kpi_sub" id="kpi_dias">—</p>
+            </article>
+            <article class="card_kpi">
+                <div class="kpi_topo">
+                    <h2>Horário com atenção em mais dias</h2><label class="somente_leitor"
+                        for="componente_horario">Componente do horário recorrente</label><select id="componente_horario"
+                        class="seletor_componente"></select>
+                </div>
+                <p class="kpi_valor" id="kpi_horario">—</p>
+                <p class="kpi_sub" id="kpi_horario_dias">—</p>
+            </article>
+            <article class="card_kpi">
+                <div class="kpi_topo">
+                    <h2>Processo que mais consome</h2><label class="somente_leitor" for="componente_lider">Componente
+                        dos processos líderes</label><select id="componente_lider" class="seletor_processo"></select>
+                </div>
+                <div class="lider_linhas">
+                    <p><span>Dias úteis</span><strong id="lider_util">—</strong></p>
+                    <p><span>Fim de semana</span><strong id="lider_fim">—</strong></p>
+                </div>
+            </article>
+        </section>
+
+        <section class="card_grafico">
+            <header class="card_topo">
+                <div>
+                    <h2>Ranking por tempo em atenção</h2>
+                    <p class="texto_apoio">Barra inteira = atenção total · vermelho = parte em estado crítico</p>
+                </div>
+                <div class="filtros"><label>Dia<select id="dia"></select></label><label>Componente<select
+                            id="componente_ranking">
+                            <option value="todos">Comparar todos</option>
+                            <option value="cpu">CPU</option>
+                            <option value="ram">RAM</option>
+                            <option value="disco">Disco</option>
+                        </select></label></div>
+            </header>
+            <div class="ranking_layout">
+                <div class="grafico_area ranking_area"><canvas id="grafico_ranking" role="img"
+                        aria-label="Ranking por tempo total em atenção com a parcela crítica destacada"></canvas></div>
+                <div class="tabela_scroll">
+                    <table>
+                        <caption class="somente_leitor">Tempo total em atenção, parcela crítica e entradas confirmadas
+                            em estado crítico</caption>
+                        <thead>
+                            <tr>
+                                <th>Componente</th>
+                                <th>Atenção total</th>
+                                <th>Desse tempo, crítico</th>
+                                <th>Entradas em crítico*</th>
+                                <th>Hora com mais atenção</th>
+                            </tr>
+                        </thead>
+                        <tbody id="ranking_tabela"></tbody>
+                    </table>
+                </div>
+            </div>
+            <p class="nota">* Mudanças observadas de abaixo do crítico para crítico. Uma sequência contínua conta uma
+                vez; início da coleta ou retorno após lacuna já em crítico não confirma uma nova entrada.</p>
+        </section>
+
+        <div class="grafico_grid">
+            <section class="card_grafico">
+                <header class="card_topo">
+                    <div>
+                        <h2 id="titulo_calor">Minutos em atenção por dia e hora</h2>
+                        <p class="texto_apoio">Cada quadrado = uma hora · número = minutos</p>
+                    </div>
+                    <div class="filtros"><label>Componente<select id="componente_calor"
+                                class="seletor_componente"></select></label><label>Mostrar<select id="estado_calor">
+                                <option value="atencao">Atenção total</option>
+                                <option value="critico">Somente crítico</option>
+                            </select></label></div>
+                </header>
+                <div class="calor_scroll">
+                    <div id="grafico_calor" role="img"
+                        aria-label="Mapa de calor com minutos em atenção, por dia e hora"></div>
+                </div>
+                <p class="nota">Mais vermelho = mais minutos no estado selecionado · 0 = nenhum minuto · — = sem coleta.
+                </p>
+                <details>
+                    <summary>Ver os valores do mapa em tabela</summary>
+                    <div class="tabela_scroll" id="calor_tabela"></div>
+                </details>
+            </section>
+            <section class="card_grafico">
+                <header class="card_topo">
+                    <div>
+                        <h2>Valor dos PIX × tempo em atenção</h2>
+                        <p class="texto_apoio" id="financeiro_dia"></p>
+                    </div><label>Componente<select id="componente_financeiro"
+                            class="seletor_componente"></select></label>
+                </header>
+                <div class="grafico_area financeiro_area"><canvas id="grafico_financeiro" role="img"
+                        aria-label="Valores PIX aprovados por tempo de processamento e minutos em atenção por hora"></canvas>
+                </div>
+                <p class="nota">PIX simulados · 2 s é referência de demonstração, não SLA. Não representa prejuízo nem
+                    prova causa.</p>
+            </section>
+        </div>
+
+        <section class="card_grafico">
+            <header class="card_topo">
+                <div>
+                    <h2>Processos: dias úteis × fim de semana</h2>
+                    <p class="texto_apoio" id="processos_unidade"></p>
+                </div><label>Componente<select id="componente_processos" class="seletor_processo"></select></label>
+            </header>
+            <div class="processos_layout">
+                <div class="grafico_area processos_area"><canvas id="grafico_processos" role="img"
+                        aria-label="Consumo dos processos comparado entre dias úteis e fim de semana"></canvas></div>
+                <div class="tabela_scroll">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Processo</th>
+                                <th>Dia útil</th>
+                                <th>Fim de semana</th>
+                                <th>Diferença</th>
+                            </tr>
+                        </thead>
+                        <tbody id="processos_tabela"></tbody>
+                    </table>
+                </div>
+            </div>
+        </section>
+        <aside class="sugestao"><span class="sugestao_marca">Investigar</span>
+            <p id="sugestao_texto"></p>
+        </aside>
+        <footer class="rodape"><span id="fonte_texto">Dados de demonstração, sem conexão ao S3.</span><span>Disco =
+                espaço ocupado, não leitura/escrita.</span></footer>
+    </main>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/echarts@5.6.0/dist/echarts.min.js"></script>
+    <script src="./assets/js/dashboard-padroes.js"></script>
+</body>
+
+</html>

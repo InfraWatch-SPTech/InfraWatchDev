@@ -1,0 +1,48 @@
+{
+  "origem": "local",
+  "servidores": [
+    {
+      "id": "srv-01",
+      "nome": "Meu servidor",
+      "criticos": {
+        "cpu": 90,
+        "ram": 90,
+        "disco": 95
+      }
+    }
+  ],
+  "amostras": [
+    {
+      "servidor_id": "srv-01",
+      "inicio": "2026-11-10T14:00:00-03:00",
+      "fim": "2026-11-10T14:01:00-03:00",
+      "cpu": 82,
+      "ram": 65,
+      "disco": 70,
+      "processos_completos": true,
+      "processos": [
+        {
+          "nome": "java",
+          "cpu": 25,
+          "ram": 20
+        },
+        {
+          "nome": "mysql",
+          "cpu": 15,
+          "ram": 18
+        }
+      ]
+    },
+    {
+      "servidor_id": "srv-01",
+      "inicio": "2026-11-10T14:01:00-03:00",
+      "fim": "2026-11-10T14:02:00-03:00",
+      "cpu": 90,
+      "ram": 82,
+      "disco": null,
+      "processos_completos": false,
+      "processos": []
+    }
+  ],
+  "pix": []
+}
