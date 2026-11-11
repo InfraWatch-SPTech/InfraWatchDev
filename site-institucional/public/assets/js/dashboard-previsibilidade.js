@@ -131,6 +131,58 @@ function pontosPrevisao(recurso) {
     : [];
 }
 
+function previsaoDiaria(recurso, valorInicial) {
+  const previsoesGold = pontosPrevisao(recurso)
+    .filter(ponto => ponto.dia > 0)
+    .map(ponto => ({
+      dia: ponto.dia,
+      estimativa: ponto.valor,
+      faixa_inferior: numero(ponto.original.faixa_inferior),
+      faixa_superior: numero(ponto.original.faixa_superior),
+      pontoGold: true
+    }));
+  if (!previsoesGold.length) return [];
+
+  const ancora = numero(valorInicial);
+  const pontos = [
+    ...(ancora === null ? [] : [{ dia: 0, estimativa: ancora, faixa_inferior: ancora, faixa_superior: ancora }]),
+    ...previsoesGold
+  ].sort((a, b) => a.dia - b.dia);
+  const ultimoDia = Math.floor(previsoesGold[previsoesGold.length - 1].dia);
+  const diarias = [];
+
+  for (let dia = 1; dia <= ultimoDia; dia += 1) {
+    const pontoGold = previsoesGold.find(ponto => ponto.dia === dia);
+    if (pontoGold) {
+      diarias.push({ ...pontoGold, dia, interpolada: false });
+      continue;
+    }
+
+    const anteriores = pontos.filter(ponto => ponto.dia < dia);
+    const anterior = anteriores[anteriores.length - 1];
+    const seguinte = pontos.find(ponto => ponto.dia > dia);
+    if (!anterior || !seguinte) {
+      diarias.push({ dia, estimativa: null, faixa_inferior: null, faixa_superior: null, interpolada: false });
+      continue;
+    }
+
+    const proporcao = (dia - anterior.dia) / (seguinte.dia - anterior.dia);
+    const interpolar = campo => {
+      if (anterior[campo] === null || seguinte[campo] === null) return null;
+      return anterior[campo] + (seguinte[campo] - anterior[campo]) * proporcao;
+    };
+    diarias.push({
+      dia,
+      estimativa: interpolar('estimativa'),
+      faixa_inferior: interpolar('faixa_inferior'),
+      faixa_superior: interpolar('faixa_superior'),
+      interpolada: true
+    });
+  }
+
+  return diarias;
+}
+
 function calcularRunwayDias(chave, recurso = recursoAtual(chave)) {
   if (!recurso) return null;
   const atual = valorAtual(chave, recurso);
@@ -330,7 +382,36 @@ function criarGraficos() {
         tooltip: { filter: item => item.raw !== null, callbacks: { label: item => `${item.dataset.label}: ${formatarPercentual(item.parsed.y)}` } }
       },
       scales: {
-        x: { ...eixoComum, title: { display: true, text: 'Amostras observadas e horizonte previsto', color: eixoTexto }, ticks: { ...eixoComum.ticks, maxTicksLimit: 9, maxRotation: 0 } },
+        x: {
+          ...eixoComum,
+          title: { display: true, text: 'Amostras observadas · D = hoje · previsão diária', color: eixoTexto },
+          ticks: {
+            color: eixoTexto,
+            font: { size: 9 },
+            autoSkip: false,
+            maxRotation: 0,
+            callback: function (valor, indice) {
+              const rotulo = String(this.getLabelForValue(valor));
+              const labelsAtuais = this.chart.data.labels;
+              const primeiroDiaPrevisto = labelsAtuais.findIndex(label => String(label).startsWith('D+'));
+              const totalHistorico = primeiroDiaPrevisto === -1 ? labelsAtuais.length : primeiroDiaPrevisto;
+              const totalDiasPrevistos = Math.max(0, labelsAtuais.length - totalHistorico);
+              const largura = this.chart.chartArea?.width || this.chart.width || 600;
+              const maxRotulos = Math.max(6, Math.floor(largura / 42));
+
+              if (rotulo.startsWith('D+')) {
+                const dia = Number(rotulo.slice(2));
+                const vagasPrevisao = Math.max(3, maxRotulos - Math.min(6, totalHistorico));
+                const intervaloDias = Math.max(1, Math.ceil(totalDiasPrevistos / vagasPrevisao));
+                return dia === 1 || dia === totalDiasPrevistos || dia % intervaloDias === 0 ? rotulo : '';
+              }
+
+              const vagasHistorico = Math.max(2, maxRotulos - Math.min(totalDiasPrevistos, maxRotulos - 2));
+              const intervaloHistorico = Math.max(1, Math.ceil(totalHistorico / vagasHistorico));
+              return indice === 0 || indice === totalHistorico - 1 || indice % intervaloHistorico === 0 ? rotulo : '';
+            }
+          }
+        },
         y: { min: 0, max: 100, ...eixoComum, title: { display: true, text: 'Uso do recurso (%)', color: eixoTexto }, ticks: { ...eixoComum.ticks, callback: valor => `${valor}%` } }
       }
     }
@@ -378,7 +459,7 @@ function opcoesGraficoCarga(tipo) {
       } } }
     },
     scales: {
-      x: { type: 'linear', min: 1, ...eixoComum, title: { display: true, text: 'Número de requisições', color: eixoTexto }, ticks: { ...eixoComum.ticks, maxTicksLimit: 10, callback: valor => formatarNumero(valor, 0) } },
+      x: { type: 'linear', min: 1, ...eixoComum, title: { display: true, text: 'Número de requisições', color: eixoTexto }, ticks: { ...eixoComum.ticks, maxTicksLimit: 14, stepSize: 50, callback: valor => formatarNumero(valor, 0) } },
       [tipo]: tipo === 'cpu'
         ? { type: 'linear', position: 'left', min: 0, max: 100, ...eixoComum, title: { display: true, text: 'Uso de CPU (%)', color: '#20baf4' }, ticks: { ...eixoComum.ticks, callback: valor => `${formatarNumero(valor, 0)}%` } }
         : { type: 'linear', position: 'left', beginAtZero: true, ...eixoComum, title: { display: true, text: 'Latência (ms)', color: '#ff9f32' }, ticks: { ...eixoComum.ticks, callback: valor => `${formatarNumero(valor, 0)} ms` } }
@@ -407,30 +488,33 @@ function atualizarGraficoTendencia() {
   }
   const previsoes = pontosPrevisao(recurso).map(item => item.original);
   const labels = historico.map(item => rotuloData(item.data_hora));
-  previsoes.forEach(item => labels.push(`D+${formatarNumero(item.dias_a_frente, 0)}`));
   const cor = config.cor;
   const limite = limiteRecurso(chave, 'critico', recurso);
   const dadosHistoricos = historico.map(item => numero(item.media));
+  const valorInicialPrevisao = dadosHistoricos[dadosHistoricos.length - 1] ?? valorAtual(chave, recurso);
+  const previsoesDiarias = previsaoDiaria(recurso, valorInicialPrevisao);
+  if (previsoesDiarias.length && labels.length) labels[labels.length - 1] = 'D';
+  previsoesDiarias.forEach(item => labels.push(`D+${item.dia}`));
   const inferioresHistoricos = historico.map(item => numero(item.minimo) ?? numero(item.media));
   const superioresHistoricos = historico.map(item => numero(item.maximo) ?? numero(item.media));
   const datasets = [];
 
   const faixaHistoricaDisponivel = historico.some(item => numero(item.minimo) !== null && numero(item.maximo) !== null);
-  const inferioresPrevisao = previsoes.map(item => numero(item.faixa_inferior));
-  const superioresPrevisao = previsoes.map(item => numero(item.faixa_superior));
-  const faixaPrevisaoDisponivel = previsoes.length > 0 &&
+  const inferioresPrevisao = previsoesDiarias.map(item => numero(item.faixa_inferior));
+  const superioresPrevisao = previsoesDiarias.map(item => numero(item.faixa_superior));
+  const faixaPrevisaoDisponivel = previsoesDiarias.length > 0 &&
     inferioresPrevisao.every(valor => valor !== null) && superioresPrevisao.every(valor => valor !== null);
   if (faixaHistoricaDisponivel || faixaPrevisaoDisponivel) {
     const indiceInferior = datasets.length;
-    const valoresInferiores = [...inferioresHistoricos, ...previsoes.map((item, indice) => faixaPrevisaoDisponivel ? inferioresPrevisao[indice] : null)];
-    const valoresSuperiores = [...superioresHistoricos, ...previsoes.map((item, indice) => faixaPrevisaoDisponivel ? superioresPrevisao[indice] : null)];
+    const valoresInferiores = [...inferioresHistoricos, ...previsoesDiarias.map((item, indice) => faixaPrevisaoDisponivel ? inferioresPrevisao[indice] : null)];
+    const valoresSuperiores = [...superioresHistoricos, ...previsoesDiarias.map((item, indice) => faixaPrevisaoDisponivel ? superioresPrevisao[indice] : null)];
     datasets.push({ label: 'Limite inferior da faixa', data: valoresInferiores, borderColor: 'transparent', pointRadius: 0, fill: false });
     datasets.push({ label: 'Variação observada / faixa estimada pelo ETL', data: valoresSuperiores, borderColor: 'transparent', backgroundColor: corComAlpha(cor, 0.13), pointRadius: 0, fill: { target: indiceInferior } });
   }
 
   datasets.push({
     label: 'Média observada (10 min)',
-    data: [...dadosHistoricos, ...previsoes.map(() => null)],
+    data: [...dadosHistoricos, ...previsoesDiarias.map(() => null)],
     borderColor: cor,
     backgroundColor: cor,
     borderWidth: 2.2,
@@ -446,9 +530,9 @@ function atualizarGraficoTendencia() {
 
   if (previsoes.length) {
     const ancora = dadosHistoricos.length ? dadosHistoricos[dadosHistoricos.length - 1] : null;
-    const previsao = [...historico.map(() => null), ...previsoes.map(item => numero(item.estimativa))];
+    const previsao = [...historico.map(() => null), ...previsoesDiarias.map(item => numero(item.estimativa))];
     if (historico.length && ancora !== null) previsao[historico.length - 1] = ancora;
-    datasets.push({ label: 'Previsão central do Gold', data: previsao, borderColor: cor, borderWidth: 2.2, borderDash: [7, 5], pointRadius: 3, pointHoverRadius: 5, tension: 0.12, spanGaps: false });
+    datasets.push({ label: 'Previsão diária (Gold e interpolação entre pontos)', data: previsao, borderColor: cor, borderWidth: 2.2, borderDash: [7, 5], pointRadius: previsoesDiarias.map(item => item.pontoGold ? 3 : 0), pointHoverRadius: 5, tension: 0, spanGaps: false });
   }
 
   graficoTendencia.data = { labels, datasets };
@@ -484,6 +568,10 @@ function atualizarGraficoTendencia() {
   if (!previsoes.length) {
     const aviso = document.createElement('span');
     aviso.textContent = recurso.mensagem_previsao || 'Previsão não disponível no Gold.';
+    contexto.appendChild(aviso);
+  } else if (previsoesDiarias.some(item => item.interpolada)) {
+    const aviso = document.createElement('span');
+    aviso.textContent = 'Dias sem ponto próprio no Gold são interpolados entre os pontos disponíveis.';
     contexto.appendChild(aviso);
   }
 }
@@ -722,11 +810,13 @@ function atualizarGraficosCarga() {
       if (estimativa >= 1) cruzamento = estimativa;
     }
   }
-  const horizonte = Math.max(20, maiorRequisicaoObservada * 2);
-  const quantidadePontosPrevisao = 40;
-  const gradePrevisao = Array.from({ length: quantidadePontosPrevisao }, (_, indice) =>
-    maiorRequisicaoObservada + ((horizonte - maiorRequisicaoObservada) * ((indice + 1) / quantidadePontosPrevisao))
-  );
+  const incrementoPrevisao = 50;
+  const horizonte = Math.ceil(Math.max(500, maiorRequisicaoObservada * 2) / incrementoPrevisao) * incrementoPrevisao;
+  const primeiraRequisicaoProjetada = Math.ceil((maiorRequisicaoObservada + 1e-9) / incrementoPrevisao) * incrementoPrevisao;
+  const gradePrevisao = maiorRequisicaoObservada > 0 ? [maiorRequisicaoObservada] : [];
+  for (let requisicoesProjetadas = primeiraRequisicaoProjetada; requisicoesProjetadas <= horizonte; requisicoesProjetadas += incrementoPrevisao) {
+    gradePrevisao.push(requisicoesProjetadas);
+  }
   const adicionarFaixaEPrevisao = (datasets, modelo, eixo, nome, cor, faixa) => {
     if (!modelo) return;
     const previsoes = gradePrevisao.map(x => ({ x, ...estimarRegressao(modelo, x) }));
@@ -747,6 +837,7 @@ function atualizarGraficosCarga() {
   graficoPrevisaoCpu.$zonaCriticaCarga = { limite: limiteCpu, cruzamento, faixaRisco, horizonte, observado: cruzamentoObservado };
   graficoPrevisaoCpu.data = { datasets: datasetsCpu };
   graficoPrevisaoCpu.options.scales.x.max = horizonte;
+  graficoPrevisaoCpu.options.scales.x.ticks.stepSize = Math.max(incrementoPrevisao, Math.ceil(horizonte / 500) * incrementoPrevisao);
 
   const datasetsLatencia = [];
   if (p95.length) datasetsLatencia.push({ label: 'Latência P95 observada', data: p95, yAxisID: 'latencia', borderColor: '#ff9f32', backgroundColor: '#ff9f32', borderWidth: 2, pointRadius: 3, pointHoverRadius: 5, showLine: true, tension: 0.12 });
@@ -757,6 +848,7 @@ function atualizarGraficosCarga() {
 
   graficoPrevisaoLatencia.data = { datasets: datasetsLatencia };
   graficoPrevisaoLatencia.options.scales.x.max = horizonte;
+  graficoPrevisaoLatencia.options.scales.x.ticks.stepSize = Math.max(incrementoPrevisao, Math.ceil(horizonte / 500) * incrementoPrevisao);
   const configurarTooltips = (grafico, eixo) => {
     grafico.options.plugins.tooltip.filter = item => !item.dataset.label.startsWith('Faixa ');
     grafico.options.plugins.tooltip.callbacks.title = items => items.length ? `${formatarNumero(items[0].parsed.x, 0)} requisições` : '';
@@ -808,7 +900,7 @@ function atualizarGraficosCarga() {
   if (limiteCpu === null) partes.push('limite crítico de CPU não retornado pelo banco');
   const modelosCalculados = [cpuModelo, latenciaModelo, p99Modelo].filter(Boolean).length;
   const metodoPrevisao = modelosCalculados
-    ? `Linhas tracejadas: regressão linear até ${formatarNumero(horizonte, 0)} requisições; faixa estimada: ±1,96 desvios padrão.`
+    ? `Linhas tracejadas: regressão linear até ${formatarNumero(horizonte, 0)} requisições, em saltos de ${formatarNumero(incrementoPrevisao, 0)}; faixa estimada: ±1,96 desvios padrão.`
     : 'Ainda não há valores em contagens distintas para ajustar uma previsão.';
   resumo.textContent = temCpu || temLatencia ? `${partes.join(' · ')}. ${metodoPrevisao}` : mensagemEstadoVazio(semDados);
   const ultima = requisicoes.ultima_amostra || observacoes[observacoes.length - 1]?.amostra;

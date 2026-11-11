@@ -72,23 +72,24 @@
             <div class="runway-detalhes" id="runway-detalhes"></div>
           </div>
         </article>
-        <article class="bloco">
-          <h2>Previsão sob carga HTTP</h2>
-          <div class="painel grafico estresse">
-            <p class="grafico-subtitulo"><span class="periodo-teste" id="periodo-teste">Gold</span> Relação entre o número de requisições, uso de CPU e latência</p>
-            <div class="estresse-graficos">
-              <div class="grafico-estresse">
-                <span>CPU observada e prevista · limite crítico do servidor</span>
-                <div class="grafico-visual"><canvas id="grafico-previsao-cpu" aria-label="Uso de CPU observado e previsto pelo número de requisições"></canvas><div class="estado-grafico" id="estado-grafico-previsao-cpu" role="status" aria-live="polite" hidden></div></div>
-              </div>
-              <div class="grafico-estresse">
-                <span>Latência P95 e P99 observada e prevista</span>
-                <div class="grafico-visual"><canvas id="grafico-previsao-latencia" aria-label="Latências P95 e P99 observadas e previstas pelo número de requisições"></canvas><div class="estado-grafico" id="estado-grafico-previsao-latencia" role="status" aria-live="polite" hidden></div></div>
-              </div>
-            </div>
-            <p class="ruptura-nota" id="resumo-estresse">Erro: sem amostras por requisição no Gold.</p>
+      </div>
+    </section>
+
+    <section class="bloco previsao-carga" aria-labelledby="titulo-previsao-carga">
+      <h2 id="titulo-previsao-carga">Previsão sob carga HTTP</h2>
+      <div class="painel grafico estresse">
+        <p class="grafico-subtitulo"><span class="periodo-teste" id="periodo-teste">Gold</span> Relação entre o número de requisições, uso de CPU e latência</p>
+        <div class="estresse-graficos">
+          <div class="grafico-estresse">
+            <span>CPU observada e prevista · limite crítico do servidor</span>
+            <div class="grafico-visual"><canvas id="grafico-previsao-cpu" aria-label="Uso de CPU observado e previsto pelo número de requisições"></canvas><div class="estado-grafico" id="estado-grafico-previsao-cpu" role="status" aria-live="polite" hidden></div></div>
           </div>
-        </article>
+          <div class="grafico-estresse">
+            <span>Latência P95 e P99 observada e prevista</span>
+            <div class="grafico-visual"><canvas id="grafico-previsao-latencia" aria-label="Latências P95 e P99 observadas e previstas pelo número de requisições"></canvas><div class="estado-grafico" id="estado-grafico-previsao-latencia" role="status" aria-live="polite" hidden></div></div>
+          </div>
+        </div>
+        <p class="ruptura-nota" id="resumo-estresse">Erro: sem amostras por requisição no Gold.</p>
       </div>
     </section>
 
