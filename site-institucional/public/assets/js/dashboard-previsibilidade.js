@@ -209,6 +209,49 @@ function calcularRunwayDias(chave, recurso = recursoAtual(chave)) {
   return null;
 }
 
+function estadoRunway(chave, recurso = recursoAtual(chave), dias = calcularRunwayDias(chave, recurso)) {
+  const atual = valorAtual(chave, recurso);
+  const atencao = limiteRecurso(chave, 'atencao', recurso);
+  const critico = limiteRecurso(chave, 'critico', recurso);
+
+  if (atual !== null && critico !== null && atual >= critico) {
+    return {
+      classe: 'critico',
+      rotulo: 'CRÍTICO',
+      mensagem: atual > critico ? 'Limite crítico ultrapassado' : 'Limite crítico atingido',
+      cor: '#ff5c5c'
+    };
+  }
+  if (dias !== null && dias > 0) {
+    return {
+      classe: 'alerta',
+      rotulo: 'ALERTA',
+      mensagem: `Limite crítico previsto em aproximadamente ${formatarNumero(dias)} dias`,
+      cor: '#f5c542'
+    };
+  }
+  if (atual !== null && atencao !== null && atual >= atencao) {
+    return { classe: 'atencao', rotulo: 'ATENÇÃO', mensagem: 'Uso acima do limite de atenção', cor: '#f5c542' };
+  }
+  if (atual !== null && (atencao !== null || critico !== null)) {
+    return { classe: 'normal', rotulo: 'NORMAL', mensagem: 'Sem alerta previsto', cor: '#3ddc84' };
+  }
+  return { classe: 'indisponivel', rotulo: 'N/D', mensagem: 'Dados insuficientes para indicar o estado', cor: '#aaa8ba' };
+}
+
+function atualizarEstadosSeletoresRunway() {
+  Object.keys(recursosDashboard).forEach(chave => {
+    const indicador = document.querySelector(`[data-status-componente="${chave}"]`);
+    if (!indicador) return;
+    const recurso = recursoAtual(chave);
+    const estado = estadoRunway(chave, recurso);
+    indicador.hidden = estado.classe === 'normal' || estado.classe === 'indisponivel';
+    indicador.className = `runway-sinal runway-sinal--${estado.classe} seletor-status`;
+    indicador.textContent = estado.rotulo;
+    indicador.title = estado.mensagem;
+  });
+}
+
 function mensagemRunwayIndisponivel() {
   const recursos = Object.keys(recursosDashboard).map(chave => ({
     chave,
@@ -284,14 +327,14 @@ function atualizarKpis() {
   runways.sort((a, b) => a.dias - b.dias);
   if (runways.length) {
     const proximo = runways[0];
-    const valor = proximo.dias === 0 ? 'No limite' : `~${formatarNumero(proximo.dias)} dias`;
     const limite = limiteRecurso(proximo.chave, 'critico', proximo.recurso);
-    const nivel = corDeEstado({
-      atual: valorAtual(proximo.chave, proximo.recurso),
-      atencao: limiteRecurso(proximo.chave, 'atencao', proximo.recurso),
-      critico: limite
-    });
-    const detalhe = `${recursosDashboard[proximo.chave].nome}${limite === null ? '' : ` · limite ${formatarPercentual(limite)}`}`;
+    const estado = estadoRunway(proximo.chave, proximo.recurso, proximo.dias);
+    const atual = valorAtual(proximo.chave, proximo.recurso);
+    const valor = proximo.dias === 0
+      ? atual > limite ? 'Ultrapassado' : 'No limite'
+      : `~${formatarNumero(proximo.dias)} dias`;
+    const nivel = estado.classe === 'critico' ? 'vermelho' : 'amarelo';
+    const detalhe = `${recursosDashboard[proximo.chave].nome} · ${estado.rotulo}${limite === null ? '' : ` · limite ${formatarPercentual(limite)}`}`;
     definirKpi('kpi-proximo-limite', 'kpi-proximo-limite-descricao', valor, detalhe, nivel);
   } else {
     definirKpi('kpi-proximo-limite', 'kpi-proximo-limite-descricao', 'N/D', mensagemRunwayIndisponivel(), 'azul');
@@ -424,7 +467,14 @@ function criarGraficos() {
       indexAxis: 'y',
       responsive: true,
       maintainAspectRatio: false,
-      plugins: { legend: { display: false }, tooltip: { callbacks: { label: item => `${formatarNumero(item.raw)} dias estimados até o limite crítico` } } },
+      plugins: {
+        legend: { display: false },
+        tooltip: { callbacks: { label: item => {
+          const runway = runways[item.dataIndex];
+          const estado = estadoRunway(runway.chave, runway.recurso, runway.dias);
+          return `${estado.rotulo} · ${formatarNumero(item.raw)} dias até o limite crítico`;
+        } } }
+      },
       scales: {
         x: { beginAtZero: true, ...eixoComum, title: { display: true, text: 'Dias estimados', color: eixoTexto }, ticks: { ...eixoComum.ticks, callback: valor => `${valor}d` } },
         y: { ...eixoComum, grid: { display: false }, ticks: { color: '#ddd9eb', font: { size: 10 } } }
@@ -452,14 +502,14 @@ function opcoesGraficoCarga(tipo) {
     maintainAspectRatio: false,
     interaction: { mode: 'nearest', intersect: false, axis: 'x' },
     plugins: {
-      legend: { labels: { color: '#c5c3cd', boxWidth: 12, font: { size: 10 }, filter: item => !item.text.startsWith('Faixa ') } },
+      legend: { labels: { color: '#c5c3cd', boxWidth: 9, padding: 7, font: { size: 9 }, filter: item => !item.text.startsWith('Faixa ') } },
       tooltip: { callbacks: { label: item => {
         const unidade = item.dataset.yAxisID === 'cpu' ? '%' : ' ms';
         return `${item.dataset.label}: ${formatarNumero(item.parsed.y, 2)}${unidade}`;
       } } }
     },
     scales: {
-      x: { type: 'linear', min: 1, ...eixoComum, title: { display: true, text: 'Número de requisições', color: eixoTexto }, ticks: { ...eixoComum.ticks, maxTicksLimit: 14, stepSize: 50, callback: valor => formatarNumero(valor, 0) } },
+      x: { type: 'linear', min: 0, ...eixoComum, title: { display: true, text: 'Número de requisições', color: eixoTexto }, ticks: { ...eixoComum.ticks, maxTicksLimit: 14, stepSize: 50, callback: valor => formatarNumero(valor, 0) } },
       [tipo]: tipo === 'cpu'
         ? { type: 'linear', position: 'left', min: 0, max: 100, ...eixoComum, title: { display: true, text: 'Uso de CPU (%)', color: '#20baf4' }, ticks: { ...eixoComum.ticks, callback: valor => `${formatarNumero(valor, 0)}%` } }
         : { type: 'linear', position: 'left', beginAtZero: true, ...eixoComum, title: { display: true, text: 'Latência (ms)', color: '#ff9f32' }, ticks: { ...eixoComum.ticks, callback: valor => `${formatarNumero(valor, 0)} ms` } }
@@ -558,6 +608,13 @@ function atualizarGraficoTendencia() {
   if (tendencia !== null) valoresContexto.push(['Tendência', `${formatarNumero(tendencia, 3)} p.p./dia`]);
   const runway = calcularRunwayDias(chave, recurso);
   if (runway !== null && runway >= 0) valoresContexto.push(['Runway', runway === 0 ? 'no limite' : `~${formatarNumero(runway)} dias`]);
+  const estadoAtualRunway = estadoRunway(chave, recurso, runway);
+  if (['alerta', 'critico', 'atencao'].includes(estadoAtualRunway.classe)) {
+    const indicador = document.createElement('span');
+    indicador.className = `runway-sinal runway-sinal--${estadoAtualRunway.classe}`;
+    indicador.textContent = `${estadoAtualRunway.rotulo} · ${estadoAtualRunway.mensagem}`;
+    contexto.appendChild(indicador);
+  }
   valoresContexto.forEach(([rotulo, valor]) => {
     const span = document.createElement('span');
     const strong = document.createElement('b');
@@ -590,7 +647,7 @@ function atualizarGraficoRunway() {
     datasets: [{
       label: 'Dias até o limite crítico',
       data: runways.map(item => item.dias),
-      backgroundColor: runways.map(item => recursosDashboard[item.chave].cor),
+      backgroundColor: runways.map(item => estadoRunway(item.chave, item.recurso, item.dias).cor),
       borderRadius: 5,
       barThickness: 19
     }]
@@ -608,17 +665,171 @@ function atualizarGraficoRunway() {
   runways.forEach(item => {
     const linha = document.createElement('div');
     linha.className = 'runway-linha';
+    const estado = estadoRunway(item.chave, item.recurso, item.dias);
     const ponto = document.createElement('span');
     ponto.className = 'runway-cor';
-    ponto.style.setProperty('--runway-cor', recursosDashboard[item.chave].cor);
+    ponto.style.setProperty('--runway-cor', estado.cor);
     const texto = document.createElement('span');
-    texto.textContent = `${formatarPercentual(item.atual)} agora · limite ${item.limite === null ? 'não informado' : formatarPercentual(item.limite)} · runway ${formatarNumero(item.dias)} dias`;
+    const descricaoRunway = item.dias === 0
+      ? item.atual > item.limite ? 'limite ultrapassado' : 'no limite crítico'
+      : `runway ${formatarNumero(item.dias)} dias`;
+    texto.textContent = `${formatarPercentual(item.atual)} agora · limite ${item.limite === null ? 'não informado' : formatarPercentual(item.limite)} · ${descricaoRunway}`;
     const forte = document.createElement('b');
     forte.textContent = `${recursosDashboard[item.chave].nome}: `;
     texto.prepend(forte);
-    linha.append(ponto, texto);
+    const sinal = document.createElement('span');
+    sinal.className = `runway-sinal runway-sinal--${estado.classe}`;
+    sinal.textContent = estado.rotulo;
+    sinal.title = estado.mensagem;
+    linha.append(ponto, texto, sinal);
     detalhes.appendChild(linha);
   });
+}
+
+function atualizarResumoOperacional() {
+  const painel = elemento('resumo-operacional');
+  painel.replaceChildren();
+
+  if (!estadoDashboard.dados) {
+    painel.className = 'painel resumo-operacional resumo-operacional--vazio';
+    painel.textContent = mensagemEstadoVazio();
+    return;
+  }
+
+  const recursos = Object.keys(recursosDashboard).map(chave => {
+    const recurso = recursoAtual(chave);
+    const atual = valorAtual(chave, recurso);
+    const limiteCritico = limiteRecurso(chave, 'critico', recurso);
+    const dias = calcularRunwayDias(chave, recurso);
+    return { chave, recurso, atual, limiteCritico, dias, estado: estadoRunway(chave, recurso, dias) };
+  }).filter(item => item.recurso && item.atual !== null);
+
+  if (!recursos.length) {
+    painel.className = 'painel resumo-operacional resumo-operacional--vazio';
+    painel.textContent = 'O Gold não trouxe valores atuais para CPU, memória ou disco.';
+    return;
+  }
+
+  const prioridade = { critico: 0, alerta: 1, atencao: 2, normal: 3, indisponivel: 4 };
+  recursos.sort((a, b) => prioridade[a.estado.classe] - prioridade[b.estado.classe] ||
+    (a.dias ?? Number.POSITIVE_INFINITY) - (b.dias ?? Number.POSITIVE_INFINITY));
+
+  const quantidadeCritica = recursos.filter(item => item.estado.classe === 'critico').length;
+  const quantidadePrevista = recursos.filter(item => item.estado.classe === 'alerta').length;
+  const quantidadeAtencao = recursos.filter(item => item.estado.classe === 'atencao').length;
+  const quantidadeSemLimite = recursos.filter(item => item.estado.classe === 'indisponivel').length;
+  const resumo = document.createElement('div');
+  resumo.className = `prioridades-resumo prioridades-resumo--${quantidadeCritica ? 'critico' : quantidadePrevista || quantidadeAtencao ? 'alerta' : quantidadeSemLimite ? 'indisponivel' : 'normal'}`;
+  const resumoTitulo = document.createElement('strong');
+  resumoTitulo.textContent = quantidadeCritica
+    ? 'Ação imediata necessária'
+    : quantidadePrevista
+      ? 'Planejamento de capacidade necessário'
+      : quantidadeAtencao
+        ? 'Acompanhar recursos em atenção'
+        : quantidadeSemLimite
+          ? 'Leitura parcial dos limites'
+          : 'Nenhum alerta ativo';
+  const resumoTexto = document.createElement('span');
+  const contagens = [];
+  if (quantidadeCritica) contagens.push(`${quantidadeCritica} acima do limite crítico`);
+  if (quantidadePrevista) contagens.push(`${quantidadePrevista} com cruzamento previsto`);
+  if (quantidadeAtencao) contagens.push(`${quantidadeAtencao} acima do limite de atenção`);
+  if (!contagens.length && quantidadeSemLimite) contagens.push(`${quantidadeSemLimite} sem limite para comparação`);
+  resumoTexto.textContent = contagens.length
+    ? contagens.join(' · ')
+    : 'Nenhum limite crítico atingido ou previsto com os dados disponíveis.';
+  resumo.append(resumoTitulo, resumoTexto);
+  painel.className = 'painel resumo-operacional';
+  painel.appendChild(resumo);
+
+  const lista = document.createElement('div');
+  lista.className = 'prioridades-lista';
+  recursos.forEach(item => {
+    const { chave, recurso, atual, limiteCritico, dias, estado } = item;
+    const linha = document.createElement('article');
+    linha.className = `prioridade-item prioridade-item--${estado.classe}`;
+    linha.style.setProperty('--prioridade-cor', estado.cor);
+
+    const topo = document.createElement('div');
+    topo.className = 'prioridade-topo';
+    const nome = document.createElement('strong');
+    nome.textContent = recursosDashboard[chave].nome;
+    const sinal = document.createElement('span');
+    sinal.className = `runway-sinal runway-sinal--${estado.classe}`;
+    sinal.textContent = estado.rotulo;
+    topo.append(nome, sinal);
+
+    const metricas = document.createElement('div');
+    metricas.className = 'prioridade-metricas';
+    const metricaAtual = document.createElement('div');
+    const rotuloAtual = document.createElement('span');
+    rotuloAtual.textContent = 'Uso atual';
+    const valorAtualEl = document.createElement('strong');
+    valorAtualEl.textContent = formatarPercentual(atual);
+    metricaAtual.append(rotuloAtual, valorAtualEl);
+    const metricaLimite = document.createElement('div');
+    const rotuloLimite = document.createElement('span');
+    rotuloLimite.textContent = 'Limite crítico';
+    const valorLimite = document.createElement('strong');
+    valorLimite.textContent = formatarPercentual(limiteCritico);
+    metricaLimite.append(rotuloLimite, valorLimite);
+    metricas.append(metricaAtual, metricaLimite);
+
+    if (limiteCritico !== null && limiteCritico > 0) {
+      const medidor = document.createElement('div');
+      medidor.className = 'prioridade-medidor';
+      medidor.setAttribute('aria-hidden', 'true');
+      const preenchimento = document.createElement('span');
+      preenchimento.style.width = `${Math.min(100, Math.max(0, (atual / limiteCritico) * 100))}%`;
+      medidor.appendChild(preenchimento);
+      linha.append(topo, metricas, medidor);
+    } else {
+      linha.append(topo, metricas);
+    }
+
+    const diferenca = document.createElement('p');
+    diferenca.className = 'prioridade-diferenca';
+    if (limiteCritico === null) {
+      diferenca.textContent = 'Sem limite crítico cadastrado para comparação.';
+    } else if (atual >= limiteCritico) {
+      diferenca.textContent = `${formatarNumero(atual - limiteCritico)} p.p. acima do limite crítico.`;
+    } else if (estado.classe === 'atencao') {
+      diferenca.textContent = `${formatarNumero(limiteCritico - atual)} p.p. abaixo do limite crítico; acima do limite de atenção.`;
+    } else {
+      diferenca.textContent = `${formatarNumero(limiteCritico - atual)} p.p. disponíveis até o limite crítico.`;
+    }
+
+    const orientacao = document.createElement('p');
+    orientacao.className = 'prioridade-orientacao';
+    if (estado.classe === 'critico') {
+      orientacao.textContent = 'Limite já ultrapassado. Priorize a validação da carga e da capacidade deste servidor.';
+    } else if (estado.classe === 'alerta') {
+      orientacao.textContent = `Limite crítico previsto em aproximadamente ${formatarNumero(dias)} dias.`;
+    } else if (estado.classe === 'atencao') {
+      orientacao.textContent = 'Uso acima do limite de atenção. Acompanhe as próximas medições.';
+    } else if (estado.classe === 'normal') {
+      orientacao.textContent = dias === null
+        ? 'Abaixo do limite; sem data estimada de cruzamento com a tendência atual.'
+        : 'Sem ação imediata indicada pela previsão atual.';
+    } else {
+      orientacao.textContent = 'Não foi possível calcular a condição sem os limites cadastrados.';
+    }
+
+    const amostras = Array.isArray(recurso.serie_10_minutos) ? recurso.serie_10_minutos : [];
+    const ultimaAmostra = amostras.slice().reverse().find(ponto => ponto?.data_hora)?.data_hora;
+    const frescor = document.createElement('span');
+    frescor.className = 'prioridade-frescor';
+    const quantidadeAmostras = numero(recurso.quantidade_amostras);
+    frescor.textContent = [
+      ultimaAmostra ? `Última amostra: ${formatarData(ultimaAmostra)}` : 'Horário da amostra não informado',
+      quantidadeAmostras === null ? null : `${formatarNumero(quantidadeAmostras, 0)} amostras`
+    ].filter(Boolean).join(' · ');
+
+    linha.append(diferenca, orientacao, frescor);
+    lista.appendChild(linha);
+  });
+  painel.appendChild(lista);
 }
 
 function desvioPadrao(valores) {
@@ -758,9 +969,12 @@ const zonaCriticaCarga = {
     if (config.cruzamento > config.horizonte) {
       ctx.save();
       ctx.fillStyle = '#ff7777';
-      ctx.font = '600 11px sans-serif';
-      const texto = `Limite estimado: ~${formatarNumero(config.cruzamento, 0)} req (fora da faixa exibida)`;
-      ctx.fillText(texto, Math.max(chartArea.left + 8, chartArea.right - ctx.measureText(texto).width - 8), chartArea.top + 15);
+      ctx.font = '600 10px sans-serif';
+      const larguraPlot = chartArea.right - chartArea.left;
+      const prefixo = larguraPlot < 220 ? '~' : larguraPlot < 360 ? 'Limite ~' : 'Limite estimado: ~';
+      const sufixo = larguraPlot < 220 ? ' req · fora' : larguraPlot < 360 ? ' req · fora da faixa' : ' req (fora da faixa exibida)';
+      const texto = `${prefixo}${formatarNumero(config.cruzamento, 0)}${sufixo}`;
+      ctx.fillText(texto, Math.max(chartArea.left + 4, chartArea.right - ctx.measureText(texto).width - 4), chartArea.top + 14);
       ctx.restore();
       return;
     }
@@ -776,9 +990,9 @@ const zonaCriticaCarga = {
     ctx.stroke();
     ctx.setLineDash([]);
     ctx.fillStyle = '#ff7777';
-    ctx.font = '600 11px sans-serif';
-    const rotulo = config.observado ? 'Limite observado' : 'Limite previsto';
-    ctx.fillText(`${rotulo} · ${formatarNumero(config.cruzamento, 0)} req`, Math.min(x + 7, chartArea.right - 145), chartArea.top + 15);
+    ctx.font = '600 10px sans-serif';
+    const rotulo = config.observado ? 'Limite real' : 'Limite';
+    ctx.fillText(`${rotulo} · ${formatarNumero(config.cruzamento, 0)} req`, Math.min(x + 5, chartArea.right - 110), chartArea.top + 14);
     ctx.restore();
   }
 };
@@ -811,16 +1025,78 @@ function atualizarGraficosCarga() {
     }
   }
   const incrementoPrevisao = 50;
-  const horizonte = Math.ceil(Math.max(500, maiorRequisicaoObservada * 2) / incrementoPrevisao) * incrementoPrevisao;
+  const contagensObservadas = observacoes.map(ponto => ponto.x).filter(Number.isFinite);
+  const usarEscalaLogRequisicoes = contagensObservadas.length > 0 && contagensObservadas.every(valor => valor > 0);
+  const larguraGraficoCarga = elemento('grafico-previsao-cpu').parentElement.getBoundingClientRect().width || window.innerWidth;
+  const horizonteResponsivo = larguraGraficoCarga < 360 ? 200 : 500;
+  const horizonte = Math.ceil(Math.max(horizonteResponsivo, maiorRequisicaoObservada * 2) / incrementoPrevisao) * incrementoPrevisao;
   const primeiraRequisicaoProjetada = Math.ceil((maiorRequisicaoObservada + 1e-9) / incrementoPrevisao) * incrementoPrevisao;
   const gradePrevisao = maiorRequisicaoObservada > 0 ? [maiorRequisicaoObservada] : [];
   for (let requisicoesProjetadas = primeiraRequisicaoProjetada; requisicoesProjetadas <= horizonte; requisicoesProjetadas += incrementoPrevisao) {
     gradePrevisao.push(requisicoesProjetadas);
   }
+  const valoresLatenciaObservados = [...latencia, ...p95, ...p99].map(ponto => ponto.y);
+  const previsoesLatenciaEscala = [latenciaModelo, p99Modelo].filter(Boolean).flatMap(modelo =>
+    gradePrevisao.flatMap(x => {
+      const estimativa = estimarRegressao(modelo, x);
+      return [estimativa.valor, estimativa.inferior, estimativa.superior].map(valor => Math.max(0, valor));
+    })
+  );
+  const valoresLatenciaEscala = [...valoresLatenciaObservados, ...previsoesLatenciaEscala].filter(Number.isFinite);
+  const positivosObservadosLatencia = valoresLatenciaObservados.filter(valor => valor > 0);
+  const minimoLatenciaObservada = positivosObservadosLatencia.length ? Math.min(...positivosObservadosLatencia) : null;
+  const maximoLatenciaEscala = valoresLatenciaEscala.length ? Math.max(...valoresLatenciaEscala) : null;
+  const todosCentraisPositivos = valoresLatenciaObservados.every(valor => valor > 0) &&
+    [latenciaModelo, p99Modelo].filter(Boolean).every(modelo =>
+      gradePrevisao.every(x => estimarRegressao(modelo, x).valor > 0)
+    );
+  const usarEscalaLogLatencia = minimoLatenciaObservada !== null && maximoLatenciaEscala !== null &&
+    todosCentraisPositivos && maximoLatenciaEscala / minimoLatenciaObservada >= 10;
+  const pisoEscalaLogLatencia = usarEscalaLogLatencia ? Math.max(0.1, minimoLatenciaObservada / 1.5) : 0;
+
+  const configurarEixoRequisicoes = grafico => {
+    const eixo = grafico.options.scales.x;
+    eixo.type = usarEscalaLogRequisicoes ? 'logarithmic' : 'linear';
+    eixo.min = usarEscalaLogRequisicoes ? 1 : 0;
+    eixo.max = horizonte;
+    eixo.title.text = usarEscalaLogRequisicoes
+      ? larguraGraficoCarga < 360 ? ['Requisições', 'Escala logarítmica'] : ['Número de requisições', 'Escala logarítmica']
+      : 'Número de requisições';
+    eixo.ticks.maxTicksLimit = larguraGraficoCarga < 360 ? 8 : 10;
+    if (usarEscalaLogRequisicoes) {
+      eixo.ticks.stepSize = undefined;
+      eixo.ticks.callback = function (valor) {
+        if (valor <= 0) return '';
+        const ordem = 10 ** Math.floor(Math.log10(valor));
+        const mantissa = valor / ordem;
+        const maximo = this.chart.options.scales.x.max;
+        const rotuloPrincipal = [1, 2, 5].some(marca => Math.abs(mantissa - marca) < 1e-8);
+        return rotuloPrincipal || Math.abs(valor - maximo) < 1e-8 ? formatarNumero(valor, 0) : '';
+      };
+    } else {
+      eixo.ticks.stepSize = Math.max(incrementoPrevisao, Math.ceil(horizonte / 500) * incrementoPrevisao);
+      eixo.ticks.callback = valor => formatarNumero(valor, 0);
+    }
+  };
+  configurarEixoRequisicoes(graficoPrevisaoCpu);
+  configurarEixoRequisicoes(graficoPrevisaoLatencia);
+
+  const eixoLatencia = graficoPrevisaoLatencia.options.scales.latencia;
+  eixoLatencia.type = usarEscalaLogLatencia ? 'logarithmic' : 'linear';
+  eixoLatencia.beginAtZero = !usarEscalaLogLatencia;
+  eixoLatencia.min = usarEscalaLogLatencia ? pisoEscalaLogLatencia : 0;
+  eixoLatencia.max = usarEscalaLogLatencia ? maximoLatenciaEscala * 1.15 : undefined;
+  eixoLatencia.title.text = usarEscalaLogLatencia ? 'Latência (ms · escala logarítmica)' : 'Latência (ms)';
+  eixoLatencia.ticks.callback = usarEscalaLogLatencia
+    ? valor => Math.abs(Math.log10(valor) - Math.round(Math.log10(valor))) < 1e-8 ? `${formatarNumero(valor, 0)} ms` : ''
+    : valor => `${formatarNumero(valor, 0)} ms`;
+
   const adicionarFaixaEPrevisao = (datasets, modelo, eixo, nome, cor, faixa) => {
     if (!modelo) return;
     const previsoes = gradePrevisao.map(x => ({ x, ...estimarRegressao(modelo, x) }));
-    const limitar = valor => eixo === 'cpu' ? Math.min(100, Math.max(0, valor)) : Math.max(0, valor);
+    const limitar = valor => eixo === 'cpu'
+      ? Math.min(100, Math.max(0, valor))
+      : usarEscalaLogLatencia ? Math.max(pisoEscalaLogLatencia, valor) : Math.max(0, valor);
     const indiceInferior = datasets.length;
     datasets.push({ label: `Faixa inferior ${nome}`, data: previsoes.map(ponto => ({ x: ponto.x, y: limitar(ponto.inferior) })), yAxisID: eixo, borderColor: 'transparent', pointRadius: 0, fill: false });
     datasets.push({ label: `Faixa ${nome} (±1,96σ)`, data: previsoes.map(ponto => ({ x: ponto.x, y: limitar(ponto.superior) })), yAxisID: eixo, borderColor: 'transparent', backgroundColor: faixa, pointRadius: 0, fill: { target: indiceInferior } });
@@ -836,8 +1112,6 @@ function atualizarGraficosCarga() {
   const faixaRisco = limiteCpu === null ? null : gradeCpu.find(ponto => ponto.superior >= limiteCpu)?.x ?? null;
   graficoPrevisaoCpu.$zonaCriticaCarga = { limite: limiteCpu, cruzamento, faixaRisco, horizonte, observado: cruzamentoObservado };
   graficoPrevisaoCpu.data = { datasets: datasetsCpu };
-  graficoPrevisaoCpu.options.scales.x.max = horizonte;
-  graficoPrevisaoCpu.options.scales.x.ticks.stepSize = Math.max(incrementoPrevisao, Math.ceil(horizonte / 500) * incrementoPrevisao);
 
   const datasetsLatencia = [];
   if (p95.length) datasetsLatencia.push({ label: 'Latência P95 observada', data: p95, yAxisID: 'latencia', borderColor: '#ff9f32', backgroundColor: '#ff9f32', borderWidth: 2, pointRadius: 3, pointHoverRadius: 5, showLine: true, tension: 0.12 });
@@ -847,8 +1121,6 @@ function atualizarGraficosCarga() {
   adicionarFaixaEPrevisao(datasetsLatencia, p99Modelo, 'latencia', 'Latência P99', '#d879ff', 'rgba(216,121,255,.1)');
 
   graficoPrevisaoLatencia.data = { datasets: datasetsLatencia };
-  graficoPrevisaoLatencia.options.scales.x.max = horizonte;
-  graficoPrevisaoLatencia.options.scales.x.ticks.stepSize = Math.max(incrementoPrevisao, Math.ceil(horizonte / 500) * incrementoPrevisao);
   const configurarTooltips = (grafico, eixo) => {
     grafico.options.plugins.tooltip.filter = item => !item.dataset.label.startsWith('Faixa ');
     grafico.options.plugins.tooltip.callbacks.title = items => items.length ? `${formatarNumero(items[0].parsed.x, 0)} requisições` : '';
@@ -948,10 +1220,12 @@ function atualizarEventos() {
     return { chave, recurso, dias: calcularRunwayDias(chave, recurso), limite: limiteRecurso(chave, 'critico', recurso), atual: valorAtual(chave, recurso) };
   }).filter(item => item.dias !== null && item.dias >= 0).sort((a, b) => a.dias - b.dias);
   runways.forEach(item => {
-    const horizonte = item.dias === 0 ? 'No limite' : `Em aproximadamente ${formatarNumero(item.dias)} dias`;
+    const estado = estadoRunway(item.chave, item.recurso, item.dias);
     const limite = item.limite === null ? 'limite crítico não informado' : `limite crítico de ${formatarPercentual(item.limite)}`;
-    const texto = `${recursosDashboard[item.chave].nome}: tendência do Gold e limite crítico cadastrado indicam ${horizonte} (${limite}). Ação sugerida: revisar a capacidade antes do prazo estimado.`;
-    adicionarEvento(container, `Runway · ${recursosDashboard[item.chave].nome}`, texto, recursosDashboard[item.chave].cor);
+    const texto = item.dias === 0
+      ? `${estado.rotulo}: ${recursosDashboard[item.chave].nome} já ${item.atual > item.limite ? 'ultrapassou' : 'atingiu'} o ${limite}. Ação sugerida: agir imediatamente.`
+      : `${estado.rotulo}: ${recursosDashboard[item.chave].nome} pode atingir o ${limite} em aproximadamente ${formatarNumero(item.dias)} dias. Ação sugerida: revisar a capacidade antes do prazo estimado.`;
+    adicionarEvento(container, `Runway · ${recursosDashboard[item.chave].nome}`, texto, estado.cor);
   });
 
   const req = dados.requisicoes || {};
@@ -989,9 +1263,11 @@ function atualizarContextoGold() {
 
 function renderizarDashboard() {
   atualizarKpis();
+  atualizarEstadosSeletoresRunway();
   atualizarAvisoAmostras();
   atualizarGraficoTendencia();
   atualizarGraficoRunway();
+  atualizarResumoOperacional();
   atualizarGraficosCarga();
   atualizarEventos();
   if (estadoDashboard.dados) atualizarContextoGold();

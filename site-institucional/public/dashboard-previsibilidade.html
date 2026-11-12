@@ -49,9 +49,9 @@
       <article class="bloco tendencia">
         <h2>Tendência e previsão de saturação</h2>
         <div class="grafico-controles" role="group" aria-label="Componente exibido">
-          <button class="seletor ativo" type="button" data-componente="cpu" aria-pressed="true">CPU</button>
-          <button class="seletor" type="button" data-componente="ram" aria-pressed="false">Memória RAM</button>
-          <button class="seletor" type="button" data-componente="disco" aria-pressed="false">Disco</button>
+          <button class="seletor ativo" type="button" data-componente="cpu" aria-pressed="true"><span>CPU</span><span class="runway-sinal runway-sinal--indisponivel seletor-status" data-status-componente="cpu" hidden></span></button>
+          <button class="seletor" type="button" data-componente="ram" aria-pressed="false"><span>Memória RAM</span><span class="runway-sinal runway-sinal--indisponivel seletor-status" data-status-componente="ram" hidden></span></button>
+          <button class="seletor" type="button" data-componente="disco" aria-pressed="false"><span>Disco</span><span class="runway-sinal runway-sinal--indisponivel seletor-status" data-status-componente="disco" hidden></span></button>
         </div>
         <div class="painel grafico">
           <div class="grafico-contexto" id="contexto-tendencia"></div>
@@ -71,6 +71,10 @@
             </div>
             <div class="runway-detalhes" id="runway-detalhes"></div>
           </div>
+        </article>
+        <article class="bloco" aria-labelledby="titulo-prioridades-operacionais">
+          <h2 id="titulo-prioridades-operacionais">Prioridades operacionais</h2>
+          <div class="painel resumo-operacional" id="resumo-operacional" aria-live="polite" aria-atomic="true"></div>
         </article>
       </div>
     </section>

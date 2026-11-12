@@ -349,7 +349,7 @@ function buscarEquipamentoPorId(req, res) {
             }
         });
 }
-// conexão e consulta com s3
+// conexão e consulta com s3 para buscar o arquivo dash-previsibilidade mais recente do servidor solicitado, caso exista. Caso não exista, retorna 404 com mensagem informando que ainda não há arquivo dash-previsibilidade no Gold para este servidor.
 
 function buscarDashPrevisibilidade(req, res) {
     var idEquipamento = converterId(req.params.idEquipamento);
@@ -426,9 +426,8 @@ function buscarDashPrevisibilidade(req, res) {
             console.error("Erro ao buscar dash-previsibilidade no S3:", erro.name || erro.code || "erro");
 
             if (!res.headersSent) {
-                var configuracaoS3Ausente = erro.code === "S3_CONFIG_MISSING" || erro.code === "S3_SDK_MISSING";
-                var status = configuracaoS3Ausente ? 503 : 502;
-                var mensagem = configuracaoS3Ausente
+                var status = erro.code === "S3_CONFIG_MISSING" ? 503 : 502;
+                var mensagem = erro.code === "S3_CONFIG_MISSING"
                     ? erro.message
                     : "Não foi possível consultar os dados de previsibilidade no S3.";
                 res.status(status).json({ mensagem: mensagem });
