@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="./assets/css/dash-gestao-problemas.css">
+    <link rel="stylesheet" href="./assets/css/global.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.3.1/css/all.min.css"
+        integrity="sha512-QeR2VH+lsBE5LSAe1Q5EnTBbe7XTBubt8dG93Y7gidSgdMCr8nVqKcfKAMyN96SV8KDbZVTDXChatu5G2KQGzg=="
+        crossorigin="anonymous" referrerpolicy="no-referrer">
+    <title>Gestão de Problemas</title>
+</head>
+<body>
+    <!-- HEADER  -->
+    <header>
+
+        <!-- Coloque a navbar aqui -->
+
+
+        <div class="container-aba"> <!-- Row -->
+            <div class="aba selecao"> <!-- Column -->
+                <p>todas as equipes</p>
+                <hr>
+            </div>
+            <div class="aba">
+                <p>escolher equipe</p>
+                <hr>
+            </div>
+        </div>
+
+
+        <div class="container-titulo">
+            <p>dashboard</p>
+            <h2>gestão de problemas</h2>
+        </div>
+
+
+    </header>
+
+    <main>
+
+
+        <div class="content-box"> <!-- Colunm -->
+            
+            <div class="content-titulo"> <!-- Row -->
+                <span>ação rápida</span>
+                <p>servidores mais afetados - por prioridade</p>
+            </div>
+            
+            
+            <div class="content-box-table">
+                <table class="ar-table">
+                    <thead>
+                        <tr>
+                            <th>#</th>
+                            <th>servidor</th>
+                            <th>equipe</th>
+                            <th>risco de queda</th>
+                            <th>alertas ativos</th>
+                            <th>problema</th>
+                            <th>ações</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>1</td>
+                            <td>srv-pix-01</td>
+                            <td>a</td>
+                            <td class="td-barra">
+                                <p>87%</p> 
+                                <div class="barra-fundo">
+                                    <span class="barra-preenchimento" style="width: 87%; background-color: var(--cor-vermelho-inativo);"></span>
+                                </div>
+                            </td>
+                            <td class="qtd-a">22</td>
+                            <td>ram, cpu, disco</td>
+                            <td><a href="#">ver -></a></td>
+                        </tr>
+                        <tr>
+                            <td>2</td>
+                            <td>srv-pix-bkp</td>
+                            <td>b</td>
+                            <td class="td-barra">
+                                <p>67%</p> 
+                                <div class="barra-fundo">
+                                    <span class="barra-preenchimento" style="width: 67%; background-color: var(--cor-amarelo-atencao);"></span>
+                                </div>
+                            </td>
+                            <td class="qtd-a">10</td>
+                            <td>ram, cpu</td>
+                            <td><a href="#">ver -></a></td>
+                        </tr>
+                        <tr>
+                            <td>3</td>
+                            <td>srv-pix-02</td>
+                            <td>a</td>
+                            <td class="td-barra">
+                                <p>42%</p> 
+                                <div class="barra-fundo">
+                                    <span class="barra-preenchimento" style="width: 42%; background-color: var(--cor-amarelo-atencao);"></span>
+                                </div>
+                            </td>
+                            <td class="qtd-a">3</td>
+                            <td>cpu</td>
+                            <td><a href="">ver -></a></td>
+                        </tr>
+                        <tr>
+                            <td>4</td>
+                            <td>srv-site</td>
+                            <td>a</td>
+                            <td class="td-barra">
+                                <p>15%</p> 
+                                <div class="barra-fundo">
+                                    <span class="barra-preenchimento" style="width: 15%; background-color: var(--cor-verde-ativo);"></span>
+                                </div>
+                            </td>
+                            <td class="qtd-a">3</td>
+                            <td>cpu</td>
+                            <td><a href="">ver -></a></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+        </div>
+
+    
+        <div class="container-box">
+           
+           
+            <div class="content-box kpi">
+                <div class="icon"> <!-- icon kpi --> </div>
+                <div class="infos-kpi">
+                    <p>servidores ativos</p>
+                    <h3>23/25</h3>
+                    <span>2 servidores inativos</span>
+                </div>
+            </div>
+            
+            
+            <div class="content-box kpi">
+                <div class="icon"> <!-- icon kpi --> </div>
+                <div class="infos-kpi">
+                    <p>mttr</p>
+                    <h3>42m04s</h3>
+                    <span>8% mais rápido</span>
+                </div>
+            </div>
+            
+            
+            <div class="content-box kpi">
+                <div class="icon"> <!-- icon kpi --> </div>
+                <div class="infos-kpi">
+                    <p>mtbf</p>
+                    <h3>1d20h</h3>
+                    <span>5% mais demorado</span>
+                </div>
+            </div>
+            
+            
+            <div class="content-box kpi-dupla">
+                
+                
+                <div class="kpi-alertas">
+                    <div class="infos-kpi">
+                        <h3>25</h3>
+                        <p>alertas ativos</p>
+                        <span>2 critivos</span>
+                    </div>
+                </div>
+
+                <div class="seta-prejuizo"></div>
+
+                <div class="icon"> <!-- icon kpi --> </div>
+                
+                <div class="kpi-prejuizo">
+                    <div class="infos-kpi">
+                        <p>prejuízo estimado</p>
+                        <h3>R$ 18 mil</h3>
+                        <span>se não resolvidos</span>
+                    </div>
+                </div>
+           
+           
+            </div>
+        
+        
+        </div>
+
+        <div class="content-box grafico_saldo_indisp">
+
+            <p class="infos_kpis_nome">Orçamento de Indisponibilidade Restante (Anual)</p>
+            <p class="grafic_disp_limite_max">Limite máximo: 8h46m</p>
+            <canvas
+                id="grafico-indisp-saldo"
+                style="max-width: 100%; max-height: 50px;">
+            </canvas>
+            <div class="infos_grafic_status">
+                <p id="grafic-disp-consumido">Consumido: $$</p>
+                <p id="grafic-disp-restante">Restam: $$</p>
+            </div>
+
+        </div>
+
+        <div class="container-dash-box">
+
+            <div class="content-box">
+                <!-- Matriz de risco-->
+                 <canvas id="g-dash-matriz-risco"></canvas>
+            </div>
+
+
+            <div class="content-box">
+                <canvas id="g-dash-evol-equip"></canvas>
+            </div>
+
+        </div>
+
+    </main>
+</body>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script src="./assets/js/dash-gestao-problema.js"></script>
+</html>
