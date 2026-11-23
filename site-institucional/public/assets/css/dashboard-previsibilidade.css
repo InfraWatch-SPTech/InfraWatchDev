@@ -9,6 +9,10 @@ body { background: var(--bg-dark); color: var(--cor-branco-default); }
 .topo h1 { font-size:clamp(1.5rem, 2.4vw, 2rem); font-weight:800; text-transform:uppercase; }
 .topo p { color:var(--cor-azul-apagado); font-size:.82rem; }
 .topo p span { padding:0 6px; }
+.topo-acoes { display:flex; align-items:center; gap:12px; }
+.botao-modo-tv { display:inline-flex; align-items:center; justify-content:center; gap:8px; min-height:36px; padding:7px 12px; border:1px solid var(--cor-azul-apagado); border-radius:6px; background:var(--cor-azul-icone-fundo); color:var(--cor-branco-default); font:inherit; font-size:.76rem; font-weight:700; cursor:pointer; }
+.botao-modo-tv:hover,.botao-modo-tv:focus-visible { border-color:var(--cor-azul-contraste2); background:var(--cor-azul-contraste); }
+.botao-modo-tv:focus-visible { outline:2px solid var(--cor-azul-contraste2); outline-offset:2px; }
 .sla { white-space:nowrap; color:var(--cor-verde-ativo); border:1px solid currentColor; padding:5px 9px; border-radius:5px; font-size:.78rem; }
 .sla.indisponivel { color:var(--cor-texto-apagado); }
 .status-ponto { display:inline-block; width:7px; height:7px; margin-right:7px; border-radius:50%; background:currentColor; }
@@ -27,7 +31,18 @@ body { background: var(--bg-dark); color: var(--cor-branco-default); }
 .aviso-amostras { display:none; margin:-10px 0 24px; padding:12px 16px; border:1px solid var(--cor-amarelo-atencao); border-left:4px solid var(--cor-amarelo-atencao); border-radius:var(--raio-card); background:color-mix(in srgb, var(--cor-amarelo-atencao) 9%, var(--cor-azul-contraste)); color:var(--cor-amarelo-claro); font-size:.78rem; line-height:1.5; }
 .aviso-amostras.visivel { display:block; }
 .aviso-amostras.ok { border-color:var(--cor-verde-ativo); border-left-color:var(--cor-verde-ativo); background:color-mix(in srgb, var(--cor-verde-ativo) 8%, var(--cor-azul-contraste)); color:var(--cor-verde-ativo); }
+.resumo-executivo { --resumo-cor:var(--cor-texto-apagado); display:grid; grid-template-columns:4px minmax(0,1fr); gap:16px; margin:0 0 20px; padding:18px 20px; }
+.resumo-executivo--critico { --resumo-cor:var(--cor-vermelho-claro); }
+.resumo-executivo--alerta,.resumo-executivo--atencao { --resumo-cor:var(--cor-amarelo-claro); }
+.resumo-executivo--normal { --resumo-cor:var(--cor-verde-ativo); }
+.resumo-executivo--indisponivel { --resumo-cor:var(--cor-texto-apagado); }
+.resumo-executivo-sinal { width:4px; height:100%; min-height:58px; border-radius:4px; background:var(--resumo-cor); box-shadow:0 0 14px color-mix(in srgb, var(--resumo-cor) 35%, transparent); }
+.resumo-executivo-legenda { margin-bottom:5px; color:var(--resumo-cor); font-size:.64rem; font-weight:800; letter-spacing:.08em; text-transform:uppercase; }
+.resumo-executivo h2 { margin:0 0 6px; color:var(--cor-branco-default); font-size:1rem; line-height:1.35; }
+.resumo-executivo-conteudo > p:not(.resumo-executivo-legenda) { color:#e2dfec; font-size:.78rem; line-height:1.5; }
+.contexto-resumo-executivo { margin-top:8px; color:var(--cor-texto-apagado); font-size:.65rem; line-height:1.5; }
 .kpis { display:grid; grid-template-columns:repeat(4,minmax(0,1fr)); gap:24px; margin:0 0 8px; }
+.recursos-tv { display:none; }
 .painel { background:var(--cor-azul-contraste); border:1px solid var(--cor-azul-apagado); border-radius:var(--raio-card); }
 .kpi { min-height:110px; padding:20px 22px 16px; }
 .kpi h2 { margin-bottom:10px; color:var(--cor-texto-apagado); font-size:.68rem; font-weight:600; text-transform:uppercase; }
@@ -104,16 +119,169 @@ body { background: var(--bg-dark); color: var(--cor-branco-default); }
 .ruptura-nota strong { color:var(--cor-vermelho-inativo); }
 .linha-tempo { margin-top:32px; padding:28px clamp(20px, 3vw, 52px) 24px; }
 .linha-tempo h2 span { font-weight:400; }
-.eventos { display:grid; grid-template-columns:repeat(auto-fit,minmax(160px,1fr)); position:relative; padding:20px 0 5px; }
-.eventos:before { content:""; position:absolute; top:50%; left:3%; right:3%; height:3px; background:#302356; }
-.evento { position:relative; min-height:120px; text-align:center; }
-.evento:nth-child(even) { padding-top:65px; }
-.evento-ponto { position:relative; z-index:1; display:block; width:14px; height:14px; margin:15px auto; border:2px solid white; border-radius:50%; background:var(--evento-cor); }
-.evento:nth-child(even) .evento-ponto { margin-top:-59px; margin-bottom:46px; }
-.evento-data { display:block; color:var(--evento-cor); font-size:.67rem; font-weight:bold; }
-.evento-texto { display:block; max-width:180px; margin:8px auto; padding:6px; border:1px solid var(--evento-cor); border-radius:4px; font-size:.58rem; line-height:1.35; }
+.eventos { display:grid; grid-template-columns:repeat(auto-fit,minmax(min(100%,240px),1fr)); gap:10px; position:relative; padding:8px 0 2px; }
+.eventos:before { display:none; }
+.evento { position:relative; min-width:0; min-height:0; padding:12px; border:1px solid rgba(139,134,155,.24); border-left:3px solid var(--evento-cor); border-radius:7px; background:rgba(12,17,42,.28); text-align:left; }
+.evento:nth-child(even) { padding-top:12px; }
+.evento-ponto { display:none; }
+.evento-data { display:block; color:var(--evento-cor); font-size:.66rem; font-weight:bold; }
+.evento-texto { display:block; max-width:none; margin:7px 0 0; padding:0; border:0; color:#d4d0e3; font-size:.65rem; line-height:1.5; overflow-wrap:anywhere; }
 .nota { margin-top:12px; color:var(--cor-texto-apagado); font-size:.68rem; text-align:right; }
 .nota i { margin-right:5px; color:var(--cor-azul-contraste2); }
 @media(max-width:1100px){.analises{grid-template-columns:minmax(0,1fr) minmax(360px,.82fr)}.tendencia .grafico{flex-basis:680px;height:680px}.estresse{height:820px}}
 @media(max-width:900px){.kpis{grid-template-columns:repeat(2,minmax(0,1fr))}.analises{grid-template-columns:1fr}.coluna{grid-template-rows:auto}.tendencia .grafico{flex-basis:500px;height:500px}.estresse{height:790px}.topo{align-items:flex-start;flex-direction:column}.seletor-servidor{grid-template-columns:1fr;gap:12px}.eventos{grid-template-columns:repeat(3,minmax(0,1fr))}.eventos:before{display:none}}
 @media(max-width:600px){.previsibilidade{width:100%;min-width:0;padding:24px 16px 48px}.topo{align-items:flex-start;flex-direction:column;margin-bottom:20px}.topo h1{font-size:1.35rem}.topo p{line-height:1.6}.sla{white-space:normal}.kpis{grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}.kpi{padding:14px}.kpi p{font-size:.62rem}.analises{gap:24px;margin-top:24px}.previsao-carga{margin-top:24px;min-width:0}.grafico{height:330px}.tendencia .grafico{flex-basis:360px;height:360px}.barra{height:250px}.estresse{height:740px;padding:16px 12px}.estresse-graficos{min-width:0}.grafico-estresse{padding:10px 8px 6px}.grafico-estresse > span{font-size:.65rem}.linha-tempo{padding:16px}.linha-tempo h2 span{display:block;margin-top:5px}.eventos{grid-template-columns:repeat(2,minmax(0,1fr))}}
+
+html:not(.modo-tv) .seletor-servidor { grid-template-columns:minmax(0,1fr); gap:6px; margin:0 0 14px; padding:10px 14px; }
+html:not(.modo-tv) .seletor-servidor-campo { grid-template-columns:auto minmax(220px,360px); align-items:center; gap:6px 12px; }
+html:not(.modo-tv) .seletor-servidor label { grid-column:1; grid-row:1; white-space:nowrap; }
+html:not(.modo-tv) .seletor-servidor select { grid-column:2; grid-row:1; min-height:36px; padding:6px 10px; }
+html:not(.modo-tv) .mensagem-servidor { grid-column:1/-1; min-height:0; }
+html:not(.modo-tv) .servidor-resumo { grid-column:1/-1; min-height:0; gap:4px 18px; padding-top:6px; border-top:1px solid rgba(139,134,155,.2); }
+html:not(.modo-tv) .limites-servidor { grid-column:1/-1; gap:4px 18px; padding-top:6px; border-top:1px solid rgba(139,134,155,.2); }
+html:not(.modo-tv) .limites-servidor:empty { display:none; }
+html:not(.modo-tv) .aviso-amostras { margin:8px 0 20px; }
+html:not(.modo-tv) .resumo-operacional:not(.resumo-operacional--vazio) { min-height:clamp(320px,42vh,450px); }
+html:not(.modo-tv) .prioridades-lista { flex:1 1 auto; align-content:stretch; }
+
+@media (min-width:901px) {
+  html:not(.modo-tv) .coluna { grid-template-rows:auto minmax(320px,1fr); gap:16px; }
+}
+
+@media (max-width:600px) {
+  html:not(.modo-tv) .seletor-servidor-campo { grid-template-columns:minmax(0,1fr); }
+  html:not(.modo-tv) .seletor-servidor label,html:not(.modo-tv) .seletor-servidor select { grid-column:1; grid-row:auto; }
+}
+
+@media (min-width:1600px) and (min-height:900px) {
+  html.modo-tv,html.modo-tv body { width:100%; height:100%; min-height:0; overflow:hidden; }
+  html.modo-tv .dashboard_header { display:none; }
+  html.modo-tv .previsibilidade {
+    width:100vw; max-width:none; height:100dvh; min-height:0; margin:0; padding:12px 16px;
+    display:grid; grid-template-columns:minmax(0,1.55fr) minmax(430px,1fr);
+    grid-template-rows:40px 60px auto 80px 84px minmax(250px,1.15fr) minmax(160px,.72fr) minmax(88px,.34fr) minmax(30px,.12fr);
+    grid-template-areas:"topo topo" "seletor seletor" "aviso aviso" "executivo executivo" "kpis kpis" "recursos analises" "carga carga" "eventos eventos" "nota nota";
+    gap:8px 10px; overflow:hidden;
+  }
+  html.modo-tv .previsibilidade > * { min-width:0; min-height:0; }
+  html.modo-tv .topo { grid-area:topo; min-height:0; margin:0; gap:16px; }
+  html.modo-tv .topo > div:first-child { min-width:0; flex-direction:row; align-items:baseline; gap:16px; }
+  html.modo-tv .topo h1 { flex:0 0 auto; font-size:1.18rem; }
+  html.modo-tv .topo p { min-width:0; overflow:hidden; font-size:.76rem; text-overflow:ellipsis; white-space:nowrap; }
+  html.modo-tv .topo-acoes { flex:0 0 auto; gap:9px; }
+  html.modo-tv .botao-modo-tv { min-height:32px; padding:5px 10px; font-size:.7rem; }
+  html.modo-tv .sla { padding:4px 8px; font-size:.68rem; }
+  html.modo-tv .seletor-servidor { grid-area:seletor; grid-template-columns:minmax(230px,.42fr) minmax(0,1fr); gap:14px; margin:0; padding:8px 12px; }
+  html.modo-tv .seletor-servidor-campo { grid-template-columns:1fr; gap:3px; }
+  html.modo-tv .seletor-servidor label { font-size:.68rem; }
+  html.modo-tv .seletor-servidor select { min-height:32px; padding:5px 9px; font-size:.78rem; }
+  html.modo-tv .mensagem-servidor { display:none; }
+  html.modo-tv .servidor-resumo { min-height:0; gap:5px 16px; font-size:.72rem; }
+  html.modo-tv .limites-servidor { display:none; }
+  html.modo-tv .aviso-amostras { grid-area:aviso; margin:0; padding:5px 10px; font-size:.72rem; line-height:1.35; }
+  html.modo-tv .resumo-executivo { grid-area:executivo; grid-template-columns:4px minmax(0,1fr); gap:7px; margin:0; padding:4px 12px; overflow:hidden; }
+  html.modo-tv .resumo-executivo-sinal { min-height:0; }
+  html.modo-tv .resumo-executivo-legenda { margin-bottom:2px; font-size:.62rem; }
+  html.modo-tv .resumo-executivo h2 { margin:0 0 2px; font-size:.9rem; line-height:1.2; }
+  html.modo-tv .resumo-executivo-conteudo > p:not(.resumo-executivo-legenda) { overflow:hidden; font-size:.75rem; line-height:1.3; text-overflow:ellipsis; white-space:nowrap; }
+  html.modo-tv .contexto-resumo-executivo { margin-top:2px; overflow:hidden; font-size:.64rem; line-height:1.25; text-overflow:ellipsis; white-space:nowrap; }
+  html.modo-tv .kpis { grid-area:kpis; grid-template-columns:repeat(4,minmax(0,1fr)); gap:8px; margin:0; }
+  html.modo-tv .kpi { min-height:0; padding:8px 12px; overflow:hidden; }
+  html.modo-tv .kpi h2 { margin-bottom:4px; font-size:.68rem; }
+  html.modo-tv .kpi strong { margin-bottom:2px; font-size:1rem; }
+  html.modo-tv .kpi p { display:-webkit-box; overflow:hidden; font-size:.66rem; line-height:1.2; text-overflow:ellipsis; white-space:normal; -webkit-box-orient:vertical; -webkit-line-clamp:2; }
+  html.modo-tv .recursos-tv { grid-area:recursos; display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:8px; min-width:0; min-height:0; }
+  html.modo-tv .tendencia-tv-card { display:flex; flex-direction:column; min-width:0; min-height:0; }
+  html.modo-tv .tendencia-tv-card > h2 { flex:0 0 auto; gap:8px; min-height:28px; margin:0 0 5px; padding:5px 8px 5px 12px; font-size:.82rem; }
+  html.modo-tv .tendencia-tv-card > h2:before { top:5px; bottom:5px; }
+  html.modo-tv .tendencia-tv-card .grafico { display:flex; flex:1 1 auto; flex-direction:column; gap:7px; min-width:0; min-height:0; height:auto; padding:8px; }
+  html.modo-tv .tendencia-tv-card .grafico-contexto { flex:0 0 auto; max-height:100px; gap:4px 9px; overflow:hidden; font-size:.64rem; line-height:1.3; }
+  html.modo-tv .tendencia-tv-card .grafico-contexto b { color:var(--cor-branco-default); }
+  html.modo-tv .tendencia-tv-card .grafico-visual { flex:1 1 auto; min-width:0; min-height:0; }
+  html.modo-tv .tendencia-tv-card .seletor-status { padding:2px 5px; font-size:.52rem; }
+  html.modo-tv .analises { grid-area:analises; display:block; min-width:0; min-height:0; margin:0; }
+  html.modo-tv .analises > .tendencia { display:none; }
+  html.modo-tv .coluna { height:100%; grid-template-rows:minmax(0,.82fr) minmax(0,1.18fr); gap:8px; }
+  html.modo-tv .coluna > .bloco { display:flex; flex-direction:column; min-width:0; min-height:0; }
+  html.modo-tv .coluna > .bloco > h2 { flex:0 0 auto; min-height:28px; margin:0 0 5px; padding:5px 8px 5px 12px; font-size:.8rem; }
+  html.modo-tv .barra { flex:1 1 auto; height:auto; min-height:0; gap:4px; padding:6px 8px; overflow:hidden; }
+  html.modo-tv .barra .grafico-visual { flex:1 1 auto; min-height:45px; }
+  html.modo-tv .runway-detalhes { gap:2px; }
+  html.modo-tv .runway-linha { gap:4px; font-size:.62rem; line-height:1.25; }
+  html.modo-tv .runway-linha > span:nth-child(2) { flex-basis:100px; }
+  html.modo-tv .runway-sinal { padding:2px 5px; font-size:.56rem; }
+  html.modo-tv .resumo-operacional { flex:1 1 auto; gap:5px; min-height:0; padding:6px; overflow:hidden; }
+  html.modo-tv .prioridades-resumo { gap:2px; padding:5px 7px; }
+  html.modo-tv .prioridades-resumo strong { font-size:.68rem; }
+  html.modo-tv .prioridades-resumo span { font-size:.6rem; line-height:1.25; }
+  html.modo-tv .prioridades-lista { grid-template-columns:repeat(auto-fit,minmax(min(100%,190px),1fr)); gap:5px; min-height:0; }
+  html.modo-tv .prioridade-item { padding:6px; overflow:hidden; }
+  html.modo-tv .prioridade-topo { align-items:flex-start; flex-direction:column; gap:3px; margin-bottom:5px; }
+  html.modo-tv .prioridade-topo > strong { font-size:.68rem; }
+  html.modo-tv .prioridade-topo .runway-sinal { white-space:normal; }
+  html.modo-tv .prioridade-metricas { grid-template-columns:1fr; gap:3px; }
+  html.modo-tv .prioridade-metricas span { font-size:.58rem; }
+  html.modo-tv .prioridade-metricas strong { font-size:.72rem; }
+  html.modo-tv .prioridade-medidor { height:3px; margin:5px 0 2px; }
+  html.modo-tv .prioridade-diferenca { margin-top:3px; font-size:.58rem; line-height:1.2; }
+  html.modo-tv .prioridade-orientacao { margin-top:2px; font-size:.58rem; line-height:1.2; }
+  html.modo-tv .prioridade-frescor { margin-top:3px; font-size:.55rem; line-height:1.2; }
+  html.modo-tv .previsao-carga { grid-area:carga; display:flex; flex-direction:column; min-width:0; min-height:0; margin:0; }
+  html.modo-tv .previsao-carga > h2 { flex:0 0 auto; min-height:28px; margin:0 0 5px; padding:5px 8px 5px 12px; font-size:.8rem; }
+  html.modo-tv .estresse { flex:1 1 auto; height:auto; min-height:0; gap:5px; padding:7px 9px; overflow:hidden; }
+  html.modo-tv .grafico-subtitulo { flex:0 0 auto; overflow:hidden; font-size:.66rem; text-overflow:ellipsis; white-space:nowrap; }
+  html.modo-tv .periodo-teste { margin-right:4px; padding:2px 5px; }
+  html.modo-tv .estresse-graficos { grid-template-columns:repeat(2,minmax(0,1fr)); grid-template-rows:minmax(0,1fr); gap:8px; }
+  html.modo-tv .grafico-estresse { gap:4px; padding:6px 8px 4px; }
+  html.modo-tv .grafico-estresse > span { font-size:.68rem; }
+  html.modo-tv .ruptura-nota { flex:0 0 auto; overflow:hidden; font-size:.62rem; line-height:1.25; text-overflow:ellipsis; white-space:nowrap; }
+  html.modo-tv .linha-tempo { grid-area:eventos; display:grid; grid-template-rows:auto minmax(0,1fr); gap:4px; min-width:0; min-height:0; margin:0; padding:6px 9px; overflow:hidden; }
+  html.modo-tv .linha-tempo h2 { min-height:25px; margin:0; padding:4px 7px 4px 11px; font-size:.72rem; }
+  html.modo-tv .linha-tempo h2:before { top:4px; bottom:4px; }
+  html.modo-tv .linha-tempo h2 span { margin-left:6px; font-size:.62rem; }
+  html.modo-tv .eventos { grid-template-columns:repeat(5,minmax(0,1fr)); gap:5px; min-width:0; min-height:0; padding:0; overflow:hidden; }
+  html.modo-tv .evento,html.modo-tv .evento:nth-child(even) { min-height:0; padding:5px 7px; overflow:hidden; }
+  html.modo-tv .evento-data { overflow:hidden; font-size:.6rem; text-overflow:ellipsis; white-space:nowrap; }
+  html.modo-tv .evento-texto { display:-webkit-box; margin:3px 0 0; overflow:hidden; font-size:.6rem; line-height:1.25; -webkit-box-orient:vertical; -webkit-line-clamp:2; }
+  html.modo-tv .nota { grid-area:nota; display:block; min-width:0; margin:0; overflow:hidden; font-size:.7rem; line-height:1.25; text-align:left; }
+}
+
+@media (min-width:1600px) and (min-height:900px) and (max-height:1000px) {
+  html.modo-tv .previsibilidade { grid-template-rows:36px 54px auto 68px 76px minmax(220px,1.15fr) minmax(135px,.72fr) minmax(78px,.34fr) minmax(30px,.12fr); gap:6px 8px; padding:9px 12px; }
+  html.modo-tv .kpi { padding:6px 10px; }
+  html.modo-tv .tendencia-tv-card .grafico-contexto { max-height:72px; }
+  html.modo-tv .resumo-operacional { gap:4px; padding:5px; }
+}
+
+@media (max-width:1599px), (max-height:899px) {
+  html.modo-tv { overflow:auto; }
+  html.modo-tv body { min-height:100vh; overflow:auto; }
+  html.modo-tv .dashboard_header { display:none; }
+  html.modo-tv .previsibilidade { max-width:none; padding:20px clamp(16px,3vw,48px) 32px; }
+  html.modo-tv .topo { align-items:center; flex-direction:row; margin-bottom:16px; }
+  html.modo-tv .recursos-tv { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:12px; margin-bottom:24px; }
+  html.modo-tv .tendencia-tv-card { min-width:0; }
+  html.modo-tv .tendencia-tv-card > h2 { margin-bottom:7px; }
+  html.modo-tv .tendencia-tv-card .grafico { display:flex; flex-direction:column; gap:9px; height:420px; padding:14px; }
+  html.modo-tv .tendencia-tv-card .grafico-contexto { flex:0 0 auto; gap:5px 12px; font-size:.64rem; }
+  html.modo-tv .tendencia-tv-card .grafico-visual { flex:1 1 auto; min-height:0; }
+  html.modo-tv .analises { display:block; margin:0; }
+  html.modo-tv .analises > .tendencia { display:none; }
+  html.modo-tv .coluna { grid-template-rows:auto; gap:16px; }
+  html.modo-tv .previsao-carga { margin-top:24px; }
+  html.modo-tv .estresse { height:600px; }
+  html.modo-tv .estresse-graficos { grid-template-columns:repeat(2,minmax(0,1fr)); grid-template-rows:minmax(0,1fr); }
+  html.modo-tv .linha-tempo { margin-top:24px; }
+  html.modo-tv .nota { display:none; }
+}
+
+@media (max-width:900px) {
+  html.modo-tv .topo { align-items:flex-start; flex-direction:column; }
+  html.modo-tv .topo-acoes { width:100%; justify-content:space-between; }
+  html.modo-tv .recursos-tv { grid-template-columns:minmax(0,1fr); }
+  html.modo-tv .tendencia-tv-card .grafico { height:360px; }
+  html.modo-tv .coluna { grid-template-rows:auto; }
+  html.modo-tv .estresse { height:740px; }
+  html.modo-tv .estresse-graficos { grid-template-columns:minmax(0,1fr); grid-template-rows:repeat(2,minmax(0,1fr)); }
+  html.modo-tv .eventos { grid-template-columns:repeat(2,minmax(0,1fr)); }
+}

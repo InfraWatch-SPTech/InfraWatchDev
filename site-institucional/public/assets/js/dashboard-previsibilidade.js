@@ -25,6 +25,7 @@ const eixoComum = {
 };
 
 let graficoTendencia;
+let graficosTendenciaTv = {};
 let graficoRunway;
 let graficoPrevisaoCpu;
 let graficoPrevisaoLatencia;
@@ -51,10 +52,21 @@ function formatarPercentual(valor) {
   return convertido === null ? '—' : `${formatarNumero(convertido, 2)}%`;
 }
 
+function converterData(valor) {
+  if (!valor) return null;
+  const texto = String(valor).trim();
+  const dataDireta = new Date(valor instanceof Date ? valor.getTime() : texto);
+  if (!Number.isNaN(dataDireta.getTime())) return dataDireta;
+
+  const textoLocal = texto.replace(/^(\d{4}-\d{2}-\d{2})\s+/, '$1T');
+  const dataLocal = new Date(textoLocal);
+  return Number.isNaN(dataLocal.getTime()) ? null : dataLocal;
+}
+
 function formatarData(valor, incluirHora = true) {
   if (!valor) return 'data não informada';
-  const data = new Date(String(valor).replace(' ', 'T'));
-  if (Number.isNaN(data.getTime())) return String(valor);
+  const data = converterData(valor);
+  if (!data) return String(valor);
   return data.toLocaleString('pt-BR', incluirHora
     ? { dateStyle: 'short', timeStyle: 'short' }
     : { dateStyle: 'short' });
@@ -66,13 +78,13 @@ function definirMensagemServidor(texto) {
 
 function mensagemEstadoVazio(mensagemEspecifica) {
   if (estadoDashboard.status === 'loading') return 'Carregando os dados do Gold…';
-  if (mensagemEspecifica) return `Erro: ${mensagemEspecifica}`;
-  if (estadoDashboard.status === 'missing') return `Erro: ${estadoDashboard.erro || 'nenhum arquivo dash-previsibilidade foi encontrado no Gold para este servidor.'}`;
-  if (estadoDashboard.status === 'error') return `Erro: ${estadoDashboard.erro || 'não foi possível consultar os dados do servidor.'}`;
+  if (mensagemEspecifica) return `Dados indisponíveis: ${mensagemEspecifica}`;
+  if (estadoDashboard.status === 'missing') return estadoDashboard.erro || 'Ainda não há arquivo de previsibilidade no Gold para este servidor.';
+  if (estadoDashboard.status === 'error') return `Falha na consulta: ${estadoDashboard.erro || 'não foi possível consultar os dados do servidor.'}`;
   if (!estadoDashboard.servidor) return estadoDashboard.usuario
-    ? 'Erro: selecione um servidor para consultar o Gold.'
-    : 'Erro: entre no sistema e selecione um servidor para consultar o Gold.';
-  return 'Erro: o Gold não contém dados para este gráfico.';
+    ? 'Selecione um servidor para consultar o Gold.'
+    : 'Entre no sistema e selecione um servidor para consultar o Gold.';
+  return 'O Gold não contém dados para este gráfico.';
 }
 
 function mostrarEstadoGrafico(canvasId, estadoId, temDados, mensagem) {
@@ -120,6 +132,29 @@ function limiteRecurso(chave, tipo, recurso = recursoAtual(chave)) {
   const limiteBanco = numero(estadoDashboard.limites[chave]?.[tipo]);
   if (limiteBanco !== null) return limiteBanco;
   return numero(recurso?.[campoGold]);
+}
+
+function origemLimiteRecurso(chave, tipo, recurso = recursoAtual(chave)) {
+  if (numero(estadoDashboard.limites[chave]?.[tipo]) !== null) return 'cadastro do servidor';
+  const campoGold = tipo === 'critico' ? 'limite_critico' : 'limite_atencao';
+  return numero(recurso?.[campoGold]) !== null ? 'Gold' : null;
+}
+
+function obterJanelaAmostras(pontos) {
+  const datas = (Array.isArray(pontos) ? pontos : [])
+    .map(ponto => dataValida(ponto?.data_hora ?? ponto?.amostra?.data_hora))
+    .filter(Boolean)
+    .sort((a, b) => a - b);
+  if (!datas.length) return null;
+  const inicio = datas[0];
+  const fim = datas[datas.length - 1];
+  return inicio.getTime() === fim.getTime()
+    ? formatarData(fim)
+    : `${formatarData(inicio)} – ${formatarData(fim)}`;
+}
+
+function recursoTemProjecao(recurso) {
+  return pontosPrevisao(recurso).some(ponto => ponto.dia > 0) || numero(recurso?.tendencia_por_dia) !== null;
 }
 
 function pontosPrevisao(recurso) {
@@ -186,7 +221,7 @@ function previsaoDiaria(recurso, valorInicial) {
 function calcularRunwayDias(chave, recurso = recursoAtual(chave)) {
   if (!recurso) return null;
   const atual = valorAtual(chave, recurso);
-  const critico = numero(estadoDashboard.limites[chave]?.critico);
+  const critico = limiteRecurso(chave, 'critico', recurso);
   if (atual === null || critico === null) return null;
   if (atual >= critico) return 0;
 
@@ -233,22 +268,25 @@ function estadoRunway(chave, recurso = recursoAtual(chave), dias = calcularRunwa
   if (atual !== null && atencao !== null && atual >= atencao) {
     return { classe: 'atencao', rotulo: 'ATENÇÃO', mensagem: 'Uso acima do limite de atenção', cor: '#f5c542' };
   }
-  if (atual !== null && (atencao !== null || critico !== null)) {
+  if (atual !== null && critico !== null && recursoTemProjecao(recurso)) {
     return { classe: 'normal', rotulo: 'NORMAL', mensagem: 'Sem alerta previsto', cor: '#3ddc84' };
+  }
+  if (atual !== null && critico !== null) {
+    return { classe: 'indisponivel', rotulo: 'SEM PREVISÃO', mensagem: 'Uso abaixo do limite, mas o Gold não trouxe tendência ou projeção para estimar o risco', cor: '#aaa8ba' };
   }
   return { classe: 'indisponivel', rotulo: 'N/D', mensagem: 'Dados insuficientes para indicar o estado', cor: '#aaa8ba' };
 }
 
 function atualizarEstadosSeletoresRunway() {
   Object.keys(recursosDashboard).forEach(chave => {
-    const indicador = document.querySelector(`[data-status-componente="${chave}"]`);
-    if (!indicador) return;
     const recurso = recursoAtual(chave);
     const estado = estadoRunway(chave, recurso);
-    indicador.hidden = estado.classe === 'normal' || estado.classe === 'indisponivel';
-    indicador.className = `runway-sinal runway-sinal--${estado.classe} seletor-status`;
-    indicador.textContent = estado.rotulo;
-    indicador.title = estado.mensagem;
+    document.querySelectorAll(`[data-status-componente="${chave}"]`).forEach(indicador => {
+      indicador.hidden = estado.classe === 'normal' || estado.classe === 'indisponivel';
+      indicador.className = `runway-sinal runway-sinal--${estado.classe} seletor-status`;
+      indicador.textContent = estado.rotulo;
+      indicador.title = estado.mensagem;
+    });
   });
 }
 
@@ -258,16 +296,18 @@ function mensagemRunwayIndisponivel() {
     recurso: recursoAtual(chave),
     previsoes: pontosPrevisao(recursoAtual(chave))
   }));
-  if (!recursos.some(item => item.previsoes.length)) {
-    return 'Erro: o Gold não trouxe pontos numéricos de previsão para CPU, RAM ou disco.';
+  const temPrevisaoGold = recursos.some(item => item.previsoes.length);
+  const temTendencia = recursos.some(item => numero(item.recurso?.tendencia_por_dia) !== null);
+  if (!temPrevisaoGold && !temTendencia) {
+    return 'O Gold não trouxe pontos de previsão nem tendência diária para estimar um prazo.';
   }
-  if (recursos.some(item => item.previsoes.length && numero(estadoDashboard.limites[item.chave]?.critico) === null)) {
-    return 'Erro: o limite crítico de um recurso não foi retornado pelo banco.';
+  if (recursos.some(item => item.previsoes.length && limiteRecurso(item.chave, 'critico', item.recurso) === null)) {
+    return 'Não há limite crítico cadastrado no servidor nem informado pelo Gold para comparar com a previsão.';
   }
   if (recursos.some(item => item.previsoes.length && valorAtual(item.chave, item.recurso) === null)) {
-    return 'Erro: o Gold não trouxe o valor atual necessário para calcular o runway.';
+    return 'O Gold não trouxe o valor atual necessário para calcular o prazo.';
   }
-  return 'A previsão disponível não cruza o limite crítico e não indica crescimento para estimar uma data.';
+  return 'A previsão disponível não cruza o limite crítico e a tendência não indica crescimento positivo para estimar uma data.';
 }
 
 function listaRecursosComValor() {
@@ -283,6 +323,19 @@ function listaRecursosComValor() {
   }).filter(item => item.recurso && item.atual !== null);
 }
 
+function listaRecursosPriorizados() {
+  const prioridade = { critico: 0, alerta: 1, atencao: 2, normal: 3, indisponivel: 4 };
+  return Object.keys(recursosDashboard).map(chave => {
+    const recurso = recursoAtual(chave);
+    const atual = valorAtual(chave, recurso);
+    const limiteCritico = limiteRecurso(chave, 'critico', recurso);
+    const dias = calcularRunwayDias(chave, recurso);
+    return { chave, recurso, atual, limiteCritico, dias, estado: estadoRunway(chave, recurso, dias) };
+  }).filter(item => item.recurso && item.atual !== null)
+    .sort((a, b) => prioridade[a.estado.classe] - prioridade[b.estado.classe] ||
+      (a.dias ?? Number.POSITIVE_INFINITY) - (b.dias ?? Number.POSITIVE_INFINITY));
+}
+
 function corDeEstado(item) {
   if (item.critico !== null && item.atual >= item.critico) return 'vermelho';
   if (item.atencao !== null && item.atual >= item.atencao) return 'amarelo';
@@ -296,13 +349,101 @@ function definirKpi(valorId, descricaoId, valor, descricao, classe) {
   elemento(descricaoId).textContent = descricao;
 }
 
+function atualizarResumoExecutivo() {
+  const painel = document.querySelector('.resumo-executivo');
+  const titulo = elemento('titulo-resumo-executivo');
+  const texto = elemento('texto-resumo-executivo');
+  const contexto = elemento('contexto-resumo-executivo');
+  const definir = (classe, tituloTexto, textoConteudo, contextoTexto = '') => {
+    painel.className = `painel resumo-executivo resumo-executivo--${classe}`;
+    titulo.textContent = tituloTexto;
+    texto.textContent = textoConteudo;
+    contexto.textContent = contextoTexto;
+  };
+
+  if (!estadoDashboard.dados) {
+    const tituloEstado = estadoDashboard.status === 'loading'
+      ? 'Consultando dados do servidor'
+      : estadoDashboard.status === 'error'
+        ? 'Falha ao consultar os dados'
+        : estadoDashboard.status === 'missing'
+          ? 'Dados de previsibilidade ainda não disponíveis'
+          : 'Aguardando seleção do servidor';
+    definir('indisponivel', tituloEstado, mensagemEstadoVazio());
+    return;
+  }
+
+  const recursos = listaRecursosPriorizados();
+  if (!recursos.length) {
+    definir('indisponivel', 'Leitura de capacidade indisponível',
+      'O Gold não trouxe valores atuais de CPU, memória ou disco para orientar uma decisão.');
+    return;
+  }
+
+  const principal = recursos[0];
+  const { chave, recurso, atual, limiteCritico, dias, estado } = principal;
+  const nome = recursosDashboard[chave].nome;
+  const recursosSemLimite = recursos.filter(item => item.limiteCritico === null);
+  const recursosSemPrevisao = recursos.filter(item => item.limiteCritico !== null && !recursoTemProjecao(item.recurso));
+  let classeResumo = estado.classe;
+  let tituloTexto;
+  let textoConteudo;
+  if (estado.classe === 'critico') {
+    tituloTexto = 'Ação imediata necessária';
+    textoConteudo = `${nome} está em ${formatarPercentual(atual)}${limiteCritico === null ? '' : atual > limiteCritico ? `, acima do limite crítico de ${formatarPercentual(limiteCritico)}` : `, no limite crítico de ${formatarPercentual(limiteCritico)}`}. Valide a carga atual e o plano de capacidade deste servidor.`;
+  } else if (estado.classe === 'alerta') {
+    tituloTexto = 'Planeje capacidade antes do cruzamento estimado';
+    textoConteudo = `${nome} está em ${formatarPercentual(atual)} e pode atingir o limite crítico de ${formatarPercentual(limiteCritico)} em aproximadamente ${formatarNumero(dias)} dias. Revise o plano de capacidade considerando essa estimativa.`;
+  } else if (estado.classe === 'atencao') {
+    tituloTexto = 'Acompanhe o recurso em atenção';
+    textoConteudo = `${nome} está em ${formatarPercentual(atual)}, acima do limite de atenção${limiteCritico === null ? '' : ` e ${formatarNumero(limiteCritico - atual)} p.p. abaixo do crítico (${formatarPercentual(limiteCritico)})`}. Acompanhe as próximas medições.`;
+  } else if (estado.classe === 'indisponivel') {
+    classeResumo = 'indisponivel';
+    if (limiteCritico === null) {
+      tituloTexto = 'Leitura parcial dos limites';
+      textoConteudo = `${recursosSemLimite.map(item => recursosDashboard[item.chave].nome).join(', ')} sem limite crítico para comparação. Não é possível estimar o prazo de capacidade para esses recursos.`;
+    } else {
+      tituloTexto = 'Previsão de capacidade indisponível';
+      textoConteudo = `${nome} está em ${formatarPercentual(atual)} e abaixo do limite crítico, mas o Gold não trouxe uma projeção ou tendência para estimar quando esse limite pode ser atingido.`;
+    }
+  } else if (estado.classe === 'normal' && (recursosSemLimite.length || recursosSemPrevisao.length)) {
+    classeResumo = 'indisponivel';
+    tituloTexto = 'Leitura parcial da capacidade';
+    const detalhesParciais = [];
+    if (recursosSemLimite.length) detalhesParciais.push(`sem limite crítico: ${recursosSemLimite.map(item => recursosDashboard[item.chave].nome).join(', ')}`);
+    if (recursosSemPrevisao.length) detalhesParciais.push(`sem projeção ou tendência: ${recursosSemPrevisao.map(item => recursosDashboard[item.chave].nome).join(', ')}`);
+    textoConteudo = `Nenhum cruzamento previsto nos recursos avaliáveis. Leitura parcial — ${detalhesParciais.join('; ')}.`;
+  } else {
+    tituloTexto = 'Nenhum alerta de capacidade identificado';
+    textoConteudo = `${nome} está em ${formatarPercentual(atual)}${limiteCritico === null ? '' : `, abaixo do limite crítico de ${formatarPercentual(limiteCritico)}`}. A previsão disponível não indica cruzamento; isso não significa que exista uma data estimada para todos os recursos.`;
+  }
+
+  const amostras = Array.isArray(recurso.serie_10_minutos) ? recurso.serie_10_minutos : [];
+  const janela = obterJanelaAmostras(amostras);
+  const ultimaAmostra = amostras.slice().reverse().find(ponto => ponto?.data_hora)?.data_hora;
+  const quantidade = numero(recurso.quantidade_amostras);
+  const fonteLimite = origemLimiteRecurso(chave, 'critico', recurso);
+  const contextoPartes = [];
+  if (janela) contextoPartes.push(`Janela observada: ${janela}`);
+  if (quantidade !== null) contextoPartes.push(`${formatarNumero(quantidade, 0)} amostras`);
+  if (ultimaAmostra) contextoPartes.push(`Última amostra: ${formatarData(ultimaAmostra)}`);
+  if (fonteLimite) contextoPartes.push(`Limite: ${fonteLimite}`);
+  if (recursosSemLimite.length) {
+    contextoPartes.push(`Sem limite crítico: ${recursosSemLimite.map(item => recursosDashboard[item.chave].nome).join(', ')}`);
+  }
+  if (recursosSemPrevisao.length) {
+    contextoPartes.push(`Sem projeção ou tendência: ${recursosSemPrevisao.map(item => recursosDashboard[item.chave].nome).join(', ')}`);
+  }
+  definir(classeResumo, tituloTexto, textoConteudo, contextoPartes.join(' · '));
+}
+
 function atualizarKpis() {
   const dados = estadoDashboard.dados;
   if (!dados) {
     const erro = mensagemEstadoVazio();
     definirKpi('kpi-maior-uso', 'kpi-maior-uso-descricao', 'N/D', erro, 'azul');
     definirKpi('kpi-proximo-limite', 'kpi-proximo-limite-descricao', 'N/D', erro, 'azul');
-    definirKpi('kpi-requisicoes', 'kpi-requisicoes-descricao', 'N/D', 'Erro: sem métricas HTTP no Gold.', 'azul');
+    definirKpi('kpi-requisicoes', 'kpi-requisicoes-descricao', 'N/D', 'Métricas HTTP não disponíveis no Gold.', 'azul');
     definirKpi('kpi-sla', 'kpi-sla-descricao', 'N/D', 'Sem resposta do Gold.', 'azul');
     elemento('status-sla-texto').textContent = 'SLA: indisponível no Gold';
     elemento('status-sla').classList.add('indisponivel');
@@ -310,14 +451,14 @@ function atualizarKpis() {
   }
 
   const recursos = listaRecursosComValor();
-  const maiorUso = recursos.sort((a, b) => b.atual - a.atual)[0];
-  if (maiorUso) {
-    let descricao = recursosDashboard[maiorUso.chave].nome;
-    if (maiorUso.critico !== null) descricao += ` · limite crítico ${formatarPercentual(maiorUso.critico)}`;
-    else descricao += ' · limite crítico não informado';
-    definirKpi('kpi-maior-uso', 'kpi-maior-uso-descricao', formatarPercentual(maiorUso.atual), descricao, corDeEstado(maiorUso));
+  const recursosComLimite = recursos.filter(item => item.critico !== null && item.critico > 0);
+  const maisProximo = recursosComLimite.sort((a, b) => (b.atual / b.critico) - (a.atual / a.critico))[0];
+  if (maisProximo) {
+    const percentualDoLimite = (maisProximo.atual / maisProximo.critico) * 100;
+    const descricao = `${recursosDashboard[maisProximo.chave].nome} · ${formatarPercentual(maisProximo.atual)} atual / ${formatarPercentual(maisProximo.critico)} crítico`;
+    definirKpi('kpi-maior-uso', 'kpi-maior-uso-descricao', formatarPercentual(percentualDoLimite), descricao, corDeEstado(maisProximo));
   } else {
-    definirKpi('kpi-maior-uso', 'kpi-maior-uso-descricao', 'N/D', 'Sem valores de uso para CPU, RAM ou disco.', 'azul');
+    definirKpi('kpi-maior-uso', 'kpi-maior-uso-descricao', 'N/D', 'Sem limites críticos para comparar o risco entre CPU, memória e disco.', 'azul');
   }
 
   const runways = Object.keys(recursosDashboard).map(chave => {
@@ -347,10 +488,11 @@ function atualizarKpis() {
   const totalSucessos = numero(requisicoes.total_sucessos) ?? (serieRequisicoesGold.length ? somarCampo('sucessos') : null);
   const totalErros = numero(requisicoes.total_erros) ?? (serieRequisicoesGold.length ? somarCampo('erros') : null);
   if (requisicoes.disponivel && totalRequisicoes !== null) {
-    const descricao = `${formatarNumero(totalSucessos, 0)} sucessos · ${formatarNumero(totalErros, 0)} erros`;
+    const janelaHttp = obterJanelaAmostras(serieRequisicoesGold);
+    const descricao = `${formatarNumero(totalSucessos, 0)} sucessos · ${formatarNumero(totalErros, 0)} erros${janelaHttp ? ` · ${janelaHttp}` : ' · período não informado pelo Gold'}`;
     definirKpi('kpi-requisicoes', 'kpi-requisicoes-descricao', formatarNumero(totalRequisicoes, 0), descricao, totalErros > 0 ? 'amarelo' : 'verde');
   } else {
-    definirKpi('kpi-requisicoes', 'kpi-requisicoes-descricao', 'N/D', requisicoes.motivo || 'Erro: o Gold não contém contagem de requisições.', 'azul');
+    definirKpi('kpi-requisicoes', 'kpi-requisicoes-descricao', 'N/D', requisicoes.motivo || 'O Gold não contém contagem de requisições.', 'azul');
   }
 
   const sla = dados.disponibilidade_sla || {};
@@ -402,35 +544,30 @@ function corComAlpha(hex, alpha = 0.15) {
 }
 
 function dataValida(valor) {
-  if (!valor) return null;
-  const data = new Date(String(valor).replace(' ', 'T'));
-  return Number.isNaN(data.getTime()) ? null : data;
+  return converterData(valor);
 }
 
 function rotuloData(valor) {
   const data = dataValida(valor);
-  return data ? data.toLocaleString('pt-BR', { day: '2-digit', month: '2-digit', hour: '2-digit', minute: '2-digit' }) : String(valor || 'Amostra');
+  return data ? data.toLocaleString('pt-BR', { day: '2-digit', month: '2-digit', hour: '2-digit', minute: '2-digit', hourCycle: 'h23' }).replace(',', '') : String(valor || 'Amostra');
 }
 
-function criarGraficos() {
-  graficoTendencia = new Chart(elemento('grafico-tendencia'), {
-    type: 'line',
-    data: { labels: [], datasets: [] },
-    options: {
+function opcoesGraficoTendencia(modoTv = false) {
+  return {
       responsive: true,
       maintainAspectRatio: false,
       interaction: { mode: 'index', intersect: false },
       plugins: {
-        legend: { labels: { color: '#c5c3cd', boxWidth: 14, filter: item => !item.text.startsWith('Limite inferior') } },
+        legend: { position: modoTv ? 'bottom' : 'top', labels: { color: '#c5c3cd', boxWidth: 14, padding: modoTv ? 6 : 10, font: { size: modoTv ? 11 : 9 }, filter: item => !item.text.startsWith('Limite inferior') } },
         tooltip: { filter: item => item.raw !== null, callbacks: { label: item => `${item.dataset.label}: ${formatarPercentual(item.parsed.y)}` } }
       },
       scales: {
         x: {
           ...eixoComum,
-          title: { display: true, text: 'Amostras observadas · D = hoje · previsão diária', color: eixoTexto },
+          title: { display: true, text: 'Amostras observadas · Base = última amostra · D+n = horizonte informado pelo Gold', color: eixoTexto },
           ticks: {
             color: eixoTexto,
-            font: { size: 9 },
+            font: { size: modoTv ? 11 : 9 },
             autoSkip: false,
             maxRotation: 0,
             callback: function (valor, indice) {
@@ -457,8 +594,20 @@ function criarGraficos() {
         },
         y: { min: 0, max: 100, ...eixoComum, title: { display: true, text: 'Uso do recurso (%)', color: eixoTexto }, ticks: { ...eixoComum.ticks, callback: valor => `${valor}%` } }
       }
-    }
+  };
+}
+
+function criarGraficos() {
+  const criarTendencia = (canvasId, modoTv = false) => new Chart(elemento(canvasId), {
+    type: 'line',
+    data: { labels: [], datasets: [] },
+    options: opcoesGraficoTendencia(modoTv)
   });
+  graficoTendencia = criarTendencia('grafico-tendencia');
+  graficosTendenciaTv = Object.fromEntries(Object.keys(recursosDashboard).map(chave => [
+    chave,
+    criarTendencia(`grafico-tendencia-tv-${chave}`, true)
+  ]));
 
   graficoRunway = new Chart(elemento('grafico-runway'), {
     type: 'bar',
@@ -477,7 +626,7 @@ function criarGraficos() {
       },
       scales: {
         x: { beginAtZero: true, ...eixoComum, title: { display: true, text: 'Dias estimados', color: eixoTexto }, ticks: { ...eixoComum.ticks, callback: valor => `${valor}d` } },
-        y: { ...eixoComum, grid: { display: false }, ticks: { color: '#ddd9eb', font: { size: 10 } } }
+        y: { ...eixoComum, grid: { display: false }, ticks: { color: '#ddd9eb', font: { size: 11 } } }
       }
     }
   });
@@ -502,7 +651,7 @@ function opcoesGraficoCarga(tipo) {
     maintainAspectRatio: false,
     interaction: { mode: 'nearest', intersect: false, axis: 'x' },
     plugins: {
-      legend: { labels: { color: '#c5c3cd', boxWidth: 9, padding: 7, font: { size: 9 }, filter: item => !item.text.startsWith('Faixa ') } },
+      legend: { labels: { color: '#c5c3cd', boxWidth: 10, padding: 8, font: { size: 11 }, filter: item => !item.text.startsWith('Faixa ') } },
       tooltip: { callbacks: { label: item => {
         const unidade = item.dataset.yAxisID === 'cpu' ? '%' : ' ms';
         return `${item.dataset.label}: ${formatarNumero(item.parsed.y, 2)}${unidade}`;
@@ -517,18 +666,20 @@ function opcoesGraficoCarga(tipo) {
   };
 }
 
-function atualizarGraficoTendencia() {
-  const chave = estadoDashboard.componente;
+function atualizarGraficoTendencia(chave = estadoDashboard.componente, grafico = graficoTendencia, sufixo = '') {
   const config = recursosDashboard[chave];
   const recurso = recursoAtual(chave);
-  const contexto = elemento('contexto-tendencia');
+  const sufixoId = sufixo ? `-${sufixo}` : '';
+  const canvasId = `grafico-tendencia${sufixoId}`;
+  const estadoId = `estado-grafico-tendencia${sufixoId}`;
+  const contexto = elemento(`contexto-tendencia${sufixoId}`);
   contexto.replaceChildren();
   if (!recurso) {
-    graficoTendencia.data = { labels: [], datasets: [] };
-    graficoTendencia.update();
+    grafico.data = { labels: [], datasets: [] };
+    grafico.update();
     const erro = estadoDashboard.dados ? `o Gold não trouxe dados de ${config.nome} para este servidor.` : null;
     contexto.textContent = mensagemEstadoVazio(erro);
-    mostrarEstadoGrafico('grafico-tendencia', 'estado-grafico-tendencia', false, erro);
+    mostrarEstadoGrafico(canvasId, estadoId, false, erro);
     return;
   }
 
@@ -543,7 +694,7 @@ function atualizarGraficoTendencia() {
   const dadosHistoricos = historico.map(item => numero(item.media));
   const valorInicialPrevisao = dadosHistoricos[dadosHistoricos.length - 1] ?? valorAtual(chave, recurso);
   const previsoesDiarias = previsaoDiaria(recurso, valorInicialPrevisao);
-  if (previsoesDiarias.length && labels.length) labels[labels.length - 1] = 'D';
+  if (previsoesDiarias.length && labels.length) labels[labels.length - 1] = 'Base';
   previsoesDiarias.forEach(item => labels.push(`D+${item.dia}`));
   const inferioresHistoricos = historico.map(item => numero(item.minimo) ?? numero(item.media));
   const superioresHistoricos = historico.map(item => numero(item.maximo) ?? numero(item.media));
@@ -559,11 +710,11 @@ function atualizarGraficoTendencia() {
     const valoresInferiores = [...inferioresHistoricos, ...previsoesDiarias.map((item, indice) => faixaPrevisaoDisponivel ? inferioresPrevisao[indice] : null)];
     const valoresSuperiores = [...superioresHistoricos, ...previsoesDiarias.map((item, indice) => faixaPrevisaoDisponivel ? superioresPrevisao[indice] : null)];
     datasets.push({ label: 'Limite inferior da faixa', data: valoresInferiores, borderColor: 'transparent', pointRadius: 0, fill: false });
-    datasets.push({ label: 'Variação observada / faixa estimada pelo ETL', data: valoresSuperiores, borderColor: 'transparent', backgroundColor: corComAlpha(cor, 0.13), pointRadius: 0, fill: { target: indiceInferior } });
+    datasets.push({ label: 'Faixa (variação)', data: valoresSuperiores, borderColor: 'transparent', backgroundColor: corComAlpha(cor, 0.13), pointRadius: 0, fill: { target: indiceInferior } });
   }
 
   datasets.push({
-    label: 'Média observada (10 min)',
+    label: 'Uso observado',
     data: [...dadosHistoricos, ...previsoesDiarias.map(() => null)],
     borderColor: cor,
     backgroundColor: cor,
@@ -582,15 +733,15 @@ function atualizarGraficoTendencia() {
     const ancora = dadosHistoricos.length ? dadosHistoricos[dadosHistoricos.length - 1] : null;
     const previsao = [...historico.map(() => null), ...previsoesDiarias.map(item => numero(item.estimativa))];
     if (historico.length && ancora !== null) previsao[historico.length - 1] = ancora;
-    datasets.push({ label: 'Previsão diária (Gold e interpolação entre pontos)', data: previsao, borderColor: cor, borderWidth: 2.2, borderDash: [7, 5], pointRadius: previsoesDiarias.map(item => item.pontoGold ? 3 : 0), pointHoverRadius: 5, tension: 0, spanGaps: false });
+    datasets.push({ label: 'Previsão Gold', data: previsao, borderColor: cor, borderWidth: 2.2, borderDash: [7, 5], pointRadius: previsoesDiarias.map(item => item.pontoGold ? 3 : 0), pointHoverRadius: 5, tension: 0, spanGaps: false });
   }
 
-  graficoTendencia.data = { labels, datasets };
-  graficoTendencia.update();
+  grafico.data = { labels, datasets };
+  grafico.update();
   const temDadosGrafico = dadosHistoricos.some(valor => valor !== null) || previsoes.some(item => numero(item.estimativa) !== null);
   mostrarEstadoGrafico(
-    'grafico-tendencia',
-    'estado-grafico-tendencia',
+    canvasId,
+    estadoId,
     temDadosGrafico,
     temDadosGrafico ? null : `o Gold não trouxe pontos de série para ${config.nome}.`
   );
@@ -598,7 +749,8 @@ function atualizarGraficoTendencia() {
   const valoresContexto = [
     ['Atual', formatarPercentual(valorAtual(chave, recurso))],
     ['Amostras', formatarNumero(recurso.quantidade_amostras, 0)],
-    ['Limite crítico', limite === null ? 'não informado' : formatarPercentual(limite)]
+    ['Janela observada', obterJanelaAmostras(historico) || 'período não informado'],
+    ['Limite crítico', limite === null ? 'não informado' : `${formatarPercentual(limite)} · ${origemLimiteRecurso(chave, 'critico', recurso)}`]
   ];
   const p95 = numero(recurso.p95);
   const maximo = numero(recurso.maximo);
@@ -607,7 +759,9 @@ function atualizarGraficoTendencia() {
   const tendencia = numero(recurso.tendencia_por_dia);
   if (tendencia !== null) valoresContexto.push(['Tendência', `${formatarNumero(tendencia, 3)} p.p./dia`]);
   const runway = calcularRunwayDias(chave, recurso);
-  if (runway !== null && runway >= 0) valoresContexto.push(['Runway', runway === 0 ? 'no limite' : `~${formatarNumero(runway)} dias`]);
+  if (runway !== null && runway >= 0) {
+    valoresContexto.push(['Prazo estimado', runway === 0 ? 'no limite' : `~${formatarNumero(runway)} dias`]);
+  }
   const estadoAtualRunway = estadoRunway(chave, recurso, runway);
   if (['alerta', 'critico', 'atencao'].includes(estadoAtualRunway.classe)) {
     const indicador = document.createElement('span');
@@ -626,11 +780,23 @@ function atualizarGraficoTendencia() {
     const aviso = document.createElement('span');
     aviso.textContent = recurso.mensagem_previsao || 'Previsão não disponível no Gold.';
     contexto.appendChild(aviso);
-  } else if (previsoesDiarias.some(item => item.interpolada)) {
-    const aviso = document.createElement('span');
-    aviso.textContent = 'Dias sem ponto próprio no Gold são interpolados entre os pontos disponíveis.';
-    contexto.appendChild(aviso);
   }
+  if (sufixo) {
+    const status = estadoDashboard.dados?.status_previsao?.[chave] || {};
+    const amostras = numero(recurso.quantidade_amostras ?? status.quantidade_amostras) ?? 0;
+    const minimo = Number(estadoDashboard.dados?.minimo_amostras_previsao || 3);
+    const avisoAmostras = document.createElement('span');
+    avisoAmostras.textContent = previsoes.length && amostras >= minimo
+      ? `Previsão Gold · ${formatarNumero(amostras, 0)} amostras`
+      : status.mensagem || recurso.mensagem_previsao || `Previsão indisponível · ${formatarNumero(amostras, 0)} de ${minimo} amostras mínimas`;
+    contexto.appendChild(avisoAmostras);
+  }
+}
+
+function atualizarGraficosTendenciaTv() {
+  Object.keys(recursosDashboard).forEach(chave => {
+    atualizarGraficoTendencia(chave, graficosTendenciaTv[chave], `tv-${chave}`);
+  });
 }
 
 function atualizarGraficoRunway() {
@@ -672,8 +838,9 @@ function atualizarGraficoRunway() {
     const texto = document.createElement('span');
     const descricaoRunway = item.dias === 0
       ? item.atual > item.limite ? 'limite ultrapassado' : 'no limite crítico'
-      : `runway ${formatarNumero(item.dias)} dias`;
-    texto.textContent = `${formatarPercentual(item.atual)} agora · limite ${item.limite === null ? 'não informado' : formatarPercentual(item.limite)} · ${descricaoRunway}`;
+      : `~${formatarNumero(item.dias)} dias estimados`;
+    const origemLimite = origemLimiteRecurso(item.chave, 'critico', item.recurso);
+    texto.textContent = `${formatarPercentual(item.atual)} agora · limite ${item.limite === null ? 'não informado' : `${formatarPercentual(item.limite)}${origemLimite ? ` (${origemLimite})` : ''}`} · ${descricaoRunway}`;
     const forte = document.createElement('b');
     forte.textContent = `${recursosDashboard[item.chave].nome}: `;
     texto.prepend(forte);
@@ -696,13 +863,7 @@ function atualizarResumoOperacional() {
     return;
   }
 
-  const recursos = Object.keys(recursosDashboard).map(chave => {
-    const recurso = recursoAtual(chave);
-    const atual = valorAtual(chave, recurso);
-    const limiteCritico = limiteRecurso(chave, 'critico', recurso);
-    const dias = calcularRunwayDias(chave, recurso);
-    return { chave, recurso, atual, limiteCritico, dias, estado: estadoRunway(chave, recurso, dias) };
-  }).filter(item => item.recurso && item.atual !== null);
+  const recursos = listaRecursosPriorizados();
 
   if (!recursos.length) {
     painel.className = 'painel resumo-operacional resumo-operacional--vazio';
@@ -710,16 +871,13 @@ function atualizarResumoOperacional() {
     return;
   }
 
-  const prioridade = { critico: 0, alerta: 1, atencao: 2, normal: 3, indisponivel: 4 };
-  recursos.sort((a, b) => prioridade[a.estado.classe] - prioridade[b.estado.classe] ||
-    (a.dias ?? Number.POSITIVE_INFINITY) - (b.dias ?? Number.POSITIVE_INFINITY));
-
   const quantidadeCritica = recursos.filter(item => item.estado.classe === 'critico').length;
   const quantidadePrevista = recursos.filter(item => item.estado.classe === 'alerta').length;
   const quantidadeAtencao = recursos.filter(item => item.estado.classe === 'atencao').length;
-  const quantidadeSemLimite = recursos.filter(item => item.estado.classe === 'indisponivel').length;
+  const quantidadeSemLimite = recursos.filter(item => item.limiteCritico === null).length;
+  const quantidadeSemPrevisao = recursos.filter(item => item.limiteCritico !== null && !recursoTemProjecao(item.recurso)).length;
   const resumo = document.createElement('div');
-  resumo.className = `prioridades-resumo prioridades-resumo--${quantidadeCritica ? 'critico' : quantidadePrevista || quantidadeAtencao ? 'alerta' : quantidadeSemLimite ? 'indisponivel' : 'normal'}`;
+  resumo.className = `prioridades-resumo prioridades-resumo--${quantidadeCritica ? 'critico' : quantidadePrevista || quantidadeAtencao ? 'alerta' : quantidadeSemLimite || quantidadeSemPrevisao ? 'indisponivel' : 'normal'}`;
   const resumoTitulo = document.createElement('strong');
   resumoTitulo.textContent = quantidadeCritica
     ? 'Ação imediata necessária'
@@ -727,15 +885,16 @@ function atualizarResumoOperacional() {
       ? 'Planejamento de capacidade necessário'
       : quantidadeAtencao
         ? 'Acompanhar recursos em atenção'
-        : quantidadeSemLimite
-          ? 'Leitura parcial dos limites'
+        : quantidadeSemLimite || quantidadeSemPrevisao
+          ? 'Leitura parcial da capacidade'
           : 'Nenhum alerta ativo';
   const resumoTexto = document.createElement('span');
   const contagens = [];
   if (quantidadeCritica) contagens.push(`${quantidadeCritica} acima do limite crítico`);
   if (quantidadePrevista) contagens.push(`${quantidadePrevista} com cruzamento previsto`);
   if (quantidadeAtencao) contagens.push(`${quantidadeAtencao} acima do limite de atenção`);
-  if (!contagens.length && quantidadeSemLimite) contagens.push(`${quantidadeSemLimite} sem limite para comparação`);
+  if (quantidadeSemLimite) contagens.push(`${quantidadeSemLimite} sem limite crítico`);
+  if (quantidadeSemPrevisao) contagens.push(`${quantidadeSemPrevisao} sem tendência ou previsão`);
   resumoTexto.textContent = contagens.length
     ? contagens.join(' · ')
     : 'Nenhum limite crítico atingido ou previsto com os dados disponíveis.';
@@ -770,7 +929,8 @@ function atualizarResumoOperacional() {
     metricaAtual.append(rotuloAtual, valorAtualEl);
     const metricaLimite = document.createElement('div');
     const rotuloLimite = document.createElement('span');
-    rotuloLimite.textContent = 'Limite crítico';
+    const origemLimite = origemLimiteRecurso(chave, 'critico', recurso);
+    rotuloLimite.textContent = origemLimite ? `Limite crítico · ${origemLimite}` : 'Limite crítico';
     const valorLimite = document.createElement('strong');
     valorLimite.textContent = formatarPercentual(limiteCritico);
     metricaLimite.append(rotuloLimite, valorLimite);
@@ -791,9 +951,11 @@ function atualizarResumoOperacional() {
     const diferenca = document.createElement('p');
     diferenca.className = 'prioridade-diferenca';
     if (limiteCritico === null) {
-      diferenca.textContent = 'Sem limite crítico cadastrado para comparação.';
-    } else if (atual >= limiteCritico) {
+      diferenca.textContent = 'Sem limite crítico informado para comparação.';
+    } else if (atual > limiteCritico) {
       diferenca.textContent = `${formatarNumero(atual - limiteCritico)} p.p. acima do limite crítico.`;
+    } else if (atual === limiteCritico) {
+      diferenca.textContent = 'No limite crítico.';
     } else if (estado.classe === 'atencao') {
       diferenca.textContent = `${formatarNumero(limiteCritico - atual)} p.p. abaixo do limite crítico; acima do limite de atenção.`;
     } else {
@@ -805,7 +967,7 @@ function atualizarResumoOperacional() {
     if (estado.classe === 'critico') {
       orientacao.textContent = 'Limite já ultrapassado. Priorize a validação da carga e da capacidade deste servidor.';
     } else if (estado.classe === 'alerta') {
-      orientacao.textContent = `Limite crítico previsto em aproximadamente ${formatarNumero(dias)} dias.`;
+      orientacao.textContent = `Limite crítico estimado em aproximadamente ${formatarNumero(dias)} dias.`;
     } else if (estado.classe === 'atencao') {
       orientacao.textContent = 'Uso acima do limite de atenção. Acompanhe as próximas medições.';
     } else if (estado.classe === 'normal') {
@@ -813,7 +975,9 @@ function atualizarResumoOperacional() {
         ? 'Abaixo do limite; sem data estimada de cruzamento com a tendência atual.'
         : 'Sem ação imediata indicada pela previsão atual.';
     } else {
-      orientacao.textContent = 'Não foi possível calcular a condição sem os limites cadastrados.';
+      orientacao.textContent = limiteCritico === null
+        ? 'Não há limite crítico informado para comparar o uso deste recurso.'
+        : 'Uso abaixo do limite, mas sem tendência ou projeção para estimar o risco futuro.';
     }
 
     const amostras = Array.isArray(recurso.serie_10_minutos) ? recurso.serie_10_minutos : [];
@@ -822,7 +986,8 @@ function atualizarResumoOperacional() {
     frescor.className = 'prioridade-frescor';
     const quantidadeAmostras = numero(recurso.quantidade_amostras);
     frescor.textContent = [
-      ultimaAmostra ? `Última amostra: ${formatarData(ultimaAmostra)}` : 'Horário da amostra não informado',
+      obterJanelaAmostras(amostras) ? `Janela: ${obterJanelaAmostras(amostras)}` : 'Período das amostras não informado',
+      ultimaAmostra ? `Última amostra: ${formatarData(ultimaAmostra)}` : null,
       quantidadeAmostras === null ? null : `${formatarNumero(quantidadeAmostras, 0)} amostras`
     ].filter(Boolean).join(' · ');
 
@@ -1008,7 +1173,7 @@ function atualizarGraficosCarga() {
   const cpuModelo = ajustarRegressao(cpu);
   const latenciaModelo = ajustarRegressao(fonteLatencia);
   const p99Modelo = ajustarRegressao(p99);
-  const limiteCpu = numero(estadoDashboard.limites.cpu?.critico);
+  const limiteCpu = limiteRecurso('cpu', 'critico');
   const maiorRequisicaoObservada = observacoes.reduce((maior, ponto) => Math.max(maior, ponto.x), 0);
   let cruzamento = null;
   let cruzamentoObservado = false;
@@ -1100,7 +1265,7 @@ function atualizarGraficosCarga() {
     const indiceInferior = datasets.length;
     datasets.push({ label: `Faixa inferior ${nome}`, data: previsoes.map(ponto => ({ x: ponto.x, y: limitar(ponto.inferior) })), yAxisID: eixo, borderColor: 'transparent', pointRadius: 0, fill: false });
     datasets.push({ label: `Faixa ${nome} (±1,96σ)`, data: previsoes.map(ponto => ({ x: ponto.x, y: limitar(ponto.superior) })), yAxisID: eixo, borderColor: 'transparent', backgroundColor: faixa, pointRadius: 0, fill: { target: indiceInferior } });
-    datasets.push({ label: `${nome} previsto`, data: previsoes.map(ponto => ({ x: ponto.x, y: limitar(ponto.valor), inferior: limitar(ponto.inferior), superior: limitar(ponto.superior) })), yAxisID: eixo, borderColor: cor, backgroundColor: cor, borderWidth: 2.2, borderDash: [7, 5], pointRadius: 0, tension: 0.12 });
+    datasets.push({ label: `${nome} estimado por regressão linear`, data: previsoes.map(ponto => ({ x: ponto.x, y: limitar(ponto.valor), inferior: limitar(ponto.inferior), superior: limitar(ponto.superior) })), yAxisID: eixo, borderColor: cor, backgroundColor: cor, borderWidth: 2.2, borderDash: [7, 5], pointRadius: 0, tension: 0.12 });
   };
 
   const datasetsCpu = [];
@@ -1169,14 +1334,17 @@ function atualizarGraficosCarga() {
   if (!cruzamentoObservado && cruzamento !== null && cruzamento > horizonte && faixaRisco !== null) {
     partes.push(`faixa de risco alcança o limite a partir de ~${formatarNumero(faixaRisco, 0)} requisições`);
   }
-  if (limiteCpu === null) partes.push('limite crítico de CPU não retornado pelo banco');
+  if (limiteCpu === null) partes.push('limite crítico de CPU não cadastrado nem informado pelo Gold');
+  else partes.push(`limite crítico de CPU vindo de ${origemLimiteRecurso('cpu', 'critico')}`);
   const modelosCalculados = [cpuModelo, latenciaModelo, p99Modelo].filter(Boolean).length;
   const metodoPrevisao = modelosCalculados
-    ? `Linhas tracejadas: regressão linear até ${formatarNumero(horizonte, 0)} requisições, em saltos de ${formatarNumero(incrementoPrevisao, 0)}; faixa estimada: ±1,96 desvios padrão.`
+    ? `Simulação exploratória: regressão linear até ${formatarNumero(horizonte, 0)} requisições, em saltos de ${formatarNumero(incrementoPrevisao, 0)}. Faixa calculada por ±1,96 desvios padrão e não é garantia de resultado; esta simulação não representa a previsão temporal de 30 dias do Gold.`
     : 'Ainda não há valores em contagens distintas para ajustar uma previsão.';
   resumo.textContent = temCpu || temLatencia ? `${partes.join(' · ')}. ${metodoPrevisao}` : mensagemEstadoVazio(semDados);
-  const ultima = requisicoes.ultima_amostra || observacoes[observacoes.length - 1]?.amostra;
-  elemento('periodo-teste').textContent = ultima?.data_hora ? formatarData(ultima.data_hora) : `${observacoes.length} requisições observadas`;
+  const janelaHttp = obterJanelaAmostras(observacoes);
+  elemento('periodo-teste').textContent = janelaHttp
+    ? `Amostras HTTP: ${janelaHttp}`
+    : observacoes.length ? `${observacoes.length} pontos · período não informado` : 'Sem amostras HTTP';
 }
 
 function adicionarEvento(container, data, texto, cor) {
@@ -1201,7 +1369,7 @@ function atualizarEventos() {
   const dados = estadoDashboard.dados;
   if (!dados) {
     const carregando = estadoDashboard.status === 'loading';
-    adicionarEvento(container, carregando ? 'Consultando Gold' : 'Erro de consulta', mensagemEstadoVazio(), carregando ? '#35b8f2' : '#ff5c5c');
+    adicionarEvento(container, carregando ? 'Consultando Gold' : estadoDashboard.status === 'error' ? 'Falha na consulta' : 'Sem dados disponíveis', mensagemEstadoVazio(), carregando ? '#35b8f2' : '#ff5c5c');
     return;
   }
 
@@ -1225,7 +1393,7 @@ function atualizarEventos() {
     const texto = item.dias === 0
       ? `${estado.rotulo}: ${recursosDashboard[item.chave].nome} já ${item.atual > item.limite ? 'ultrapassou' : 'atingiu'} o ${limite}. Ação sugerida: agir imediatamente.`
       : `${estado.rotulo}: ${recursosDashboard[item.chave].nome} pode atingir o ${limite} em aproximadamente ${formatarNumero(item.dias)} dias. Ação sugerida: revisar a capacidade antes do prazo estimado.`;
-    adicionarEvento(container, `Runway · ${recursosDashboard[item.chave].nome}`, texto, estado.cor);
+    adicionarEvento(container, `Estimativa · ${recursosDashboard[item.chave].nome}`, texto, estado.cor);
   });
 
   const req = dados.requisicoes || {};
@@ -1244,7 +1412,7 @@ function atualizarEventos() {
   }
 
   if (!runways.length) {
-    adicionarEvento(container, 'Runway indisponível', mensagemRunwayIndisponivel(), '#f5c542');
+    adicionarEvento(container, 'Prazo estimado indisponível', mensagemRunwayIndisponivel(), '#f5c542');
   }
 }
 
@@ -1263,9 +1431,11 @@ function atualizarContextoGold() {
 
 function renderizarDashboard() {
   atualizarKpis();
+  atualizarResumoExecutivo();
   atualizarEstadosSeletoresRunway();
   atualizarAvisoAmostras();
   atualizarGraficoTendencia();
+  atualizarGraficosTendenciaTv();
   atualizarGraficoRunway();
   atualizarResumoOperacional();
   atualizarGraficosCarga();
@@ -1511,7 +1681,45 @@ function instalarControles() {
   });
 }
 
+function instalarModoTv() {
+  const raiz = document.documentElement;
+  const botao = elemento('alternar-modo-tv');
+  const texto = botao.querySelector('span');
+  const atualizarBotao = ativo => {
+    raiz.classList.toggle('modo-tv', ativo);
+    botao.setAttribute('aria-pressed', String(ativo));
+    botao.setAttribute('aria-label', ativo ? 'Sair do modo TV' : 'Entrar em modo TV');
+    texto.textContent = ativo ? 'Sair do modo TV' : 'Modo TV';
+    botao.querySelector('i').className = `fa-solid ${ativo ? 'fa-compress' : 'fa-expand'}`;
+    requestAnimationFrame(() => {
+      [graficoTendencia, ...Object.values(graficosTendenciaTv), graficoRunway, graficoPrevisaoCpu, graficoPrevisaoLatencia]
+        .filter(Boolean)
+        .forEach(grafico => grafico.resize());
+    });
+  };
+
+  botao.addEventListener('click', async () => {
+    const ativo = !raiz.classList.contains('modo-tv');
+    atualizarBotao(ativo);
+    if (ativo && !document.fullscreenElement && raiz.requestFullscreen) {
+      try {
+        await raiz.requestFullscreen();
+      } catch (erro) {
+        // Keep the compact layout as a fallback when fullscreen is unavailable.
+      }
+    } else if (!ativo && document.fullscreenElement && document.exitFullscreen) {
+      await document.exitFullscreen();
+    }
+  });
+
+  document.addEventListener('fullscreenchange', () => {
+    if (document.fullscreenElement) atualizarBotao(true);
+    else if (raiz.classList.contains('modo-tv')) atualizarBotao(false);
+  });
+}
+
 criarGraficos();
 instalarControles();
+instalarModoTv();
 renderizarDashboard();
 carregarServidoresDaEmpresa();
