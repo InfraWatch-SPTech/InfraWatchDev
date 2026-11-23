@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dash - Identificação de Padrões</title>
+    <link rel="stylesheet" href="./assets/css/global.css">
+    <link rel="stylesheet" href="./assets/css/menu.css">
+    <link rel="stylesheet" href="./assets/css/dashboard-padroes.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.3.1/css/all.min.css"
+        integrity="sha512-QeR2VH+lsBE5LSAe1Q5EnTBbe7XTBubt8dG93Y7gidSgdMCr8nVqKcfKAMyN96SV8KDbZVTDXChatu5G2KQGzg=="
+        crossorigin="anonymous" referrerpolicy="no-referrer">
+</head>
+<body>
+    <main class="padrao_container">
+        <header class="padrao_cabecalho">
+            <div>
+                <p class="padrao_subtitulo">Dashboard</p>
+                <h1 class="padrao_titulo">Identificação de padrões</h1>
+            </div>
+            <p class="padrao_periodo" id="padrao-periodo"></p>
+        </header>
+
+        <section class="padrao_secao" id="secao-geral">
+            <h2 class="padrao_secao_titulo">Visão geral</h2>
+            <div class="padrao_painel">
+                <div class="padrao_kpis" id="padrao-kpis"></div>
+                <div class="padrao_caixa">
+                    <p class="padrao_caixa_titulo">Incidentes nos últimos 30 dias</p>
+                    <div class="padrao_grafico"><canvas id="grafico-tendencia"></canvas></div>
+                    <p class="padrao_nota" id="padrao-tendencia-nota"></p>
+                </div>
+            </div>
+        </section>
+
+        <section class="padrao_secao" id="secao-servidores">
+            <h2 class="padrao_secao_titulo">Servidores</h2>
+            <div class="padrao_painel" id="conteudo-servidores"></div>
+        </section>
+
+        <section class="padrao_secao" id="secao-tempo">
+            <h2 class="padrao_secao_titulo">Tempo e sazonalidade</h2>
+            <div class="padrao_painel" id="conteudo-tempo"></div>
+        </section>
+    </main>
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="./assets/js/redirecionamento.js"></script>
+    <script src="./assets/js/sessao.js"></script>
+    <script src="./assets/js/menu.js"></script>
+    <script src="./assets/js/dashboard-padroes.js"></script>
+</body>
+</html>

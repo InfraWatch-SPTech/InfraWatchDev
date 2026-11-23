@@ -1,0 +1,212 @@
+.padrao_container {
+    max-width: 1520px;
+    margin: 0 auto;
+    padding: 32px clamp(16px, 4vw, 48px) 64px;
+    display: flex;
+    flex-direction: column;
+    gap: 40px;
+}
+
+.padrao_cabecalho {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+    gap: 16px;
+}
+
+.padrao_subtitulo {
+    font-size: 14px;
+    color: var(--cor-azul-contraste2);
+}
+
+.padrao_titulo {
+    font-size: 36px;
+    font-weight: 800;
+    line-height: 1.1;
+}
+
+.padrao_periodo {
+    font-size: 14px;
+    color: var(--cor-azul-apagado);
+}
+
+.padrao_secao {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.padrao_secao_titulo {
+    padding-bottom: 12px;
+    border-bottom: 1px solid var(--cor-azul-apagado);
+    font-size: 16px;
+    font-weight: 300;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--cor-azul-apagado);
+}
+
+.padrao_painel {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.padrao_kpis {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+    gap: 16px;
+}
+
+.padrao_kpi {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    padding: 20px 24px;
+    background-color: var(--cor-azul-contraste);
+    border: 1px solid var(--cor-azul-apagado);
+    border-radius: 10px;
+}
+
+.padrao_kpi_nome {
+    font-size: 14px;
+    color: var(--cor-texto-apagado);
+}
+
+.padrao_kpi_valor {
+    font-size: 30px;
+    font-weight: 800;
+    line-height: 1.1;
+}
+
+.padrao_kpi_sub {
+    font-size: 14px;
+    line-height: 1.4;
+}
+
+.padrao_cor_ruim { color: var(--cor-vermelho-inativo); }
+.padrao_cor_atencao { color: var(--cor-amarelo-atencao); }
+.padrao_cor_bom { color: var(--cor-verde-ativo); }
+
+.padrao_caixa {
+    padding: 24px;
+    background-color: var(--cor-azul-contraste);
+    border: 1px solid var(--cor-azul-apagado);
+    border-radius: 10px;
+}
+
+.padrao_caixa_titulo {
+    margin-bottom: 16px;
+    font-size: 16px;
+}
+
+.padrao_nota {
+    margin-top: 12px;
+    font-size: 12px;
+    color: var(--cor-azul-apagado);
+}
+
+.padrao_grade {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(340px, 1fr));
+    gap: 20px;
+}
+
+.padrao_grafico {
+    position: relative;
+    height: 320px;
+}
+
+.padrao_tabela_rolagem {
+    overflow-x: auto;
+}
+
+.padrao_tabela {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 14px;
+}
+
+.padrao_tabela th {
+    text-align: left;
+    font-weight: 300;
+    color: var(--cor-texto-apagado);
+}
+
+.padrao_tabela th,
+.padrao_tabela td {
+    padding: 12px 8px;
+    border-bottom: 1px solid var(--cor-borda);
+}
+
+.padrao_tag {
+    padding: 3px 10px;
+    border-radius: 20px;
+    font-size: 12px;
+    background-color: var(--cor-campo-fundo);
+    color: var(--cor-verde-ativo);
+}
+
+.padrao_tag_ruim {
+    background-color: rgba(255, 92, 92, 0.15);
+    color: var(--cor-vermelho-inativo);
+}
+
+.padrao_calor {
+    display: grid;
+    grid-template-columns: 34px repeat(24, 1fr);
+    grid-template-rows: repeat(7, 1fr);
+    gap: 3px;
+    height: 300px;
+}
+
+.padrao_calor_rotulo {
+    align-self: center;
+    font-size: 12px;
+    color: var(--cor-texto-apagado);
+}
+
+.padrao_calor_celula {
+    border-radius: 3px;
+    background-color: var(--cor-azul-contraste2);
+    transition: transform 0.15s;
+}
+
+.padrao_calor_celula:hover {
+    transform: scale(1.2);
+}
+
+.padrao_calor_horas {
+    display: grid;
+    grid-template-columns: 34px repeat(24, 1fr);
+    gap: 3px;
+    margin-top: 8px;
+    font-size: 11px;
+    text-align: center;
+    white-space: nowrap;
+    color: var(--cor-texto-apagado);
+}
+
+.padrao_calor_legenda {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 8px;
+    margin-top: 16px;
+    font-size: 12px;
+    color: var(--cor-texto-apagado);
+}
+
+.padrao_calor_escala {
+    width: 120px;
+    height: 10px;
+    border-radius: 5px;
+    background: linear-gradient(to right, rgba(81, 120, 249, 0.12), rgba(81, 120, 249, 1));
+}
+
+@media (max-width: 600px) {
+    .padrao_container { gap: 32px; }
+    .padrao_cabecalho { flex-direction: column; align-items: flex-start; }
+    .padrao_titulo { font-size: 28px; }
+    .padrao_kpi_valor { font-size: 26px; }
+}
