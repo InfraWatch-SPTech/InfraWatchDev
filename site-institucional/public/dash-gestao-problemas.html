@@ -141,9 +141,9 @@
             <div class="content-box kpi">
                 <div class="icon"> <!-- icon kpi --> </div>
                 <div class="infos-kpi">
-                    <p>mttr</p>
-                    <h3>42m04s</h3>
-                    <span>8% mais rápido</span>
+                    <p>uptime atual</p>
+                    <h3>99.95%</h3>
+                    <span>de acordo com a sla</span>
                 </div>
             </div>
             
@@ -163,21 +163,19 @@
                 
                 <div class="kpi-alertas">
                     <div class="infos-kpi">
-                        <h3>25</h3>
-                        <p>alertas ativos</p>
+                        <p>prejuízo atual</p>
+                        <h3>R$ 100 mil</h3>
                         <span>2 critivos</span>
                     </div>
                 </div>
 
                 <div class="seta-prejuizo"></div>
-
-                <div class="icon"> <!-- icon kpi --> </div>
                 
                 <div class="kpi-prejuizo">
                     <div class="infos-kpi">
                         <p>prejuízo estimado</p>
                         <h3>R$ 18 mil</h3>
-                        <span>se não resolvidos</span>
+                        <span>downtime: $$</span>
                     </div>
                 </div>
            
@@ -210,8 +208,12 @@
             </div>
 
 
-            <div class="content-box">
-                <canvas id="g-dash-evol-equip"></canvas>
+            <div class="content-box grafico">
+                <div class="content-titulo"> <!-- Row -->
+                    <span>prejuizo</span>
+                    <p>Pareto: prejuízo acumulado por componente</p>
+                </div>
+                <canvas id="g-dash-comp-prej"></canvas>
             </div>
 
         </div>

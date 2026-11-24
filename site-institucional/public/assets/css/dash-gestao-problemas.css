@@ -295,3 +295,7 @@ main {
     height: auto;
     gap: 25px;
 }
+
+.grafico {
+    height: 40vh;
+}

@@ -109,189 +109,170 @@ options: {
 });
 
 // ----------------------------------------------------------------------
-// GRÁFICO DE LINHA - EVOLUÇÃO MENSAL POR EQUIPE ------------------------
+// GRÁFICO DE LINHA - PARETO PREJUÍZO POR COMPONENTE --------------------
 // ----------------------------------------------------------------------
 
 // Definição do json de consumo
-const alertaEquipMensal = [
+const prejuizoComponente = [
     {
-        'equipe1': 15,
-        'equipe2': 13,
-        'equipe3': 9,
-        'timestamp': 'Jan'
+        'comp': 'CPU',
+        'prejuizo': 5000.00
     },
     {
-        'equipe1': 17,
-        'equipe2': 10,
-        'equipe3': 5,
-        'timestamp': 'Fev'
+        'comp': 'RAM',
+        'prejuizo': 25000.00
     },
     {
-        'equipe1': 15,
-        'equipe2': 13,
-        'equipe3': 9,
-        'timestamp': 'Mar'
+        'comp': 'DISCO',
+        'prejuizo': 10000.00
     },
     {
-        'equipe1': 17,
-        'equipe2': 13,
-        'equipe3': 8,
-        'timestamp': 'Abr'
-    },
-    {
-        'equipe1': 5,
-        'equipe2': 15,
-        'equipe3': 8,
-        'timestamp': 'Mai' 
-    },
-    {
-        'equipe1': 10,
-        'equipe2': 12,
-        'equipe3': 4,
-        'timestamp': 'Jun' 
-    },
-    {
-        'equipe1': 15,
-        'equipe2': 16,
-        'equipe3': 5,
-        'timestamp': 'Jul' 
-    },
-    {
-        'equipe1': 15,
-        'equipe2': 12,
-        'equipe3': 5,
-        'timestamp': 'Ago' 
-    },
-    {
-        'equipe1': 11,
-        'equipe2': 15,
-        'equipe3': 10,
-        'timestamp': 'Out' 
-    },
-    {
-        'equipe1': 16,
-        'equipe2': 13,
-        'equipe3': 5,
-        'timestamp': 'Nov' 
-    },
-    {
-        'equipe1': 15,
-        'equipe2': 6,
-        'equipe3': 8,
-        'timestamp': 'Dez' 
+        'comp': 'LATÊNCIA',
+        'prejuizo': 55000.00
     }
 ]
 
+// Ordena os dados do maior pro menor
+prejuizoComponente.sort((a, b) => b.prejuizo - a.prejuizo);
+
 // Variáveis de tratamento
-let equip1 = [];
-let equip2= [];
-let equip3 = [];
-let timestamp = [];
+let componente = [];
+let prejuizo = [];
+let prejuAcumulado = [];
+let linhaAcumulada = [];
 
 // Função de tratamento
-function tratarAlertasEquipMensal(alertaEquipMensal) {
-    for (let i = 0; i < alertaEquipMensal.length; i++) {
-        equip1.push(alertaEquipMensal[i].equipe1)
-        equip2.push(alertaEquipMensal[i].equipe2)
-        equip3.push(alertaEquipMensal[i].equipe3)
-        timestamp.push(alertaEquipMensal[i].timestamp)
-    }
-    return equip1, equip2, equip3, timestamp;
-}
-tratarAlertasEquipMensal(alertaEquipMensal);
+function tratarPrejuizoComponente(prejuizoComponente) {
+    for (let i = 0; i < prejuizoComponente.length; i++) {
+        componente.push(prejuizoComponente[i].comp)
+        prejuizo.push(prejuizoComponente[i].prejuizo)
 
-const ctx_disp = document.getElementById('g-dash-evol-equip');
+        if (prejuAcumulado.length == 0) {
+            prejuAcumulado.push(prejuizoComponente[i].prejuizo);
+        } else {
+            prejuAcumulado.push(prejuAcumulado[i - 1] + prejuizoComponente[i].prejuizo);
+        }
+        console.log(prejuAcumulado[i]);
+    }
+    
+    for (let i = 0; i < prejuAcumulado.length; i++) {
+        total = prejuAcumulado[prejuAcumulado.length - 1]
+        linhaAcumulada.push(((prejuAcumulado[i] / total) * 100).toFixed(2))
+    }
+
+    return componente, prejuizo, prejuAcumulado;
+}
+tratarPrejuizoComponente(prejuizoComponente);
+
+
+const ctx_disp = document.getElementById('g-dash-comp-prej');
 
 new Chart(ctx_disp, {
-    type: 'line',
     data: {
-    labels: timestamp,
-    datasets: [
-        {
-            label: 'A',
-            data: equip1,
-            borderWidth: 1,
-            pointBackgroundColor: '#5178F9',
-            pointBorderColor: '#5178F9',
-            borderColor: '#5178F9',
-            borderWidth: 2,
-            fill:true
-        },{
-            label: 'B',
-            data: equip2,
-            borderWidth: 1,
-            pointBackgroundColor: '#F5C542',
-            pointBorderColor: '#F5C542C',
-            borderColor: '#F5C542',
-            borderWidth: 2,
-            fill:true
-        },{
-            label: 'C',
-            data: equip3,
-            borderWidth: 1,
-            pointBackgroundColor: '#FF5C5C',
-            pointBorderColor: '#FF5C5C',
-            borderColor: '#FF5C5C',
-            borderWidth: 2,
-            fill:true
-        }
-    ]
-    },
-    options: {
-    scales: {
-        y: {
-            beginAtZero: true,
-            min: 0,
-            grid: {
-                display: false
+        labels: componente,
+            datasets: [
+            {
+                type: 'bar',
+                label: 'Prejuízo',
+                data: prejuizo,
+                backgroundColor: '#5178F9',
+                yAxisID: 'yFreq',
+                order: 2
             },
-            ticks: {
-                color: '#5C6288',
-                font: { size: 14, weight: 'bold' }
-            },
-            border: {
-                display: true,
-                color: '#5C6288',
-                width: 1
+            {
+                type: 'line',
+                label: '% Acumulado',
+                data: linhaAcumulada,
+                borderColor: '#FF5C5C',
+                backgroundColor: '#FF5C5C',
+                tension: 0,
+                pointRadius: 4,
+                yAxisID: 'yPct',
+                order: 1
             }
+            ]
         },
-        x: {
-            grid: {
-                display: false
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            scales: {
+            x: {
+                ticks: {
+                    color: '#5C6288',
+                    font: {
+                        family: 'allerta',
+                        size: 12,
+                        weight: 'bold',
+                        style: 'italic'
+                    }
+                }
             },
-            ticks: {
-                color: '#5C6288',
-                font: { size: 14, weight: 'bold' }
+            yFreq: {
+                type: 'linear',
+                position: 'left',
+                beginAtZero: true,
+                max: prejuAcumulado[prejuAcumulado.length - 1],
+                grid: { display: false },
+                title: { 
+                    display: true, 
+                    text: 'Prejuízo', 
+                    color: '#5C6288', 
+                    font: { family: 'allerta', 
+                        size: 14, 
+                        weight: 'normal' 
+                    } 
+                },
+                ticks: {
+                    color: '#5C6288',
+                    font: { family: 'allerta', size: 14, weight: 'normal' }
+                },
+                border: {
+                    display: true,
+                    color: '#5C6288',
+                    width: 1
+                }
             },
-            border: {
-                display: true,
-                color: '#5C6288',
-                width: 1
-            }
-        }
-    },
-    plugins: {
-            title: {
-                display: true,
-                text: 'Evolução Mensal Por Equipe',
-                color: '#eaeaf3',
-                position: 'top',
-                font: { family:'allerta',  size: 16, weight: 'normal' },
-                padding: { top: 10, bottom: 20 },
-                align: 'center'
-            },
-            legend: {
-                display: true,
-                position: 'bottom',
-                align: 'end',
-                labels: {
-                    color: '#eaeaf3',
-                    borderRadius: 10,
-                    boxWidth: 15,
-                    boxHeight: 15,
-                    font: { family: 'allerta', size: 14 }
+            yPct: {
+                type: 'linear',
+                position: 'right',
+                min: 0,
+                max: 100,
+                grid: { display: false },
+                ticks: { 
+                    callback: v => v + '%',
+                    color: '#5C6288',
+                    precision: 0,
+                    font: { family: 'allerta', size: 14, weight: 'normal' }
+                },
+                title: { 
+                    display: true, 
+                    text: '% Acumulado', 
+                    color: '#5C6288', 
+                    font: { 
+                        family: 'allerta', 
+                        size: 14, 
+                        weight: 'normal' 
+                    } 
+                },
+                border: {
+                    display: true,
+                    color: '#5C6288',
+                    width: 1
                 }
             }
+            },
+            plugins: {
+                tooltip: {
+                    callbacks: {
+                    label: ctx_disp => ctx_disp.dataset.type === 'line'
+                        ? `${ctx_disp.dataset.label}: ${ctx_disp.parsed.y}%`
+                        : `${ctx_disp.dataset.label}: ${ctx_disp.parsed.y}`
+                    }
+                },
+                legend: {
+                    display: false
+                }
+
+            }
         }
-    }
 });
