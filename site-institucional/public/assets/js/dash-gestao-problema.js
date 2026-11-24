@@ -224,7 +224,8 @@ new Chart(ctx_disp, {
                 },
                 ticks: {
                     color: '#5C6288',
-                    font: { family: 'allerta', size: 14, weight: 'normal' }
+                    font: { family: 'allerta', size: 14, weight: 'normal' },
+                    stepSize: 15000
                 },
                 border: {
                     display: true,
@@ -242,7 +243,8 @@ new Chart(ctx_disp, {
                     callback: v => v + '%',
                     color: '#5C6288',
                     precision: 0,
-                    font: { family: 'allerta', size: 14, weight: 'normal' }
+                    font: { family: 'allerta', size: 14, weight: 'normal' },
+                    stepSize: 20
                 },
                 title: { 
                     display: true, 
@@ -271,8 +273,83 @@ new Chart(ctx_disp, {
                 },
                 legend: {
                     display: false
+                },
+                title: { 
+                    display: true, 
+                    text: 'Pareto: % Prejuízo Acumulado por Componente', 
+                    color: '#eaeaf3', 
+                    font: { 
+                        family: 'allerta', 
+                        size: 16, 
+                        weight: 'normal' 
+                    } 
                 }
 
             }
         }
 });
+
+// ----------------------------------------------------------------------
+// GRÁFICO DE LINHA - PARETO PREJUÍZO POR COMPONENTE --------------------
+// ----------------------------------------------------------------------
+
+// Definição do json de consumo
+const criticidadePrejuizo = [
+    {
+        'id': 'CPU',
+        'servidor': 'SVR-01',
+        'equipe': 'A',
+        'criticidade_alertas': 1,
+        'prejuizo_estimado': 3,
+    },
+    {
+        'id': 'CPU',
+        'servidor': 'SVR-02',
+        'equipe': 'A',
+        'criticidade_alertas': 1,
+        'prejuizo_estimado': 3,
+    },
+    {
+        'id': 'CPU',
+        'servidor': 'SVR-03',
+        'equipe': 'A',
+        'criticidade_alertas': 1,
+        'prejuizo_estimado': 3,
+    },
+    {
+        'id': 'CPU',
+        'servidor': 'SVR-06',
+        'equipe': 'A',
+        'criticidade_alertas': 1,
+        'prejuizo_estimado': 3,
+    }
+]
+
+// Ordena os dados do maior pro menor
+prejuizoComponente.sort((a, b) => b.prejuizo - a.prejuizo);
+
+// Variáveis de tratamento
+let servidor = [];
+
+// Função de tratamento
+function tratarPrejuizoComponente(prejuizoComponente) {
+    for (let i = 0; i < prejuizoComponente.length; i++) {
+        componente.push(prejuizoComponente[i].comp)
+        prejuizo.push(prejuizoComponente[i].prejuizo)
+
+        if (prejuAcumulado.length == 0) {
+            prejuAcumulado.push(prejuizoComponente[i].prejuizo);
+        } else {
+            prejuAcumulado.push(prejuAcumulado[i - 1] + prejuizoComponente[i].prejuizo);
+        }
+        console.log(prejuAcumulado[i]);
+    }
+    
+    for (let i = 0; i < prejuAcumulado.length; i++) {
+        total = prejuAcumulado[prejuAcumulado.length - 1]
+        linhaAcumulada.push(((prejuAcumulado[i] / total) * 100).toFixed(2))
+    }
+
+    return componente, prejuizo, prejuAcumulado;
+}
+tratarPrejuizoComponente(prejuizoComponente);

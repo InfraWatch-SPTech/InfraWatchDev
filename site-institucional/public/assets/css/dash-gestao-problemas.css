@@ -299,3 +299,59 @@ main {
 .grafico {
     height: 40vh;
 }
+
+.content-box .matriz-titulo span {
+    border: 1px solid var(--cor-azul-contraste2);
+    color: var(--cor-azul-contraste2);
+}
+
+.content-box .matriz-titulo p {
+    color: var(--cor-azul-contraste2);
+}
+
+.content-box .matriz {
+    width: 100%;
+    border-radius: 8px;
+    text-align: center;
+    align-items: center;
+}
+
+.content-box .matriz th {
+    color: var(--cor-branco-default);
+    font-family: 'allerta';
+    font-size: 14px;
+}
+
+.content-box .matriz td{
+    width: 30%;
+    height: 7vh;
+    border-radius: 10px;
+    background-color: var(--cor-azul-apagado);
+    text-align: center;
+    align-items: center;
+    font-family: 'allerta';
+    color: black;
+    text-transform: uppercase;
+    font-weight: 600;
+}
+
+.content-box .matriz .baixo {
+    background-color: var(--cor-verde-ativo);
+}
+
+.content-box .matriz .medio {
+    background-color: var(--cor-amarelo-atencao);
+}
+
+.content-box .matriz .alto {
+    background-color: var(--cor-vermelho-inativo);
+}
+
+.content-box .matriz .vertical {
+    writing-mode: vertical-lr;
+    transform: rotate(180deg);
+}
+
+.matriz-de-risco {
+    justify-content: space-between;
+}

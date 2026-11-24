@@ -202,17 +202,52 @@
 
         <div class="container-dash-box">
 
-            <div class="content-box">
-                <!-- Matriz de risco-->
-                 <canvas id="g-dash-matriz-risco"></canvas>
+            <div class="content-box grafico matriz-de-risco">
+                <div class="content-titulo matriz-titulo"> <!-- Row -->
+                    <span>matriz de risco</span>
+                    <p>criticidade em alertas x prejuízo estimado</p>
+                </div>
+                <table class="matriz">
+                    <thead>
+                        <tr>
+                            <th></th>
+                            <th></th>
+                            <th colspan="3" class="legenda-matriz">Prejuízo Estimado</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <th></th>
+                            <th></th>
+                            <th>Baixo</th>
+                            <th>Médio</th>
+                            <th>Alto</th>
+                        </tr>
+                        <tr>
+                            <th rowspan="3" class="legenda-matriz vertical">Criticidade de Alertas</th>
+                            <th scope="row">Crítica</th>
+                            <td class="medio" id="critica-baixo">srv-pix-01</td>
+                            <td class="alto" id="critica-medio">srv-pix-02</td>
+                            <td class="alto" id="critica-alto">srv-pix-03</td>
+                        </tr>
+                        <tr>
+                            <th scope="row">Média</th>
+                            <td class="baixo" id="media-baixo">srv-pix-04</td>
+                            <td class="medio" id="media-medio">srv-pix-05</td>
+                            <td class="alto" id="media-alto">srv-pix-06</td>
+                        </tr>
+                        <tr>
+                            <th scope="row">Baixa</th>
+                            <td class="baixo" id="baixa-baixo">srv-pix-07</td>
+                            <td class="baixo" id="baixa-medio">srv-pix-08</td>
+                            <td class="medio" id="baixa-alto">srv-pix-09</td>
+                        </tr>
+                    </tbody>
+                </table>
             </div>
 
 
             <div class="content-box grafico">
-                <div class="content-titulo"> <!-- Row -->
-                    <span>prejuizo</span>
-                    <p>Pareto: prejuízo acumulado por componente</p>
-                </div>
                 <canvas id="g-dash-comp-prej"></canvas>
             </div>
 
