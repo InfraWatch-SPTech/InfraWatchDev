@@ -54,20 +54,22 @@ function autenticar(req, res) {
             }
 
             if (resultadoAutenticar.length > 1) {
-                return res.status(403).send("Mais de um usuário com o mesmo login e senha!");
+                return res.status(403).send(
+                    "Mais de um usuário com o mesmo login e senha!"
+                );
             }
 
             var usuario = resultadoAutenticar[0];
             var permissoes = transformarLista(usuario.permissoes);
 
-            res.json({
+            var dadosUsuario = {
                 id: usuario.id,
                 email: usuario.email,
                 nome: usuario.nome,
                 idNivelAcesso: usuario.idNivelAcesso,
                 nomeNivelAcesso: usuario.nomeNivelAcesso,
 
-                // Mantidos para não quebrar páginas antigas do projeto.
+                // Compatibilidade com as outras páginas.
                 perm: usuario.idNivelAcesso,
                 nomePermissao: usuario.nomeNivelAcesso,
                 descPermissao: usuario.descPermissao,
@@ -75,10 +77,37 @@ function autenticar(req, res) {
                 permissoes: permissoes,
                 idEmpresa: usuario.idEmpresa,
                 nomeEmpresa: usuario.nomeEmpresa
+            };
+
+            req.session.regenerate(function (erro) {
+                if (erro) {
+                    return res.status(500).send(
+                        "Não foi possível iniciar a sessão."
+                    );
+                }
+
+                req.session.usuario = {
+                    id: usuario.id,
+                    idEmpresa: usuario.idEmpresa
+                };
+
+                req.session.save(function (erro) {
+                    if (erro) {
+                        return res.status(500).send(
+                            "Não foi possível salvar a sessão."
+                        );
+                    }
+
+                    res.json(dadosUsuario);
+                });
             });
         })
         .catch(function (erro) {
-            console.log("Houve um erro ao realizar o login!", erro.sqlMessage || erro);
+            console.log(
+                "Houve um erro ao realizar o login!",
+                erro.sqlMessage || erro
+            );
+
             res.status(500).send("Erro interno ao realizar o login.");
         });
 }

@@ -16,12 +16,12 @@ const dados_mock = {
         online: false
     },
     cpu: [18, 22, 22, 26, 26, 38, 47, 56, 65, 69, 73, 79, 82, 83, 84, 84, 84, 85, 86, 88, 89, 88, 88.5, 92.0],
-    ram: [54, 51, 51, 53, 55, 59, 66, 75, 69, 57, 54, 55, 56, 56, 55, 55, 56, 56, 55, 54, 54, 55, 55, 35],
-    disco: [12, 11, 11, 11, 11, 11, 12, 12, 12, 11, 11, 10, 10, 10, 10, 10, 10, 11, 11, 11, 11, 10, 10, 78],
+    ram: [54, 51, 51, 53, 55, 59, 66, 75, 69, 57, 54, 55, 56, 56, 55, 55, 56, 56, 55, 54, 54, 55, 55, 86],
+    disco: [12, 18, 25, 27, 31, 31, 33, 37, 30, 35, 40, 42, 42, 49, 54, 48, 48, 55, 62, 65, 70, 71, 74, 81],
     latencia: [
         30, 46, 34, 58, 32, 66, 38, 70, 22, 18,
         48, 64, 26, 35, 20, 28, 22, 22, 24, 34,
-        30, 22, 250, 42, 40, 36, 34, 52, 40, 48,
+        30, 22, 120, 42, 40, 36, 34, 52, 40, 48,
         38, 36, 34, 40, 44, 50, 46, 44, 56, 50,
         60, 64, 52, 66, 74, 58, 60, 52, 48, 44,
         50, 46, 42, 40, 38, 40, 38, 42, 38, 38
@@ -35,8 +35,8 @@ const dados_mock = {
     ],
     incidentes: [
         { componente: 'CPU', registro: '92%', parametro: '80%', nivel: 'critico', descricao: 'Componente CPU atingiu medida acima do parâmetro', timestamp: '10/09/26 - 12:32:12', resolvido: false },
-        { componente: 'CPU', registro: '87%', parametro: '80%', nivel: 'critico', descricao: 'Componente CPU atingiu medida acima do parâmetro', timestamp: '10/09/26 - 12:32:12', resolvido: true },
-        { componente: 'RAM', registro: '76%', parametro: '75%', nivel: 'critico', descricao: 'Componente RAM atingiu medida acima do parâmetro', timestamp: '10/09/26 - 12:32:12', resolvido: false }
+        { componente: 'DISCO', registro: '81%', parametro: '80%', nivel: 'critico', descricao: 'Componente DISCO atingiu medida acima do parâmetro', timestamp: '10/09/26 - 12:32:12', resolvido: true },
+        { componente: 'RAM', registro: '86%', parametro: '75%', nivel: 'critico', descricao: 'Componente RAM atingiu medida acima do parâmetro', timestamp: '10/09/26 - 12:32:12', resolvido: false }
     ]
 };
 
@@ -141,7 +141,7 @@ function preencher_kpis(dados) {
     definir_kpi('kpi_disco_valor', disco, limites.disco, formatar_percentual(disco));
     const disponivel = document.getElementById('kpi_disco_disponivel');
     disponivel.textContent = formatar_percentual(100 - disco);
-    disponivel.className = 'status_ok';
+    // disponivel.className = 'status_ok';
 
     definir_kpi('kpi_latencia_valor', latencia, limites.latencia, formatar_ms(latencia));
     document.getElementById('kpi_latencia_sub').textContent = 'Throughput ' + dados.throughput.toLocaleString('pt-BR') + ' tx/s';

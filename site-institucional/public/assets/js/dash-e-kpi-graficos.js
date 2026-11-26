@@ -5,8 +5,7 @@
 // Definição do json de consumo
 const incidentesServidor = [
     { 'nome': 'Servidor Principal', 'qtd_incidentes': 3 },
-    { 'nome': 'Servidor Backup', 'qtd_incidentes': 2 },
-    { 'nome': 'Switch Central', 'qtd_incidentes': 1 }
+    { 'nome': 'Servidor Backup', 'qtd_incidentes': 1 }
 ]
 
 // Variáveis de tratamento
@@ -240,20 +239,20 @@ new Chart(ctx_disp, {
 const alertasPorComponente = [
     {
         'componente': 'cpu',
-        'qtd_alertas_ativos': 3,
+        'qtd_alertas_ativos': 1,
         'qtd_alertas_totais': 3,
         'qtd_alertas_criticos': 2
     },
     {
         'componente': 'ram',
-        'qtd_alertas_ativos': 3,
+        'qtd_alertas_ativos': 2,
         'qtd_alertas_totais': 3,
         'qtd_alertas_criticos': 2
     },
     {
         'componente': 'disco',
-        'qtd_alertas_ativos':0,
-        'qtd_alertas_totais': 0,
+        'qtd_alertas_ativos':1,
+        'qtd_alertas_totais': 2,
         'qtd_alertas_criticos': 0
     }
 ]
@@ -357,7 +356,7 @@ new Chart(ctx_comp2, {
         labels: ['Em alerta', 'Qtd Total'],
         datasets: [{
             label: false,
-            data: [qtdAlertasAtivos[1], qtdTotalAlertas[0] - qtdAlertasAtivos[0]],
+            data: [qtdAlertasAtivos[1], qtdTotalAlertas[1] - qtdAlertasAtivos[1]],
             backgroundColor: ["#FF5C5C", '#291C58'],
             borderWidth: 0
         }]
@@ -401,7 +400,7 @@ new Chart(ctx_comp3, {
     labels: ['Em alerta', 'Qtd Total'],
         datasets: [{
             label: false,
-            data: [qtdAlertasAtivos[2], qtdTotalAlertas[0] - qtdAlertasAtivos[0]],
+            data: [qtdAlertasAtivos[2], qtdTotalAlertas[2] - qtdAlertasAtivos[2]],
             backgroundColor: ["#FF5C5C", '#291C58'],
             borderWidth: 0
         }]
@@ -547,7 +546,7 @@ options: {
 // KPI -- SERVIDORES ATIVOS
 const servidoresAtivos = [
     {
-        'qtdServidoresAtivos': 2,
+        'qtdServidoresAtivos': 1,
         'qtdServidoresTotais': 3
     }
 ]
@@ -747,8 +746,8 @@ if (dispExternaPercent < 90.00) {
 
 const alertas24h = [
     {
-        'qtdAtual': 6,
-        'qtdAnterior': 10
+        'qtdAtual': 4,
+        'qtdAnterior': 3
     }
 ]
 
@@ -797,7 +796,7 @@ atualizarKpiAlertas24h(alertas24h[0]);
 const limitesMetricas = {
     cpu: { moderado: 70, critico: 85 },
     ram: { moderado: 70, critico: 85 },
-    disco: { moderado: 75, critico: 90 }
+    disco: { moderado: 75, critico: 80 }
 };
 
 const minutosSemComunicacao = 5;
@@ -805,14 +804,9 @@ const mostrarSomenteEmAlerta = true;
 
 // Definição do json de consumo (médias dos últimos 15 minutos)
 const mediaServidores = [
-    { 'idEquipamento': 1, 'nome': 'Principal', 'cpu': 89.5, 'ram': 55, 'disco': 10, 'minutosSemDados': 0 },
-    { 'idEquipamento': 2, 'nome': 'Backup', 'cpu': 35, 'ram': 30, 'disco': 85, 'minutosSemDados': 1 },
-    { 'idEquipamento': 3, 'nome': 'Switch Central', 'cpu': 72, 'ram': 35, 'disco': 78, 'minutosSemDados': 0 },
-    { 'idEquipamento': 4, 'nome': 'Web XPTO', 'cpu': 12, 'ram': 75, 'disco': 40, 'minutosSemDados': 2 },
-    { 'idEquipamento': 5, 'nome': 'Notebook Financeiro', 'cpu': 12, 'ram': 35, 'disco': 78, 'minutosSemDados': 0 },
-    { 'idEquipamento': 6, 'nome': 'Servidor Pix', 'cpu': 85, 'ram': 75, 'disco': 35, 'minutosSemDados': 1 },
-    { 'idEquipamento': 7, 'nome': 'Servidor Boleto', 'cpu': 15, 'ram': 25, 'disco': 35, 'minutosSemDados': 0 },
-    { 'idEquipamento': 8, 'nome': 'Servidor Legado', 'cpu': 20, 'ram': 30, 'disco': 45, 'minutosSemDados': 1 }
+    { 'idEquipamento': 1, 'nome': 'Servidor Principal', 'cpu': 92, 'ram': 86, 'disco': 81, 'minutosSemDados': 0 },
+    { 'idEquipamento': 2, 'nome': 'Servidor Backup', 'cpu': 35, 'ram': 86, 'disco': 32, 'minutosSemDados': 1 },
+    { 'idEquipamento': 3, 'nome': 'Switch Central', 'cpu': 72, 'ram': 35, 'disco': 78, 'minutosSemDados': 0 }
 ]
 
 const rotulosStatus = ['Normal', 'Moderado', 'Crítico', 'Sem dados'];
