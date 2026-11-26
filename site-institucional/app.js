@@ -19,6 +19,7 @@ var indexRouter = require("./src/routes/index");
 var usuarioRouter = require("./src/routes/usuarios");
 var hardwaresRouter = require("./src/routes/hardwares");
 var relatoriosRouter = require("./src/routes/relatorios");
+var apiJira = require("./src/routes/apiJira");
 
 app.use(cors());
 app.use(express.json());
@@ -32,6 +33,7 @@ app.use("/", indexRouter);
 app.use("/usuarios", usuarioRouter);
 app.use("/hardwares", hardwaresRouter);
 app.use("/relatorios", relatoriosRouter);
+app.use("/apiJira", apiJira);
 
 app.listen(PORTA_APP, function () {
     console.log(

@@ -4,13 +4,14 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="./assets/css/dash-gestao-problemas.css">
+    <link rel="icon" type="image/png" href="./assets/midias/main-icon-image.png">
     <link rel="stylesheet" href="./assets/css/global.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.3.1/css/all.min.css"
         integrity="sha512-QeR2VH+lsBE5LSAe1Q5EnTBbe7XTBubt8dG93Y7gidSgdMCr8nVqKcfKAMyN96SV8KDbZVTDXChatu5G2KQGzg=="
         crossorigin="anonymous" referrerpolicy="no-referrer">
     <title>Gestão de Problemas</title>
 </head>
-<body>
+<body onload="receberInformaçõesJira()">
     <!-- HEADER  -->
     <header>
 
@@ -61,64 +62,7 @@
                             <th>ações</th>
                         </tr>
                     </thead>
-                    <tbody>
-                        <tr>
-                            <td>1</td>
-                            <td>srv-pix-01</td>
-                            <td>a</td>
-                            <td class="td-barra">
-                                <p>87%</p> 
-                                <div class="barra-fundo">
-                                    <span class="barra-preenchimento" style="width: 87%; background-color: var(--cor-vermelho-inativo);"></span>
-                                </div>
-                            </td>
-                            <td class="qtd-a">22</td>
-                            <td>ram, cpu, disco</td>
-                            <td><a href="#">ver -></a></td>
-                        </tr>
-                        <tr>
-                            <td>2</td>
-                            <td>srv-pix-bkp</td>
-                            <td>b</td>
-                            <td class="td-barra">
-                                <p>67%</p> 
-                                <div class="barra-fundo">
-                                    <span class="barra-preenchimento" style="width: 67%; background-color: var(--cor-amarelo-atencao);"></span>
-                                </div>
-                            </td>
-                            <td class="qtd-a">10</td>
-                            <td>ram, cpu</td>
-                            <td><a href="#">ver -></a></td>
-                        </tr>
-                        <tr>
-                            <td>3</td>
-                            <td>srv-pix-02</td>
-                            <td>a</td>
-                            <td class="td-barra">
-                                <p>42%</p> 
-                                <div class="barra-fundo">
-                                    <span class="barra-preenchimento" style="width: 42%; background-color: var(--cor-amarelo-atencao);"></span>
-                                </div>
-                            </td>
-                            <td class="qtd-a">3</td>
-                            <td>cpu</td>
-                            <td><a href="">ver -></a></td>
-                        </tr>
-                        <tr>
-                            <td>4</td>
-                            <td>srv-site</td>
-                            <td>a</td>
-                            <td class="td-barra">
-                                <p>15%</p> 
-                                <div class="barra-fundo">
-                                    <span class="barra-preenchimento" style="width: 15%; background-color: var(--cor-verde-ativo);"></span>
-                                </div>
-                            </td>
-                            <td class="qtd-a">3</td>
-                            <td>cpu</td>
-                            <td><a href="">ver -></a></td>
-                        </tr>
-                    </tbody>
+                    <tbody id="lista-servidores-prioridade"></tbody>
                 </table>
             </div>
 
@@ -128,32 +72,36 @@
         <div class="container-box">
            
            
-            <div class="content-box kpi">
-                <div class="icon"> <!-- icon kpi --> </div>
+            <div class="content-box kpi" id="kpi-servidores-ativos">
                 <div class="infos-kpi">
                     <p>servidores ativos</p>
-                    <h3>23/25</h3>
-                    <span>2 servidores inativos</span>
+                    <h3>
+                        <span id="kpi-s-ativos">$$</span>
+                        /
+                        <span id="kpi-s-totais">$$</span>
+                    </h3>
+                    <div class="barra"></div>
+                    <span id="kpi-s-inativos">$ servidores inativos</span>
                 </div>
             </div>
             
             
-            <div class="content-box kpi">
-                <div class="icon"> <!-- icon kpi --> </div>
+            <div class="content-box kpi" id="kpi-uptime-atual">
                 <div class="infos-kpi">
                     <p>uptime atual</p>
-                    <h3>99.95%</h3>
-                    <span>de acordo com a sla</span>
+                    <h3 id="uptime-atual">99.95%</h3>
+                    <div class="barra"></div>
+                    <span id="uptime-sla">de acordo com a sla</span>
                 </div>
             </div>
             
             
-            <div class="content-box kpi">
-                <div class="icon"> <!-- icon kpi --> </div>
+            <div class="content-box kpi" id="kpi-mtbf">
                 <div class="infos-kpi">
                     <p>mtbf</p>
-                    <h3>1d20h</h3>
-                    <span>5% mais demorado</span>
+                    <h3 id="mtbf">1d20h</h3>
+                    <div class="barra"></div>
+                    <span id="mtbf-comparado">5% mais demorado</span>
                 </div>
             </div>
             
@@ -164,18 +112,18 @@
                 <div class="kpi-alertas">
                     <div class="infos-kpi">
                         <p>prejuízo atual</p>
-                        <h3>R$ 100 mil</h3>
-                        <span>2 critivos</span>
+                        <h3 id="p-atual">R$ 100 mil</h3>
+                        <span id="downtime-atual">$$</span>
                     </div>
                 </div>
 
-                <div class="seta-prejuizo"></div>
+                <div class="seta-prejuizo">→</div>
                 
                 <div class="kpi-prejuizo">
                     <div class="infos-kpi">
                         <p>prejuízo estimado</p>
-                        <h3>R$ 18 mil</h3>
-                        <span>downtime: $$</span>
+                        <h3 id="p-estimado">+ R$ 18 mil</h3>
+                        <span id="downtime-estimado">$$</span>
                     </div>
                 </div>
            
@@ -225,22 +173,22 @@
                         </tr>
                         <tr>
                             <th rowspan="3" class="legenda-matriz vertical">Criticidade de Alertas</th>
-                            <th scope="row">Crítica</th>
-                            <td class="medio" id="critica-baixo">srv-pix-01</td>
-                            <td class="alto" id="critica-medio">srv-pix-02</td>
-                            <td class="alto" id="critica-alto">srv-pix-03</td>
+                            <th scope="row">Baixa</th>
+                            <td class="baixo" id="baixa-baixo">-<br><span>-</span></td>
+                            <td class="baixo" id="baixa-medio">-<br><span>-</span></td>
+                            <td class="medio" id="baixa-alto">-<br><span>-</span></td>
                         </tr>
                         <tr>
                             <th scope="row">Média</th>
-                            <td class="baixo" id="media-baixo">srv-pix-04</td>
-                            <td class="medio" id="media-medio">srv-pix-05</td>
-                            <td class="alto" id="media-alto">srv-pix-06</td>
+                            <td class="baixo" id="media-baixo">-<br><span>-</span></td>
+                            <td class="medio" id="media-medio">-<br><span>-</span></td>
+                            <td class="alto" id="media-alto">-<br><span>-</span></td>
                         </tr>
                         <tr>
-                            <th scope="row">Baixa</th>
-                            <td class="baixo" id="baixa-baixo">srv-pix-07</td>
-                            <td class="baixo" id="baixa-medio">srv-pix-08</td>
-                            <td class="medio" id="baixa-alto">srv-pix-09</td>
+                            <th scope="row">Crítica</th>
+                            <td class="medio" id="critica-baixo">-<br><span>-</span></td>
+                            <td class="alto" id="critica-medio">-<br><span>-</span></td>
+                            <td class="alto" id="critica-alto">-<br><span>-</span></td>
                         </tr>
                     </tbody>
                 </table>
@@ -255,6 +203,21 @@
 
     </main>
 </body>
+<script>
+    // Teste requisição API JIRA
+    async function receberInformaçõesJira() {
+        // Código para receber maior atributo do usuário
+        const retornoInfosJira = await fetch(`/apiJira/listarIssues/`);
+        const retornoInfosJiraConvertido = await retornoInfosJira.json();
+        const repostaJira = retornoInfosJiraConvertido;
+
+        receberInformaçõesJira(repostaJira);
+
+        console.log(repostaJira);
+    }
+
+
+</script>
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script src="./assets/js/dash-gestao-problema.js"></script>
 </html>

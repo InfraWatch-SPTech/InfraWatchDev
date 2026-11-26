@@ -108,6 +108,7 @@ main {
 }
 
 .kpi-dupla {
+    height: 15vh;
     flex-direction: row;
     align-items: center;
     justify-content: space-evenly;
@@ -120,6 +121,10 @@ main {
 }
 
 .content-box h3 {
+    font-size: 30px;
+}
+
+.content-box h3 span {
     font-size: 30px;
 }
 
@@ -188,7 +193,7 @@ main {
 }
 
 .content-box .content-box-table .ar-table td {
-  padding: 18px 12px;
+  padding: 18px 0px;
   font-weight: 600;
   text-transform: uppercase;
   border-top: 1px solid var(--cor-azul-apagado);
@@ -329,10 +334,20 @@ main {
     background-color: var(--cor-azul-apagado);
     text-align: center;
     align-items: center;
-    font-family: 'allerta';
+    font-family: Verdana, Geneva, Tahoma, sans-serif;
     color: black;
     text-transform: uppercase;
     font-weight: 600;
+}
+
+.content-box .matriz td span{
+    text-align: center;
+    align-items: center;
+    font-family: Verdana, Geneva, Tahoma, sans-serif;
+    color: rgb(0, 0, 0, 0.5);
+    text-transform: uppercase;
+    font-weight: 800;
+    font-size: 12px;
 }
 
 .content-box .matriz .baixo {
@@ -352,6 +367,44 @@ main {
     transform: rotate(180deg);
 }
 
+.content-box .matriz .legenda-matriz {
+    color: var(--cor-azul-apagado);
+    font-weight: 300;
+}
+
 .matriz-de-risco {
     justify-content: space-between;
+}
+
+.seta-prejuizo {
+    width: 5vw;
+    height: 5vh;
+    line-height: 1;
+    box-sizing: border-box;
+    background-color: rgb(249, 81, 84, 0.3);
+    border:2px solid #F95154;
+    color: #F95154;
+    font-size: 30px;
+    display: flex;
+    text-align: center;
+    justify-content: center;
+    align-items: center;
+    border-radius: 100px;
+    font-family: monospace;
+}
+
+.cor_vermelha {
+    color: var(--cor-vermelho-inativo) !important;
+}
+
+.cor_amarela {
+    color: var(--cor-amarelo-atencao) !important;
+}
+
+.cor_verde {
+    color: var(--cor-verde-ativo) !important;
+}
+
+.cor_padrao {
+    color: var(--cor-branco-default) !important;
 }
