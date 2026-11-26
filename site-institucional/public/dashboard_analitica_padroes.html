@@ -11,88 +11,10 @@
     <link rel="stylesheet" href="./assets/css/global.css">
     <link rel="stylesheet" href="./assets/css/menu.css">
     <link rel="stylesheet" href="./assets/css/dashboard_analitica_padroes.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.3.1/css/all.min.css">
 </head>
 
-<body>
-    <header class="header_principal">
-        <button
-            class="header_botao_menu"
-            id="botao_menu"
-            aria-label="Abrir menu"
-            aria-expanded="false"
-            aria-controls="menu_lateral">
-            ☰
-        </button>
-
-        <a class="header_logo" href="./pagina-inicial.html">
-            Infra<span>Watch</span>
-        </a>
-
-        <div class="header_usuario">
-            <span class="header_empresa">Histórico e padrões</span>
-            <span class="modo_dados" id="modo_dados">Carregando hardware</span>
-        </div>
-    </header>
-
-    <div class="menu_fundo" id="menu_fundo"></div>
-
-    <nav
-        class="menu_lateral"
-        id="menu_lateral"
-        aria-label="Menu principal"
-        aria-hidden="true"
-        inert>
-
-        <div class="menu_topo">
-            <span class="menu_marca">Infra<span>Watch</span></span>
-
-            <button
-                class="menu_fechar"
-                id="menu_fechar"
-                aria-label="Fechar menu">
-                ×
-            </button>
-        </div>
-
-        <ul class="menu_lista">
-            <li>
-                <a class="menu_link" href="./pagina-inicial.html">
-                    Início
-                </a>
-            </li>
-
-            <li>
-                <a class="menu_link" href="./dash-empresa.html">
-                    Dashboard empresa
-                </a>
-            </li>
-
-            <li>
-                <a class="menu_link" href="./dashboard-servidor.html">
-                    Monitoramento do servidor
-                </a>
-            </li>
-
-            <li>
-                <a
-                    class="menu_link"
-                    href="./dashboard_analitica_padroes.html"
-                    aria-current="page">
-                    Histórico e padrões
-                </a>
-            </li>
-
-            <li>
-                <a
-                    class="menu_link"
-                    href="./login.html"
-                    id="sair_dashboard">
-                    Sair
-                </a>
-            </li>
-        </ul>
-    </nav>
-
+<body id="topo">
     <main class="pagina_conteudo">
 
         <!-- Cabeçalho -->
@@ -101,6 +23,7 @@
                 <div>
                     <h1>Padrões de consumo</h1>
                     <p class="texto_apoio" id="periodo_texto"></p>
+                    <span class="modo_dados" id="modo_dados">Carregando histórico…</span>
                 </div>
             </div>
 
@@ -150,6 +73,8 @@
                         id="periodo_importante"
                         class="seletor_componente">
                         <option value="almoco">Almoço 12h–14h</option>
+                        <option value="jantar">Jantar 18h–20h</option>
+                        <option value="fim_semana">Fim de semana</option>
                         <option value="quinto_dia_util">5º dia útil</option>
                         <option value="feriado">Feriados</option>
                     </select>
@@ -207,6 +132,7 @@
                         <span>Fim de semana</span>
                     </p>
                 </div>
+                <a class="saiba_mais" href="#secao_processos">Saiba mais ↓</a>
             </article>
 
         </section>
@@ -215,10 +141,10 @@
         <section class="card_grafico">
             <header class="card_topo">
                 <div>
-                    <h2>Tempo em atenção</h2>
+                    <h2 id="titulo_ranking">Tempo em atenção</h2>
 
                     <p class="texto_apoio" id="ranking_resumo">
-                        Atenção total, incluindo o tempo crítico.
+                        Mesmo servidor vs período imediatamente anterior.
                     </p>
                 </div>
 
@@ -228,19 +154,20 @@
                         <select id="dia"></select>
                     </label>
 
-                    <label>
-                        Componente
-                        <select id="componente_ranking"></select>
+                    <label>Estado
+                        <select id="estado_ranking"><option value="atencao">Atenção total</option><option value="critico">Somente crítico</option></select>
                     </label>
+                    <label>Componente<select id="componente_ranking"></select></label>
                 </div>
             </header>
 
+            <p class="legenda_ranking"><span id="legenda_estado">● Período Selecionado</span> <span class="marca_anterior">┆</span> Anterior</p>
             <div class="ranking_layout">
                 <div class="grafico_area ranking_area">
                     <canvas
                         id="grafico_ranking"
                         role="img"
-                        aria-label="Ranking por tempo em atenção com a parcela crítica destacada">
+                        aria-label="Tempo observado por componente comparado ao período anterior">
                     </canvas>
                 </div>
 
@@ -253,10 +180,9 @@
                         <thead>
                             <tr>
                                 <th>Componente</th>
-                                <th>Atenção total</th>
-                                <th>Crítico</th>
-                                <th>Entradas em crítico</th>
-                                <th>Horário de pico</th>
+                                <th>Período Selecionado</th>
+                                <th>Anterior</th>
+                                <th>Variação</th>
                             </tr>
                         </thead>
 
@@ -277,7 +203,7 @@
 
         <p id="estado_dados" class="estado_dados"></p>
 
-        <!-- Mapa e pontuação lado a lado -->
+        <!-- Mapa e evolução lado a lado -->
         <div class="grafico_grid">
 
             <section class="card_grafico">
@@ -322,53 +248,29 @@
             </section>
 
             <section class="card_grafico">
-                <header class="card_topo">
-                    <div>
-                        <h2>Saúde: selecionado × melhor</h2>
-                        <p class="texto_apoio" id="pontuacao_resumo"></p>
-                    </div>
-                </header>
-
-                <div class="pontuacao_placar">
-                    <p>
-                        <span id="pontuacao_nome_atual">Atual</span>
-                        <strong id="pontuacao_atual">—</strong>
-                    </p>
-
-                    <p>
-                        <span id="pontuacao_nome_comparado">Melhor</span>
-                        <strong id="pontuacao_comparado">—</strong>
-                    </p>
-
-                    <p>
-                        <span>Diferença</span>
-                        <strong id="pontuacao_diferenca">—</strong>
-                    </p>
+                <header class="card_topo"><div>
+                    <h2>Evolução do servidor</h2>
+                    <p class="texto_apoio" id="comparacao_resumo"></p>
+                </div></header>
+                <div class="abas_comparacao" role="group" aria-label="Medida de comparação">
+                    <button type="button" data-medida="critico" aria-pressed="true">Tempo crítico</button>
+                    <button type="button" data-medida="cpu" aria-pressed="false">Oscilação CPU</button>
+                    <button type="button" data-medida="ram" aria-pressed="false">Oscilação RAM</button>
                 </div>
-
-                <div class="grafico_area pontuacao_area">
-                    <canvas
-                        id="grafico_pontuacao"
-                        role="img"
-                        aria-label="Nota por componente do servidor selecionado e do melhor servidor">
-                    </canvas>
-                </div>
-
-                <p class="nota" id="pontuacao_perda"></p>
-
-                <p class="nota">
-                    0–100 · maior é melhor · tempo 50% · alertas 30% · consumo 20%
-                </p>
+                <div class="grafico_area comparacao_area"><canvas id="grafico_comparacao" role="img" aria-label="Mesmo servidor no período selecionado e anterior"></canvas></div>
+                <p id="comparacao_variacao" class="variacao"></p>
+                <p id="comparacao_nota" class="nota"></p>
+                <p id="comparacao_cobertura" class="nota"></p>
             </section>
 
         </div>
 
         <!-- Processos -->
-        <section class="card_grafico">
+        <section class="card_grafico" id="secao_processos">
             <header class="card_topo">
                 <div>
                     <h2 id="titulo_processos">
-                        Processos: dias úteis × fim de semana
+                        Processos: dias úteis vs fim de semana
                     </h2>
 
                     <p class="texto_apoio" id="processos_unidade"></p>
@@ -410,7 +312,7 @@
         </section>
 
         <aside class="sugestao">
-            <span class="sugestao_marca">Base de processos</span>
+            <span class="sugestao_marca">Base de processos</span><a class="saiba_mais voltar" href="#topo">Voltar ao topo ↑</a>
             <p id="sugestao_texto"></p>
         </aside>
 
@@ -428,6 +330,9 @@
 
     <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/echarts@5.6.0/dist/echarts.min.js"></script>
+    <script src="./assets/js/redirecionamento.js"></script>
+    <script src="./assets/js/sessao.js"></script>
+    <script src="./assets/js/menu.js"></script>
     <script src="./assets/js/dashboard_analitica_padroes.js"></script>
 </body>
 

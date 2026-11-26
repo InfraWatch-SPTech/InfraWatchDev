@@ -1,9 +1,11 @@
-/* Cabeçalho compacto, KPIs e ranking primeiro. */
-button, select, input {
+button,
+select,
+input {
     font: inherit;
 }
 
-button, select {
+button,
+select {
     cursor: pointer;
 }
 
@@ -210,11 +212,11 @@ button, select {
 }
 
 /* Ordem visual: topo, erro, KPIs, ranking e demais informações */
-.pagina_conteudo > .card_grafico {
+.pagina_conteudo>.card_grafico {
     order: 8;
 }
 
-.kpi_grid + .card_grafico {
+.kpi_grid+.card_grafico {
     order: 4;
 }
 
@@ -280,7 +282,7 @@ button, select {
     height: 210px;
 }
 
-.pontuacao_area,
+.comparacao_area,
 .processos_area {
     height: 280px;
 }
@@ -324,33 +326,6 @@ button, select {
 
 .pagina_conteudo tbody tr:last-child td {
     border-bottom: 0;
-}
-
-/* Comparativo de saúde */
-.pontuacao_placar {
-    display: grid;
-    grid-template-columns: repeat(3, minmax(0, 1fr));
-    gap: 8px;
-    margin-bottom: 12px;
-}
-
-.pontuacao_placar p {
-    display: flex;
-    flex-direction: column;
-    gap: 4px;
-    padding: 10px;
-    border: 1px solid var(--cor-azul-apagado);
-    border-radius: 6px;
-}
-
-.pontuacao_placar span {
-    color: var(--cor-texto-apagado);
-    font-size: 12px;
-    overflow-wrap: anywhere;
-}
-
-.pontuacao_placar strong {
-    font-size: 26px;
 }
 
 .sugestao {
@@ -422,5 +397,123 @@ button, select {
 
     .header_empresa {
         display: none;
+    }
+}
+
+/* Realce sem atribuir uma nota de saúde ao consumo. */
+html {
+    scroll-behavior: smooth;
+    scroll-padding-top: 84px;
+}
+
+.card_kpi {
+    border-top: 3px solid #665c8c;
+}
+
+.card_kpi.status_ok {
+    border-top-color: #75bf83;
+    color: inherit;
+}
+
+.card_kpi.status_atencao {
+    border-top-color: #f3bd4f;
+    color: inherit;
+}
+
+.card_kpi.status_critico {
+    border-top-color: #ff6e7b;
+    color: inherit;
+}
+
+.card_kpi.status_ok .kpi_valor {
+    color: #75bf83;
+}
+
+.card_kpi.status_atencao .kpi_valor {
+    color: #f3bd4f;
+}
+
+.card_kpi.status_critico .kpi_valor {
+    color: #ff6e7b;
+}
+
+.saiba_mais {
+    display: inline-block;
+    margin-top: 10px;
+    color: #6fe0ff;
+    font-size: 13px;
+    text-decoration: none;
+}
+
+.saiba_mais:hover {
+    text-decoration: underline;
+}
+
+.voltar {
+    float: right;
+    margin: 0;
+}
+
+.legenda_ranking {
+    color: #c5c3cd;
+    font-size: 12px;
+    padding-bottom: 6px;
+}
+
+.marca_anterior {
+    color: white;
+    font-size: 19px;
+    margin-left: 16px;
+}
+
+.abas_comparacao {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    margin-bottom: 12px;
+}
+
+.abas_comparacao button {
+    border: 1px solid #48445f;
+    border-radius: 6px;
+    padding: 7px 9px;
+    color: #c5c3cd;
+    background: transparent;
+    font-size: 13px;
+}
+
+.abas_comparacao button[aria-pressed="true"] {
+    background: #5178f9;
+    border-color: #5178f9;
+    color: white;
+}
+
+.comparacao_area {
+    height: 210px;
+}
+
+.variacao {
+    font-size: 18px;
+    font-weight: 600;
+    padding-top: 10px;
+}
+
+.ranking_layout {
+    grid-template-columns: minmax(0, 1.1fr) minmax(0, 1fr);
+}
+
+#secao_processos {
+    scroll-margin-top: 90px;
+}
+
+@media (max-width: 1000px) {
+    .ranking_layout {
+        grid-template-columns: 1fr;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    html {
+        scroll-behavior: auto;
     }
 }

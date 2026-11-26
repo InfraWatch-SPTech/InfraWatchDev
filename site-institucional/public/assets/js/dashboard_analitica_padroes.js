@@ -1,7 +1,9 @@
 
 var cores = { cpu: '#5178F9', ram: '#6FE0FF', disco: '#F5C542', rede: '#B48CFF' };
-var NOMES_CRITERIOS = { tempo: 'tempo em atenção', alertas: 'quantidade de alertas', consumo: 'consumo médio' };
-var NOMES_CURTOS = { almoco: 'Almoço', quinto_dia_util: '5º dia útil', feriado: 'Feriados' };
+var medidaComparacao = 'critico';
+var contextoFiltros = '';
+var escolhasManuais = {};
+var NOMES_CURTOS = { almoco: 'Almoço', jantar: 'Jantar', quinto_dia_util: '5º dia útil', feriado: 'Feriados', fim_semana: 'Fim de semana' };
 
 var dados = null;
 var graficos = {};
@@ -15,10 +17,11 @@ function nome(componente) { return dados.servidor.nomes[componente] || component
 function numero(valor) { return valor.toLocaleString('pt-BR', { maximumFractionDigits: 1 }); }
 function percentual(valor) { return valor === null || valor === undefined ? 'Sem dados' : numero(valor) + '%'; }
 function nota(valor) { return valor === null || valor === undefined ? 'Sem histórico' : numero(valor); }
-function dataCurta(dia) { return dia.slice(8, 10) + '/' + dia.slice(5, 7); }
+function dataCurta(dia) { if (!dia) return '—'; return dia.slice(8, 10) + '/' + dia.slice(5, 7); }
 function faixaHora(hora) { return String(hora).padStart(2, '0') + 'h–' + String(hora + 1).padStart(2, '0') + 'h'; }
 
 function duracao(minutos) {
+    if (minutos === null || minutos === undefined) return 'Sem dados';
     if (minutos > 0 && minutos < 1) return numero(minutos * 60) + ' s';
     var total = Math.round(minutos);
     return Math.floor(total / 60) + 'h ' + String(total % 60).padStart(2, '0') + 'min';
@@ -98,6 +101,8 @@ async function carregarDados() {
 // 2. CABEÇALHO E FILTROS
 // ============================================================
 function atualizarDashboard() {
+    var contexto = dados.servidor.id + ':' + dados.periodo.dias;
+    if (contexto !== contextoFiltros) { escolhasManuais = {}; contextoFiltros = contexto; }
     var servidor = dados.servidor;
     var dias = dados.periodo.dias_com_coleta;
 
@@ -105,14 +110,16 @@ function atualizarDashboard() {
 
     // Seletores: só componentes monitorados · padrão = componente com mais tempo em atenção
     var opcoes = servidor.componentes.map(function (c) { return { valor: c, texto: nome(c) }; });
-    preencherSelect('componente_horario', opcoes, dados.padrao.componente);
-    preencherSelect('componente_calor', opcoes, dados.padrao.componente);
+    preencherSelect('componente_horario', opcoes, escolhasManuais['componente_horario'] ? undefined : dados.padrao.componente);
+    preencherSelect('componente_calor', opcoes, escolhasManuais['componente_calor'] ? undefined : dados.padrao.componente);
     preencherSelect('componente_ranking', [{ valor: 'todos', texto: 'Comparar todos' }].concat(opcoes), 'todos');
     var opcoesProcessos = [{ valor: 'cpu', texto: nome('cpu') }, { valor: 'ram', texto: nome('ram') }];
-    preencherSelect('componente_lider', opcoesProcessos, dados.padrao.processo);
-    preencherSelect('componente_processos', opcoesProcessos, dados.padrao.processo);
+    preencherSelect('componente_lider', opcoesProcessos, escolhasManuais['componente_lider'] ? undefined : dados.padrao.processo);
+    preencherSelect('componente_processos', opcoesProcessos, escolhasManuais['componente_processos'] ? undefined : dados.padrao.processo);
     preencherSelect('dia', [{ valor: 'periodo', texto: 'Período todo' }]
         .concat(dias.map(function (d) { return { valor: d, texto: 'Dia ' + dataCurta(d) }; })), 'periodo');
+
+    preencherSelect('periodo_importante', Object.keys(NOMES_CURTOS).map(function (p) { return { valor: p, texto: NOMES_CURTOS[p] + (p === 'almoco' ? ' 12h–14h' : p === 'jantar' ? ' 18h–20h' : '') + (dados.aumento[p].suficiente ? '' : ' · sem base') }; }), escolhasManuais.periodo_importante && dados.aumento[elemento('periodo_importante').value] && dados.aumento[elemento('periodo_importante').value].suficiente ? undefined : dados.padrao.periodo);
 
     texto('modo_dados', dados.fonte === 'local' ? 'Dados locais' : 'Dados do S3');
     texto('fonte_texto', (dados.fonte === 'local' ? 'Gold local' : 'Gold no S3') + ' · gerada em ' +
@@ -122,7 +129,7 @@ function atualizarDashboard() {
         ? 'Janela: ' + dataCurta(dados.periodo.inicio) + ' a ' + dataCurta(dados.periodo.fim) + '/' + dados.periodo.fim.slice(0, 4) + ' · horário de São Paulo'
         : 'Sem histórico para este servidor');
     texto('estado_dados', dados.coleta.amostras
-        ? servidor.nome + ' · ' + duracao(dados.coleta.minutos) + ' monitoradas · ' + dias.length + ' dias com coleta'
+        ? servidor.nome + ' · ' + duracao(dados.coleta.minutos) + ' monitoradas · ' + dias.length + ' dias com coleta · limites atuais nas duas janelas'
         : 'Servidor cadastrado no banco, mas sem histórico na Gold. Execute a captura deste equipamento e depois o ETL.');
 
     // Faixa com os limites do cadastro
@@ -141,7 +148,7 @@ function atualizarDashboard() {
     atualizarKpis();
     atualizarRanking();
     atualizarCalor();
-    atualizarPontuacao();
+    atualizarComparacao();
     atualizarProcessos();
 }
 
@@ -163,6 +170,7 @@ function atualizarKpis() {
         sub = duracao(maior.atencao) + ' em atenção · ' + percentual(maior.percentual) + ' do tempo';
     }
     texto('kpi_componente_tempo', sub);
+    colorirKpi('kpi_componente', !maior ? '' : maior.atencao > 0 ? 'atencao' : 'ok');
 
     atualizarAumento();
 
@@ -176,6 +184,7 @@ function atualizarKpis() {
         texto('kpi_horario_dias', h && h.observado ? 'Sem atenção observada' : 'Sem coleta válida');
     }
 
+    colorirKpi('kpi_horario', h && h.observado ? h.horario ? 'atencao' : 'ok' : '');
     atualizarLideres();
 }
 
@@ -185,16 +194,21 @@ function atualizarLideres() {
     texto('lider_fora', processos.lider_fora ? processos.lider_fora.nome + ' — ' + percentual(processos.lider_fora.valor) : 'Sem dados');
 }
 
+function colorirKpi(id, estado) {
+    var card = elemento(id).closest('.card_kpi');
+    card.classList.remove('status_ok', 'status_atencao', 'status_critico');
+    if (estado) card.classList.add('status_' + estado);
+}
+
 function atualizarAumento() {
-    var periodo = elemento('periodo_importante').value;
-    var resultado = dados.aumento[periodo];
+    var resultado = dados.aumento[elemento('periodo_importante').value];
     var maior = resultado.maior;
-    texto('kpi_aumento', !resultado.suficiente ? 'Sem comparação' : !maior ? 'Sem aumento' : nome(maior.componente));
+    texto('kpi_aumento', !resultado.suficiente ? 'Sem dados suficientes' : !maior ? 'Sem aumento' : nome(maior.componente));
     texto('kpi_aumento_valor', maior ? '+' + numero(maior.diferenca) + ' p.p.' : '—');
-    texto('kpi_aumento_sub', maior
-        ? percentual(maior.dentro) + ' no período × ' + percentual(maior.fora) + ' fora'
-        : resultado.suficiente ? 'Nenhum componente aumentou a média'
-        : 'Mínimo de ' + resultado.minutos_minimos + ' min dentro e fora');
+    texto('kpi_aumento_sub', maior ? percentual(maior.dentro) + ' no período vs ' + percentual(maior.fora) + ' fora'
+        : resultado.suficiente ? 'Nenhum componente aumentou a média' : 'Mínimo de ' + resultado.minutos_minimos + ' min dentro e fora');
+    colorirKpi('kpi_aumento', !resultado.suficiente ? '' : maior ? 'critico' : 'ok');
+    elemento('kpi_aumento_valor').style.color = maior ? '#ff6e7b' : '#75bf83';
 }
 
 // ============================================================
@@ -222,51 +236,84 @@ function opcoesBase(tituloX) {
 }
 
 // ---------------- Ranking por tempo em atenção ----------------
+function percentualEstado(r, estado) {
+    return r && r.observado && r[estado] !== null && (estado !== 'critico' || r.critico_configurado !== false)
+        ? 100 * r[estado] / r.observado : null;
+}
+
+// Uma marca por componente: a referência é o período anterior, não um SLA.
+var pluginReferencia = {
+    id: 'referenciaHistorica',
+    afterDatasetsDraw: function (grafico) {
+        var dataset = grafico.data.datasets[0];
+        var ctx = grafico.ctx;
+        ctx.save();
+        grafico.getDatasetMeta(0).data.forEach(function (barra, i) {
+            var anterior = dataset.anteriores[i];
+            if (anterior !== null) {
+                var x = grafico.scales.x.getPixelForValue(anterior);
+                ctx.strokeStyle = '#eee5ff'; ctx.lineWidth = 2; ctx.setLineDash([3, 3]);
+                ctx.beginPath(); ctx.moveTo(x, barra.y - 15); ctx.lineTo(x, barra.y + 15); ctx.stroke();
+            }
+            ctx.setLineDash([]); ctx.fillStyle = '#e7e3f3'; ctx.font = '12px sans-serif'; ctx.textBaseline = 'middle';
+            var fimBarra = Number.isFinite(barra.x) ? barra.x : grafico.scales.x.getPixelForValue(0);
+            ctx.fillText(dataset.rotulos[i], fimBarra + 7, barra.y);
+        });
+        ctx.restore();
+    }
+};
+
 function atualizarRanking() {
     var dia = elemento('dia').value;
     var escolhido = elemento('componente_ranking').value;
+    var estado = elemento('estado_ranking').value;
     var porComponente = dados.ranking[dia] || {};
-    texto('ranking_resumo', (dia === 'periodo' ? 'Período completo' : dataCurta(dia)) + ' · vermelho = crítico');
-
-    var lista = [];
-    for (var i = 0; i < dados.servidor.componentes.length; i++) {
-        var c = dados.servidor.componentes[i];
-        if (escolhido !== 'todos' && escolhido !== c) continue;
-        var r = porComponente[c];
-        lista.push({ c: c, r: r && r.observado ? r : null });
-    }
-    lista.sort(function (a, b) { return (b.r ? b.r.atencao : 0) - (a.r ? a.r.atencao : 0); });
-
-    var opcoes = opcoesBase('Minutos acumulados em atenção');
-    opcoes.scales.x.stacked = true;
-    opcoes.scales.y.stacked = true;
-    criarGrafico('grafico_ranking', {
-        type: 'bar',
-        data: {
-            labels: lista.map(function (item) { return nome(item.c); }),
-            datasets: [
-                {
-                    label: 'Atenção sem crítico',
-                    data: lista.map(function (item) { return item.r ? item.r.atencao - item.r.critico : null; }),
-                    backgroundColor: lista.map(function (item) { return cores[item.c]; }),
-                    maxBarThickness: 28
-                },
-                {
-                    label: 'Crítico',
-                    data: lista.map(function (item) { return item.r ? item.r.critico : null; }),
-                    backgroundColor: '#FF5C5C',
-                    maxBarThickness: 28
-                }
-            ]
-        },
-        options: opcoes
+    var anterior = dados.ranking_anterior[dia] || {};
+    var cor = estado === 'critico' ? '#ff6e7b' : '#f3bd4f';
+    texto('titulo_ranking', estado === 'critico' ? 'Tempo em crítico' : 'Tempo em atenção');
+    texto('ranking_resumo', 'Mesmo servidor · ' + dados.periodo.dias + ' dias selecionados vs ' + dados.periodo.dias + ' dias anteriores' + (dia !== 'periodo' ? ' · dia ' + dataCurta(dia) : ''));
+    elemento('legenda_estado').style.color = cor;
+    var lista = dados.servidor.componentes.filter(function (c) { return escolhido === 'todos' || escolhido === c; }).map(function (c) {
+        return { c: c, r: porComponente[c], anterior: anterior[c], valor: percentualEstado(porComponente[c], estado), referencia: percentualEstado(anterior[c], estado) };
     });
-
+    lista.sort(function (a, b) { return (b.valor || 0) - (a.valor || 0); });
+    var opcoes = opcoesBase('Percentual do tempo monitorado');
+    opcoes.layout = { padding: { right: 112 } };
+    var maximo = Math.max.apply(null, [1].concat(lista.map(function (item) { return Math.max(item.valor || 0, item.referencia || 0); })));
+    opcoes.scales.x.min = 0;
+    opcoes.scales.x.max = Math.min(100, Math.ceil(maximo * 1.15));
+    opcoes.scales.x.ticks.callback = function (v) { return v + '%'; };
+    opcoes.plugins.legend.display = false;
+    opcoes.plugins.tooltip = {
+        callbacks: {
+            label: function (ctx) {
+                var item = lista[ctx.dataIndex];
+                return ['Período Selecionado: ' + (item.valor === null ? 'Sem coleta' : duracao(item.r[estado]) + ' · ' + percentual(item.valor)),
+                'Anterior: ' + (item.referencia === null ? 'Sem coleta' : duracao(item.anterior[estado]) + ' · ' + percentual(item.referencia))];
+            }
+        }
+    };
+    criarGrafico('grafico_ranking', {
+        type: 'bar', data: {
+            labels: lista.map(function (item) { return nome(item.c); }),
+            datasets: [{
+                label: 'Período Selecionado', data: lista.map(function (item) { return item.valor; }),
+                anteriores: lista.map(function (item) { return item.referencia; }),
+                rotulos: lista.map(function (item) { return item.valor === null ? 'Sem coleta' : duracao(item.r[estado]) + ' · ' + percentual(item.valor); }),
+                backgroundColor: cor, maxBarThickness: 22
+            }]
+        }, options: opcoes, plugins: [pluginReferencia]
+    });
     preencherTabela('ranking_tabela', lista.map(function (item) {
-        var r = item.r;
-        if (!r) return [nome(item.c), 'Sem coleta', '—', '—', '—'];
-        return [nome(item.c), duracao(r.atencao), duracao(r.critico), r.entradas_criticas, r.hora !== null ? faixaHora(r.hora) : '—'];
+        var diferenca = item.valor !== null && item.referencia !== null ? item.valor - item.referencia : null;
+        return [nome(item.c), item.valor === null ? 'Sem coleta' : duracao(item.r[estado]) + ' · ' + percentual(item.valor),
+        item.referencia === null ? 'Sem histórico' : duracao(item.anterior[estado]) + ' · ' + percentual(item.referencia),
+        diferenca === null ? '—' : (diferenca > 0 ? '+' : '') + numero(diferenca) + ' p.p.'];
     }));
+    elemento('ranking_tabela').querySelectorAll('tr').forEach(function (tr, i) {
+        var item = lista[i];
+        if (item.valor !== null && item.referencia !== null) tr.lastChild.className = item.valor > item.referencia ? 'status_critico' : item.valor < item.referencia ? 'status_ok' : '';
+    });
 }
 
 // ---------------- Mapa de calor (ECharts) ----------------
@@ -332,124 +379,58 @@ function atualizarCalor() {
     }, true);
 }
 
-// ---------------- Pontuação: atual (esquerda) × melhor (direita) ----------------
-
-// Escreve a nota no fim de cada barra, ou o aviso quando não há barra
-var pluginRotulos = {
-    id: 'rotulosPontuacao',
-    afterDatasetsDraw: function (grafico) {
-        var ctx = grafico.ctx;
-        var meio = grafico.scales.x.getPixelForValue(0);
-        ctx.save();
-        ctx.font = 'bold 14px sans-serif';
-        ctx.textBaseline = 'middle';
-        grafico.data.datasets.forEach(function (dataset, lado) {
-            grafico.getDatasetMeta(lado).data.forEach(function (barra, i) {
-                var valor = dataset.data[i];
-                var aviso = dataset.avisos[i];
-                ctx.textAlign = lado === 0 ? 'right' : 'left';
-                if (valor !== null) {
-                    ctx.fillStyle = '#E7E5F0';
-                    ctx.fillText(nota(Math.abs(valor)), barra.x + (lado === 0 ? -6 : 6), barra.y);
-                } else if (aviso) {
-                    ctx.fillStyle = '#8B869B';
-                    ctx.fillText(aviso, meio + (lado === 0 ? -6 : 6), barra.y);
-                }
-            });
-        });
-        ctx.restore();
-    }
-};
-
-// Nota de um componente (ou "geral") e o aviso quando ela não existe
-function notaDe(servidor, c) {
-    if (!servidor) return { valor: null, aviso: '' };
-    if (c === 'geral') return { valor: servidor.total, aviso: '' };
-    if (servidor.componentes[c] === undefined) return { valor: null, aviso: 'não monitorado' };
-    if (servidor.componentes[c] === null) return { valor: null, aviso: 'sem histórico' };
-    return { valor: servidor.componentes[c].nota, aviso: '' };
-}
-
-function atualizarPontuacao() {
-    var p = dados.pontuacao;
-    var atual = p.atual;
-    var comparado = p.comparado;
-    var rotuloComparado = 'Melhor';
-
-    texto('pontuacao_nome_atual', 'Atual · ' + atual.nome);
-    texto('pontuacao_nome_comparado', comparado ? rotuloComparado + ' · ' + comparado.nome : 'Melhor servidor');
-    texto('pontuacao_atual', nota(atual.total));
-    texto('pontuacao_comparado', comparado ? nota(comparado.total) : '—');
-    var diferenca = comparado && atual.total !== null ? atual.total - comparado.total : null;
-    texto('pontuacao_diferenca', diferenca === null ? '—' : (diferenca > 0 ? '+' : '') + nota(diferenca) + ' pts');
-
-    var resumo;
-    if (atual.total === null) resumo = 'Selecionado sem histórico';
-    else if (!atual.historico_suficiente) resumo = 'Histórico curto · mínimo ' + p.minutos_minimos + ' min para o ranking';
-    else if (p.atual_e_melhor) resumo = 'O selecionado é o melhor · diferença zero';
-    else if (!comparado) resumo = 'Sem servidor elegível para comparar';
-    else resumo = 'Nota de saúde · maior é melhor';
-    texto('pontuacao_resumo', resumo);
-    texto('pontuacao_perda', p.maior_perda
-        ? 'Maior perda: ' + nome(p.maior_perda.componente) + ' · ' + NOMES_CRITERIOS[p.maior_perda.criterio]
-        : '');
-
-    // Linhas = componentes de qualquer um dos dois servidores + Geral
-    var linhas = [];
-    var todos = ['cpu', 'ram', 'disco', 'rede'];
-    for (var i = 0; i < todos.length; i++) {
-        var c = todos[i];
-        if (atual.componentes[c] !== undefined || (comparado && comparado.componentes[c] !== undefined)) linhas.push(c);
-    }
-    linhas.push('geral');
-
-    var notasAtual = linhas.map(function (c) { return notaDe(atual, c); });
-    var notasComparado = linhas.map(function (c) { return notaDe(comparado, c); });
-
-    var opcoes = opcoesBase('Selecionado ← Nota de saúde → Melhor');
-    opcoes.scales.x.stacked = true;
-    opcoes.scales.y.stacked = true;
-    // Eixo até 125 para caber o número no fim da barra; marcas só até 100
-    opcoes.scales.x.min = -125;
-    opcoes.scales.x.max = 125;
-    opcoes.scales.x.ticks.stepSize = 25;
-    opcoes.scales.x.ticks.callback = function (v) { return Math.abs(v) > 100 ? '' : Math.abs(v); };
-    opcoes.plugins.tooltip = { callbacks: { label: function (ctx) { return ctx.dataset.label + ': ' + nota(Math.abs(ctx.raw)); } } };
-
-    criarGrafico('grafico_pontuacao', {
-        type: 'bar',
-        data: {
-            labels: linhas.map(function (c) { return c === 'geral' ? 'Geral' : nome(c); }),
-            datasets: [
-                {
-                    label: 'Selecionado',
-                    // valores negativos = barra para a esquerda
-                    data: notasAtual.map(function (n) { return n.valor === null ? null : -n.valor; }),
-                    avisos: notasAtual.map(function (n) { return n.aviso; }),
-                    backgroundColor: '#5178F9', maxBarThickness: 22
-                },
-                {
-                    label: comparado ? 'Melhor' : 'Sem comparação',
-                    data: notasComparado.map(function (n) { return n.valor; }),
-                    avisos: notasComparado.map(function (n) { return n.aviso; }),
-                    backgroundColor: '#6FE0FF', maxBarThickness: 22
-                }
-            ]
-        },
-        options: opcoes,
-        plugins: [pluginRotulos]
+// Evolução do MESMO servidor: janela selecionada vs imediatamente anterior.
+function atualizarComparacao() {
+    var p = dados.comparacao;
+    var critico = medidaComparacao === 'critico';
+    var atual = critico ? p.atual.critico_percentual : p.atual[medidaComparacao];
+    var anterior = critico ? p.anterior.critico_percentual : p.anterior[medidaComparacao];
+    var unidade = critico ? '%' : ' p.p.';
+    texto('comparacao_resumo', 'Mesmo servidor · ' + dados.periodo.dias + ' dias selecionados vs ' + dados.periodo.dias + ' dias anteriores');
+    var opcoes = opcoesBase(critico ? 'Tempo monitorado em crítico (%)' : 'Desvio padrão (p.p.)');
+    opcoes.plugins.legend.display = false;
+    opcoes.scales.x.min = 0;
+    opcoes.layout = { padding: { right: 116 } };
+    opcoes.plugins.tooltip = {
+        callbacks: {
+            label: function (ctx) {
+                var r = ctx.dataIndex === 0 ? p.atual : p.anterior;
+                return ctx.raw === null ? 'Sem dados' : numero(ctx.raw) + unidade + (critico ? ' · ' + duracao(r.critico_minutos) : '');
+            }
+        }
+    };
+    criarGrafico('grafico_comparacao', {
+        type: 'bar', data: {
+            labels: ['Período Selecionado', 'Anterior'], datasets: [{
+                data: [atual, anterior], anteriores: [null, null],
+                rotulos: [atual, anterior].map(function (v, i) { return v === null ? 'Sem dados' : numero(v) + unidade + (critico ? ' · ' + duracao((i === 0 ? p.atual : p.anterior).critico_minutos) : ''); }),
+                backgroundColor: ['#5178f9', '#6fe0ff'], maxBarThickness: 28
+            }]
+        }, options: opcoes, plugins: [pluginReferencia]
     });
+    var diferenca = atual !== null && anterior !== null ? atual - anterior : null;
+    var descricao = critico ? 'tempo crítico' : 'oscilação';
+    texto('comparacao_variacao', diferenca === null ? 'Sem histórico suficiente para comparar' :
+        (diferenca > 0 ? '+' : '') + numero(diferenca) + ' p.p. · ' + (diferenca > 0 ? 'mais ' : diferenca < 0 ? 'menos ' : 'mesmo nível de ') + descricao);
+    elemento('comparacao_variacao').className = 'variacao ' + (critico && diferenca !== null ? diferenca > 0 ? 'status_critico' : diferenca < 0 ? 'status_ok' : '' : '');
+    texto('comparacao_nota', critico ? 'Qualquer recurso crítico · sobreposições contam uma vez' : 'Desvio padrão · menor = menos variação');
+    var coberturaAtual = critico ? p.atual.cobertura : p.atual['cobertura_' + medidaComparacao];
+    var coberturaAnterior = critico ? p.anterior.cobertura : p.anterior['cobertura_' + medidaComparacao];
+    texto('comparacao_cobertura', 'Anterior: ' + dataCurta(p.periodo_anterior.inicio) + ' a ' + dataCurta(p.periodo_anterior.fim) +
+        ' · cobertura: ' + percentual(coberturaAtual) + ' vs ' + percentual(coberturaAnterior) +
+        (coberturaAtual !== coberturaAnterior ? ' · coberturas diferentes' : ''));
+    document.querySelectorAll('[data-medida]').forEach(function (botao) { botao.setAttribute('aria-pressed', String(botao.dataset.medida === medidaComparacao)); });
 }
 
-// ---------------- Processos: período importante × demais horários ----------------
+// ---------------- Processos: período importante vs demais horários ----------------
 function atualizarProcessos() {
     var componente = elemento('componente_processos').value;
     var resultado = dados.processos[componente];
     var lista = resultado.lista;
 
-    texto('titulo_processos', 'Processos · dias úteis × fim de semana');
+    texto('titulo_processos', 'Processos · dias úteis vs fim de semana');
     texto('coluna_dentro', 'Dias úteis');
-    texto('processos_unidade', nome(componente) + ' médio (%) · seg–sex × sáb–dom');
+    texto('processos_unidade', nome(componente) + ' médio (%) · seg–sex vs sáb–dom');
 
     criarGrafico('grafico_processos', {
         type: 'bar',
@@ -475,7 +456,7 @@ function atualizarProcessos() {
     var sugestao = !resultado.minutos_uteis || !resultado.minutos_fim_semana
         ? 'Comparação incompleta: faltam processos em um dos grupos.'
         : 'Dias úteis: ' + duracao(resultado.minutos_uteis) + ' · fim de semana: ' + duracao(resultado.minutos_fim_semana);
-    texto('sugestao_texto', sugestao);
+    texto('sugestao_texto', sugestao + ' · Médias dos processos registrados na Gold; ausência não conta como zero.');
 }
 
 // ============================================================
@@ -497,28 +478,12 @@ elemento('estado_calor').addEventListener('change', function () { if (dados) atu
 elemento('componente_processos').addEventListener('change', function () { if (dados) atualizarProcessos(); });
 window.addEventListener('resize', function () { if (calor) calor.resize(); });
 
-// ---------------- Menu lateral e sair ----------------
-function alternarMenu(abrir) {
-    elemento('menu_lateral').classList.toggle('menu_aberto', abrir);
-    elemento('menu_fundo').classList.toggle('menu_aberto', abrir);
-    elemento('menu_lateral').inert = !abrir;
-    elemento('menu_lateral').setAttribute('aria-hidden', String(!abrir));
-    elemento('botao_menu').setAttribute('aria-expanded', String(abrir));
-    document.body.classList.toggle('menu_travado', abrir);
-}
-elemento('botao_menu').addEventListener('click', function () { alternarMenu(true); });
-elemento('menu_fechar').addEventListener('click', function () { alternarMenu(false); });
-elemento('menu_fundo').addEventListener('click', function () { alternarMenu(false); });
-document.addEventListener('keydown', function (e) { if (e.key === 'Escape') alternarMenu(false); });
-
-elemento('sair_dashboard').addEventListener('click', async function (evento) {
-    evento.preventDefault();
-    try {
-        var resposta = await fetch('/sessao/sair', { method: 'POST', credentials: 'same-origin' });
-        if (!resposta.ok) throw new Error('Não foi possível encerrar a sessão.');
-        localStorage.removeItem('usuarioLogado');
-        window.location.href = './login.html';
-    } catch (erro) { mostrarErro(erro.message); }
+// Menu, perfil e saída são os mesmos das outras páginas (menu.js / sessao.js).
+elemento('estado_ranking').addEventListener('change', function () { if (dados) atualizarRanking(); });
+document.querySelectorAll('[data-medida]').forEach(function (botao) {
+    botao.addEventListener('click', function () { medidaComparacao = botao.dataset.medida; if (dados) atualizarComparacao(); });
 });
-
+['periodo_importante', 'componente_horario', 'componente_calor', 'componente_lider', 'componente_processos'].forEach(function (id) {
+    elemento(id).addEventListener('change', function () { escolhasManuais[id] = true; });
+});
 carregarDados();

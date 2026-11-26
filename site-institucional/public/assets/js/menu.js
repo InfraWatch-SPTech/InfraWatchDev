@@ -1,6 +1,7 @@
 var menuItens = [
     { rota: 'inicio', icone: 'fa-house', texto: 'Início' },
     { rota: 'dashboard_empresa', icone: 'fa-chart-line', texto: 'Dashboard empresa' },
+    { rota: 'dashboard_analitica_padroes', icone: 'fa-chart-column', texto: 'Histórico e padrões', permissoes: ['DASHBOARD_PADROES_VISUALIZAR', 'DASHBOARD_SERVIDOR_VISUALIZAR', 'DASHBOARD_GERAL_VISUALIZAR'] },
     // { rota: 'dashboard_servidor', icone: 'fa-server', texto: 'Dashboard servidor' },
     { rota: 'hardwares', icone: 'fa-gear', texto: 'Gerenciar servidores' },
     { rota: 'usuarios', icone: 'fa-users', texto: 'Gerenciar funcionários', restrito: true },
@@ -83,6 +84,11 @@ function montarMenu() {
         const item = menuItens[i];
 
         if (item.restrito && !usuarioPodeGerenciarUsuarios(usuario)) {
+            continue;
+        }
+
+        if (item.permissoes && nivelUsuario(usuario) !== 'Root' &&
+            !item.permissoes.some(function (permissao) { return usuarioPossuiPermissao(usuario, permissao); })) {
             continue;
         }
 
