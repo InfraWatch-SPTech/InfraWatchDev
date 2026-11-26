@@ -45,19 +45,29 @@ async function lerArquivo(partes) {
     var pastaLocal = process.env.DIRETORIO_GOLD_LOCAL;
     if (!pastaLocal) {
         var prefixo = (process.env.S3_PREFIX_GOLD || 'gold/').replace(/^\/+|\/+$/g, '');
-        var chave = (prefixo ? prefixo + '/' : '') + partes.join('/');
-        try { return await s3.lerJson(chave); }
-        catch (erro) {
-            if (erro.status === 404) return null;
-            throw erro;
-        }
+        var pasta = (prefixo ? prefixo + '/' : '') + partes.join('/') + '/';
+        return s3.lerDashboardMaisRecente(pasta);
     }
 
     // A pasta local representa a raiz da Gold e deve ficar fora de public.
-    var caminho = require('path').resolve(pastaLocal, ...partes);
+    var path = require('path');
+    var pastaEquipamento = path.resolve(pastaLocal, ...partes);
     var fs = require('fs/promises');
     var conteudo;
     try {
+        var entradas = await fs.readdir(pastaEquipamento, { withFileTypes: true });
+        var ultimo = null;
+        for (var i = 0; i < entradas.length; i++) {
+            var entrada = entradas[i];
+            if (!entrada.isFile() ||
+                !/^dashboard_\d{4}[-_]\d{2}[-_]\d{2}_\d{2}-\d{2}-\d{2}\.json$/.test(entrada.name)) continue;
+            var infoArquivo = await fs.stat(path.join(pastaEquipamento, entrada.name));
+            if (!ultimo || infoArquivo.mtimeMs > ultimo.modificado ||
+                (infoArquivo.mtimeMs === ultimo.modificado && entrada.name > ultimo.nome)) {
+                ultimo = { nome: entrada.name, modificado: infoArquivo.mtimeMs };
+            }
+        }
+        var caminho = path.join(pastaEquipamento, ultimo ? ultimo.nome : 'dashboard.json');
         var info = await fs.stat(caminho);
         if (info.size > 25 * 1024 * 1024) {
             throw criarErro(503, 'Gold acima de 25 MB.');
@@ -92,7 +102,7 @@ async function lerGold(idEmpresa) {
     for (var i = 0; i < cadastrados.length; i++) {
         var id = String(cadastrados[i].idEquipamento);
         if (!/^\d+$/.test(id)) throw criarErro(502, 'Equipamento inválido no cadastro.');
-        var arquivo = await lerArquivo([nomeEmpresa, id, 'dashboard.json']);
+        var arquivo = await lerArquivo([nomeEmpresa, id]);
         if (arquivo === null) continue; // Equipamento ainda sem Gold.
 
         if (String(arquivo.empresa_id) !== String(idEmpresa) || !Array.isArray(arquivo.amostras)) {
