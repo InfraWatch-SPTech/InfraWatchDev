@@ -1,0 +1,145 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Previsibilidade e capacidade | InfraWatch</title>
+  <link rel="stylesheet" href="./assets/css/global.css">
+  <link rel="stylesheet" href="./assets/css/menu.css">
+  <link rel="stylesheet" href="./assets/css/dashboard-previsibilidade.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.3.1/css/all.min.css" integrity="sha512-QeR2VH+lsBE5LSAe1Q5EnTBbe7XTBubt8dG93Y7gidSgdMCr8nVqKcfKAMyN96SV8KDbZVTDXChatu5G2KQGzg==" crossorigin="anonymous" referrerpolicy="no-referrer">
+</head>
+<body>
+  <header class="dashboard_header">
+    <a class="header_logo" href="./main.html">Infra<span>Watch</span></a>
+      <span class="dashboard_tag">Dados de previsibilidade</span>
+  </header>
+  <main class="previsibilidade">
+    <header class="topo">
+      <div><h1>Previsibilidade e capacidade</h1>
+        <p id="contexto-servidor">Selecione um servidor para carregar os dados de previsibilidade do Gold.</p>
+      </div>
+      <div class="topo-acoes">
+        <div class="sla" id="status-sla"><span class="status-ponto"></span><strong id="status-sla-texto">SLA: aguardando dados do Gold</strong></div>
+        <button class="botao-modo-tv" id="alternar-modo-tv" type="button" aria-pressed="false" aria-label="Entrar em modo TV">
+          <i class="fa-solid fa-expand" aria-hidden="true"></i><span>Modo TV</span>
+        </button>
+      </div>
+    </header>
+
+    <section class="painel seletor-servidor" aria-labelledby="titulo-servidor">
+      <div class="seletor-servidor-campo">
+        <label id="titulo-servidor" for="servidor-em-analise">Servidor em análise</label>
+        <select id="servidor-em-analise" disabled>
+          <option value="">Carregando servidores...</option>
+        </select>
+        <p id="mensagem-servidor" class="mensagem-servidor" role="status" aria-live="polite">Verificando sessão...</p>
+      </div>
+      <div id="servidor-resumo" class="servidor-resumo" aria-live="polite">
+        <span class="resumo-placeholder">Selecione um servidor para ver os dados de identificação.</span>
+      </div>
+      <div id="limites-servidor" class="limites-servidor" aria-live="polite"></div>
+    </section>
+
+    <section class="painel resumo-executivo resumo-executivo--indisponivel" aria-labelledby="titulo-resumo-executivo" aria-live="polite" aria-atomic="true">
+      <div class="resumo-executivo-sinal" aria-hidden="true"></div>
+      <div class="resumo-executivo-conteudo">
+        <p class="resumo-executivo-legenda">Leitura executiva</p>
+        <h2 id="titulo-resumo-executivo">Aguardando dados do servidor</h2>
+        <p id="texto-resumo-executivo">Selecione um servidor para identificar riscos de capacidade.</p>
+        <div id="contexto-resumo-executivo" class="contexto-resumo-executivo"></div>
+      </div>
+    </section>
+
+    <section class="kpis" aria-label="Indicadores principais">
+      <article class="painel kpi"><h2>Ocupação do limite crítico</h2><strong id="kpi-maior-uso" class="azul">—</strong><p id="kpi-maior-uso-descricao">Selecione um servidor.</p></article>
+      <article class="painel kpi"><h2>Próximo limite crítico</h2><strong id="kpi-proximo-limite" class="azul">N/D</strong><p id="kpi-proximo-limite-descricao">Selecione um servidor.</p></article>
+      <article class="painel kpi"><h2>Requisições avaliadas</h2><strong id="kpi-requisicoes" class="azul">N/D</strong><p id="kpi-requisicoes-descricao">Selecione um servidor.</p></article>
+      <article class="painel kpi"><h2>SLA / indisponibilidade</h2><strong id="kpi-sla" class="azul">N/D</strong><p id="kpi-sla-descricao">O Gold não fornece essa métrica.</p></article>
+    </section>
+
+    <div id="aviso-amostras" class="aviso-amostras" role="status" aria-live="polite"></div>
+
+    <section class="recursos-tv" aria-label="Tendências individuais de CPU, memória e disco">
+      <article class="bloco tendencia-tv-card">
+        <h2>CPU <span class="runway-sinal runway-sinal--indisponivel" data-status-componente="cpu" hidden></span></h2>
+        <div class="painel grafico">
+          <div class="grafico-contexto" id="contexto-tendencia-tv-cpu"></div>
+          <div class="grafico-visual"><canvas id="grafico-tendencia-tv-cpu" aria-label="Histórico e previsão de CPU"></canvas><div class="estado-grafico" id="estado-grafico-tendencia-tv-cpu" role="status" aria-live="polite" hidden></div></div>
+        </div>
+      </article>
+      <article class="bloco tendencia-tv-card">
+        <h2>Memória RAM <span class="runway-sinal runway-sinal--indisponivel" data-status-componente="ram" hidden></span></h2>
+        <div class="painel grafico">
+          <div class="grafico-contexto" id="contexto-tendencia-tv-ram"></div>
+          <div class="grafico-visual"><canvas id="grafico-tendencia-tv-ram" aria-label="Histórico e previsão de memória RAM"></canvas><div class="estado-grafico" id="estado-grafico-tendencia-tv-ram" role="status" aria-live="polite" hidden></div></div>
+        </div>
+      </article>
+      <article class="bloco tendencia-tv-card">
+        <h2>Disco <span class="runway-sinal runway-sinal--indisponivel" data-status-componente="disco" hidden></span></h2>
+        <div class="painel grafico">
+          <div class="grafico-contexto" id="contexto-tendencia-tv-disco"></div>
+          <div class="grafico-visual"><canvas id="grafico-tendencia-tv-disco" aria-label="Histórico e previsão de uso do disco"></canvas><div class="estado-grafico" id="estado-grafico-tendencia-tv-disco" role="status" aria-live="polite" hidden></div></div>
+        </div>
+      </article>
+    </section>
+
+    <section class="analises">
+      <article class="bloco tendencia">
+        <h2>Tendência e previsão de saturação</h2>
+        <div class="grafico-controles" role="group" aria-label="Componente exibido">
+          <button class="seletor ativo" type="button" data-componente="cpu" aria-pressed="true"><span>CPU</span><span class="runway-sinal runway-sinal--indisponivel seletor-status" data-status-componente="cpu" hidden></span></button>
+          <button class="seletor" type="button" data-componente="ram" aria-pressed="false"><span>Memória RAM</span><span class="runway-sinal runway-sinal--indisponivel seletor-status" data-status-componente="ram" hidden></span></button>
+          <button class="seletor" type="button" data-componente="disco" aria-pressed="false"><span>Disco</span><span class="runway-sinal runway-sinal--indisponivel seletor-status" data-status-componente="disco" hidden></span></button>
+        </div>
+        <div class="painel grafico">
+          <div class="grafico-contexto" id="contexto-tendencia"></div>
+          <div class="grafico-visual">
+            <canvas id="grafico-tendencia" aria-label="Histórico e previsão de uso informados pelo Gold"></canvas>
+            <div class="estado-grafico" id="estado-grafico-tendencia" role="status" aria-live="polite" hidden></div>
+          </div>
+        </div>
+      </article>
+      <div class="coluna">
+        <article class="bloco">
+          <h2>Tempo estimado até o limite</h2>
+          <div class="painel grafico barra">
+            <div class="grafico-visual">
+              <canvas id="grafico-runway" aria-label="Dias restantes até o limite crítico"></canvas>
+              <div class="estado-grafico" id="estado-grafico-runway" role="status" aria-live="polite" hidden></div>
+            </div>
+            <div class="runway-detalhes" id="runway-detalhes"></div>
+          </div>
+        </article>
+        <article class="bloco" aria-labelledby="titulo-prioridades-operacionais">
+          <h2 id="titulo-prioridades-operacionais">Prioridades operacionais</h2>
+          <div class="painel resumo-operacional" id="resumo-operacional" aria-live="polite" aria-atomic="true"></div>
+        </article>
+      </div>
+    </section>
+
+    <section class="bloco previsao-carga" aria-labelledby="titulo-previsao-carga">
+      <h2 id="titulo-previsao-carga">Simulação de resposta à carga HTTP</h2>
+      <div class="painel grafico estresse">
+        <p class="grafico-subtitulo"><span class="periodo-teste" id="periodo-teste">Aguardando amostras</span> Relação entre requisições observadas, uso de CPU e latência; estimativa linear sobre os pontos disponíveis. As faixas representam variação estatística, não uma garantia.</p>
+        <div class="estresse-graficos">
+          <div class="grafico-estresse">
+            <span>CPU observada e estimada por regressão · limite crítico</span>
+            <div class="grafico-visual"><canvas id="grafico-previsao-cpu" aria-label="Uso de CPU observado e estimado por regressão pelo número de requisições"></canvas><div class="estado-grafico" id="estado-grafico-previsao-cpu" role="status" aria-live="polite" hidden></div></div>
+          </div>
+          <div class="grafico-estresse">
+            <span>Latência P95 e P99 observada e estimada por regressão</span>
+            <div class="grafico-visual"><canvas id="grafico-previsao-latencia" aria-label="Latências P95 e P99 observadas e estimadas por regressão pelo número de requisições"></canvas><div class="estado-grafico" id="estado-grafico-previsao-latencia" role="status" aria-live="polite" hidden></div></div>
+          </div>
+        </div>
+        <p class="ruptura-nota" id="resumo-estresse">Aguardando amostras HTTP do Gold.</p>
+      </div>
+    </section>
+
+    <section class="painel linha-tempo"><h2>Sinais e marcos de capacidade <span>(medições recentes e estimativas; nem todos são eventos cronológicos)</span></h2><div id="eventos" class="eventos"></div></section>
+    <p class="nota"><i class="fa-solid fa-circle-info" aria-hidden="true"></i> Na tendência temporal, pontos sólidos representam amostras do Gold e linhas tracejadas representam a projeção do Gold; dias intermediários podem ser interpolados. Na simulação HTTP, linhas tracejadas são estimativas por regressão linear sobre as amostras de carga e não uma previsão temporal. As faixas mostram variação estatística, não uma garantia de prazo.</p>
+  </main>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+  <script src="./assets/js/dashboard-previsibilidade.js"></script>
+</body>
+</html>

@@ -163,6 +163,19 @@ function buscarTipoEquipamento(idEquipamento, idEmpresa) {
     return database.executar(instrucaoSql);
 }
 
+function buscarEmpresaDoEquipamento(idEquipamento, idEmpresa) {
+    var instrucaoSql = `
+        SELECT e.idEmpresa, e.nome AS nomeEmpresa
+        FROM empresa e
+        JOIN equipamento eq
+            ON eq.fkEmpresa = e.idEmpresa
+        WHERE eq.idEquipamento = ${idEquipamento}
+            AND e.idEmpresa = ${idEmpresa};
+    `;
+
+    return database.executar(instrucaoSql);
+}
+
 function cadastrarEquipamento(nome, tipo, localizacao, descricao, fkEmpresa) {
     var instrucaoSql = `
         INSERT INTO equipamento
@@ -344,6 +357,7 @@ module.exports = {
     buscarAcessoUsuario,
     buscarEquipamentosEmpresa,
     buscarTipoEquipamento,
+    buscarEmpresaDoEquipamento,
     cadastrarEquipamento,
     cadastrarComponentes,
     buscarEquipamentoPorId,
