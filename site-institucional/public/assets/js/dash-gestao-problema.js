@@ -10,10 +10,11 @@ async function receberInformacoesJira() {
 
         const retornoInfosJiraConvertido = await retornoInfosJira.json();
         const issues = retornoInfosJiraConvertido;
+
+        return issues;
     } catch (e) {
         console.error("Erro ao buscar issues do Jira:", e)
     }
-
 }
 
 
