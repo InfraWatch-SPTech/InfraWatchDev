@@ -1,7 +1,8 @@
 
 var ambiente_processo = process.env.AMBIENTE_PROCESSO || 'desenvolvimento';
 
-var caminho_env = ambiente_processo === 'producao' ? '.env' : '.env.dev';
+var arquivo_env = ambiente_processo === 'producao' ? '.env' : '.env.dev';
+var caminho_env = path.join(__dirname, arquivo_env);
 
 require("dotenv").config({ path: require('path').join(__dirname, caminho_env) });
 
