@@ -11,7 +11,8 @@ var rotas = {
     usuarios: './usuarios.html',
     criar_relatorio: './relatorios.html#cadastro',
     lista_relatorios: './relatorios.html#relatorios',
-    plataformas_externas: './plataformas_externas.html'
+    plataformas_externas: './plataformas_externas.html',
+    dashboard_gestao_problemas: './dash-gestao-problemas.html'
 };
 
 function redirecionar(nome) {

@@ -36,6 +36,7 @@ var indexRouter = require("./src/routes/index");
 var usuarioRouter = require("./src/routes/usuarios");
 var hardwaresRouter = require("./src/routes/hardwares");
 var relatoriosRouter = require("./src/routes/relatorios");
+var apiJira = require("./src/routes/apiJira");
 var dashboardAnaliticaPadroesRouter = require('./src/routes/dashboard_analitica_padroes');
 
 app.use(cors());
@@ -50,6 +51,8 @@ app.use("/", indexRouter);
 app.use("/usuarios", usuarioRouter);
 app.use("/hardwares", hardwaresRouter);
 app.use("/relatorios", relatoriosRouter);
+app.use("/apiJira", apiJira);
+
 app.use('/dashboard_analitica_padroes', dashboardAnaliticaPadroesRouter);
 
 app.post('/sessao/sair', function(req, res) {
