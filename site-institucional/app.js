@@ -1,17 +1,16 @@
-
+var path = require("node:path");
 var ambiente_processo = process.env.AMBIENTE_PROCESSO || 'desenvolvimento';
 
 var arquivo_env = ambiente_processo === 'producao' ? '.env' : '.env.dev';
 var caminho_env = path.join(__dirname, arquivo_env);
 
-require("dotenv").config({ path: require('path').join(__dirname, caminho_env) });
+require("dotenv").config({ path: caminho_env });
 
 ambiente_processo = process.env.AMBIENTE_PROCESSO || ambiente_processo;
 process.env.AMBIENTE_PROCESSO = ambiente_processo;
 
 var express = require("express");
 var cors = require("cors");
-var path = require("path");
 var session = require('express-session');
 var crypto = require('crypto');
 
