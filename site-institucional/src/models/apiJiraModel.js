@@ -1,9 +1,11 @@
 function formatar(j) {
+    const campos = j.fields ?? {};
+
     return { // Colunas formatadas para recebimento do json
-        chave: j.key,
-        titulo: j.fields.summary,
-        status: j.fields.status?.name,
-        responsavel: j.fields.assignee?.displayName ?? "Sem Responsável",
+        chave: j.key ?? "",
+        titulo: campos.summary ?? "",
+        status: campos.status?.name ?? "",
+        responsavel: campos.assignee?.displayName ?? "Sem Responsável",
     };
 }
 

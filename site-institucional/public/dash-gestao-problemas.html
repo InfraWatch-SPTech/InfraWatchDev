@@ -11,7 +11,7 @@
         crossorigin="anonymous" referrerpolicy="no-referrer">
     <title>Gestão de Problemas</title>
 </head>
-<body onload="receberInformaçõesJira()">
+<body onload="receberInformacoesJira()">
     <!-- HEADER  -->
     <header>
 
@@ -56,7 +56,7 @@
                             <th>#</th>
                             <th>servidor</th>
                             <th>equipe</th>
-                            <th>risco de queda</th>
+                            <th>risco de downtime</th>
                             <th>alertas ativos</th>
                             <th>problema</th>
                             <th>ações</th>
@@ -135,7 +135,7 @@
 
         <div class="content-box grafico_saldo_indisp">
 
-            <p class="infos_kpis_nome">Orçamento de Indisponibilidade Restante (Anual)</p>
+            <p class="infos_kpis_nome">Tempo de Indisponibilidade (Anual)</p>
             <p class="grafic_disp_limite_max">Limite máximo: 8h46m</p>
             <canvas
                 id="grafico-indisp-saldo"
@@ -203,21 +203,6 @@
 
     </main>
 </body>
-<script>
-    // Teste requisição API JIRA
-    async function receberInformaçõesJira() {
-        // Código para receber maior atributo do usuário
-        const retornoInfosJira = await fetch(`/apiJira/listarIssues/`);
-        const retornoInfosJiraConvertido = await retornoInfosJira.json();
-        const repostaJira = retornoInfosJiraConvertido;
-
-        receberInformaçõesJira(repostaJira);
-
-        console.log(repostaJira);
-    }
-
-
-</script>
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script src="./assets/js/dash-gestao-problema.js"></script>
 </html>

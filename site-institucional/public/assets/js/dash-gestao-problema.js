@@ -1,4 +1,34 @@
 // ----------------------------------------------------------------------
+// API JIRA - REQUISIÇÃO E TRATAMENTO DE ALERTAS ------------------------
+// ----------------------------------------------------------------------
+async function receberInformacoesJira() {
+    // Código para receber maior atributo do usuário
+    try {        
+        const retornoInfosJira = await fetch(`/apiJira/listarIssues`);
+
+        if (!retornoInfosJira.ok) throw new Error("HTTP " + retornoInfosJira.status); // Se a resposta não estiver certa, retorna o erro
+
+        const retornoInfosJiraConvertido = await retornoInfosJira.json();
+        const issues = retornoInfosJiraConvertido;
+    } catch (e) {
+        console.error("Erro ao buscar issues do Jira:", e)
+    }
+
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+// ----------------------------------------------------------------------
 // GRÁFICO DE BARRAS - ORÇAMENTO DE INDISPONIBILIDADE ANUAL -------------
 // ----------------------------------------------------------------------
 
@@ -242,7 +272,7 @@ new Chart(ctx_disp, {
                     callback: v => v + '%',
                     color: '#5C6288',
                     precision: 0,
-                    font: { family: 'allerta', size: 14, weight: 'normal' },
+                    font: { family: 'allerta', size: 12, weight: 'normal' },
                     stepSize: 20
                 },
                 title: { 
@@ -304,8 +334,8 @@ const criticidadePrejuizo = [
         'id': 1,
         'servidor': 'SVR-01',
         'equipe': 'Equipe Alertas',
-        'criticidade_alertas': 1,
-        'prejuizo_estimado': 2,
+        'criticidade_alertas': 3,
+        'prejuizo_estimado': 3,
         'valor_prejuizo': 2000000.00
     },
     {
@@ -321,7 +351,7 @@ const criticidadePrejuizo = [
         'servidor': 'SVR-03',
         'equipe': 'Equipe Análistas',
         'criticidade_alertas': 1,
-        'prejuizo_estimado': 2,
+        'prejuizo_estimado': 1,
         'valor_prejuizo': 100000.00
     },
     {
