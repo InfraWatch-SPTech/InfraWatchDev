@@ -55,7 +55,7 @@
       <article class="painel kpi"><h2>Ocupação do limite crítico</h2><strong id="kpi-maior-uso" class="azul">—</strong><p id="kpi-maior-uso-descricao">Selecione um servidor.</p></article>
       <article class="painel kpi"><h2>Próximo limite crítico</h2><strong id="kpi-proximo-limite" class="azul">N/D</strong><p id="kpi-proximo-limite-descricao">Selecione um servidor.</p></article>
       <article class="painel kpi"><h2>Requisições avaliadas</h2><strong id="kpi-requisicoes" class="azul">N/D</strong><p id="kpi-requisicoes-descricao">Selecione um servidor.</p></article>
-      <article class="painel kpi"><h2>SLA / indisponibilidade</h2><strong id="kpi-sla" class="azul">N/D</strong><p id="kpi-sla-descricao">O Gold não fornece essa métrica.</p></article>
+      <article class="painel kpi"><h2>Taxa de falhas HTTP</h2><strong id="kpi-taxa-erros" class="azul">N/D</strong><p id="kpi-taxa-erros-descricao">Aguardando contagens de requisições do Gold.</p></article>
     </section>
 
     <div id="aviso-amostras" class="aviso-amostras" role="status" aria-live="polite"></div>
@@ -102,13 +102,12 @@
       </article>
       <div class="coluna">
         <article class="bloco">
-          <h2>Tempo estimado até o limite</h2>
+          <h2>Estado e proximidade do limite crítico</h2>
           <div class="painel grafico barra">
-            <div class="grafico-visual">
-              <canvas id="grafico-runway" aria-label="Dias restantes até o limite crítico"></canvas>
+            <div class="grafico-visual runway-visual">
+              <div class="runway-lista" id="runway-detalhes" role="list" aria-label="Situação dos limites por recurso"></div>
               <div class="estado-grafico" id="estado-grafico-runway" role="status" aria-live="polite" hidden></div>
             </div>
-            <div class="runway-detalhes" id="runway-detalhes"></div>
           </div>
         </article>
         <article class="bloco" aria-labelledby="titulo-prioridades-operacionais">
@@ -119,25 +118,24 @@
     </section>
 
     <section class="bloco previsao-carga" aria-labelledby="titulo-previsao-carga">
-      <h2 id="titulo-previsao-carga">Simulação de resposta à carga HTTP</h2>
+      <h2 id="titulo-previsao-carga">Carga HTTP e resposta do servidor</h2>
       <div class="painel grafico estresse">
-        <p class="grafico-subtitulo"><span class="periodo-teste" id="periodo-teste">Aguardando amostras</span> Relação entre requisições observadas, uso de CPU e latência; estimativa linear sobre os pontos disponíveis. As faixas representam variação estatística, não uma garantia.</p>
+        <p class="grafico-subtitulo"><span class="periodo-teste" id="periodo-teste">Aguardando amostras</span> Relação entre volume de requisições, uso de CPU e latência. As linhas tracejadas mostram estimativas lineares; as faixas indicam variação estatística, não uma garantia.</p>
         <div class="estresse-graficos">
           <div class="grafico-estresse">
             <span>CPU observada e estimada por regressão · limite crítico</span>
-            <div class="grafico-visual"><canvas id="grafico-previsao-cpu" aria-label="Uso de CPU observado e estimado por regressão pelo número de requisições"></canvas><div class="estado-grafico" id="estado-grafico-previsao-cpu" role="status" aria-live="polite" hidden></div></div>
+            <div class="grafico-visual"><canvas id="grafico-previsao-cpu" aria-label="Uso de CPU observado e estimado por regressão pelo número de requisições em milhares"></canvas><div class="estado-grafico" id="estado-grafico-previsao-cpu" role="status" aria-live="polite" hidden></div></div>
           </div>
           <div class="grafico-estresse">
             <span>Latência P95 e P99 observada e estimada por regressão</span>
-            <div class="grafico-visual"><canvas id="grafico-previsao-latencia" aria-label="Latências P95 e P99 observadas e estimadas por regressão pelo número de requisições"></canvas><div class="estado-grafico" id="estado-grafico-previsao-latencia" role="status" aria-live="polite" hidden></div></div>
+            <div class="grafico-visual"><canvas id="grafico-previsao-latencia" aria-label="Latências P95 e P99 observadas e estimadas por regressão pelo número de requisições em milhares"></canvas><div class="estado-grafico" id="estado-grafico-previsao-latencia" role="status" aria-live="polite" hidden></div></div>
           </div>
         </div>
         <p class="ruptura-nota" id="resumo-estresse">Aguardando amostras HTTP do Gold.</p>
       </div>
     </section>
 
-    <section class="painel linha-tempo"><h2>Sinais e marcos de capacidade <span>(medições recentes e estimativas; nem todos são eventos cronológicos)</span></h2><div id="eventos" class="eventos"></div></section>
-    <p class="nota"><i class="fa-solid fa-circle-info" aria-hidden="true"></i> Na tendência temporal, pontos sólidos representam amostras do Gold e linhas tracejadas representam a projeção do Gold; dias intermediários podem ser interpolados. Na simulação HTTP, linhas tracejadas são estimativas por regressão linear sobre as amostras de carga e não uma previsão temporal. As faixas mostram variação estatística, não uma garantia de prazo.</p>
+    <p class="nota"><i class="fa-solid fa-circle-info" aria-hidden="true"></i> Na tendência temporal, pontos sólidos representam amostras do Gold e linhas tracejadas representam a projeção do Gold; dias intermediários podem ser interpolados. Na análise da carga HTTP, linhas tracejadas são estimativas por regressão linear sobre as amostras de carga, não uma previsão temporal. As faixas mostram variação estatística, não uma garantia de prazo.</p>
   </main>
   <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
   <script src="./assets/js/dashboard-previsibilidade.js"></script>
