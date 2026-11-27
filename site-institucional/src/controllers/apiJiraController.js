@@ -1,7 +1,6 @@
 const { formatar } = require('../models/apiJiraModel');
 
 const CAMPOS = ["summary", "status", "assignee", "description", "created", "resolutiondate"];
-const MAX_RESULTADOS = 50;
 
 async function listarIssues(req, res) {
     const { JIRA_DOMAIN, JIRA_EMAIL, JIRA_API_TOKEN, JIRA_PROJECT_KEY } = process.env;
@@ -16,15 +15,14 @@ async function listarIssues(req, res) {
         return res.status(400).json({ erro: "Chave de projeto inválida!" });
     }
 
-    const jql = `project = "${projeto}" AND statusCategory != Done ORDER BY created DESC`;
+    const jql = `project = "${projeto}" ORDER BY created DESC`;
 
     const params = new URLSearchParams({
         jql,
         fields: CAMPOS.join(","),
-        maxResults: String(MAX_RESULTADOS),
         expand: "changelog",
     });
-    const url = `${JIRA_DOMAIN.replace(/\/+$/, "")}/rest/api/3/search/jql?${params}&expand=changelog`;
+    const url = `${JIRA_DOMAIN.replace(/\/+$/, "")}/rest/api/3/search/jql?${params}`;
 
     try {
         const auth = Buffer.from(`${JIRA_EMAIL}:${JIRA_API_TOKEN}`).toString("base64");

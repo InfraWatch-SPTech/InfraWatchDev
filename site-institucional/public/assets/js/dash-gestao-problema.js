@@ -20,8 +20,8 @@ async function receberInformacoesJira() {
 
 async function receberInformacoesEquipes(usuarioLogado) {
 
-    const usuario = usuarioLogado ? JSON.parse(usuarioLogado) : null;
-    const idEmpresa = usuario ? usuario.idEmpresa : null;
+    const usuario = usuarioLogado ? JSON.parse(usuarioLogado) : console.error("Id do usuário não encontrado");
+    const idEmpresa = usuario ? usuario.idEmpresa : console.error("Id da empresa não encontrado");
     
     try {        
         const retornoEquipes = await fetch(`/dashGP/buscarEquipeServidores/${idEmpresa}`);
@@ -39,8 +39,7 @@ async function receberInformacoesEquipes(usuarioLogado) {
     }
 }
 
-async function tratarInformacoesJira(idComparacao) {
-    let infosJira = await receberInformacoesJira();
+async function tratarInformacoesJira(idComparacao, infosJira) {
 
     let issuesJson = []
 
@@ -81,37 +80,38 @@ async function tratarInformacoesJira(idComparacao) {
     return issuesJson;
 }
 
-function juntarEquipes(equipesServidor) {
-  const servidores = {};
+async function juntarEquipes(equipesServidor) {
+    const servidores = {};
 
-  // Adiciona os servidores individualmente na lista
-  for (const s of equipesServidor) {
-    const idEq = s.id;
+    // Adiciona os servidores individualmente na lista
+    for (const s of equipesServidor) {
+        const idEq = s.id;
 
-    if (!servidores[idEq]) {
-      servidores[idEq] = {
-        id: idEq,
-        nome: s.nome,
-        valorDowntime: s.valorDowntime,
-        equipes: []
-      };
+        if (!servidores[idEq]) {
+        servidores[idEq] = {
+            id: idEq,
+            nome: s.nome,
+            valorDowntime: s.valorDowntime,
+            equipes: []
+        };
+        }
+
+        if (!servidores[idEq].equipes.includes(s.equipe)) {
+        servidores[idEq].equipes.push(s.equipe);
+        }
     }
 
-    if (!servidores[idEq].equipes.includes(s.equipe)) {
-      servidores[idEq].equipes.push(s.equipe);
-    }
-  }
-
-  formatarEquipesServidor(Object.values(servidores));
+    await formatarEquipesServidor(Object.values(servidores));
 }
 
 async function formatarEquipesServidor(eqServidor) {
+    let infosJira = await receberInformacoesJira();
 
     let jsonServidores = []
     
     for (let i = 0; i < eqServidor.length; i++) {
         
-        let alertasServidor = await tratarInformacoesJira(eqServidor[i].id);
+        let alertasServidor = await tratarInformacoesJira(eqServidor[i].id, infosJira);
 
         let componentes = [];
 

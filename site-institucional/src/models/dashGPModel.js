@@ -8,9 +8,9 @@ function buscarEquipeServidores(idEmpresa) {
             equipa.valorDowntime AS valorDowntime, 
             equipe.nome AS equipe 
         FROM empresa AS e 
-        JOIN equipamento AS equipa ON equipa.fkEmpresa = e.idEmpresa 
-        JOIN usuario_equipamento AS ue ON ue.fkEquipamento = equipa.idEquipamento 
-        JOIN equipe ON equipe.idEquipe = ue.fkEquipe 
+        LEFT JOIN equipamento AS equipa ON equipa.fkEmpresa = e.idEmpresa 
+        LEFT JOIN usuario_equipamento AS ue ON ue.fkEquipamento = equipa.idEquipamento 
+        LEFT JOIN equipe ON equipe.idEquipe = ue.fkEquipe 
         WHERE e.idEmpresa = ${idEmpresa} 
         ORDER BY equipa.idEquipamento;
     `;
