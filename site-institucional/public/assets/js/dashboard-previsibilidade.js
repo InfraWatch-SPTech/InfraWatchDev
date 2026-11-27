@@ -946,13 +946,38 @@ function atualizarGraficoRunway() {
     const rotuloTempo = document.createElement('span');
     rotuloTempo.textContent = item.dias === null || item.dias === 0 ? estado.mensagem : 'até o cruzamento estimado';
     textoTempo.append(tempoRestante, rotuloTempo);
-    corpo.append(dial, textoTempo);
+
+    const leitura = document.createElement('div');
+    leitura.className = 'runway-leitura';
+    const atual = document.createElement('strong');
+    atual.textContent = `${formatarPercentual(item.atual)} atual`;
+    const limite = document.createElement('span');
+    limite.textContent = item.limite === null ? 'Limite não informado' : `Limite crítico ${formatarPercentual(item.limite)}`;
+    leitura.append(atual, limite);
+
+    const trilho = document.createElement('div');
+    trilho.className = 'runway-trilho';
+    trilho.setAttribute('aria-hidden', 'true');
+    const escala = Math.max(item.limite !== null && item.limite > 0 ? item.limite * 1.12 : 100, item.atual * 1.06, 1);
+    trilho.style.setProperty('--runway-uso', `${Math.min(100, Math.max(0, item.atual / escala * 100))}%`);
+    trilho.style.setProperty('--runway-limite', item.limite === null ? '0%' : `${Math.min(100, Math.max(0, item.limite / escala * 100))}%`);
+    const preenchimento = document.createElement('span');
+    preenchimento.className = 'runway-trilho-uso';
+    const marcador = document.createElement('span');
+    marcador.className = 'runway-trilho-limite';
+    marcador.hidden = item.limite === null;
+    trilho.append(preenchimento, marcador);
+
+    const detalhesCartao = document.createElement('div');
+    detalhesCartao.className = 'runway-card-detalhes';
+    detalhesCartao.append(leitura, trilho, textoTempo);
+    corpo.append(dial, detalhesCartao);
 
     const descricao = document.createElement('span');
     descricao.className = 'runway-descricao';
     const origemLimite = origemLimiteRecurso(item.chave, 'critico', item.recurso);
-    const detalheLimite = item.limite === null ? 'limite crítico não informado' : `limite ${formatarPercentual(item.limite)}${origemLimite ? ` (${origemLimite})` : ''}`;
-    descricao.textContent = `${formatarPercentual(item.atual)} atual · ${detalheLimite}`;
+    const detalheLimite = item.limite === null ? 'limite crítico não informado' : `limite crítico ${formatarPercentual(item.limite)}${origemLimite ? ` (${origemLimite})` : ''}`;
+    descricao.textContent = `${detalheLimite} · ${estado.mensagem}`;
 
     linha.append(cabecalho, corpo, descricao);
     detalhes.appendChild(linha);
