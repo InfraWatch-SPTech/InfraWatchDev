@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard de Alertas · InfraWatch</title>
+    <link rel="stylesheet" href="./assets/css/global.css">
+    <link rel="stylesheet" href="./assets/css/menu.css">
+    <link rel="stylesheet" href="./assets/css/dashboard-alertas.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.3.1/css/all.min.css"
+        integrity="sha512-QeR2VH+lsBE5LSAe1Q5EnTBbe7XTBubt8dG93Y7gidSgdMCr8nVqKcfKAMyN96SV8KDbZVTDXChatu5G2KQGzg=="
+        crossorigin="anonymous" referrerpolicy="no-referrer">
+</head>
+
+<body>
+    <!-- header + menu hambúrguer + popup de perfil: montados pelo menu.js do projeto -->
+
+    <main class="dash" id="dash" data-periodo="hoje">
+        <section class="dash_topo">
+            <div class="dash_titulo">
+                <h1>Dashboard de Alertas</h1>
+                <p>Onde estão os problemas e estamos dentro do SLA no período escolhido</p>
+            </div>
+
+            <div class="dash_controles">
+                <!-- tempo real agora vem ANTES do SLA -->
+                <div class="chip_tempo_real" id="tempo_real" title="Atualização automática">
+                    <span class="ponto_vivo"></span>
+                    <span>Tempo real · atualizado há <b id="tempo_real_seg">8</b> s</span>
+                </div>
+
+                <button class="chip_sla" id="btn_sla" type="button" aria-haspopup="dialog">
+                    <span>SLA de resolução: <b id="sla_texto">60 min</b></span>
+                    <i class="fa-solid fa-pen"></i>
+                </button>
+
+                <div class="select_periodo">
+                    <select id="select_periodo" aria-label="Período">
+                        <option value="hoje">Hoje</option>
+                        <option value="7d">Últimos 7 dias</option>
+                        <option value="30d">Últimos 30 dias</option>
+                    </select>
+                    <i class="fa-solid fa-chevron-down"></i>
+                </div>
+            </div>
+        </section>
+
+        <!-- KPIs -->
+        <section class="kpis">
+            <article class="card kpi" id="kpi_crit">
+                <h3 class="card_titulo">Críticos em aberto</h3>
+                <div class="kpi_valor" id="crit_valor">0</div>
+                <div class="kpi_delta"><b id="crit_delta_val"></b> <span id="crit_delta_txt"></span></div>
+                <div class="kpi_rodape" id="crit_rodape"></div>
+            </article>
+
+            <article class="card kpi k_crit">
+                <h3 class="card_titulo">Alertas fora do SLA</h3>
+                <div class="kpi_valor"><span id="fora_valor">0</span><small id="fora_de"></small></div>
+                <div class="kpi_delta"><b id="fora_delta_val"></b> <span id="fora_delta_txt"></span></div>
+                <div class="kpi_rodape" id="fora_rodape"></div>
+            </article>
+
+            <article class="card kpi" id="kpi_media">
+                <h3 class="card_titulo">Tempo médio de resolução</h3>
+                <div class="kpi_valor" id="media_valor">—</div>
+                <div class="kpi_delta"><b id="media_delta_val"></b> <span id="media_delta_txt"></span></div>
+                <div class="sla_barra">
+                    <div class="sla_barra_trilho"><div class="sla_barra_fill" id="media_fill"></div></div>
+                    <div class="sla_barra_marca" id="media_marca"><span id="media_marca_txt">SLA 1h</span></div>
+                </div>
+                <div class="kpi_rodape" id="media_rodape"></div>
+            </article>
+
+            <article class="card kpi">
+                <h3 class="card_titulo">Alertas em aberto</h3>
+                <div class="kpi_valor" id="abertos_valor">0</div>
+                <div class="kpi_delta"><b id="abertos_delta_val"></b> <span id="abertos_delta_txt"></span></div>
+                <div class="kpi_rodape" id="abertos_rodape"></div>
+            </article>
+        </section>
+
+        <!-- Fila de atenção (só aparece em "Hoje") -->
+        <section class="card fila" id="fila" hidden>
+            <h3 class="card_titulo">Fila de atenção · em aberto hoje</h3>
+            <p class="card_sub">Os alertas mais atrasados em relação ao SLA</p>
+
+            <div id="fila_tabela">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Chave</th>
+                            <th>Equipamento · Componente</th>
+                            <th>Severidade</th>
+                            <th>Status</th>
+                            <th id="fila_th_sla">SLA (60 min)</th>
+                        </tr>
+                    </thead>
+                    <tbody id="fila_corpo"></tbody>
+                </table>
+                <p class="rodape_tabela" id="fila_rodape"></p>
+            </div>
+            <p class="vazio" id="fila_vazio" hidden></p>
+
+            <template id="tpl_linha">
+                <tr>
+                    <td class="chave"></td>
+                    <td class="equip"></td>
+                    <td><span class="pill"></span></td>
+                    <td class="status"></td>
+                    <td class="estourado"></td>
+                </tr>
+            </template>
+        </section>
+
+        <!-- Gráficos (Chart.js) -->
+        <section class="graficos">
+            <article class="card grafico">
+                <h3 class="card_titulo">Onde estão os alertas em aberto</h3>
+                <div class="legenda">
+                    <span><i style="background:var(--c-crit)"></i>Crítico</span>
+                    <span><i style="background:var(--c-warn)"></i>Atenção</span>
+                </div>
+                <div class="onde_cab"><span>Componente</span><span>Total</span></div>
+                <div class="chart_box"><canvas id="chart_onde"></canvas></div>
+            </article>
+
+            <article class="card grafico">
+                <h3 class="card_titulo"><span id="fluxo_titulo">Entrada × saída de alertas por hora</span><br><span id="fluxo_sub">(só horas com movimento)</span></h3>
+                <div class="legenda">
+                    <span><i style="background:var(--c-azul)"></i>Criados</span>
+                    <span><i style="background:var(--c-ok)"></i>Resolvidos</span>
+                    <span class="nota">+N = entrou mais do que saiu</span>
+                </div>
+                <div class="chart_box"><canvas id="chart_fluxo"></canvas></div>
+            </article>
+
+            <article class="card grafico">
+                <h3 class="card_titulo">Tempo médio de resolução × SLA</h3>
+                <div class="chart_box"><canvas id="chart_tmr"></canvas></div>
+                <div class="legenda">
+                    <span><i style="background:var(--c-crit)"></i>&gt; 2h</span>
+                    <span><i style="background:var(--c-warn)"></i>Acima do SLA</span>
+                    <span><i style="background:var(--c-ok)"></i>Dentro do SLA</span>
+                </div>
+            </article>
+        </section>
+    </main>
+
+    <!-- Tela central para definir o SLA -->
+    <div class="modal_fundo" id="modal_sla" aria-hidden="true">
+        <div class="modal" role="dialog" aria-modal="true" aria-labelledby="modal_sla_titulo">
+            <button class="modal_fechar" id="modal_sla_fechar" type="button" aria-label="Fechar">
+                <i class="fa-solid fa-xmark"></i>
+            </button>
+            <div class="modal_icone"><i class="fa-regular fa-clock"></i></div>
+            <h2 id="modal_sla_titulo">SLA de resolução</h2>
+            <p class="modal_desc">Tempo máximo aceitável para resolver um alerta. Todos os indicadores da dashboard
+                são recalculados com esse valor.</p>
+
+            <div class="sla_campo">
+                <button type="button" class="sla_step" id="sla_menos" aria-label="Diminuir">−</button>
+                <div class="sla_input_wrap">
+                    <input type="number" id="sla_input" min="5" max="1440" step="5" inputmode="numeric">
+                    <span>min</span>
+                </div>
+                <button type="button" class="sla_step" id="sla_mais" aria-label="Aumentar">+</button>
+            </div>
+            <p class="sla_equivale" id="sla_equivale">= 1h</p>
+
+            <div class="sla_presets" id="sla_presets">
+                <button type="button" data-min="15">15 min</button>
+                <button type="button" data-min="30">30 min</button>
+                <button type="button" data-min="60">1 h</button>
+                <button type="button" data-min="120">2 h</button>
+                <button type="button" data-min="240">4 h</button>
+            </div>
+
+            <p class="sla_erro" id="sla_erro" hidden>Informe um valor entre 5 e 1440 minutos.</p>
+
+            <div class="modal_acoes">
+                <button type="button" class="btn_sec" id="sla_cancelar">Cancelar</button>
+                <button type="button" class="btn_pri" id="sla_salvar">Salvar SLA</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="toast" id="toast" role="status"></div>
+
+    <!-- MOCK: cria um usuário de teste se não houver sessão. Remover ao integrar (a sessão real vem do login) -->
+    <script>
+        if (!localStorage.getItem('usuarioLogado')) {
+            localStorage.setItem('usuarioLogado', JSON.stringify({
+                nome: 'Usuário Demo', email: 'demo@infrawatch.dev',
+                nomeEmpresa: 'InfraWatch.Dev', nomeNivelAcesso: 'Root', permissoes: []
+            }));
+        }
+    </script>
+
+    <!-- JS do projeto: rotas, sessão e menu (montarMenu injeta header + menu lateral) -->
+    <script src="./assets/js/redirecionamento.js"></script>
+    <script src="./assets/js/sessao.js"></script>
+    <script src="./assets/js/menu.js"></script>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+    <script src="./assets/js/dashboard-alertas.js"></script>
+</body>
+
+</html>
