@@ -1,0 +1,339 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Padrões de consumo | InfraWatch</title>
+
+    <link rel="icon" href="./assets/midias/main-icon-image.png">
+    <link rel="stylesheet" href="./assets/css/global.css">
+    <link rel="stylesheet" href="./assets/css/menu.css">
+    <link rel="stylesheet" href="./assets/css/dashboard_analitica_padroes.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.3.1/css/all.min.css">
+</head>
+
+<body id="topo">
+    <main class="pagina_conteudo">
+
+        <!-- Cabeçalho -->
+        <header class="pagina_topo">
+            <div class="titulo_grupo">
+                <div>
+                    <h1>Padrões de consumo</h1>
+                    <p class="texto_apoio" id="periodo_texto"></p>
+                    <span class="modo_dados" id="modo_dados">Carregando histórico…</span>
+                </div>
+            </div>
+
+            <div class="filtros">
+                <label>
+                    Servidor
+                    <select id="servidor"></select>
+                </label>
+
+                <label>
+                    Período
+                    <select id="periodo">
+                        <option value="7">7 dias</option>
+                        <option value="14">14 dias</option>
+                    </select>
+                </label>
+
+                <button type="button" id="atualizar_dados">
+                    Atualizar
+                </button>
+            </div>
+        </header>
+
+        <p id="erro" class="mensagem_erro" role="alert" hidden></p>
+
+        <!-- KPIs -->
+        <section class="kpi_grid" aria-label="Resumo do histórico">
+
+            <article class="card_kpi">
+                <h2>Mais tempo em atenção</h2>
+
+                <p class="kpi_valor" id="kpi_componente">—</p>
+                <p class="kpi_sub" id="kpi_componente_tempo">—</p>
+            </article>
+
+            <article class="card_kpi card_novo">
+                <div class="kpi_topo">
+                    <h2>Maior aumento de consumo</h2>
+
+                    <label
+                        class="somente_leitor"
+                        for="periodo_importante">
+                        Período importante
+                    </label>
+
+                    <select
+                        id="periodo_importante"
+                        class="seletor_componente">
+                        <option value="almoco">Almoço 12h–14h</option>
+                        <option value="jantar">Jantar 18h–20h</option>
+                        <option value="fim_semana">Fim de semana</option>
+                        <option value="quinto_dia_util">5º dia útil</option>
+                        <option value="feriado">Feriados</option>
+                    </select>
+                </div>
+
+                <p class="kpi_valor" id="kpi_aumento">—</p>
+                <p class="aumento_valor" id="kpi_aumento_valor">—</p>
+                <p class="kpi_sub" id="kpi_aumento_sub">—</p>
+            </article>
+
+            <article class="card_kpi">
+                <div class="kpi_topo">
+                    <h2>Horário mais recorrente</h2>
+
+                    <label
+                        class="somente_leitor"
+                        for="componente_horario">
+                        Componente do horário recorrente
+                    </label>
+
+                    <select
+                        id="componente_horario"
+                        class="seletor_componente">
+                    </select>
+                </div>
+
+                <p class="kpi_valor" id="kpi_horario">—</p>
+                <p class="kpi_sub" id="kpi_horario_dias">—</p>
+            </article>
+
+            <article class="card_kpi">
+                <div class="kpi_topo">
+                    <h2>Processo que mais consome</h2>
+
+                    <label
+                        class="somente_leitor"
+                        for="componente_lider">
+                        Componente dos processos líderes
+                    </label>
+
+                    <select
+                        id="componente_lider"
+                        class="seletor_processo">
+                    </select>
+                </div>
+
+                <div class="lider_linhas">
+                    <p>
+                        <strong id="lider_dentro">—</strong>
+                        <span>Dias úteis</span>
+                    </p>
+
+                    <p>
+                        <strong id="lider_fora">—</strong>
+                        <span>Fim de semana</span>
+                    </p>
+                </div>
+                <a class="saiba_mais" href="#secao_processos">Saiba mais ↓</a>
+            </article>
+
+        </section>
+
+        <!-- Ranking -->
+        <section class="card_grafico">
+            <header class="card_topo">
+                <div>
+                    <h2 id="titulo_ranking">Tempo em atenção</h2>
+
+                    <p class="texto_apoio" id="ranking_resumo">
+                        Mesmo servidor vs período imediatamente anterior.
+                    </p>
+                </div>
+
+                <div class="filtros">
+                    <label>
+                        Período
+                        <select id="dia"></select>
+                    </label>
+
+                    <label>Estado
+                        <select id="estado_ranking"><option value="atencao">Atenção total</option><option value="critico">Somente crítico</option></select>
+                    </label>
+                    <label>Componente<select id="componente_ranking"></select></label>
+                </div>
+            </header>
+
+            <p class="legenda_ranking"><span id="legenda_estado">● Período Selecionado</span> <span class="marca_anterior">┆</span> Anterior</p>
+            <div class="ranking_layout">
+                <div class="grafico_area ranking_area">
+                    <canvas
+                        id="grafico_ranking"
+                        role="img"
+                        aria-label="Tempo observado por componente comparado ao período anterior">
+                    </canvas>
+                </div>
+
+                <div class="tabela_scroll">
+                    <table>
+                        <caption class="somente_leitor">
+                            Tempo em atenção, tempo crítico e entradas em crítico.
+                        </caption>
+
+                        <thead>
+                            <tr>
+                                <th>Componente</th>
+                                <th>Período Selecionado</th>
+                                <th>Anterior</th>
+                                <th>Variação</th>
+                            </tr>
+                        </thead>
+
+                        <tbody id="ranking_tabela"></tbody>
+                    </table>
+                </div>
+            </div>
+        </section>
+
+        <!-- Informações complementares -->
+        <div class="faixa_limites">
+            <span>
+                <strong>Limites: atenção / crítico</strong>
+            </span>
+
+            <div id="limites"></div>
+        </div>
+
+        <p id="estado_dados" class="estado_dados"></p>
+
+        <!-- Mapa e evolução lado a lado -->
+        <div class="grafico_grid">
+
+            <section class="card_grafico">
+                <header class="card_topo">
+                    <div>
+                        <h2 id="titulo_calor">Mapa de calor</h2>
+                        <p class="texto_apoio">
+                            Minutos por hora · — sem coleta
+                        </p>
+                    </div>
+
+                    <div class="filtros">
+                        <label>
+                            Componente
+                            <select
+                                id="componente_calor"
+                                class="seletor_componente">
+                            </select>
+                        </label>
+
+                        <label>
+                            Mostrar
+                            <select id="estado_calor">
+                                <option value="atencao">Atenção total</option>
+                                <option value="critico">Somente crítico</option>
+                            </select>
+                        </label>
+                    </div>
+                </header>
+
+                <div class="calor_scroll">
+                    <div
+                        id="grafico_calor"
+                        role="img"
+                        aria-label="Minutos em atenção por dia e hora">
+                    </div>
+                </div>
+
+                <p class="nota">
+                    Mais vermelho = mais tempo no estado selecionado.
+                </p>
+            </section>
+
+            <section class="card_grafico">
+                <header class="card_topo"><div>
+                    <h2>Evolução do servidor</h2>
+                    <p class="texto_apoio" id="comparacao_resumo"></p>
+                </div></header>
+                <div class="abas_comparacao" role="group" aria-label="Medida de comparação">
+                    <button type="button" data-medida="critico" aria-pressed="true">Tempo crítico</button>
+                    <button type="button" data-medida="cpu" aria-pressed="false">Oscilação CPU</button>
+                    <button type="button" data-medida="ram" aria-pressed="false">Oscilação RAM</button>
+                </div>
+                <div class="grafico_area comparacao_area"><canvas id="grafico_comparacao" role="img" aria-label="Mesmo servidor no período selecionado e anterior"></canvas></div>
+                <p id="comparacao_variacao" class="variacao"></p>
+                <p id="comparacao_nota" class="nota"></p>
+                <p id="comparacao_cobertura" class="nota"></p>
+            </section>
+
+        </div>
+
+        <!-- Processos -->
+        <section class="card_grafico" id="secao_processos">
+            <header class="card_topo">
+                <div>
+                    <h2 id="titulo_processos">
+                        Processos: dias úteis vs fim de semana
+                    </h2>
+
+                    <p class="texto_apoio" id="processos_unidade"></p>
+                </div>
+
+                <label>
+                    Componente
+                    <select
+                        id="componente_processos"
+                        class="seletor_processo">
+                    </select>
+                </label>
+            </header>
+
+            <div class="processos_layout">
+                <div class="grafico_area processos_area">
+                    <canvas
+                        id="grafico_processos"
+                        role="img"
+                        aria-label="Consumo médio dos processos em dias úteis e no fim de semana">
+                    </canvas>
+                </div>
+
+                <div class="tabela_scroll">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Processo</th>
+                                <th id="coluna_dentro">Dias úteis</th>
+                                <th>Fim de semana</th>
+                                <th>Diferença</th>
+                            </tr>
+                        </thead>
+
+                        <tbody id="processos_tabela"></tbody>
+                    </table>
+                </div>
+            </div>
+        </section>
+
+        <aside class="sugestao">
+            <span class="sugestao_marca">Base de processos</span><a class="saiba_mais voltar" href="#topo">Voltar ao topo ↑</a>
+            <p id="sugestao_texto"></p>
+        </aside>
+
+        <footer class="rodape">
+            <span id="fonte_texto">
+                Métricas calculadas pela API a partir da Gold.
+            </span>
+
+            <span>
+                Disco = espaço ocupado · Rede = % da capacidade da placa.
+            </span>
+        </footer>
+
+    </main>
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/echarts@5.6.0/dist/echarts.min.js"></script>
+    <script src="./assets/js/redirecionamento.js"></script>
+    <script src="./assets/js/sessao.js"></script>
+    <script src="./assets/js/menu.js"></script>
+    <script src="./assets/js/dashboard_analitica_padroes.js"></script>
+</body>
+
+</html>

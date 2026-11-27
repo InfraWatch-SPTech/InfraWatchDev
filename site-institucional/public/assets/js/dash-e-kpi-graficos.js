@@ -430,26 +430,26 @@ new Chart(ctx_comp3, {
 // ----------------------------------------------------------------------
 
 // Definição do json de consumo
-const dispAnual = [
+const dispAnualA = [
     {
         'tempoDispAnualMin': 42
     }
 ]
 
 // Variáveis de tratamento
-let tempoDispAnualMin = dispAnual[0].tempoDispAnualMin;
+let tempoDispAnualMinA = dispAnualA[0].tempoDispAnualMinA;
 let tempoMinTotais = 526;
-let tempDispAnualPercent = (tempoDispAnualMin * 100) / tempoMinTotais;
+let tempDispAnualPercent = (tempoDispAnualMinA * 100) / tempoMinTotais;
 tempDispAnualPercent = Math.round(tempDispAnualPercent)
 let restante = 100 - tempDispAnualPercent;
 
 // Cálculo de tempo consumido
-let qtdConsumidoMin = tempoDispAnualMin % 60;
-let qtdConsumidoHoras = tempoDispAnualMin / 60;
+let qtdConsumidoMin = tempoDispAnualMinA % 60;
+let qtdConsumidoHoras = tempoDispAnualMinA / 60;
 qtdConsumidoHoras = Math.trunc(qtdConsumidoHoras);
 
 // Cálculo de tempo restante
-let qtdRestanteMinTotais = tempoMinTotais - tempoDispAnualMin;
+let qtdRestanteMinTotais = tempoMinTotais - tempoDispAnualMinA;
 let qtdRestanteHoras = Math.round(qtdRestanteMinTotais / 60);
 let qtdRestanteMin = qtdRestanteMinTotais % 60;
 
@@ -459,7 +459,7 @@ let idRestante = document.getElementById('grafic-disp-restante')
 
 // Condições para formatação
 if (qtdConsumidoHoras < 1) {
-    qtdConsumido = `${tempoDispAnualMin}min`
+    qtdConsumido = `${tempoDispAnualMinA}min`
 } else {
     qtdConsumido = `${qtdConsumidoHoras}h${qtdConsumidoMin}min`
 }
