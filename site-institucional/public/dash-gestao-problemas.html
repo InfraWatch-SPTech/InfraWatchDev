@@ -11,7 +11,7 @@
         crossorigin="anonymous" referrerpolicy="no-referrer">
     <title>Gestão de Problemas</title>
 </head>
-<body onload="receberInformacoesJira()">
+<body onload="receberInformacoesJira(), receberInformacoesEquipes(localStorage.getItem('usuarioLogado'))">
     <!-- HEADER  -->
     <header>
 
@@ -98,7 +98,7 @@
             
             <div class="content-box kpi" id="kpi-mtbf">
                 <div class="infos-kpi">
-                    <p>mtbf</p>
+                    <p>MTBF</p>
                     <h3 id="mtbf">1d20h</h3>
                     <div class="barra"></div>
                     <span id="mtbf-comparado">5% mais demorado</span>

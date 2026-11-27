@@ -37,6 +37,7 @@ var usuarioRouter = require("./src/routes/usuarios");
 var hardwaresRouter = require("./src/routes/hardwares");
 var relatoriosRouter = require("./src/routes/relatorios");
 var apiJira = require("./src/routes/apiJira");
+var dashGP = require("./src/routes/dashGP");
 var dashboardAnaliticaPadroesRouter = require('./src/routes/dashboard_analitica_padroes');
 
 app.use(cors());
@@ -52,6 +53,7 @@ app.use("/usuarios", usuarioRouter);
 app.use("/hardwares", hardwaresRouter);
 app.use("/relatorios", relatoriosRouter);
 app.use("/apiJira", apiJira);
+app.use("/dashGP", dashGP);
 
 app.use('/dashboard_analitica_padroes', dashboardAnaliticaPadroesRouter);
 

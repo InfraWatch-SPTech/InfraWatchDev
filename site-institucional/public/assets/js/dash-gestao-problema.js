@@ -12,14 +12,173 @@ async function receberInformacoesJira() {
         const issues = retornoInfosJiraConvertido;
 
         return issues;
+
     } catch (e) {
         console.error("Erro ao buscar issues do Jira:", e)
     }
 }
 
+async function receberInformacoesEquipes(usuarioLogado) {
+
+    const usuario = usuarioLogado ? JSON.parse(usuarioLogado) : null;
+    const idEmpresa = usuario ? usuario.idEmpresa : null;
+    
+    try {        
+        const retornoEquipes = await fetch(`/dashGP/buscarEquipeServidores/${idEmpresa}`);
+
+        if (!retornoEquipes.ok) throw new Error("HTTP " + retornoEquipes.status); // Se a resposta não estiver certa, retorna o erro
+
+        const retornoEquipesConvertido = await retornoEquipes.json();
+        const srvEquipes = retornoEquipesConvertido;
+
+        juntarEquipes(srvEquipes);
+
+        return srvEquipes;
+    } catch (e) {
+        console.error("Erro ao buscar equipes dos servidores:", e)
+    }
+}
+
+async function tratarInformacoesJira(idComparacao) {
+    let infosJira = await receberInformacoesJira();
+
+    let issuesJson = []
+
+    for (let i = 0; i < infosJira.length; i++) {
+        let descricao = infosJira[i].descricao.split('|');
+        for (let j = 0; j < descricao.length; j++) {
+           descricao[j] = descricao[j].split(':');
+        }
+        
+        let colunas = infosJira[i].tempoPorColuna;
+        
+        let tempoAtivo = 0;
+
+        for (let j = 0; j < colunas.length; j++) {
+            if (colunas[j].coluna == "A fazer" || colunas[j].coluna == "Em andamento") {
+                tempoAtivo += colunas[j].duracaoMs;
+            }
+        }
+
+        let idAtual = parseInt((descricao[1][1].split('#'))[1].trim());
+
+        if (idAtual == idComparacao) {
+            issuesJson.push(
+                {
+                    'empresa': descricao[0][1].trim(),
+                    'idEquipamento': idAtual,
+                    'componente': descricao[2][1].trim(),
+                    'tipo': descricao[3][1].trim(),
+                    'porcentagem': parseFloat(descricao[4][1].trim()),
+                    'parametro': parseFloat(descricao[5][1].trim()),
+                    'tempoAtivo': tempoAtivo,
+                }
+            )
+        }
+        
+    }
+
+    return issuesJson;
+}
+
+function juntarEquipes(equipesServidor) {
+  const servidores = {};
+
+  // Adiciona os servidores individualmente na lista
+  for (const s of equipesServidor) {
+    const idEq = s.id;
+
+    if (!servidores[idEq]) {
+      servidores[idEq] = {
+        id: idEq,
+        nome: s.nome,
+        valorDowntime: s.valorDowntime,
+        equipes: []
+      };
+    }
+
+    if (!servidores[idEq].equipes.includes(s.equipe)) {
+      servidores[idEq].equipes.push(s.equipe);
+    }
+  }
+
+  formatarEquipesServidor(Object.values(servidores));
+}
+
+async function formatarEquipesServidor(eqServidor) {
+
+    let jsonServidores = []
+    
+    for (let i = 0; i < eqServidor.length; i++) {
+        
+        let alertasServidor = await tratarInformacoesJira(eqServidor[i].id);
+
+        let componentes = [];
+
+        let qtdCriticos = 0;
+
+        let qtdAtencao = 0;
+
+        let riscoDowntime = 0; // Calcula o risco de downtime daquele componente
+        let riscoTotal = 0;
+
+        for (let j = 0; j < alertasServidor.length; j++) {
+            if (!componentes.includes(alertasServidor[j].componente)) {
+                let comp = alertasServidor[j].componente;
+                componentes.push(comp);
+            }
+            if (alertasServidor[j].tipo == "CRITICO") {
+                qtdCriticos++;
+            } else if (alertasServidor[j].tipo == "ATENCAO") {
+                qtdAtencao++;
+            }
+
+            let porcentagem = alertasServidor[j].porcentagem ? alertasServidor[j].porcentagem : 0;
+            let tempoAtivo = alertasServidor[j].tempoAtivo ? alertasServidor[j].tempoAtivo : 0;
+
+            // Fórmula de risco de downtime que consideram o tempo ativo do alerta, a porcentagem de uso e um modificador temporal (0.5)
+            riscoDowntime += porcentagem * (1 + 0.5 * (Math.log1p(tempoAtivo)))
+
+            riscoTotal += 100 * (1 + 0.5 * (Math.log1p(tempoAtivo))) // Assume o pior cenário
+
+            console.log(porcentagem);
+            
+        }
+
+        jsonServidores.push(
+            {
+                'id': eqServidor[i].id,
+                'servidor': eqServidor[i].nome,
+                'equipe': eqServidor[i].equipes[0],
+                'alertas_ativos': alertasServidor.length,
+                'qtdCriticos': qtdCriticos,
+                'qtdAtencao': qtdAtencao,
+                'problemas': componentes,
+                'risco_downtime': riscoDowntime,
+                'risco_total': riscoTotal
+            }
+        );
+    }
 
 
+    for (let i = 0; i < jsonServidores.length; i++) {
+        if (jsonServidores[i].alertas_ativos == 0) {
+            riscoTotal = 0;
+            riscoDowntime = 0;
+        } else {
+            jsonServidores[i].risco_downtime = (jsonServidores[i].risco_downtime * 100) / jsonServidores[i].risco_total;
+        }
+        if (jsonServidores[i].problemas.length == 0) {
+            jsonServidores[i].problemas = ["N/A"]
+        }
+        
+    }
 
+    jsonServidores.sort((a, b) => b.risco_downtime - a.risco_downtime);
+
+    listarServidoresPorSeveridade(jsonServidores);
+
+}
 
 
 
@@ -531,96 +690,64 @@ srv_ca.length > 2 ? critica_alto.innerHTML = `- R$ ${formatarValor(total_ca)}<br
 // AÇÃO RÁPIDA - SERVIDORES MAIS AFETADOS POR PRIORIDADE ----------------
 // ----------------------------------------------------------------------
 
-const listaServidores = [
-    {
-        'id': 1,
-        'servidor': 'SVR-01',
-        'equipe': 'Alertas',
-        'risco_queda': 90,
-        'alertas_ativos': 22,
-        'problema': ['CPU', 'RAM', 'DISCO']
-    },
-    {
-        'id': 2,
-        'servidor': 'SVR-02',
-        'equipe': 'Infraestrutura',
-        'risco_queda': 60,
-        'alertas_ativos': 10,
-        'problema': ['RAM', 'DISCO']
-    },
-    {
-        'id': 3,
-        'servidor': 'SVR-03',
-        'equipe': 'Análistas',
-        'risco_queda': 40,
-        'alertas_ativos': 3,
-        'problema': ['CPU','DISCO']
-    },
-    {
-        'id': 4,
-        'servidor': 'SVR-06',
-        'equipe': 'Analistas',
-        'risco_queda': 20,
-        'alertas_ativos': 3,
-        'problema': ['DISCO']
+async function listarServidoresPorSeveridade(listaServidores) {
+
+    // Variáveis de tratamento
+    let id_lista = [];
+    let servidor_lista = [];
+    let equipe_lista = [];
+    let risco_queda = [];
+    let alertas_ativos = [];
+    let problema = [];
+
+    // Função de tratamento
+    function tratarListaServidores(listaServidores) {
+        for (let i = 0; i < listaServidores.length; i++) {
+            id_lista.push(listaServidores[i].id)
+            servidor_lista.push(listaServidores[i].servidor)
+            equipe_lista.push(listaServidores[i].equipe)
+            risco_queda.push(parseInt(listaServidores[i].risco_downtime))
+            alertas_ativos.push(listaServidores[i].alertas_ativos)
+            problema.push(listaServidores[i].problemas)
+        }
+        return id_lista, servidor_lista, equipe, risco_queda, alertas_ativos, problema;
     }
-]
+    tratarListaServidores(listaServidores);
 
-// Variáveis de tratamento
-let id_lista = [];
-let servidor_lista = [];
-let equipe_lista = [];
-let risco_queda = [];
-let alertas_ativos = [];
-let problema = [];
+    lista = document.getElementById('lista-servidores-prioridade')
 
-// Função de tratamento
-function tratarListaServidores(listaServidores) {
-    for (let i = 0; i < listaServidores.length; i++) {
-        id_lista.push(listaServidores[i].id)
-        servidor_lista.push(listaServidores[i].servidor)
-        equipe_lista.push(listaServidores[i].equipe)
-        risco_queda.push(listaServidores[i].risco_queda)
-        alertas_ativos.push(listaServidores[i].alertas_ativos)
-        problema.push(listaServidores[i].problema)
+    let cor_barra = 'branco-default'
+
+    for (let i = 0; i < id_lista.length; i++) {
+        if (risco_queda[i] <= 33) {
+            cor_barra = 'verde-ativo'
+        } else if (risco_queda[i] <= 66) {
+            cor_barra = 'amarelo-atencao'
+        } else {
+            cor_barra = 'vermelho-inativo'
+        }
+
+        problemas = problema[i];
+        
+
+        lista.innerHTML += `
+                            <tr>
+                                <td>${id_lista[i]}</td>
+                                <td>${servidor_lista[i]}</td>
+                                <td>${equipe_lista[i]}</td>
+                                <td class="td-barra">
+                                    <p>${risco_queda[i]}%</p> 
+                                    <div class="barra-fundo">
+                                        <span class="barra-preenchimento" style="width: ${risco_queda[i]}%; background-color: var(--cor-${cor_barra});"></span>
+                                    </div>
+                                </td>
+                                <td class="qtd-a" style="color: var(--cor-${cor_barra})">${alertas_ativos[i]}</td>
+                                <td style="color: var(--cor-${cor_barra})">${problemas}</td>
+                                <td><a href="#">ver -></a></td>
+                            </tr>
+        `
+        
     }
-
-    return id_lista, servidor_lista, equipe, risco_queda, alertas_ativos, problema;
-}
-tratarListaServidores(listaServidores);
-
-lista = document.getElementById('lista-servidores-prioridade')
-
-let cor_barra = 'branco-default'
-
-for (let i = 0; i < id_lista.length; i++) {
-    if (risco_queda[i] <= 33) {
-        cor_barra = 'verde-ativo'
-    } else if (risco_queda[i] <= 66) {
-        cor_barra = 'amarelo-atencao'
-    } else {
-        cor_barra = 'vermelho-inativo'
-    }
-
-    problemas = problema[i].slice(0, 3);
-
-    lista.innerHTML += `
-                        <tr>
-                            <td>${id_lista[i]}</td>
-                            <td>${servidor_lista[i]}</td>
-                            <td>${equipe_lista[i]}</td>
-                            <td class="td-barra">
-                                <p>${risco_queda[i]}%</p> 
-                                <div class="barra-fundo">
-                                    <span class="barra-preenchimento" style="width: ${risco_queda[i]}%; background-color: var(--cor-${cor_barra});"></span>
-                                </div>
-                            </td>
-                            <td class="qtd-a">${alertas_ativos[i]}</td>
-                            <td style="color: var(--cor-${cor_barra})">${problemas}</td>
-                            <td><a href="#">ver -></a></td>
-                        </tr>
-    `
-    
 }
 
 

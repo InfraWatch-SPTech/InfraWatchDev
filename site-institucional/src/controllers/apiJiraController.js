@@ -1,6 +1,6 @@
 const { formatar } = require('../models/apiJiraModel');
 
-const CAMPOS = ["summary", "status", "assignee"];
+const CAMPOS = ["summary", "status", "assignee", "description", "created", "resolutiondate"];
 const MAX_RESULTADOS = 50;
 
 async function listarIssues(req, res) {
@@ -22,8 +22,9 @@ async function listarIssues(req, res) {
         jql,
         fields: CAMPOS.join(","),
         maxResults: String(MAX_RESULTADOS),
+        expand: "changelog",
     });
-    const url = `${JIRA_DOMAIN.replace(/\/+$/, "")}/rest/api/3/search/jql?${params}`;
+    const url = `${JIRA_DOMAIN.replace(/\/+$/, "")}/rest/api/3/search/jql?${params}&expand=changelog`;
 
     try {
         const auth = Buffer.from(`${JIRA_EMAIL}:${JIRA_API_TOKEN}`).toString("base64");
