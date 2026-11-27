@@ -17,16 +17,19 @@ const estadoDashboard = {
   erro: null
 };
 
-const eixoTexto = '#aaa8ba';
+const eixoTexto = '#d0cedd';
+if (typeof Chart !== 'undefined') {
+  Chart.defaults.font.size = 13;
+  Chart.defaults.color = '#d0cedd';
+}
 const eixoComum = {
-  ticks: { color: eixoTexto, maxTicksLimit: 8 },
+  ticks: { color: eixoTexto, maxTicksLimit: 8, font: { size: 13 } },
   grid: { color: 'rgba(139,134,155,.12)' },
   border: { color: '#5c6288' }
 };
 
 let graficoTendencia;
 let graficosTendenciaTv = {};
-let graficoRunway;
 let graficoPrevisaoCpu;
 let graficoPrevisaoLatencia;
 
@@ -45,6 +48,11 @@ function formatarNumero(valor, casas = 1) {
   return convertido === null
     ? '—'
     : convertido.toLocaleString('pt-BR', { maximumFractionDigits: casas });
+}
+
+function formatarRequisicoesEmMilhares(valor) {
+  const convertido = numero(valor);
+  return convertido === null ? '—' : formatarNumero(convertido * 1000, 0);
 }
 
 function formatarPercentual(valor) {
@@ -444,7 +452,7 @@ function atualizarKpis() {
     definirKpi('kpi-maior-uso', 'kpi-maior-uso-descricao', 'N/D', erro, 'azul');
     definirKpi('kpi-proximo-limite', 'kpi-proximo-limite-descricao', 'N/D', erro, 'azul');
     definirKpi('kpi-requisicoes', 'kpi-requisicoes-descricao', 'N/D', 'Métricas HTTP não disponíveis no Gold.', 'azul');
-    definirKpi('kpi-sla', 'kpi-sla-descricao', 'N/D', 'Sem resposta do Gold.', 'azul');
+    definirKpi('kpi-taxa-erros', 'kpi-taxa-erros-descricao', 'N/D', 'Métricas HTTP não disponíveis no Gold.', 'azul');
     elemento('status-sla-texto').textContent = 'SLA: indisponível no Gold';
     elemento('status-sla').classList.add('indisponivel');
     return;
@@ -486,27 +494,37 @@ function atualizarKpis() {
   const somarCampo = campo => serieRequisicoesGold.reduce((total, item) => total + (numero(item[campo]) || 0), 0);
   const totalRequisicoes = numero(requisicoes.total_requisicoes) ?? (serieRequisicoesGold.length ? somarCampo('requisicoes') : null);
   const totalSucessos = numero(requisicoes.total_sucessos) ?? (serieRequisicoesGold.length ? somarCampo('sucessos') : null);
-  const totalErros = numero(requisicoes.total_erros) ?? (serieRequisicoesGold.length ? somarCampo('erros') : null);
+  const errosInformadosNaSerie = serieRequisicoesGold.length > 0
+    && serieRequisicoesGold.every(item => numero(item.erros) !== null);
+  const totalErros = numero(requisicoes.total_erros)
+    ?? (errosInformadosNaSerie ? somarCampo('erros') : null);
   if (requisicoes.disponivel && totalRequisicoes !== null) {
     const janelaHttp = obterJanelaAmostras(serieRequisicoesGold);
     const descricao = `${formatarNumero(totalSucessos, 0)} sucessos · ${formatarNumero(totalErros, 0)} erros${janelaHttp ? ` · ${janelaHttp}` : ' · período não informado pelo Gold'}`;
-    definirKpi('kpi-requisicoes', 'kpi-requisicoes-descricao', formatarNumero(totalRequisicoes, 0), descricao, totalErros > 0 ? 'amarelo' : 'verde');
+    const corRequisicoes = totalErros === null ? 'azul' : totalErros > 0 ? 'amarelo' : 'verde';
+    definirKpi('kpi-requisicoes', 'kpi-requisicoes-descricao', formatarNumero(totalRequisicoes, 0), descricao, corRequisicoes);
   } else {
     definirKpi('kpi-requisicoes', 'kpi-requisicoes-descricao', 'N/D', requisicoes.motivo || 'O Gold não contém contagem de requisições.', 'azul');
+  }
+
+  if (requisicoes.disponivel && totalRequisicoes > 0 && totalErros !== null) {
+    const taxaErros = (totalErros / totalRequisicoes) * 100;
+    const janelaHttp = obterJanelaAmostras(serieRequisicoesGold);
+    const detalheTaxaErros = `${formatarNumero(totalErros, 0)} falhas em ${formatarNumero(totalRequisicoes, 0)} requisições${janelaHttp ? ` · ${janelaHttp}` : ''}`;
+    definirKpi('kpi-taxa-erros', 'kpi-taxa-erros-descricao', formatarPercentual(taxaErros), detalheTaxaErros, totalErros > 0 ? 'amarelo' : 'verde');
+  } else {
+    const motivoTaxaErros = requisicoes.motivo || (totalRequisicoes === 0
+      ? 'Nenhuma requisição registrada no período.'
+      : 'O Gold não fornece contagens suficientes para calcular essa taxa.');
+    definirKpi('kpi-taxa-erros', 'kpi-taxa-erros-descricao', 'N/D', motivoTaxaErros, 'azul');
   }
 
   const sla = dados.disponibilidade_sla || {};
   const percentualSla = numero(sla.disponibilidade_percentual ?? sla.percentual);
   if (sla.disponivel === true && percentualSla !== null) {
-    const detalheSla = sla.orcamento_consumido_minutos === undefined
-      ? 'Valor informado pelo Gold.'
-      : `${formatarNumero(sla.orcamento_consumido_minutos, 0)} min consumidos`;
-    definirKpi('kpi-sla', 'kpi-sla-descricao', formatarPercentual(percentualSla), detalheSla, 'azul');
     elemento('status-sla-texto').textContent = `SLA informado pelo Gold: ${formatarPercentual(percentualSla)}`;
     elemento('status-sla').classList.remove('indisponivel');
   } else {
-    const motivo = sla.motivo || 'O arquivo Gold não contém dados de indisponibilidade.';
-    definirKpi('kpi-sla', 'kpi-sla-descricao', 'N/D', motivo, 'azul');
     elemento('status-sla-texto').textContent = 'SLA: indisponível no Gold';
     elemento('status-sla').classList.add('indisponivel');
   }
@@ -558,16 +576,16 @@ function opcoesGraficoTendencia(modoTv = false) {
       maintainAspectRatio: false,
       interaction: { mode: 'index', intersect: false },
       plugins: {
-        legend: { position: modoTv ? 'bottom' : 'top', labels: { color: '#c5c3cd', boxWidth: 14, padding: modoTv ? 6 : 10, font: { size: modoTv ? 11 : 9 }, filter: item => !item.text.startsWith('Limite inferior') } },
+        legend: { position: modoTv ? 'bottom' : 'top', labels: { color: '#c5c3cd', boxWidth: 14, padding: modoTv ? 8 : 12, font: { size: 13 }, filter: item => !item.text.startsWith('Limite inferior') } },
         tooltip: { filter: item => item.raw !== null, callbacks: { label: item => `${item.dataset.label}: ${formatarPercentual(item.parsed.y)}` } }
       },
       scales: {
         x: {
           ...eixoComum,
-          title: { display: true, text: 'Amostras observadas · Base = última amostra · D+n = horizonte informado pelo Gold', color: eixoTexto },
+          title: { display: !modoTv, text: 'Amostras observadas · Base = última amostra · D+n = horizonte informado pelo Gold', color: eixoTexto },
           ticks: {
             color: eixoTexto,
-            font: { size: modoTv ? 11 : 9 },
+            font: { size: 13 },
             autoSkip: false,
             maxRotation: 0,
             callback: function (valor, indice) {
@@ -577,7 +595,7 @@ function opcoesGraficoTendencia(modoTv = false) {
               const totalHistorico = primeiroDiaPrevisto === -1 ? labelsAtuais.length : primeiroDiaPrevisto;
               const totalDiasPrevistos = Math.max(0, labelsAtuais.length - totalHistorico);
               const largura = this.chart.chartArea?.width || this.chart.width || 600;
-              const maxRotulos = Math.max(6, Math.floor(largura / 42));
+              const maxRotulos = Math.max(modoTv ? 4 : 5, Math.floor(largura / (modoTv ? 78 : 82)));
 
               if (rotulo.startsWith('D+')) {
                 const dia = Number(rotulo.slice(2));
@@ -588,7 +606,9 @@ function opcoesGraficoTendencia(modoTv = false) {
 
               const vagasHistorico = Math.max(2, maxRotulos - Math.min(totalDiasPrevistos, maxRotulos - 2));
               const intervaloHistorico = Math.max(1, Math.ceil(totalHistorico / vagasHistorico));
-              return indice === 0 || indice === totalHistorico - 1 || indice % intervaloHistorico === 0 ? rotulo : '';
+              const rotuloHistorico = modoTv ? rotulo.slice(0, 5) : rotulo;
+              if (rotuloHistorico === 'Base') return '';
+              return indice === 0 || indice === totalHistorico - 1 || indice % intervaloHistorico === 0 ? rotuloHistorico : '';
             }
           }
         },
@@ -608,28 +628,6 @@ function criarGraficos() {
     chave,
     criarTendencia(`grafico-tendencia-tv-${chave}`, true)
   ]));
-
-  graficoRunway = new Chart(elemento('grafico-runway'), {
-    type: 'bar',
-    data: { labels: [], datasets: [] },
-    options: {
-      indexAxis: 'y',
-      responsive: true,
-      maintainAspectRatio: false,
-      plugins: {
-        legend: { display: false },
-        tooltip: { callbacks: { label: item => {
-          const runway = runways[item.dataIndex];
-          const estado = estadoRunway(runway.chave, runway.recurso, runway.dias);
-          return `${estado.rotulo} · ${formatarNumero(item.raw)} dias até o limite crítico`;
-        } } }
-      },
-      scales: {
-        x: { beginAtZero: true, ...eixoComum, title: { display: true, text: 'Dias estimados', color: eixoTexto }, ticks: { ...eixoComum.ticks, callback: valor => `${valor}d` } },
-        y: { ...eixoComum, grid: { display: false }, ticks: { color: '#ddd9eb', font: { size: 11 } } }
-      }
-    }
-  });
 
   graficoPrevisaoCpu = new Chart(elemento('grafico-previsao-cpu'), {
     type: 'line',
@@ -651,7 +649,7 @@ function opcoesGraficoCarga(tipo) {
     maintainAspectRatio: false,
     interaction: { mode: 'nearest', intersect: false, axis: 'x' },
     plugins: {
-      legend: { labels: { color: '#c5c3cd', boxWidth: 10, padding: 8, font: { size: 11 }, filter: item => !item.text.startsWith('Faixa ') } },
+      legend: { labels: { color: '#c5c3cd', boxWidth: 12, padding: 10, font: { size: 13 }, filter: item => !item.text.startsWith('Faixa ') } },
       tooltip: { callbacks: { label: item => {
         const unidade = item.dataset.yAxisID === 'cpu' ? '%' : ' ms';
         return `${item.dataset.label}: ${formatarNumero(item.parsed.y, 2)}${unidade}`;
@@ -801,54 +799,69 @@ function atualizarGraficosTendenciaTv() {
 
 function atualizarGraficoRunway() {
   const detalhes = elemento('runway-detalhes');
+  const estadoGrafico = elemento('estado-grafico-runway');
   detalhes.replaceChildren();
   const runways = Object.keys(recursosDashboard).map(chave => {
     const recurso = recursoAtual(chave);
     return { chave, recurso, dias: calcularRunwayDias(chave, recurso), atual: valorAtual(chave, recurso), limite: limiteRecurso(chave, 'critico', recurso) };
-  }).filter(item => item.dias !== null && item.dias >= 0);
-  runways.sort((a, b) => a.dias - b.dias);
-
-  graficoRunway.data = {
-    labels: runways.map(item => recursosDashboard[item.chave].nome),
-    datasets: [{
-      label: 'Dias até o limite crítico',
-      data: runways.map(item => item.dias),
-      backgroundColor: runways.map(item => estadoRunway(item.chave, item.recurso, item.dias).cor),
-      borderRadius: 5,
-      barThickness: 19
-    }]
-  };
-  graficoRunway.options.scales.x.suggestedMax = runways.length ? Math.max(7, ...runways.map(item => item.dias)) * 1.12 : undefined;
-  graficoRunway.update();
+  }).filter(item => item.recurso && item.atual !== null);
+  const prioridade = { critico: 0, alerta: 1, atencao: 2, normal: 3, indisponivel: 4 };
+  runways.sort((a, b) => prioridade[estadoRunway(a.chave, a.recurso, a.dias).classe] - prioridade[estadoRunway(b.chave, b.recurso, b.dias).classe]);
 
   if (!runways.length) {
     const erro = estadoDashboard.dados ? mensagemRunwayIndisponivel() : null;
-    detalhes.textContent = mensagemEstadoVazio(erro);
-    mostrarEstadoGrafico('grafico-runway', 'estado-grafico-runway', false, erro);
+    estadoGrafico.hidden = false;
+    estadoGrafico.textContent = mensagemEstadoVazio(erro);
     return;
   }
-  mostrarEstadoGrafico('grafico-runway', 'estado-grafico-runway', true);
+  estadoGrafico.hidden = true;
+  estadoGrafico.textContent = '';
   runways.forEach(item => {
     const linha = document.createElement('div');
-    linha.className = 'runway-linha';
+    linha.className = `runway-card runway-card--${estadoRunway(item.chave, item.recurso, item.dias).classe}`;
+    linha.setAttribute('role', 'listitem');
     const estado = estadoRunway(item.chave, item.recurso, item.dias);
-    const ponto = document.createElement('span');
-    ponto.className = 'runway-cor';
-    ponto.style.setProperty('--runway-cor', estado.cor);
-    const texto = document.createElement('span');
-    const descricaoRunway = item.dias === 0
-      ? item.atual > item.limite ? 'limite ultrapassado' : 'no limite crítico'
-      : `~${formatarNumero(item.dias)} dias estimados`;
-    const origemLimite = origemLimiteRecurso(item.chave, 'critico', item.recurso);
-    texto.textContent = `${formatarPercentual(item.atual)} agora · limite ${item.limite === null ? 'não informado' : `${formatarPercentual(item.limite)}${origemLimite ? ` (${origemLimite})` : ''}`} · ${descricaoRunway}`;
-    const forte = document.createElement('b');
-    forte.textContent = `${recursosDashboard[item.chave].nome}: `;
-    texto.prepend(forte);
+    linha.style.setProperty('--runway-cor', estado.cor);
+
+    const cabecalho = document.createElement('div');
+    cabecalho.className = 'runway-card-cabecalho';
+    const nome = document.createElement('strong');
+    nome.className = 'runway-nome';
+    nome.textContent = recursosDashboard[item.chave].nome;
     const sinal = document.createElement('span');
     sinal.className = `runway-sinal runway-sinal--${estado.classe}`;
     sinal.textContent = estado.rotulo;
     sinal.title = estado.mensagem;
-    linha.append(ponto, texto, sinal);
+    cabecalho.append(nome, sinal);
+
+    const leitura = document.createElement('div');
+    leitura.className = 'runway-leitura';
+    const atual = document.createElement('strong');
+    atual.textContent = `${formatarPercentual(item.atual)} atual`;
+    const limite = document.createElement('span');
+    limite.textContent = item.limite === null ? 'Limite não informado' : `Limite crítico ${formatarPercentual(item.limite)}`;
+    leitura.append(atual, limite);
+
+    const trilho = document.createElement('div');
+    trilho.className = 'runway-trilho';
+    trilho.setAttribute('aria-hidden', 'true');
+    const escala = Math.max(item.limite !== null && item.limite > 0 ? item.limite * 1.12 : 100, item.atual * 1.06, 1);
+    trilho.style.setProperty('--runway-uso', `${Math.min(100, Math.max(0, item.atual / escala * 100))}%`);
+    trilho.style.setProperty('--runway-limite', item.limite === null ? '0%' : `${Math.min(100, Math.max(0, item.limite / escala * 100))}%`);
+    const preenchimento = document.createElement('span');
+    preenchimento.className = 'runway-trilho-uso';
+    const marcador = document.createElement('span');
+    marcador.className = 'runway-trilho-limite';
+    marcador.hidden = item.limite === null;
+    trilho.append(preenchimento, marcador);
+
+    const descricao = document.createElement('span');
+    descricao.className = 'runway-descricao';
+    const origemLimite = origemLimiteRecurso(item.chave, 'critico', item.recurso);
+    const detalheLimite = item.limite === null ? 'limite crítico não informado' : `limite crítico ${formatarPercentual(item.limite)}${origemLimite ? ` (${origemLimite})` : ''}`;
+    descricao.textContent = `${detalheLimite} · ${estado.mensagem}`;
+
+    linha.append(cabecalho, leitura, trilho, descricao);
     detalhes.appendChild(linha);
   });
 }
@@ -1004,6 +1017,41 @@ function desvioPadrao(valores) {
   return Math.sqrt(variancia);
 }
 
+function passoAmigavel(valor) {
+  if (!Number.isFinite(valor) || valor <= 0) return 1;
+  const escala = 10 ** Math.floor(Math.log10(valor));
+  const fracao = valor / escala;
+  const fator = fracao <= 1 ? 1 : fracao <= 2 ? 2 : fracao <= 5 ? 5 : 10;
+  return fator * escala;
+}
+
+function agregarObservacoesPorRequisicao(observacoes) {
+  const grupos = new Map();
+  observacoes.forEach(ponto => {
+    if (!grupos.has(ponto.x)) {
+      grupos.set(ponto.x, { x: ponto.x, cpu: [], latencia: [], p95: [], p99: [], amostras: [] });
+    }
+    const grupo = grupos.get(ponto.x);
+    ['cpu', 'latencia', 'p95', 'p99'].forEach(metrica => {
+      if (ponto[metrica] !== null) grupo[metrica].push(ponto[metrica]);
+    });
+    grupo.amostras.push(ponto.amostra);
+  });
+
+  const media = valores => valores.length
+    ? valores.reduce((soma, valor) => soma + valor, 0) / valores.length
+    : null;
+  return [...grupos.values()].map(grupo => ({
+    x: grupo.x,
+    cpu: media(grupo.cpu),
+    latencia: media(grupo.latencia),
+    p95: media(grupo.p95),
+    p99: media(grupo.p99),
+    quantidadeAmostras: grupo.amostras.length,
+    amostra: grupo.amostras.length === 1 ? grupo.amostras[0] : null
+  })).sort((a, b) => a.x - b.x);
+}
+
 function ajustarRegressao(pontos) {
   if (pontos.length < 3) return null;
   const n = pontos.length;
@@ -1138,7 +1186,7 @@ const zonaCriticaCarga = {
       const larguraPlot = chartArea.right - chartArea.left;
       const prefixo = larguraPlot < 220 ? '~' : larguraPlot < 360 ? 'Limite ~' : 'Limite estimado: ~';
       const sufixo = larguraPlot < 220 ? ' req · fora' : larguraPlot < 360 ? ' req · fora da faixa' : ' req (fora da faixa exibida)';
-      const texto = `${prefixo}${formatarNumero(config.cruzamento, 0)}${sufixo}`;
+      const texto = `${prefixo}${formatarRequisicoesEmMilhares(config.cruzamento)}${sufixo}`;
       ctx.fillText(texto, Math.max(chartArea.left + 4, chartArea.right - ctx.measureText(texto).width - 4), chartArea.top + 14);
       ctx.restore();
       return;
@@ -1157,14 +1205,15 @@ const zonaCriticaCarga = {
     ctx.fillStyle = '#ff7777';
     ctx.font = '600 10px sans-serif';
     const rotulo = config.observado ? 'Limite real' : 'Limite';
-    ctx.fillText(`${rotulo} · ${formatarNumero(config.cruzamento, 0)} req`, Math.min(x + 5, chartArea.right - 110), chartArea.top + 14);
+    ctx.fillText(`${rotulo} · ${formatarRequisicoesEmMilhares(config.cruzamento)} req`, Math.min(x + 5, chartArea.right - 135), chartArea.top + 14);
     ctx.restore();
   }
 };
 
 function atualizarGraficosCarga() {
   const requisicoes = estadoDashboard.dados?.requisicoes || {};
-  const observacoes = extrairAmostrasPorRequisicao(requisicoes);
+  const amostrasOriginais = extrairAmostrasPorRequisicao(requisicoes);
+  const observacoes = agregarObservacoesPorRequisicao(amostrasOriginais);
   const cpu = observacoes.filter(ponto => ponto.cpu !== null).map(ponto => ({ x: ponto.x, y: ponto.cpu, amostra: ponto.amostra }));
   const latencia = observacoes.filter(ponto => ponto.latencia !== null).map(ponto => ({ x: ponto.x, y: ponto.latencia, amostra: ponto.amostra }));
   const p95 = observacoes.filter(ponto => ponto.p95 !== null).map(ponto => ({ x: ponto.x, y: ponto.p95, amostra: ponto.amostra }));
@@ -1189,14 +1238,15 @@ function atualizarGraficosCarga() {
       if (estimativa >= 1) cruzamento = estimativa;
     }
   }
-  const incrementoPrevisao = 50;
-  const contagensObservadas = observacoes.map(ponto => ponto.x).filter(Number.isFinite);
-  const usarEscalaLogRequisicoes = contagensObservadas.length > 0 && contagensObservadas.every(valor => valor > 0);
   const larguraGraficoCarga = elemento('grafico-previsao-cpu').parentElement.getBoundingClientRect().width || window.innerWidth;
-  const horizonteResponsivo = larguraGraficoCarga < 360 ? 200 : 500;
-  const horizonte = Math.ceil(Math.max(horizonteResponsivo, maiorRequisicaoObservada * 2) / incrementoPrevisao) * incrementoPrevisao;
+  const multiplicadorHorizonte = larguraGraficoCarga < 480 ? 1.25 : larguraGraficoCarga < 900 ? 1.5 : 2;
+  const horizonteAlvo = Math.max(10, Math.ceil(maiorRequisicaoObservada * multiplicadorHorizonte));
+  const divisaoHorizonte = larguraGraficoCarga < 480 ? 5 : 10;
+  const incrementoPrevisao = passoAmigavel(horizonteAlvo / divisaoHorizonte);
+  const horizonte = Math.ceil(horizonteAlvo / incrementoPrevisao) * incrementoPrevisao;
   const primeiraRequisicaoProjetada = Math.ceil((maiorRequisicaoObservada + 1e-9) / incrementoPrevisao) * incrementoPrevisao;
-  const gradePrevisao = maiorRequisicaoObservada > 0 ? [maiorRequisicaoObservada] : [];
+  const gradePrevisao = [0];
+  if (maiorRequisicaoObservada > 0) gradePrevisao.push(maiorRequisicaoObservada);
   for (let requisicoesProjetadas = primeiraRequisicaoProjetada; requisicoesProjetadas <= horizonte; requisicoesProjetadas += incrementoPrevisao) {
     gradePrevisao.push(requisicoesProjetadas);
   }
@@ -1210,6 +1260,7 @@ function atualizarGraficosCarga() {
   const valoresLatenciaEscala = [...valoresLatenciaObservados, ...previsoesLatenciaEscala].filter(Number.isFinite);
   const positivosObservadosLatencia = valoresLatenciaObservados.filter(valor => valor > 0);
   const minimoLatenciaObservada = positivosObservadosLatencia.length ? Math.min(...positivosObservadosLatencia) : null;
+  const minimoLatenciaEscala = valoresLatenciaEscala.length ? Math.min(...valoresLatenciaEscala) : null;
   const maximoLatenciaEscala = valoresLatenciaEscala.length ? Math.max(...valoresLatenciaEscala) : null;
   const todosCentraisPositivos = valoresLatenciaObservados.every(valor => valor > 0) &&
     [latenciaModelo, p99Modelo].filter(Boolean).every(modelo =>
@@ -1218,40 +1269,36 @@ function atualizarGraficosCarga() {
   const usarEscalaLogLatencia = minimoLatenciaObservada !== null && maximoLatenciaEscala !== null &&
     todosCentraisPositivos && maximoLatenciaEscala / minimoLatenciaObservada >= 10;
   const pisoEscalaLogLatencia = usarEscalaLogLatencia ? Math.max(0.1, minimoLatenciaObservada / 1.5) : 0;
+  const amplitudeLatencia = minimoLatenciaEscala === null || maximoLatenciaEscala === null
+    ? null
+    : maximoLatenciaEscala - minimoLatenciaEscala;
+  const margemLatencia = amplitudeLatencia === null
+    ? 0
+    : amplitudeLatencia > 0 ? amplitudeLatencia * 0.15 : Math.max(10, Math.abs(maximoLatenciaEscala) * 0.08);
+  const pisoEscalaLinearLatencia = minimoLatenciaEscala === null ? 0 : Math.max(0, minimoLatenciaEscala - margemLatencia);
+  const tetoEscalaLinearLatencia = maximoLatenciaEscala === null ? undefined : maximoLatenciaEscala + margemLatencia;
 
   const configurarEixoRequisicoes = grafico => {
     const eixo = grafico.options.scales.x;
-    eixo.type = usarEscalaLogRequisicoes ? 'logarithmic' : 'linear';
-    eixo.min = usarEscalaLogRequisicoes ? 1 : 0;
+    eixo.type = 'linear';
+    eixo.min = 0;
     eixo.max = horizonte;
-    eixo.title.text = usarEscalaLogRequisicoes
-      ? larguraGraficoCarga < 360 ? ['Requisições', 'Escala logarítmica'] : ['Número de requisições', 'Escala logarítmica']
-      : 'Número de requisições';
+    eixo.title.text = larguraGraficoCarga < 360
+      ? ['Requisições', 'Números em milhares']
+      : ['Número de requisições', 'Números em milhares'];
     eixo.ticks.maxTicksLimit = larguraGraficoCarga < 360 ? 8 : 10;
-    if (usarEscalaLogRequisicoes) {
-      eixo.ticks.stepSize = undefined;
-      eixo.ticks.callback = function (valor) {
-        if (valor <= 0) return '';
-        const ordem = 10 ** Math.floor(Math.log10(valor));
-        const mantissa = valor / ordem;
-        const maximo = this.chart.options.scales.x.max;
-        const rotuloPrincipal = [1, 2, 5].some(marca => Math.abs(mantissa - marca) < 1e-8);
-        return rotuloPrincipal || Math.abs(valor - maximo) < 1e-8 ? formatarNumero(valor, 0) : '';
-      };
-    } else {
-      eixo.ticks.stepSize = Math.max(incrementoPrevisao, Math.ceil(horizonte / 500) * incrementoPrevisao);
-      eixo.ticks.callback = valor => formatarNumero(valor, 0);
-    }
+    eixo.ticks.stepSize = incrementoPrevisao;
+    eixo.ticks.callback = valor => formatarRequisicoesEmMilhares(valor);
   };
   configurarEixoRequisicoes(graficoPrevisaoCpu);
   configurarEixoRequisicoes(graficoPrevisaoLatencia);
 
   const eixoLatencia = graficoPrevisaoLatencia.options.scales.latencia;
   eixoLatencia.type = usarEscalaLogLatencia ? 'logarithmic' : 'linear';
-  eixoLatencia.beginAtZero = !usarEscalaLogLatencia;
-  eixoLatencia.min = usarEscalaLogLatencia ? pisoEscalaLogLatencia : 0;
-  eixoLatencia.max = usarEscalaLogLatencia ? maximoLatenciaEscala * 1.15 : undefined;
-  eixoLatencia.title.text = usarEscalaLogLatencia ? 'Latência (ms · escala logarítmica)' : 'Latência (ms)';
+  eixoLatencia.beginAtZero = false;
+  eixoLatencia.min = usarEscalaLogLatencia ? pisoEscalaLogLatencia : pisoEscalaLinearLatencia;
+  eixoLatencia.max = usarEscalaLogLatencia ? maximoLatenciaEscala * 1.15 : tetoEscalaLinearLatencia;
+  eixoLatencia.title.text = 'Latência (ms)';
   eixoLatencia.ticks.callback = usarEscalaLogLatencia
     ? valor => Math.abs(Math.log10(valor) - Math.round(Math.log10(valor))) < 1e-8 ? `${formatarNumero(valor, 0)} ms` : ''
     : valor => `${formatarNumero(valor, 0)} ms`;
@@ -1265,11 +1312,11 @@ function atualizarGraficosCarga() {
     const indiceInferior = datasets.length;
     datasets.push({ label: `Faixa inferior ${nome}`, data: previsoes.map(ponto => ({ x: ponto.x, y: limitar(ponto.inferior) })), yAxisID: eixo, borderColor: 'transparent', pointRadius: 0, fill: false });
     datasets.push({ label: `Faixa ${nome} (±1,96σ)`, data: previsoes.map(ponto => ({ x: ponto.x, y: limitar(ponto.superior) })), yAxisID: eixo, borderColor: 'transparent', backgroundColor: faixa, pointRadius: 0, fill: { target: indiceInferior } });
-    datasets.push({ label: `${nome} estimado por regressão linear`, data: previsoes.map(ponto => ({ x: ponto.x, y: limitar(ponto.valor), inferior: limitar(ponto.inferior), superior: limitar(ponto.superior) })), yAxisID: eixo, borderColor: cor, backgroundColor: cor, borderWidth: 2.2, borderDash: [7, 5], pointRadius: 0, tension: 0.12 });
+    datasets.push({ label: `${nome} estimado por regressão linear`, data: previsoes.map(ponto => ({ x: ponto.x, y: limitar(ponto.valor), inferior: limitar(ponto.inferior), superior: limitar(ponto.superior) })), yAxisID: eixo, borderColor: cor, backgroundColor: cor, borderWidth: 2.2, borderDash: [7, 5], pointRadius: 0, tension: 0 });
   };
 
   const datasetsCpu = [];
-  if (cpu.length) datasetsCpu.push({ label: 'CPU observada', data: cpu, yAxisID: 'cpu', borderColor: '#20baf4', backgroundColor: '#20baf4', borderWidth: 2, pointRadius: 3, pointHoverRadius: 5, showLine: true, tension: 0.12 });
+  if (cpu.length) datasetsCpu.push({ label: 'CPU observada', data: cpu, yAxisID: 'cpu', borderColor: '#20baf4', backgroundColor: '#20baf4', borderWidth: 2, pointRadius: 3, pointHoverRadius: 5, showLine: true, tension: 0 });
   adicionarFaixaEPrevisao(datasetsCpu, cpuModelo, 'cpu', 'CPU', '#20baf4', 'rgba(32,186,244,.13)');
   if (limiteCpu !== null) datasetsCpu.push({ label: `Limite crítico CPU (${formatarPercentual(limiteCpu)})`, data: [{ x: 1, y: limiteCpu }, { x: horizonte, y: limiteCpu }], yAxisID: 'cpu', borderColor: '#ff5c5c', borderWidth: 1.5, borderDash: [5, 4], pointRadius: 0 });
 
@@ -1279,20 +1326,23 @@ function atualizarGraficosCarga() {
   graficoPrevisaoCpu.data = { datasets: datasetsCpu };
 
   const datasetsLatencia = [];
-  if (p95.length) datasetsLatencia.push({ label: 'Latência P95 observada', data: p95, yAxisID: 'latencia', borderColor: '#ff9f32', backgroundColor: '#ff9f32', borderWidth: 2, pointRadius: 3, pointHoverRadius: 5, showLine: true, tension: 0.12 });
-  else if (latencia.length) datasetsLatencia.push({ label: 'Latência observada', data: latencia, yAxisID: 'latencia', borderColor: '#ff9f32', backgroundColor: '#ff9f32', borderWidth: 1.8, pointRadius: 2.5, pointHoverRadius: 5, showLine: true, tension: 0.12 });
+  if (p95.length) datasetsLatencia.push({ label: 'Latência P95 observada', data: p95, yAxisID: 'latencia', borderColor: '#ff9f32', backgroundColor: '#ff9f32', borderWidth: 2, pointRadius: 3, pointHoverRadius: 5, showLine: true, tension: 0 });
+  else if (latencia.length) datasetsLatencia.push({ label: 'Latência observada', data: latencia, yAxisID: 'latencia', borderColor: '#ff9f32', backgroundColor: '#ff9f32', borderWidth: 1.8, pointRadius: 2.5, pointHoverRadius: 5, showLine: true, tension: 0 });
   adicionarFaixaEPrevisao(datasetsLatencia, latenciaModelo, 'latencia', p95.length ? 'Latência P95' : 'Latência', '#ff9f32', 'rgba(255,159,50,.12)');
-  if (p99.length) datasetsLatencia.push({ label: 'Latência P99 observada', data: p99, yAxisID: 'latencia', borderColor: '#d879ff', backgroundColor: '#d879ff', borderWidth: 1.6, borderDash: [3, 3], pointRadius: 2.5, pointHoverRadius: 5, showLine: true, tension: 0.12 });
+  if (p99.length) datasetsLatencia.push({ label: 'Latência P99 observada', data: p99, yAxisID: 'latencia', borderColor: '#d879ff', backgroundColor: '#d879ff', borderWidth: 1.6, borderDash: [3, 3], pointRadius: 2.5, pointHoverRadius: 5, showLine: true, tension: 0 });
   adicionarFaixaEPrevisao(datasetsLatencia, p99Modelo, 'latencia', 'Latência P99', '#d879ff', 'rgba(216,121,255,.1)');
 
   graficoPrevisaoLatencia.data = { datasets: datasetsLatencia };
   const configurarTooltips = (grafico, eixo) => {
     grafico.options.plugins.tooltip.filter = item => !item.dataset.label.startsWith('Faixa ');
-    grafico.options.plugins.tooltip.callbacks.title = items => items.length ? `${formatarNumero(items[0].parsed.x, 0)} requisições` : '';
+    grafico.options.plugins.tooltip.callbacks.title = items => items.length ? `${formatarRequisicoesEmMilhares(items[0].parsed.x)} requisições` : '';
     grafico.options.plugins.tooltip.callbacks.afterBody = items => {
       const ponto = items[0]?.raw;
       const amostra = ponto?.amostra || {};
       const detalhes = [];
+      if (ponto?.quantidadeAmostras > 1) {
+        return [`Média de ${formatarNumero(ponto.quantidadeAmostras, 0)} amostras nesta quantidade de requisições.`];
+      }
       const desvio = numero(amostra.desvio_padrao_ms ?? amostra.latencia_desvio_padrao_ms);
       const totalRequisicoes = numero(amostra.requisicoes);
       const rps = numero(amostra.requisicoes_por_segundo);
@@ -1324,96 +1374,27 @@ function atualizarGraficosCarga() {
   const resumo = elemento('resumo-estresse');
   const sigmaLatencia = desvioPadrao(fonteLatencia.map(ponto => ponto.y)) ?? latenciaModelo?.sigma ?? null;
   const partes = [];
-  if (observacoes.length) partes.push(`${observacoes.length} observações do Gold`);
+  if (amostrasOriginais.length) partes.push(`${amostrasOriginais.length} observações do Gold`);
   if (sigmaLatencia !== null) partes.push(`desvio padrão da latência ${formatarNumero(sigmaLatencia, 2)} ms`);
-  if (cruzamentoObservado) partes.push(`CPU observada acima do limite desde ~${formatarNumero(cruzamento, 0)} requisições`);
-  else if (cpuModelo && limiteCpu !== null && cruzamento !== null) partes.push(`CPU atinge o limite estimado em ~${formatarNumero(cruzamento, 0)} requisições${cruzamento > horizonte ? ` (fora da faixa exibida até ${formatarNumero(horizonte, 0)})` : ''}`);
+  if (cruzamentoObservado) partes.push(`CPU observada acima do limite desde ~${formatarRequisicoesEmMilhares(cruzamento)} requisições`);
+  else if (cpuModelo && limiteCpu !== null && cruzamento !== null) partes.push(`CPU atinge o limite estimado em ~${formatarRequisicoesEmMilhares(cruzamento)} requisições${cruzamento > horizonte ? ` (fora da faixa exibida até ${formatarRequisicoesEmMilhares(horizonte)})` : ''}`);
   else if (cpuModelo && limiteCpu !== null) partes.push('CPU não cruza o limite na projeção exibida');
   else if (cpu.length) partes.push('sem pontos de CPU suficientes em contagens distintas para prever o cruzamento');
   else partes.push('Gold sem série de CPU por requisição para estimar saturação');
   if (!cruzamentoObservado && cruzamento !== null && cruzamento > horizonte && faixaRisco !== null) {
-    partes.push(`faixa de risco alcança o limite a partir de ~${formatarNumero(faixaRisco, 0)} requisições`);
+    partes.push(`faixa de risco alcança o limite a partir de ~${formatarRequisicoesEmMilhares(faixaRisco)} requisições`);
   }
   if (limiteCpu === null) partes.push('limite crítico de CPU não cadastrado nem informado pelo Gold');
   else partes.push(`limite crítico de CPU vindo de ${origemLimiteRecurso('cpu', 'critico')}`);
   const modelosCalculados = [cpuModelo, latenciaModelo, p99Modelo].filter(Boolean).length;
   const metodoPrevisao = modelosCalculados
-    ? `Simulação exploratória: regressão linear até ${formatarNumero(horizonte, 0)} requisições, em saltos de ${formatarNumero(incrementoPrevisao, 0)}. Faixa calculada por ±1,96 desvios padrão e não é garantia de resultado; esta simulação não representa a previsão temporal de 30 dias do Gold.`
+    ? `Estimativa exploratória por regressão linear até ${formatarRequisicoesEmMilhares(horizonte)} requisições, em intervalos de ${formatarRequisicoesEmMilhares(incrementoPrevisao)}. A faixa de variação usa ±1,96 desvios padrão e não é garantia de resultado nem substitui a previsão temporal de 30 dias do Gold.`
     : 'Ainda não há valores em contagens distintas para ajustar uma previsão.';
   resumo.textContent = temCpu || temLatencia ? `${partes.join(' · ')}. ${metodoPrevisao}` : mensagemEstadoVazio(semDados);
-  const janelaHttp = obterJanelaAmostras(observacoes);
+  const janelaHttp = obterJanelaAmostras(amostrasOriginais);
   elemento('periodo-teste').textContent = janelaHttp
     ? `Amostras HTTP: ${janelaHttp}`
     : observacoes.length ? `${observacoes.length} pontos · período não informado` : 'Sem amostras HTTP';
-}
-
-function adicionarEvento(container, data, texto, cor) {
-  const artigo = document.createElement('article');
-  artigo.className = 'evento';
-  artigo.style.setProperty('--evento-cor', cor);
-  const dataElemento = document.createElement('span');
-  dataElemento.className = 'evento-data';
-  dataElemento.textContent = data;
-  const ponto = document.createElement('span');
-  ponto.className = 'evento-ponto';
-  const textoElemento = document.createElement('span');
-  textoElemento.className = 'evento-texto';
-  textoElemento.textContent = texto;
-  artigo.append(dataElemento, ponto, textoElemento);
-  container.appendChild(artigo);
-}
-
-function atualizarEventos() {
-  const container = elemento('eventos');
-  container.replaceChildren();
-  const dados = estadoDashboard.dados;
-  if (!dados) {
-    const carregando = estadoDashboard.status === 'loading';
-    adicionarEvento(container, carregando ? 'Consultando Gold' : estadoDashboard.status === 'error' ? 'Falha na consulta' : 'Sem dados disponíveis', mensagemEstadoVazio(), carregando ? '#35b8f2' : '#ff5c5c');
-    return;
-  }
-
-  const ultimas = Object.keys(recursosDashboard).map(chave => {
-    const serie = recursoAtual(chave)?.serie_10_minutos || [];
-    return serie.length ? { chave, ponto: serie[serie.length - 1] } : null;
-  }).filter(Boolean).sort((a, b) => String(a.ponto.data_hora).localeCompare(String(b.ponto.data_hora)));
-  const amostraMaisRecente = ultimas[ultimas.length - 1]?.ponto;
-  if (amostraMaisRecente) {
-    const valores = ultimas.map(item => `${recursosDashboard[item.chave].nome} ${formatarPercentual(item.ponto.media)}`);
-    adicionarEvento(container, `Última amostra · ${formatarData(amostraMaisRecente.data_hora)}`, valores.join(' · '), '#35b8f2');
-  }
-
-  const runways = Object.keys(recursosDashboard).map(chave => {
-    const recurso = recursoAtual(chave);
-    return { chave, recurso, dias: calcularRunwayDias(chave, recurso), limite: limiteRecurso(chave, 'critico', recurso), atual: valorAtual(chave, recurso) };
-  }).filter(item => item.dias !== null && item.dias >= 0).sort((a, b) => a.dias - b.dias);
-  runways.forEach(item => {
-    const estado = estadoRunway(item.chave, item.recurso, item.dias);
-    const limite = item.limite === null ? 'limite crítico não informado' : `limite crítico de ${formatarPercentual(item.limite)}`;
-    const texto = item.dias === 0
-      ? `${estado.rotulo}: ${recursosDashboard[item.chave].nome} já ${item.atual > item.limite ? 'ultrapassou' : 'atingiu'} o ${limite}. Ação sugerida: agir imediatamente.`
-      : `${estado.rotulo}: ${recursosDashboard[item.chave].nome} pode atingir o ${limite} em aproximadamente ${formatarNumero(item.dias)} dias. Ação sugerida: revisar a capacidade antes do prazo estimado.`;
-    adicionarEvento(container, `Estimativa · ${recursosDashboard[item.chave].nome}`, texto, estado.cor);
-  });
-
-  const req = dados.requisicoes || {};
-  const ultimaCarga = req.ultima_amostra;
-  if (req.disponivel && ultimaCarga) {
-    const total = numero(ultimaCarga.requisicoes);
-    const rps = numero(ultimaCarga.requisicoes_por_segundo);
-    const p95 = numero(ultimaCarga.latencia_p95_ms);
-    const texto = [
-      total === null ? null : `${formatarNumero(total, 0)} requisições`,
-      rps === null ? null : `${formatarNumero(rps)} req/s`,
-      p95 === null ? null : `latência P95 ${formatarNumero(p95)} ms`,
-      numero(ultimaCarga.erros) === null ? null : `${formatarNumero(ultimaCarga.erros, 0)} erros`
-    ].filter(Boolean).join(' · ');
-    adicionarEvento(container, `Última medição HTTP · ${formatarData(ultimaCarga.data_hora)}`, texto || 'A medição HTTP não contém métricas detalhadas.', '#35b8f2');
-  }
-
-  if (!runways.length) {
-    adicionarEvento(container, 'Prazo estimado indisponível', mensagemRunwayIndisponivel(), '#f5c542');
-  }
 }
 
 function atualizarContextoGold() {
@@ -1439,7 +1420,6 @@ function renderizarDashboard() {
   atualizarGraficoRunway();
   atualizarResumoOperacional();
   atualizarGraficosCarga();
-  atualizarEventos();
   if (estadoDashboard.dados) atualizarContextoGold();
 }
 
@@ -1692,7 +1672,7 @@ function instalarModoTv() {
     texto.textContent = ativo ? 'Sair do modo TV' : 'Modo TV';
     botao.querySelector('i').className = `fa-solid ${ativo ? 'fa-compress' : 'fa-expand'}`;
     requestAnimationFrame(() => {
-      [graficoTendencia, ...Object.values(graficosTendenciaTv), graficoRunway, graficoPrevisaoCpu, graficoPrevisaoLatencia]
+      [graficoTendencia, ...Object.values(graficosTendenciaTv), graficoPrevisaoCpu, graficoPrevisaoLatencia]
         .filter(Boolean)
         .forEach(grafico => grafico.resize());
     });
