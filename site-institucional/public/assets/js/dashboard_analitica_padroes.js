@@ -322,7 +322,7 @@ function atualizarCalor() {
     var componente = elemento('componente_calor').value;
     var critico = elemento('estado_calor').value === 'critico';
     var rotulo = critico ? 'em crítico' : 'em atenção';
-    var dias = dados.periodo.dias_com_coleta;
+        var dias = dados.periodo.dias_janela; 
     var matriz = dados.calor[componente] || [];
     texto('titulo_calor', 'Mapa de calor · ' + nome(componente));
 

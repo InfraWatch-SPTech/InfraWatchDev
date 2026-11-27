@@ -573,7 +573,8 @@ function calcularDashboard(servidores, amostrasGold, servidorId, periodoDias) {
         servidores: servidores.map(function (s) { return { id: s.id, nome: s.nome }; }),
         servidor: { id: servidor.id, nome: servidor.nome, componentes: lista, nomes: NOMES, limites: servidor.limites },
         periodo: { dias: periodoDias, inicio: janela.dias[0] || null,
-            fim: janela.dias[janela.dias.length - 1] || null, dias_com_coleta: diasComColeta },
+            fim: janela.dias[janela.dias.length - 1] || null, dias_com_coleta: diasComColeta,
+            dias_janela: janela.dias },
         coleta: { minutos: arredondar(minutos), amostras: Object.keys(origens).length },
         padrao: { componente: componentePadrao(resumos, lista),
             processo: (mediaRam || 0) > (mediaCpu || 0) ? 'ram' : 'cpu', periodo: periodoPadrao },
@@ -584,7 +585,7 @@ function calcularDashboard(servidores, amostrasGold, servidorId, periodoDias) {
         processos: { cpu: processosNaSemana(amostras, 'cpu'), ram: processosNaSemana(amostras, 'ram') },
         ranking: rankingPorDia(amostras, lista, servidor.limites, diasComColeta),
         ranking_anterior: rankingAnterior,
-        calor: mapaCalor(amostras, lista, servidor.limites, diasComColeta),
+        calor: mapaCalor(amostras, lista, servidor.limites, janela.dias),
         comparacao: {
             limitacao: 'A Gold não armazena versões históricas dos limites. Os limites atuais do servidor são aplicados às duas janelas.',
             periodo_anterior: { inicio: inicioAnterior === null ? null : dataSP(inicioAnterior),
