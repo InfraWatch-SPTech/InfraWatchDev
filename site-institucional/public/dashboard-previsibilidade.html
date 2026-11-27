@@ -10,13 +10,9 @@
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.3.1/css/all.min.css" integrity="sha512-QeR2VH+lsBE5LSAe1Q5EnTBbe7XTBubt8dG93Y7gidSgdMCr8nVqKcfKAMyN96SV8KDbZVTDXChatu5G2KQGzg==" crossorigin="anonymous" referrerpolicy="no-referrer">
 </head>
 <body>
-  <header class="dashboard_header">
-    <a class="header_logo" href="./main.html">Infra<span>Watch</span></a>
-      <span class="dashboard_tag">Dados de previsibilidade</span>
-  </header>
   <main class="previsibilidade">
     <header class="topo">
-      <div><h1>Previsibilidade e capacidade</h1>
+      <div><span class="dashboard_tag">Dados de previsibilidade</span><h1>Previsibilidade e capacidade</h1>
         <p id="contexto-servidor">Selecione um servidor para carregar os dados de previsibilidade do Gold.</p>
       </div>
       <div class="topo-acoes">
@@ -137,6 +133,9 @@
 
     <p class="nota"><i class="fa-solid fa-circle-info" aria-hidden="true"></i> Na tendência temporal, pontos sólidos representam amostras do Gold e linhas tracejadas representam a projeção do Gold; dias intermediários podem ser interpolados. Na análise da carga HTTP, linhas tracejadas são estimativas por regressão linear sobre as amostras de carga, não uma previsão temporal. As faixas mostram variação estatística, não uma garantia de prazo.</p>
   </main>
+  <script src="./assets/js/redirecionamento.js"></script>
+  <script src="./assets/js/sessao.js"></script>
+  <script src="./assets/js/menu.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
   <script src="./assets/js/dashboard-previsibilidade.js"></script>
 </body>
