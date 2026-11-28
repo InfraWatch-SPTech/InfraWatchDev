@@ -4,9 +4,31 @@ var database = require("../database/config");
 
 
 
-// Função que retorna a quantidade de alertas críticos em aberto da empresa
-function kpiCriticosAbertos(fkEmpresa)
+// Retorna o filtro de datas com base no período selecionado
+function montarFiltroPeriodo(periodo, campoData)
 {
+  var campo = campoData || 'a.criado_em';
+
+  if (periodo === '7d')
+  {
+    return ` AND ${campo} >= DATE_SUB(CURDATE(), INTERVAL 6 DAY) `;
+  }
+
+  if (periodo === '30d')
+  {
+    return ` AND ${campo} >= DATE_SUB(CURDATE(), INTERVAL 29 DAY) `;
+  }
+
+  return ` AND ${campo} >= CURDATE() `;
+}
+
+
+
+// Função que retorna a quantidade de alertas críticos em aberto da empresa
+function kpiCriticosAbertos(fkEmpresa, periodo)
+{
+  var filtroPeriodo = montarFiltroPeriodo(periodo, 'a.criado_em');
+
   var instrucaoSql = `
     SELECT COUNT(*) AS criticos_abertos
     FROM alerta a
@@ -14,7 +36,8 @@ function kpiCriticosAbertos(fkEmpresa)
       ON e.idEquipamento = a.fkEquipamento
     WHERE e.fkEmpresa = ${fkEmpresa}
       AND a.tipo_alerta = 'CRITICO'
-      AND a.resolvido_em IS NULL;
+      AND a.resolvido_em IS NULL
+      ${filtroPeriodo};
   `;
 
   // COUNT(*) -> conta quantos alertas existem na consulta
@@ -32,21 +55,26 @@ function kpiCriticosAbertos(fkEmpresa)
 
 
 // Função que retorna a quantidade de alertas fora do SLA da empresa
-function kpiForaSla(fkEmpresa)
+function kpiForaSla(fkEmpresa, periodo)
 {
+  var filtroPeriodo = montarFiltroPeriodo(periodo, 'a.criado_em');
+
   var instrucaoSql = `
     SELECT COUNT(*) AS fora_sla
     FROM alerta a
     JOIN equipamento e
       ON e.idEquipamento = a.fkEquipamento
+    JOIN empresa emp
+      ON emp.idEmpresa = e.fkEmpresa
     WHERE e.fkEmpresa = ${fkEmpresa}
-      AND TIMESTAMPDIFF(MINUTE, a.criado_em, COALESCE(a.resolvido_em, NOW())) > e.sla_resolucao;
+      AND TIMESTAMPDIFF(MINUTE, a.criado_em, COALESCE(a.resolvido_em, NOW())) > emp.sla_resolucao
+      ${filtroPeriodo};
   `;
 
   // COUNT(*) -> conta quantos alertas estão fora do SLA
   // TIMESTAMPDIFF(MINUTE, a.criado_em, COALESCE(a.resolvido_em, NOW())) -> calcula o tempo do alerta em minutos
   // COALESCE(a.resolvido_em, NOW()) -> usa a data de resolução ou a hora atual se ainda estiver aberto
-  // > e.sla_resolucao -> retorna somente alertas que passaram do SLA da empresa/equipamento
+  // > emp.sla_resolucao -> retorna somente alertas que passaram do SLA da empresa
 
   // Exibe a query montada no terminal
   console.log("Executando a instrução SQL: \n" + instrucaoSql);
@@ -58,15 +86,18 @@ function kpiForaSla(fkEmpresa)
 
 
 // Função que retorna o tempo medio de resolução dos alertas da empresa
-function kpiTempoMedio(fkEmpresa)
+function kpiTempoMedio(fkEmpresa, periodo)
 {
+  var filtroPeriodo = montarFiltroPeriodo(periodo, 'a.criado_em');
+
   var instrucaoSql = `
     SELECT ROUND(AVG(TIMESTAMPDIFF(MINUTE, a.criado_em, a.resolvido_em)), 0) AS tempo_medio
     FROM alerta a
     JOIN equipamento e
       ON e.idEquipamento = a.fkEquipamento
     WHERE e.fkEmpresa = ${fkEmpresa}
-      AND a.resolvido_em IS NOT NULL;
+      AND a.resolvido_em IS NOT NULL
+      ${filtroPeriodo};
   `;
 
   // AVG(...) -> calcula a média do tempo de resolução dos alertas
@@ -84,15 +115,18 @@ function kpiTempoMedio(fkEmpresa)
 
 
 // Função que retorna a quantidade de alertas em aberto da empresa
-function kpiAbertos(fkEmpresa)
+function kpiAbertos(fkEmpresa, periodo)
 {
+  var filtroPeriodo = montarFiltroPeriodo(periodo, 'a.criado_em');
+
   var instrucaoSql = `
     SELECT COUNT(*) AS alertas_abertos
     FROM alerta a
     JOIN equipamento e
       ON e.idEquipamento = a.fkEquipamento
     WHERE e.fkEmpresa = ${fkEmpresa}
-      AND a.resolvido_em IS NULL;
+      AND a.resolvido_em IS NULL
+      ${filtroPeriodo};
   `;
 
   // COUNT(*) -> conta os alertas em aberto
@@ -109,21 +143,28 @@ function kpiAbertos(fkEmpresa)
 
 
 // Função que retorna onde estão os alertas em aberto da empresa
-function graficoOndeEstao(fkEmpresa)
+function graficoOndeEstao(fkEmpresa, periodo)
 {
+  var filtroPeriodo = montarFiltroPeriodo(periodo, 'a.criado_em');
+
   var instrucaoSql = `
     SELECT
       c.nome AS componente,
-      a.tipo_alerta,
-      COUNT(*) AS total
-    FROM alerta a
-    JOIN equipamento e
-      ON e.idEquipamento = a.fkEquipamento
+      COALESCE(SUM(CASE WHEN a.tipo_alerta = 'CRITICO' THEN 1 ELSE 0 END), 0) AS critico,
+      COALESCE(SUM(CASE WHEN a.tipo_alerta = 'ATENCAO' THEN 1 ELSE 0 END), 0) AS atencao,
+      COALESCE(COUNT(a.id_alerta), 0) AS total
+    FROM equipamento e
+    JOIN parametro_alerta p
+      ON p.fkEquipamento = e.idEquipamento
     JOIN componente c
-      ON c.idComponente = a.fkComponente
+      ON c.idComponente = p.fkComponente
+    LEFT JOIN alerta a
+      ON a.fkEquipamento = e.idEquipamento
+     AND a.fkComponente = p.fkComponente
+     AND a.resolvido_em IS NULL
+     ${filtroPeriodo}
     WHERE e.fkEmpresa = ${fkEmpresa}
-      AND a.resolvido_em IS NULL
-    GROUP BY c.nome, a.tipo_alerta
+    GROUP BY c.nome
     ORDER BY total DESC, c.nome;
   `;
 
@@ -143,28 +184,55 @@ function graficoOndeEstao(fkEmpresa)
 
 
 // Função que retorna o fluxo de alertas da empresa
-function graficoFluxo(fkEmpresa)
+function graficoFluxo(fkEmpresa, periodo)
 {
+  var filtroCriados = montarFiltroPeriodo(periodo, 'a.criado_em');
+  var filtroResolvidos = montarFiltroPeriodo(periodo, 'a.resolvido_em');
+  var agrupamentoCriados = 'DATE_FORMAT(a.criado_em, "%d/%m %Hh")';
+  var agrupamentoResolvidos = 'DATE_FORMAT(a.resolvido_em, "%d/%m %Hh")';
+  var ordemCriados = 'DATE_FORMAT(a.criado_em, "%Y-%m-%d %H:00:00")';
+  var ordemResolvidos = 'DATE_FORMAT(a.resolvido_em, "%Y-%m-%d %H:00:00")';
+
+  if (periodo === '7d')
+  {
+    agrupamentoCriados = 'DATE_FORMAT(a.criado_em, "%d/%m")';
+    agrupamentoResolvidos = 'DATE_FORMAT(a.resolvido_em, "%d/%m")';
+    ordemCriados = 'DATE(a.criado_em)';
+    ordemResolvidos = 'DATE(a.resolvido_em)';
+  }
+
+  if (periodo === '30d')
+  {
+    agrupamentoCriados = 'CONCAT(DATE_FORMAT(DATE_SUB(a.criado_em, INTERVAL WEEKDAY(a.criado_em) DAY), "%d/%m"), "–", DATE_FORMAT(DATE_ADD(DATE_SUB(a.criado_em, INTERVAL WEEKDAY(a.criado_em) DAY), INTERVAL 6 DAY), "%d/%m"))';
+    agrupamentoResolvidos = 'CONCAT(DATE_FORMAT(DATE_SUB(a.resolvido_em, INTERVAL WEEKDAY(a.resolvido_em) DAY), "%d/%m"), "–", DATE_FORMAT(DATE_ADD(DATE_SUB(a.resolvido_em, INTERVAL WEEKDAY(a.resolvido_em) DAY), INTERVAL 6 DAY), "%d/%m"))';
+    ordemCriados = 'DATE_SUB(a.criado_em, INTERVAL WEEKDAY(a.criado_em) DAY)';
+    ordemResolvidos = 'DATE_SUB(a.resolvido_em, INTERVAL WEEKDAY(a.resolvido_em) DAY)';
+  }
+
   var instrucaoSql = `
     SELECT
       periodo,
+      ordem,
       SUM(criados) AS criados,
       SUM(resolvidos) AS resolvidos
     FROM (
       SELECT
-        DATE_FORMAT(a.criado_em, '%d/%m %Hh') AS periodo,
+        ${agrupamentoCriados} AS periodo,
+        ${ordemCriados} AS ordem,
         COUNT(*) AS criados,
         0 AS resolvidos
       FROM alerta a
       JOIN equipamento e
         ON e.idEquipamento = a.fkEquipamento
       WHERE e.fkEmpresa = ${fkEmpresa}
-      GROUP BY DATE_FORMAT(a.criado_em, '%d/%m %Hh')
+        ${filtroCriados}
+      GROUP BY periodo, ordem
 
       UNION ALL
 
       SELECT
-        DATE_FORMAT(a.resolvido_em, '%d/%m %Hh') AS periodo,
+        ${agrupamentoResolvidos} AS periodo,
+        ${ordemResolvidos} AS ordem,
         0 AS criados,
         COUNT(*) AS resolvidos
       FROM alerta a
@@ -172,10 +240,11 @@ function graficoFluxo(fkEmpresa)
         ON e.idEquipamento = a.fkEquipamento
       WHERE e.fkEmpresa = ${fkEmpresa}
         AND a.resolvido_em IS NOT NULL
-      GROUP BY DATE_FORMAT(a.resolvido_em, '%d/%m %Hh')
+        ${filtroResolvidos}
+      GROUP BY periodo, ordem
     ) fluxo
-    GROUP BY periodo
-    ORDER BY MIN(periodo);
+    GROUP BY periodo, ordem
+    ORDER BY ordem;
   `;
 
   // UNION ALL -> junta os alertas criados e resolvidos na mesma base de dados
@@ -193,8 +262,10 @@ function graficoFluxo(fkEmpresa)
 
 
 // Função que retorna o tempo médio de resolução por componente da empresa
-function graficoMttr(fkEmpresa)
+function graficoMttr(fkEmpresa, periodo)
 {
+  var filtroPeriodo = montarFiltroPeriodo(periodo, 'a.criado_em');
+
   var instrucaoSql = `
     SELECT
       c.nome AS componente,
@@ -206,6 +277,7 @@ function graficoMttr(fkEmpresa)
       ON c.idComponente = a.fkComponente
     WHERE e.fkEmpresa = ${fkEmpresa}
       AND a.resolvido_em IS NOT NULL
+      ${filtroPeriodo}
     GROUP BY c.nome
     ORDER BY media_minutos DESC;
   `;
@@ -225,8 +297,10 @@ function graficoMttr(fkEmpresa)
 
 
 // Função que retorna a fila de atenção da empresa
-function filaAtencao(fkEmpresa)
+function filaAtencao(fkEmpresa, periodo)
 {
+  var filtroPeriodo = montarFiltroPeriodo(periodo, 'a.criado_em');
+
   var instrucaoSql = `
     SELECT
       a.jira_key,
@@ -235,21 +309,25 @@ function filaAtencao(fkEmpresa)
       a.tipo_alerta,
       a.status_alerta,
       TIMESTAMPDIFF(MINUTE, a.criado_em, NOW()) AS minutos_em_aberto,
-      TIMESTAMPDIFF(MINUTE, a.criado_em, NOW()) - e.sla_resolucao AS minutos_estourados
+      TIMESTAMPDIFF(MINUTE, a.criado_em, NOW()) - emp.sla_resolucao AS minutos_estourados
     FROM alerta a
     JOIN equipamento e
       ON e.idEquipamento = a.fkEquipamento
+    JOIN empresa emp
+      ON emp.idEmpresa = e.fkEmpresa
     JOIN componente c
       ON c.idComponente = a.fkComponente
     WHERE e.fkEmpresa = ${fkEmpresa}
       AND a.resolvido_em IS NULL
-      AND TIMESTAMPDIFF(MINUTE, a.criado_em, NOW()) > e.sla_resolucao
-    ORDER BY minutos_estourados DESC, a.criado_em DESC;
+      AND TIMESTAMPDIFF(MINUTE, a.criado_em, NOW()) > emp.sla_resolucao
+      ${filtroPeriodo}
+    ORDER BY minutos_estourados DESC, a.criado_em DESC
+    LIMIT 5;
   `;
 
   // a.jira_key -> chave do alerta para identificação na fila
   // TIMESTAMPDIFF(MINUTE, a.criado_em, NOW()) -> calcula há quanto tempo o alerta está aberto
-  // minutos_em_aberto - e.sla_resolucao -> calcula quantos minutos passaram do SLA
+  // minutos_em_aberto - emp.sla_resolucao -> calcula quantos minutos passaram do SLA
   // resolvido_em IS NULL -> retorna apenas alertas ainda em aberto
   // ORDER BY minutos_estourados DESC -> mostra primeiro os mais atrasados
 

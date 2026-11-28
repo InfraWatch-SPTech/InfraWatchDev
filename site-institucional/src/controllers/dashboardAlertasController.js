@@ -7,6 +7,7 @@ function kpiCriticosAbertos(req, res)
 {
   // id da empresa vindo da URL
   var fkEmpresa = req.params.fkEmpresa;
+  var periodo = req.query.periodo || 'hoje';
 
   if (!dashboardAlertasModel || !dashboardAlertasModel.kpiCriticosAbertos)
   {
@@ -15,7 +16,7 @@ function kpiCriticosAbertos(req, res)
   }
 
   // busca no banco os críticos em aberto
-  dashboardAlertasModel.kpiCriticosAbertos(fkEmpresa).then(function (resultado)
+  dashboardAlertasModel.kpiCriticosAbertos(fkEmpresa, periodo).then(function (resultado)
   {
     // Verifica se algum registro foi encontrado
     if (resultado.length > 0)
@@ -43,6 +44,7 @@ function kpiForaSla(req, res)
 {
   // id da empresa vindo da URL
   var fkEmpresa = req.params.fkEmpresa;
+  var periodo = req.query.periodo || 'hoje';
 
   if (!dashboardAlertasModel || !dashboardAlertasModel.kpiForaSla)
   {
@@ -51,7 +53,7 @@ function kpiForaSla(req, res)
   }
 
   // busca no banco os alertas fora do SLA
-  dashboardAlertasModel.kpiForaSla(fkEmpresa).then(function (resultado)
+  dashboardAlertasModel.kpiForaSla(fkEmpresa, periodo).then(function (resultado)
   {
     // Verifica se algum registro foi encontrado
     if (resultado.length > 0)
@@ -79,6 +81,7 @@ function kpiTempoMedio(req, res)
 {
   // id da empresa vindo da URL
   var fkEmpresa = req.params.fkEmpresa;
+  var periodo = req.query.periodo || 'hoje';
 
   if (!dashboardAlertasModel || !dashboardAlertasModel.kpiTempoMedio)
   {
@@ -87,7 +90,7 @@ function kpiTempoMedio(req, res)
   }
 
   // busca no banco o tempo médio de resolução
-  dashboardAlertasModel.kpiTempoMedio(fkEmpresa).then(function (resultado)
+  dashboardAlertasModel.kpiTempoMedio(fkEmpresa, periodo).then(function (resultado)
   {
     // Verifica se algum registro foi encontrado
     if (resultado.length > 0)
@@ -115,6 +118,7 @@ function kpiAbertos(req, res)
 {
   // id da empresa vindo da URL
   var fkEmpresa = req.params.fkEmpresa;
+  var periodo = req.query.periodo || 'hoje';
 
   if (!dashboardAlertasModel || !dashboardAlertasModel.kpiAbertos)
   {
@@ -123,7 +127,7 @@ function kpiAbertos(req, res)
   }
 
   // busca no banco os alertas em aberto
-  dashboardAlertasModel.kpiAbertos(fkEmpresa).then(function (resultado)
+  dashboardAlertasModel.kpiAbertos(fkEmpresa, periodo).then(function (resultado)
   {
     // Verifica se algum registro foi encontrado
     if (resultado.length > 0)
@@ -151,6 +155,7 @@ function graficoOndeEstao(req, res)
 {
   // id da empresa vindo da URL
   var fkEmpresa = req.params.fkEmpresa;
+  var periodo = req.query.periodo || 'hoje';
 
   if (!dashboardAlertasModel || !dashboardAlertasModel.graficoOndeEstao)
   {
@@ -159,7 +164,7 @@ function graficoOndeEstao(req, res)
   }
 
   // busca no banco os dados do gráfico
-  dashboardAlertasModel.graficoOndeEstao(fkEmpresa).then(function (resultado)
+  dashboardAlertasModel.graficoOndeEstao(fkEmpresa, periodo).then(function (resultado)
   {
     if (resultado.length > 0)
     {
@@ -184,6 +189,7 @@ function graficoFluxo(req, res)
 {
   // id da empresa vindo da URL
   var fkEmpresa = req.params.fkEmpresa;
+  var periodo = req.query.periodo || 'hoje';
 
   if (!dashboardAlertasModel || !dashboardAlertasModel.graficoFluxo)
   {
@@ -192,7 +198,7 @@ function graficoFluxo(req, res)
   }
 
   // busca no banco os dados do fluxo de alertas
-  dashboardAlertasModel.graficoFluxo(fkEmpresa).then(function (resultado)
+  dashboardAlertasModel.graficoFluxo(fkEmpresa, periodo).then(function (resultado)
   {
     if (resultado.length > 0)
     {
@@ -217,6 +223,7 @@ function graficoMttr(req, res)
 {
   // id da empresa vindo da URL
   var fkEmpresa = req.params.fkEmpresa;
+  var periodo = req.query.periodo || 'hoje';
 
   if (!dashboardAlertasModel || !dashboardAlertasModel.graficoMttr)
   {
@@ -225,7 +232,7 @@ function graficoMttr(req, res)
   }
 
   // busca no banco os dados do tempo médio de resolução
-  dashboardAlertasModel.graficoMttr(fkEmpresa).then(function (resultado)
+  dashboardAlertasModel.graficoMttr(fkEmpresa, periodo).then(function (resultado)
   {
     if (resultado.length > 0)
     {
@@ -250,6 +257,7 @@ function filaAtencao(req, res)
 {
   // id da empresa vindo da URL
   var fkEmpresa = req.params.fkEmpresa;
+  var periodo = req.query.periodo || 'hoje';
 
   if (!dashboardAlertasModel || !dashboardAlertasModel.filaAtencao)
   {
@@ -258,7 +266,7 @@ function filaAtencao(req, res)
   }
 
   // busca no banco os alertas da fila de atenção
-  dashboardAlertasModel.filaAtencao(fkEmpresa).then(function (resultado)
+  dashboardAlertasModel.filaAtencao(fkEmpresa, periodo).then(function (resultado)
   {
     if (resultado.length > 0)
     {
