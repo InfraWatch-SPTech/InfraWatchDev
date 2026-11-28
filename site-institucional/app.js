@@ -38,6 +38,7 @@ var hardwaresRouter = require("./src/routes/hardwares");
 var relatoriosRouter = require("./src/routes/relatorios");
 var apiJira = require("./src/routes/apiJira");
 var dashboardAnaliticaPadroesRouter = require('./src/routes/dashboard_analitica_padroes');
+var padroesRouter = require('./src/routes/padroes')
 
 app.use(cors());
 app.use(express.json());
@@ -54,6 +55,7 @@ app.use("/relatorios", relatoriosRouter);
 app.use("/apiJira", apiJira);
 
 app.use('/dashboard_analitica_padroes', dashboardAnaliticaPadroesRouter);
+app.use('/api/dashboard-padroes', padroesRouter);
 
 app.post('/sessao/sair', function(req, res) {
     req.session.destroy(function(erro) {
