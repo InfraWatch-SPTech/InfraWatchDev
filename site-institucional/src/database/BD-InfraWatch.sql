@@ -19,7 +19,8 @@ CREATE TABLE empresa (
     nome VARCHAR(100) NOT NULL,
     cnpj VARCHAR(18),
     email VARCHAR(100),
-    codigo CHAR(8) NOT NULL UNIQUE
+    codigo CHAR(8) NOT NULL UNIQUE,
+    mtbfMinSemana INT DEFAULT 0
 );
 
 CREATE TABLE usuario (

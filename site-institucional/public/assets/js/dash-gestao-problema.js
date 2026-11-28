@@ -18,6 +18,22 @@ async function receberInformacoesJira() {
     }
 }
 
+async function receberMtbfs(idEmpresa) {
+    try {        
+        const retornoMtbf = await fetch(`/dashGP/buscarMtbfSemanal/${idEmpresa}`);
+
+        if (!retornoMtbf.ok) throw new Error("HTTP " + retornoMtbf.status); // Se a resposta não estiver certa, retorna o erro
+
+        const mtbfConvertido = await retornoMtbf.json();
+        const mtbfs = mtbfConvertido;
+
+        return mtbfs;
+
+    } catch (e) {
+        console.error("Erro ao buscar Mtbf dos servidores:", e)
+    }
+}
+
 async function receberInformacoesEquipes(usuarioLogado) {
 
     const usuario = usuarioLogado ? JSON.parse(usuarioLogado) : console.error("Id do usuário não encontrado");
@@ -31,7 +47,7 @@ async function receberInformacoesEquipes(usuarioLogado) {
         const retornoEquipesConvertido = await retornoEquipes.json();
         const srvEquipes = retornoEquipesConvertido;
 
-        juntarEquipes(srvEquipes);
+        juntarEquipes(srvEquipes, usuarioLogado);
 
         return srvEquipes;
     } catch (e) {
@@ -71,8 +87,10 @@ async function tratarInformacoesJira(idComparacao, infosJira) {
                     'porcentagem': parseFloat(descricao[4][1].trim()),
                     'parametro': parseFloat(descricao[5][1].trim()),
                     'tempoAtivo': tempoAtivo,
+                    'kan': infosJira[i].chave
                 }
             )
+
         }
         
     }
@@ -80,7 +98,7 @@ async function tratarInformacoesJira(idComparacao, infosJira) {
     return issuesJson;
 }
 
-async function juntarEquipes(equipesServidor) {
+async function juntarEquipes(equipesServidor, usuario) {
     const servidores = {};
 
     // Adiciona os servidores individualmente na lista
@@ -101,11 +119,13 @@ async function juntarEquipes(equipesServidor) {
         }
     }
 
-    await formatarEquipesServidor(Object.values(servidores));
+    await formatarEquipesServidor(Object.values(servidores), usuario);
 }
 
-async function formatarEquipesServidor(eqServidor) {
+async function formatarEquipesServidor(eqServidor, usuario) {
     let infosJira = await receberInformacoesJira();
+    
+    kpiMtbf(infosJira, usuario);
 
     let jsonServidores = []
     
@@ -115,18 +135,25 @@ async function formatarEquipesServidor(eqServidor) {
 
         let componentes = [];
 
+        let kans = [];
+
         let qtdCriticos = 0;
 
         let qtdAtencao = 0;
 
         let riscoDowntime = 0; // Calcula o risco de downtime daquele componente
         let riscoTotal = 0;
+        
+        let statusParametro = [];
 
         for (let j = 0; j < alertasServidor.length; j++) {
             if (!componentes.includes(alertasServidor[j].componente)) {
                 let comp = alertasServidor[j].componente;
                 componentes.push(comp);
             }
+            let kan = alertasServidor[j].kan;
+            kans.push(kan);
+            
             if (alertasServidor[j].tipo == "CRITICO") {
                 qtdCriticos++;
             } else if (alertasServidor[j].tipo == "ATENCAO") {
@@ -135,27 +162,39 @@ async function formatarEquipesServidor(eqServidor) {
 
             let porcentagem = alertasServidor[j].porcentagem ? alertasServidor[j].porcentagem : 0;
             let tempoAtivo = alertasServidor[j].tempoAtivo ? alertasServidor[j].tempoAtivo : 0;
+            let parametro = alertasServidor[j].parametro ? alertasServidor[j].parametro : 0;
 
+            if (porcentagem >= parametro) {
+                if (alertasServidor[j].tipo === "CRITICO") {
+                    statusParametro.push('vermelho-inativo');
+                } else if (alertasServidor[j].tipo === "ATENCAO") {
+                    statusParametro.push('amarelo-atencao');
+                }
+            }
+            
             // Fórmula de risco de downtime que consideram o tempo ativo do alerta, a porcentagem de uso e um modificador temporal (0.5)
             riscoDowntime += porcentagem * (1 + 0.5 * (Math.log1p(tempoAtivo)))
-
+            
             riscoTotal += 100 * (1 + 0.5 * (Math.log1p(tempoAtivo))) // Assume o pior cenário
-
-            console.log(porcentagem);
             
         }
-
+        
+        statusParametro = statusParametro ? statusParametro : 'verde-ativo';
+        
         jsonServidores.push(
             {
                 'id': eqServidor[i].id,
+                'kans': kans,
                 'servidor': eqServidor[i].nome,
                 'equipe': eqServidor[i].equipes[0],
                 'alertas_ativos': alertasServidor.length,
+                'prejuizo_estimado': alertasServidor.length,
                 'qtdCriticos': qtdCriticos,
                 'qtdAtencao': qtdAtencao,
                 'problemas': componentes,
                 'risco_downtime': riscoDowntime,
-                'risco_total': riscoTotal
+                'risco_total': riscoTotal,
+                'sttsParametro': statusParametro[statusParametro.length - 1]
             }
         );
     }
@@ -177,6 +216,8 @@ async function formatarEquipesServidor(eqServidor) {
     jsonServidores.sort((a, b) => b.risco_downtime - a.risco_downtime);
 
     listarServidoresPorSeveridade(jsonServidores);
+
+    carregarMatrizDeRisco(jsonServidores);
 
 }
 
@@ -488,200 +529,183 @@ new Chart(ctx_disp, {
 // MATRIZ DE RISCO - CRITICIDADE ALERTAS X PREJUIZO ESTIMADO ------------
 // ----------------------------------------------------------------------
 
-// Definição do json de consumo
-const criticidadePrejuizo = [
-    {
-        'id': 1,
-        'servidor': 'SVR-01',
-        'equipe': 'Equipe Alertas',
-        'criticidade_alertas': 3,
-        'prejuizo_estimado': 3,
-        'valor_prejuizo': 2000000.00
-    },
-    {
-        'id': 2,
-        'servidor': 'SVR-02',
-        'equipe': 'Equipe Infraestrutura',
-        'criticidade_alertas': 1,
-        'prejuizo_estimado': 2,
-        'valor_prejuizo': 500000.00
-    },
-    {
-        'id': 3,
-        'servidor': 'SVR-03',
-        'equipe': 'Equipe Análistas',
-        'criticidade_alertas': 1,
-        'prejuizo_estimado': 1,
-        'valor_prejuizo': 100000.00
-    },
-    {
-        'id': 4,
-        'servidor': 'SVR-06',
-        'equipe': 'Equipe Analistas',
-        'criticidade_alertas': 3,
-        'prejuizo_estimado': 1,
-        'valor_prejuizo': 200000.00
+
+
+async function carregarMatrizDeRisco(listaServidores) {
+    // Definição do json de consumo
+
+    let mttr = 120;
+
+    const criticidadePrejuizo = listaServidores;
+    
+    // Variáveis de tratamento
+    let id = [];
+    let servidor = [];
+    let equipe = [];
+    let c_alertas = [];
+    let prejuizo_e = [];
+    let v_prejuizo = [];
+    
+    // Função de tratamento
+    function tratarCriticidadePrejuizo(criticidadePrejuizo) {
+        for (let i = 0; i < criticidadePrejuizo.length; i++) {
+
+            console.log(criticidadePrejuizo);
+
+            let prejuizo_estimado = (criticidadePrejuizo[i].alertas_ativos * mttr) * criticidadePrejuizo[i].prejuizo_estimado
+
+            let sttsParametro = criticidadePrejuizo[i].sttsParametro ?? 'verde-ativo';
+
+            let criticidade_alertas = sttsParametro == 'vermelho-inativo' ? 3 : sttsParametro == 'amarelo-atencao' ? 2 : 1;
+            
+            id.push(criticidadePrejuizo[i].id)
+            servidor.push(criticidadePrejuizo[i].servidor)
+            equipe.push(criticidadePrejuizo[i].equipe)
+            c_alertas.push(criticidade_alertas)
+            prejuizo_e.push(0)
+            v_prejuizo.push(prejuizo_estimado)
+
+        }
+    
+        return id, servidor, equipe, c_alertas, prejuizo_e, v_prejuizo;
     }
-]
+    tratarCriticidadePrejuizo(criticidadePrejuizo);
+    
+    const formatarValor = valor => valor.toLocaleString('pt-BR', {
+        minimumFractionDigits: 2,
+        maximumFractionDigits: 2
+    });
+    
+    
+    baixa_baixo = document.getElementById('baixa-baixo')
+    baixa_medio = document.getElementById('baixa-medio')
+    baixa_alto = document.getElementById('baixa-alto')
+    media_baixo = document.getElementById('media-baixo')
+    media_medio = document.getElementById('media-medio')
+    media_alto = document.getElementById('media-alto')
+    critica_baixo = document.getElementById('critica-baixo')
+    critica_medio = document.getElementById('critica-medio')
+    critica_alto = document.getElementById('critica-alto')
+    
+    srv_bb = []
+    srv_bm = []
+    srv_ba = []
+    srv_mb = []
+    srv_mm = []
+    srv_ma = []
+    srv_cb = []
+    srv_cm = []
+    srv_ca = []
+    
+    for (let i = 0; i < id.length; i++) {
 
-// Variáveis de tratamento
-let id = [];
-let servidor = [];
-let equipe = [];
-let c_alertas = [];
-let prejuizo_e = [];
-let v_prejuizo = [];
+        let valores_ordenados = v_prejuizo.toSorted((a, b) => a - b);
 
-// Função de tratamento
-function tratarCriticidadePrejuizo(criticidadePrejuizo) {
-    for (let i = 0; i < criticidadePrejuizo.length; i++) {
-        id.push(criticidadePrejuizo[i].id)
-        servidor.push(criticidadePrejuizo[i].servidor)
-        equipe.push(criticidadePrejuizo[i].equipe)
-        c_alertas.push(criticidadePrejuizo[i].criticidade_alertas)
-        prejuizo_e.push(criticidadePrejuizo[i].prejuizo_estimado)
-        v_prejuizo.push(criticidadePrejuizo[i].valor_prejuizo)
+        let index = 0;
+
+        for (let j = 0; j < v_prejuizo.length; j++) {
+            if (valores_ordenados[j] == v_prejuizo[i]) {
+                index = j;
+            }
+        }
+
+        let totalValores = v_prejuizo.length;
+        let tercos = parseInt(totalValores / 3);
+        if (index <= tercos) {
+            prejuizo_e[i] = 1;
+        } else if (index <= (tercos * 2)) {
+            prejuizo_e[i] = 2;
+        } else {
+            prejuizo_e[i] = 3;
+        }
+
+        item = {
+            'servidor': servidor[i],
+            'equipe': equipe[i],
+            'valor': v_prejuizo[i]
+        }
+        if (c_alertas[i] == 1 && prejuizo_e[i] == 1) {
+            srv_bb.push(item)
+        } else if (c_alertas[i] == 1 && prejuizo_e[i] == 2) {
+            srv_bm.push(item)
+        } else if (c_alertas[i] == 1 && prejuizo_e[i] == 3) {
+            srv_ba.push(item)
+        } else if (c_alertas[i] == 2 && prejuizo_e[i] == 1) {
+            srv_mb.push(item)
+        } else if (c_alertas[i] == 2 && prejuizo_e[i] == 2) {
+            srv_mm.push(item)
+        } else if (c_alertas[i] == 2 && prejuizo_e[i] == 3) {
+            srv_ma.push(item)
+        } else if (c_alertas[i] == 3 && prejuizo_e[i] == 1) {
+            srv_cb.push(item)
+        } else if (c_alertas[i] == 3 && prejuizo_e[i] == 2) {
+            srv_cm.push(item)
+        } else if (c_alertas[i] == 3 && prejuizo_e[i] == 3) {
+            srv_ca.push(item)
+        } else {
+            console.log("Nenhum servidor encontrado!");
+        }
     }
+    
+    srv_bb.length != 0 ? baixa_baixo.innerHTML = `- R$ ${formatarValor(srv_bb[0].valor)}<br><span>${srv_bb[0].servidor}</span>` : baixa_baixo.innerHTML = `<span>--</span>`
+    
+    srv_bm.length != 0 ? baixa_medio.innerHTML = `- R$ ${formatarValor(srv_bm[0].valor)}<br><span>${srv_bm[0].servidor}</span>` : baixa_medio.innerHTML = `<span>--</span>`
+    
+    srv_ba.length != 0 ? baixa_alto.innerHTML = `- R$ ${formatarValor(srv_ba[0].valor)}<br><span>${srv_ba[0].servidor}</span>` : baixa_alto.innerHTML = `<span>--</span>`
+    
+    srv_mb.length != 0 ? media_baixo.innerHTML = `- R$ ${formatarValor(srv_mb[0].valor)}<br><span>${srv_mb[0].servidor}</span>` : media_baixo.innerHTML = `<span>--</span>`
+    
+    srv_mm.length != 0 ? media_medio.innerHTML = `- R$ ${formatarValor(srv_mm[0].valor)}<br><span>${srv_mm[0].servidor}</span>` : media_medio.innerHTML = `<span>--</span>`
+    
+    srv_ma.length != 0 ? media_alto.innerHTML = `- R$ ${formatarValor(srv_ma[0].valor)}<br><span>${srv_ma[0].servidor}</span>` : media_alto.innerHTML = `<span>--</span>`
+    
+    srv_cb.length != 0 ? critica_baixo.innerHTML = `- R$ ${formatarValor(srv_cb[0].valor)}<br><span>${srv_cb[0].servidor}</span>` : critica_baixo.innerHTML = `<span>--</span>`
+    
+    srv_cm.length != 0 ? critica_medio.innerHTML = `- R$ ${formatarValor(srv_cm[0].valor)}<br><span>${srv_cm[0].servidor}</span>` : critica_medio.innerHTML = `<span>--</span>`
+    
+    srv_ca.length != 0 ? critica_alto.innerHTML = `- R$ ${formatarValor(srv_ca[0].valor)}<br><span>${srv_ca[0].servidor}</span>` : critica_alto.innerHTML = `<span>--</span>`
+    
+    let total_bb = 0;
+    let total_bm = 0;
+    let total_ba = 0;
+    let total_mb = 0;
+    let total_mm = 0;
+    let total_ma = 0;
+    let total_cb = 0;
+    let total_cm = 0;
+    let total_ca = 0;
+    
+    
+    total_bb = srv_bb.reduce((acc, s) => acc + s.valor, 0);
+    total_bm = srv_bm.reduce((acc, s) => acc + s.valor, 0);
+    total_ba = srv_ba.reduce((acc, s) => acc + s.valor, 0);
+    total_mb = srv_mb.reduce((acc, s) => acc + s.valor, 0);
+    total_mm = srv_mm.reduce((acc, s) => acc + s.valor, 0);
+    total_ma = srv_ma.reduce((acc, s) => acc + s.valor, 0);
+    total_cb = srv_cb.reduce((acc, s) => acc + s.valor, 0);
+    total_cm = srv_cm.reduce((acc, s) => acc + s.valor, 0);
+    total_ca = srv_ca.reduce((acc, s) => acc + s.valor, 0);
+    
+    
+    srv_bb.length > 1 ? baixa_baixo.innerHTML = `- R$ ${formatarValor(total_bb)}<br><span>${srv_bb[0].servidor} ...</span>` : baixa_baixo.innerHTML += ``
+    
+    srv_bm.length > 1 ? baixa_medio.innerHTML = `- R$ ${formatarValor(total_bm)}<br><span>${srv_bm[0].servidor} ...</span>` : baixa_medio.innerHTML += ``
+    
+    srv_ba.length > 1 ? baixa_alto.innerHTML = `- R$ ${formatarValor(total_ba)}<br><span>${srv_ba[0].servidor} ...</span>` : baixa_alto.innerHTML += ``
+    
+    srv_mb.length > 1 ? media_baixo.innerHTML = `- R$ ${formatarValor(total_mb)}<br><span>${srv_mb[0].servidor} ...</span>` : media_baixo.innerHTML += ``
+    
+    srv_mm.length > 1 ? media_medio.innerHTML = `- R$ ${formatarValor(total_mm)}<br><span>${srv_mm[0].servidor} ...</span>` : media_medio.innerHTML += ``
+    
+    srv_ma.length > 1 ? media_alto.innerHTML = `- R$ ${formatarValor(total_ma)}<br><span>${srv_ma[0].servidor} ...</span>` : media_alto.innerHTML += ``
+    
+    srv_cb.length > 1 ? critica_baixo.innerHTML = `- R$ ${formatarValor(total_cb)}<br><span>${srv_cb[0].servidor} ...</span>` : critica_baixo.innerHTML += ``
+    
+    srv_cm.length > 1 ? critica_medio.innerHTML = `- R$ ${formatarValor(total_cm)}<br><span>${srv_cm[0].servidor} ...</span>` : critica_medio.innerHTML += ``
+    
+    srv_ca.length > 1 ? critica_alto.innerHTML = `- R$ ${formatarValor(total_ca)}<br><span>${srv_ca[0].servidor} ...</span>` : critica_alto.innerHTML += ``
 
-    return id, servidor, equipe, c_alertas, prejuizo_e, v_prejuizo;
 }
-tratarCriticidadePrejuizo(criticidadePrejuizo);
-
-const formatarValor = valor => valor.toLocaleString('pt-BR', {
-    minimumFractionDigits: 2,
-    maximumFractionDigits: 2
-});
-
-
-baixa_baixo = document.getElementById('baixa-baixo')
-baixa_medio = document.getElementById('baixa-medio')
-baixa_alto = document.getElementById('baixa-alto')
-media_baixo = document.getElementById('media-baixo')
-media_medio = document.getElementById('media-medio')
-media_alto = document.getElementById('media-alto')
-critica_baixo = document.getElementById('critica-baixo')
-critica_medio = document.getElementById('critica-medio')
-critica_alto = document.getElementById('critica-alto')
-
-srv_bb = []
-srv_bm = []
-srv_ba = []
-srv_mb = []
-srv_mm = []
-srv_ma = []
-srv_cb = []
-srv_cm = []
-srv_ca = []
-
-for (let i = 0; i < id.length; i++) {
-    item = {
-        'servidor': servidor[i],
-        'equipe': equipe[i],
-        'valor': v_prejuizo[i]
-    }
-    if (c_alertas[i] == 1 && prejuizo_e[i] == 1) {
-        srv_bb.push(item)
-    } else if (c_alertas[i] == 1 && prejuizo_e[i] == 2) {
-        srv_bm.push(item)
-    } else if (c_alertas[i] == 1 && prejuizo_e[i] == 3) {
-        srv_ba.push(item)
-    } else if (c_alertas[i] == 2 && prejuizo_e[i] == 1) {
-        srv_mb.push(item)
-    } else if (c_alertas[i] == 2 && prejuizo_e[i] == 2) {
-        srv_mm.push(item)
-    } else if (c_alertas[i] == 2 && prejuizo_e[i] == 3) {
-        srv_ma.push(item)
-    } else if (c_alertas[i] == 3 && prejuizo_e[i] == 1) {
-        srv_cb.push(item)
-    } else if (c_alertas[i] == 3 && prejuizo_e[i] == 2) {
-        srv_cm.push(item)
-    } else if (c_alertas[i] == 3 && prejuizo_e[i] == 3) {
-        srv_ca.push(item)
-    } else {
-        console.log("Nenhum servidor encontrado!");
-    }
-}
-
-srv_bb.length != 0 ? baixa_baixo.innerHTML = `- R$ ${formatarValor(srv_bb[0].valor)}<br><span>${srv_bb[0].servidor}</span>` : baixa_baixo.innerHTML = `<span>--</span>`
-
-srv_bm.length != 0 ? baixa_medio.innerHTML = `- R$ ${formatarValor(srv_bm[0].valor)}<br><span>${srv_bm[0].servidor}</span>` : baixa_medio.innerHTML = `<span>--</span>`
-
-srv_ba.length != 0 ? baixa_alto.innerHTML = `- R$ ${formatarValor(srv_ba[0].valor)}<br><span>${srv_ba[0].servidor}</span>` : baixa_alto.innerHTML = `<span>--</span>`
-
-srv_mb.length != 0 ? media_baixo.innerHTML = `- R$ ${formatarValor(srv_mb[0].valor)}<br><span>${srv_mb[0].servidor}</span>` : media_baixo.innerHTML = `<span>--</span>`
-
-srv_mm.length != 0 ? media_medio.innerHTML = `- R$ ${formatarValor(srv_mm[0].valor)}<br><span>${srv_mm[0].servidor}</span>` : media_medio.innerHTML = `<span>--</span>`
-
-srv_ma.length != 0 ? media_alto.innerHTML = `- R$ ${formatarValor(srv_ma[0].valor)}<br><span>${srv_ma[0].servidor}</span>` : media_alto.innerHTML = `<span>--</span>`
-
-srv_cb.length != 0 ? critica_baixo.innerHTML = `- R$ ${formatarValor(srv_cb[0].valor)}<br><span>${srv_cb[0].servidor}</span>` : critica_baixo.innerHTML = `<span>--</span>`
-
-srv_cm.length != 0 ? critica_medio.innerHTML = `- R$ ${formatarValor(srv_cm[0].valor)}<br><span>${srv_cm[0].servidor}</span>` : critica_medio.innerHTML = `<span>--</span>`
-
-srv_ca.length != 0 ? critica_alto.innerHTML = `- R$ ${formatarValor(srv_ca[0].valor)}<br><span>${srv_ca[0].servidor}</span>` : critica_alto.innerHTML = `<span>--</span>`
-
-let total_bb = 0;
-let total_bm = 0;
-let total_ba = 0;
-let total_mb = 0;
-let total_mm = 0;
-let total_ma = 0;
-let total_cb = 0;
-let total_cm = 0;
-let total_ca = 0;
-
-
-total_bb = srv_bb.reduce((acc, s) => acc + s.valor, 0);
-total_bm = srv_bm.reduce((acc, s) => acc + s.valor, 0);
-total_ba = srv_ba.reduce((acc, s) => acc + s.valor, 0);
-total_mb = srv_bb.reduce((acc, s) => acc + s.valor, 0);
-total_mm = srv_bb.reduce((acc, s) => acc + s.valor, 0);
-total_ma = srv_bb.reduce((acc, s) => acc + s.valor, 0);
-total_cb = srv_bb.reduce((acc, s) => acc + s.valor, 0);
-total_cm = srv_bb.reduce((acc, s) => acc + s.valor, 0);
-total_ca = srv_bb.reduce((acc, s) => acc + s.valor, 0);
-
-
-srv_bb.length > 1 ? baixa_baixo.innerHTML = `- R$ ${formatarValor(total_bb)}<br><span>${srv_bb[0].servidor}, ${srv_bb[1].servidor}</span>` : baixa_baixo.innerHTML += ``
-
-srv_bm.length > 1 ? baixa_medio.innerHTML = `- R$ ${formatarValor(total_bm)}<br><span>${srv_bm[0].servidor}, ${srv_bm[1].servidor}</span>` : baixa_medio.innerHTML += ``
-
-srv_ba.length > 1 ? baixa_alto.innerHTML = `- R$ ${formatarValor(total_ba)}<br><span>${srv_ba[0].servidor}, ${srv_ba[1].servidor}</span>` : baixa_alto.innerHTML += ``
-
-srv_mb.length > 1 ? media_baixo.innerHTML = `- R$ ${formatarValor(total_mb)}<br><span>${srv_mb[0].servidor}, ${srv_mb[1].servidor}</span>` : media_baixo.innerHTML += ``
-
-srv_mm.length > 1 ? media_medio.innerHTML = `- R$ ${formatarValor(total_mm)}<br><span>${srv_mm[0].servidor}, ${srv_mm[1].servidor}</span>` : media_medio.innerHTML += ``
-
-srv_ma.length > 1 ? media_alto.innerHTML = `- R$ ${formatarValor(total_ma)}<br><span>${srv_ma[0].servidor}, ${srv_ma[1].servidor}</span>` : media_alto.innerHTML += ``
-
-srv_cb.length > 1 ? critica_baixo.innerHTML = `- R$ ${formatarValor(total_cb)}<br><span>${srv_cb[0].servidor}, ${srv_cb[1].servidor}</span>` : critica_baixo.innerHTML += ``
-
-srv_cm.length > 1 ? critica_medio.innerHTML = `- R$ ${formatarValor(total_cm)}<br><span>${srv_cm[0].servidor}, ${srv_cm[1].servidor}</span>` : critica_medio.innerHTML += ``
-
-srv_ca.length > 1 ? critica_alto.innerHTML = `- R$ ${formatarValor(total_ca)}<br><span>${srv_ca[0].servidor}, ${srv_ca[1].servidor}</span>` : critica_alto.innerHTML += ``
-
-
-
-srv_bb.length > 2 ? baixa_baixo.innerHTML = `- R$ ${formatarValor(total_bb)}<br><span>${srv_bb[0].servidor}, ${srv_bb[1].servidor} ...</span>` : baixa_baixo.innerHTML += ``
-
-srv_bm.length > 2 ? baixa_medio.innerHTML = `- R$ ${formatarValor(total_bm)}<br><span>${srv_bm[0].servidor}, ${srv_bm[1].servidor} ...</span>` : baixa_medio.innerHTML += ``
-
-srv_ba.length > 2 ? baixa_alto.innerHTML = `- R$ ${formatarValor(total_ba)}<br><span>${srv_ba[0].servidor}, ${srv_ba[1].servidor} ...</span>` : baixa_alto.innerHTML += ``
-
-srv_mb.length > 2 ? media_baixo.innerHTML = `- R$ ${formatarValor(total_mb)}<br><span>${srv_mb[0].servidor}, ${srv_mb[1].servidor} ...</span>` : media_baixo.innerHTML += ``
-
-srv_mm.length > 2 ? media_medio.innerHTML = `- R$ ${formatarValor(total_mm)}<br><span>${srv_mm[0].servidor}, ${srv_mm[1].servidor} ...</span>` : media_medio.innerHTML += ``
-
-srv_ma.length > 2 ? media_alto.innerHTML = `- R$ ${formatarValor(total_ma)}<br><span>${srv_ma[0].servidor}, ${srv_ma[1].servidor} ...</span>` : media_alto.innerHTML += ``
-
-srv_cb.length > 2 ? critica_baixo.innerHTML = `- R$ ${formatarValor(total_cb)}<br><span>${srv_cb[0].servidor}, ${srv_cb[1].servidor} ...</span>` : critica_baixo.innerHTML += ``
-
-srv_cm.length > 2 ? critica_medio.innerHTML = `- R$ ${formatarValor(total_cm)}<br><span>${srv_cm[0].servidor}, ${srv_cm[1].servidor} ...</span>` : critica_medio.innerHTML += ``
-
-srv_ca.length > 2 ? critica_alto.innerHTML = `- R$ ${formatarValor(total_ca)}<br><span>${srv_ca[0].servidor}, ${srv_ca[1].servidor} ...</span>` : critica_alto.innerHTML += ``
-
-
-
 
 
 
@@ -698,7 +722,10 @@ async function listarServidoresPorSeveridade(listaServidores) {
     let equipe_lista = [];
     let risco_queda = [];
     let alertas_ativos = [];
+    let prejuizo_estimado = [];
+    let kans = [];
     let problema = [];
+    let sttsParametro = [];
 
     // Função de tratamento
     function tratarListaServidores(listaServidores) {
@@ -708,9 +735,12 @@ async function listarServidoresPorSeveridade(listaServidores) {
             equipe_lista.push(listaServidores[i].equipe)
             risco_queda.push(parseInt(listaServidores[i].risco_downtime))
             alertas_ativos.push(listaServidores[i].alertas_ativos)
+            prejuizo_estimado.push(listaServidores[i].prejuizo_estimado)
+            kans.push(listaServidores[i].kans)
             problema.push(listaServidores[i].problemas)
+            sttsParametro.push(listaServidores[i].sttsParametro)
         }
-        return id_lista, servidor_lista, equipe, risco_queda, alertas_ativos, problema;
+        return id_lista, servidor_lista, equipe_lista, risco_queda, alertas_ativos, prejuizo_estimado, kans, problema, sttsParametro;
     }
     tratarListaServidores(listaServidores);
 
@@ -719,16 +749,10 @@ async function listarServidoresPorSeveridade(listaServidores) {
     let cor_barra = 'branco-default'
 
     for (let i = 0; i < id_lista.length; i++) {
-        if (risco_queda[i] <= 33) {
-            cor_barra = 'verde-ativo'
-        } else if (risco_queda[i] <= 66) {
-            cor_barra = 'amarelo-atencao'
-        } else {
-            cor_barra = 'vermelho-inativo'
-        }
 
-        problemas = problema[i];
-        
+        cor_barra = sttsParametro[i] ? sttsParametro[i] : 'verde-ativo';        
+
+        let problemas = problema[i];
 
         lista.innerHTML += `
                             <tr>
@@ -741,6 +765,7 @@ async function listarServidoresPorSeveridade(listaServidores) {
                                         <span class="barra-preenchimento" style="width: ${risco_queda[i]}%; background-color: var(--cor-${cor_barra});"></span>
                                     </div>
                                 </td>
+                                <td class="qtd-a" style="color: var(--cor-${cor_barra})">${kans[i].length > 0 ? kans[i].join(', ') : "--"}</td>
                                 <td class="qtd-a" style="color: var(--cor-${cor_barra})">${alertas_ativos[i]}</td>
                                 <td style="color: var(--cor-${cor_barra})">${problemas}</td>
                                 <td><a href="#">ver -></a></td>
@@ -748,6 +773,8 @@ async function listarServidoresPorSeveridade(listaServidores) {
         `
         
     }
+
+    kpiServidoresAtivos(listaServidores);
 }
 
 
@@ -761,51 +788,56 @@ async function listarServidoresPorSeveridade(listaServidores) {
 // ----------------------------------------------------------------------
 
 // KPI -- SERVIDORES ATIVOS
-const servidoresAtivos = [
-    {
-        'qtdServidoresAtivos': 1,
-        'qtdServidoresTotais': 3
+function kpiServidoresAtivos(listaServidores) {
+
+    let qtdAtivos = listaServidores.length;
+
+    // for (let i = 0; i < listaServidores.length; i++) {
+    //     if (listaServidores[i].ativo == false) {
+    //         qtdAtivos--;
+    //     }
+    // }
+    
+    let sAtivos = qtdAtivos;
+    let sTotais = listaServidores.length;
+    let sInativos = sTotais - sAtivos;
+    
+    let kpiInativos = document.getElementById('kpi-s-inativos');
+    let kpiAtivos = document.getElementById('kpi-s-ativos');
+    let kpiTotais = document.getElementById('kpi-s-totais');
+    kpiServidoresBorder = document.getElementById('kpi-servidores-ativos')
+    
+    if (sInativos > 1) {
+        kpiInativos.innerHTML = `${sInativos} Servidores Inativos`;
+        kpiAtivos.innerHTML = `${sAtivos}`;
+        kpiTotais.innerHTML = `${sTotais}`;
+        kpiInativos.classList.add('cor_vermelha')
+        kpiInativos.classList.remove('cor_verde')
+        kpiServidoresBorder.style.borderColor = "#FF5C5C"
+    
+    } else if (sInativos > 0) {
+        kpiInativos.innerHTML = `${sInativos} Servidor Inativo`;
+        kpiAtivos.innerHTML = `${sAtivos}`;
+        kpiTotais.innerHTML = `${sTotais}`;
+        kpiInativos.classList.add('cor_vermelha')
+        kpiInativos.classList.remove('cor_verde')
+        kpiServidoresBorder.style.borderColor = "#FF5C5C"
+    } else {
+        kpiInativos.innerHTML = `Nenhum servidor inativo`;
+        kpiAtivos.innerHTML = `${sAtivos}`;
+        kpiTotais.innerHTML = `${sTotais}`;
+        kpiInativos.classList.add('cor_verde')
+        kpiInativos.classList.remove('cor_vermelha')
+        kpiServidoresBorder.style.borderColor = "#3DDC84"
     }
-]
 
-let sAtivos = servidoresAtivos[0].qtdServidoresAtivos;
-let sTotais = servidoresAtivos[0].qtdServidoresTotais;
-let sInativos = sTotais - sAtivos;
-
-let kpiInativos = document.getElementById('kpi-s-inativos');
-let kpiAtivos = document.getElementById('kpi-s-ativos');
-let kpiTotais = document.getElementById('kpi-s-totais');
-kpiServidoresBorder = document.getElementById('kpi-servidores-ativos')
-
-if (sInativos > 1) {
-    kpiInativos.innerHTML = `${sInativos} Servidores Inativos`;
-    kpiAtivos.innerHTML = `${sAtivos}`;
-    kpiTotais.innerHTML = `${sTotais}`;
-    kpiInativos.classList.add('cor_vermelha')
-    kpiInativos.classList.remove('cor_verde')
-    kpiServidoresBorder.style.borderColor = "#FF5C5C"
-
-} else if (sInativos > 0) {
-    kpiInativos.innerHTML = `${sInativos} Servidor Inativo`;
-    kpiAtivos.innerHTML = `${sAtivos}`;
-    kpiTotais.innerHTML = `${sTotais}`;
-    kpiInativos.classList.add('cor_vermelha')
-    kpiInativos.classList.remove('cor_verde')
-    kpiServidoresBorder.style.borderColor = "#FF5C5C"
-} else {
-    kpiInativos.innerHTML = `Nenhum servidor inativo`;
-    kpiAtivos.innerHTML = `${sAtivos}`;
-    kpiTotais.innerHTML = `${sTotais}`;
-    kpiInativos.classList.add('cor_verde')
-    kpiInativos.classList.remove('cor_vermelha')
-    kpiServidoresBorder.style.borderColor = "#3DDC84"
 }
 
 
 // KPI -- UPTIME ATUAL
 const uptimeEmMinutos = [
     {
-        'uptimeMin': 476.5
+        'uptimeMin': 0
     }
 ]
 
@@ -838,49 +870,107 @@ if (uptimeAtualPercent < 99.90) {
     kpiUptimeBorder.style.borderColor = "#3DDC84"
 }
 
+async function atualizarMtbfSemanalmente(idEmp, mtbfMin, hoje) {
+    if (hoje.getDay() === 5) {
+
+        var corpo = {
+            idEmpresa: idEmp,
+            mtbf: mtbfMin
+        }
+
+        fetch(`/dashGP/atualizarMtbf`, {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify(corpo)
+        }).then(async function (resposta) {
+
+            if (resposta.ok) {
+                console.log("MTBF atualizado com sucesso.");
+                return;
+            }
+
+            const detalhe = await resposta.text();
+            throw new Error(`HTTP ${resposta.status}: ${detalhe}`);
+        }).catch(function (erro) {
+            console.error("#ERRO ao atualizar MTBF:", erro);
+        });
+    }
+
+    return mtbfMin;
+}
+
+
+
 
 
 // KPI -- MTBF (Mean Time Between Fails)
-const tempoEntreFalhasMin = [
-    {
-        'mtbfMinAtual': 93,
-        'mtbfMinAnterior': 87
+async function kpiMtbf(infosJira, usuario) {
+
+    const user = usuario ? JSON.parse(usuario) : console.error("Id do usuário não encontrado");
+    const idEmp = user ? user.idEmpresa : console.error("Id da empresa não encontrado");
+
+    // Sem pelo menos 2 issues não há intervalo entre falhas para calcular
+    if (!Array.isArray(infosJira) || infosJira.length < 2) {
+        console.warn("Dados do Jira insuficientes para calcular o MTBF.");
+        return;
     }
-]
 
-let mtbfMin = tempoEntreFalhasMin[0].mtbfMinAtual
-let mtbfAnterior = tempoEntreFalhasMin[0].mtbfMinAnterior
+    let mtbfs = await receberMtbfs(idEmp);
+    
+    let tbfTotal = 0;
+    
+    for (let i = infosJira.length - 1; i > 0; i--) {
+        let atual = new Date(infosJira[i].tempoPorColuna[0].entrouEm);
+        let anterior = new Date(infosJira[i - 1].tempoPorColuna[0].entrouEm);
 
-let kpiMtbf = document.getElementById('mtbf')
-let kpiMtbfPercent = document.getElementById('mtbf-comparado')
-let kpiMtbfBorder = document.getElementById('kpi-mtbf')
+        let tbf = Math.abs(atual - anterior);
 
-let kpiMtbfMin = mtbfMin % 60;
-let kpiMtbfHoras = mtbfMin / 60;
-
-let mtbfComparado = ((mtbfAnterior * 100) / mtbfMin) - 100;
-
-if (kpiMtbfHoras < 1) {
-    kpiMtbf.innerHTML = `${kpiMtbfMin}min`
-} else {
-    kpiMtbf.innerHTML = `${Math.floor(kpiMtbfHoras)}h${kpiMtbfMin}min`
-}
-
-if (mtbfComparado > 0) {
-    kpiMtbfPercent.innerHTML = `${mtbfComparado.toFixed(1)}% mais rápida`
-    kpiMtbfPercent.classList.add('cor_verde')
-    kpiMtbfPercent.classList.remove('cor_vermelha')
-    kpiMtbfBorder.style.borderColor = '#3DDC84'
-} else if (mtbfComparado < 0) {
-    kpiMtbfPercent.innerHTML = `${mtbfComparado.toFixed(1)}% mais lenta`
-    kpiMtbfPercent.classList.add('cor_vermelha')
-    kpiMtbfPercent.classList.remove('cor_verde')
-    kpiMtbfBorder.style.borderColor = '#FF5C5C'
-} else {
-    kpiMtbfPercent.innerHTML = `Permanece igual`
-    kpiMtbfPercent.classList.remove('cor_vermelha')
-    kpiMtbfPercent.classList.remove('cor_verde')
-    kpiMtbfBorder.style.borderColor = '#F5C542'
+        tbfTotal += tbf;
+    }
+    
+    let mtbfTotalMin = tbfTotal / infosJira.length;
+    
+    let mtbfMin = (mtbfTotalMin / 1000) / 60;
+    
+    let hoje = new Date();
+    
+    await atualizarMtbfSemanalmente(idEmp, mtbfMin, hoje);
+    
+    let mtbfAnterior = mtbfs[0].mtbfMinSemana;
+    
+    let kpiMtbf = document.getElementById('mtbf')
+    let kpiMtbfPercent = document.getElementById('mtbf-comparado')
+    let kpiMtbfBorder = document.getElementById('kpi-mtbf')
+    
+    let kpiMtbfMin = mtbfMin % 60;
+    let kpiMtbfHoras = mtbfMin / 60;
+    
+    let mtbfComparado = ((mtbfAnterior * 100) / mtbfMin) - 100;
+    
+    if (kpiMtbfHoras < 1) {
+        kpiMtbf.innerHTML = `${kpiMtbfMin.toFixed(0)}min`
+    } else {
+        kpiMtbf.innerHTML = `${Math.floor(kpiMtbfHoras.toFixed(0))}h${kpiMtbfMin.toFixed(0)}min`
+    }
+    
+    if (mtbfComparado > 0) {
+        kpiMtbfPercent.innerHTML = `${mtbfComparado.toFixed(1)}% mais rápida`
+        kpiMtbfPercent.classList.add('cor_verde')
+        kpiMtbfPercent.classList.remove('cor_vermelha')
+        kpiMtbfBorder.style.borderColor = '#3DDC84'
+    } else if (mtbfComparado < 0) {
+        kpiMtbfPercent.innerHTML = `${mtbfComparado.toFixed(1)}% mais lenta`
+        kpiMtbfPercent.classList.add('cor_vermelha')
+        kpiMtbfPercent.classList.remove('cor_verde')
+        kpiMtbfBorder.style.borderColor = '#FF5C5C'
+    } else {
+        kpiMtbfPercent.innerHTML = `Permanece igual`
+        kpiMtbfPercent.classList.remove('cor_vermelha')
+        kpiMtbfPercent.classList.remove('cor_verde')
+        kpiMtbfBorder.style.borderColor = '#F5C542'
+    }
 }
 
 

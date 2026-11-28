@@ -7,4 +7,12 @@ router.get("/buscarEquipeServidores/:idEmpresa", function (req, res) {
     dashGPController.buscarEquipeServidores(req, res);
 });
 
+router.get("/buscarMtbfSemanal/:idEmpresa", function (req, res) {
+    dashGPController.buscarMtbfSemanal(req, res);
+});
+
+router.post("/atualizarMtbf", function (req, res) {
+    dashGPController.atualizarMtbf(req, res);
+});
+
 module.exports = router;

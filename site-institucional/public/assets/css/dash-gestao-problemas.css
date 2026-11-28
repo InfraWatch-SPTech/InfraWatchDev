@@ -194,6 +194,7 @@ main {
 
 .content-box .content-box-table .ar-table td {
   padding: 18px 0px;
+  font-size: 12px;
   font-weight: 600;
   text-transform: uppercase;
   border-top: 1px solid var(--cor-azul-apagado);
@@ -201,7 +202,7 @@ main {
 
 .content-box .content-box-table .ar-table a {
   padding: 6% 25%;
-  font-size: 12px;
+  font-size: 10px;
   font-weight: 700;
   text-transform: uppercase;
   text-decoration: none;
@@ -230,7 +231,7 @@ main {
 }
 
 .content-box .content-box-table .ar-table .barra-fundo {
-    width: 20vw;
+    width: 10vw;
     height: 2vh;
     background-color: var(--cor-azul-contraste0);
     border-radius: 50px;
