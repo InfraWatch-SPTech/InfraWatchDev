@@ -37,34 +37,34 @@
                 
                 <div class="card_metrica">
                     <div class="icone_card_metrica azul">
-                        <i class="fa-solid fa-lightbulb"></i>
+                        <i class="fa-solid fa-bell"></i>
                     </div>
                     <div class="conteudo_card_metrica">
-                        <span class="rotulo_card">Disponibilidade Interna</span>
-                        <h2 class="valor_card">100%</h2>
-                        <span class="status_tag status_otimo">Status: Ótimo</span>
+                        <span class="rotulo_card">Alertas em aberto hoje</span>
+                        <h2 class="valor_card" id="kpi-alertas-abertos">—</h2>
+                        <span class="status_tag" id="status-alertas-abertos">Carregando...</span>
                     </div>
                 </div>
 
                 <div class="card_metrica">
                     <div class="icone_card_metrica roxo">
-                        <i class="fa-solid fa-bell"></i>
+                        <i class="fa-solid fa-triangle-exclamation"></i>
                     </div>
                     <div class="conteudo_card_metrica">
-                        <span class="rotulo_card">Alertas ativos</span>
-                        <h2 class="valor_card" id="qtd-alertas-ativos">25</h2>
-                        <span class="status_tag status_critico_texto" id="subtexto-alertas">2 alertas críticos</span>
+                        <span class="rotulo_card">Críticos abertos hoje</span>
+                        <h2 class="valor_card" id="kpi-alertas-criticos">—</h2>
+                        <span class="status_tag" id="status-alertas-criticos">Carregando...</span>
                     </div>
                 </div>
 
                 <div class="card_metrica">
                     <div class="icone_card_metrica roxo_escuro">
-                        <i class="fa-solid fa-tower-broadcast"></i>
+                        <i class="fa-solid fa-clock"></i>
                     </div>
                     <div class="conteudo_card_metrica">
-                        <span class="rotulo_card">Disponibilidade Externa</span>
-                        <h2 class="valor_card">99,9%</h2>
-                        <span class="status_tag status_otimo">Status: Bom</span>
+                        <span class="rotulo_card">Alertas fora do SLA hoje</span>
+                        <h2 class="valor_card" id="kpi-alertas-sla">—</h2>
+                        <span class="status_tag" id="status-alertas-sla">Carregando...</span>
                     </div>
                 </div>
 
@@ -90,15 +90,7 @@
                 <p>Escolha uma visão para acompanhar sua infraestrutura.</p>
             </div>
             <div class="grid_cards_dashboards">
-                <a class="card_dashboard" href="./dash-empresa.html">
-                    <span class="icone_dashboard"><i class="fa-solid fa-chart-line" aria-hidden="true"></i></span>
-                    <span class="conteudo_dashboard">
-                        <strong>Dashboard da empresa</strong>
-                        <span>Indicadores e visão geral da operação.</span>
-                    </span>
-                    <i class="fa-solid fa-arrow-right seta_dashboard" aria-hidden="true"></i>
-                </a>
-                <a class="card_dashboard" href="./dash-gestao-problemas.html">
+                <a class="card_dashboard" href="./dash-gestao-problemas.html" data-permissoes="ALERTAS_VISUALIZAR">
                     <span class="icone_dashboard"><i class="fa-solid fa-triangle-exclamation" aria-hidden="true"></i></span>
                     <span class="conteudo_dashboard">
                         <strong>Gestão de problemas</strong>
@@ -106,19 +98,27 @@
                     </span>
                     <i class="fa-solid fa-arrow-right seta_dashboard" aria-hidden="true"></i>
                 </a>
-                <a class="card_dashboard" href="./dashboard-servidor.html">
-                    <span class="icone_dashboard"><i class="fa-solid fa-server" aria-hidden="true"></i></span>
+                <a class="card_dashboard" href="./dashboard-alertas.html" data-permissoes="ALERTAS_VISUALIZAR">
+                    <span class="icone_dashboard"><i class="fa-solid fa-bell" aria-hidden="true"></i></span>
                     <span class="conteudo_dashboard">
-                        <strong>Dashboard do servidor</strong>
-                        <span>Métricas de uso e saúde do servidor.</span>
+                        <strong>Dashboard de alertas</strong>
+                        <span>Acompanhe alertas abertos, fluxo e cumprimento do SLA.</span>
                     </span>
                     <i class="fa-solid fa-arrow-right seta_dashboard" aria-hidden="true"></i>
                 </a>
-                <a class="card_dashboard" href="./dashboard_analitica_padroes.html" data-permissoes="DASHBOARD_PADROES_VISUALIZAR,DASHBOARD_SERVIDOR_VISUALIZAR,DASHBOARD_GERAL_VISUALIZAR">
-                    <span class="icone_dashboard"><i class="fa-solid fa-chart-column" aria-hidden="true"></i></span>
+                <a class="card_dashboard" href="./dashboard-padroes.html" data-permissoes="DASHBOARD_PADROES_VISUALIZAR,DASHBOARD_SERVIDOR_VISUALIZAR,DASHBOARD_GERAL_VISUALIZAR">
+                    <span class="icone_dashboard"><i class="fa-solid fa-chart-line" aria-hidden="true"></i></span>
                     <span class="conteudo_dashboard">
-                        <strong>Histórico e padrões</strong>
-                        <span>Explore tendências e padrões de consumo.</span>
+                        <strong>Identificação de padrões</strong>
+                        <span>Acompanhe previsibilidade, tempo e sazonalidade.</span>
+                    </span>
+                    <i class="fa-solid fa-arrow-right seta_dashboard" aria-hidden="true"></i>
+                </a>
+                <a class="card_dashboard" href="./dashboard_comportamento-servidor.html" data-permissoes="DASHBOARD_PADROES_VISUALIZAR,DASHBOARD_SERVIDOR_VISUALIZAR,DASHBOARD_GERAL_VISUALIZAR">
+                    <span class="icone_dashboard"><i class="fa-solid fa-wave-square" aria-hidden="true"></i></span>
+                    <span class="conteudo_dashboard">
+                        <strong>Comportamento do servidor</strong>
+                        <span>Explore o histórico, os padrões e o comportamento do servidor.</span>
                     </span>
                     <i class="fa-solid fa-arrow-right seta_dashboard" aria-hidden="true"></i>
                 </a>

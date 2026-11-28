@@ -872,7 +872,6 @@ function renderizarRanking(lista) {
                 <p class="col_centro ${coresMetrica[s.niveis[1]]}">${s.ram}%</p>
                 <p class="col_centro ${coresMetrica[s.niveis[2]]}">${s.disco}%</p>
                 <p class="col_centro ${coresStatus[s.status]} ${s.status >= 2 ? 'texto_forte' : ''}">${rotulosStatus[s.status]}</p>
-                <a href="./dashboard-servidor.html?idEquipamento=${s.idEquipamento}" class="btn_ver">ver-➔</a>
             </div>
         `
     }

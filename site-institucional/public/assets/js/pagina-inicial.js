@@ -1,20 +1,21 @@
 document.addEventListener('DOMContentLoaded', function () {
-  // 1. Validar se a sessão está ativa
   var usuario = lerDadosSessao();
+
   if (!usuario) {
     redirecionar('login');
     return;
   }
 
-  // 2. Preencher os dados do cabeçalho
-  document.getElementById('nome-usuario-dashboard').textContent = usuario.nome.toUpperCase();
+  document.getElementById('nome-usuario-dashboard').textContent = String(usuario.nome || '').toUpperCase();
   document.getElementById('cargo-usuario-dashboard').textContent = usuario.nomeNivelAcesso || 'Colaborador';
   document.getElementById('nome-empresa-dashboard').textContent = usuario.nomeEmpresa || 'MINHA EMPRESA';
+
   filtrarDashboardsPorPermissao(usuario);
 
-  // 3. Buscar dados de equipamentos para atualizar alertas dinamicamente
-  if (usuario.idEmpresa && usuario.id) {
-    buscarMétricasIniciais(usuario.idEmpresa, usuario.id);
+  if (usuario.idEmpresa) {
+    carregarKpisAlertas(usuario.idEmpresa);
+  } else {
+    marcarKpisIndisponiveis();
   }
 });
 
@@ -24,42 +25,110 @@ function filtrarDashboardsPorPermissao(usuario) {
     var permitido = nivelUsuario(usuario) === 'Root' || permissoes.some(function (permissao) {
       return usuarioPossuiPermissao(usuario, permissao);
     });
+
     card.hidden = !permitido;
   });
 }
 
-function buscarMétricasIniciais(idEmpresa, idUsuario) {
-  fetch('/hardwares/buscarEq/' + idEmpresa + '?idUsuario=' + idUsuario, {
-    cache: 'no-store'
-  })
-  .then(function (resposta) {
-    if (resposta.ok && resposta.status !== 204) {
-      return resposta.json();
-    }
-    return [];
-  })
-  .then(function (equipamentos) {
-    var qtdAlertas = 4;
-    var qtdCriticos = 4;
-    
-    equipamentos.forEach(function (eq) {
-      if (eq.statusEquipamento === 'Atenção' || eq.statusEquipamento === 'Manutenção') {
-        qtdAlertas++;
-      } else if (eq.statusEquipamento === 'Inativo' || eq.statusEquipamento === 'Crítico') {
-        qtdAlertas++;
-        qtdCriticos++;
-      }
-    });
+function carregarKpisAlertas(idEmpresa) {
+  var empresa = encodeURIComponent(idEmpresa);
+  var base = '/dashboardAlertas';
 
-    var elAlertas = document.getElementById('qtd-alertas-ativos');
-    var elSubtexto = document.getElementById('subtexto-alertas');
-    
-    if (elAlertas) elAlertas.textContent = qtdAlertas;
-    if (elSubtexto) elSubtexto.textContent = qtdCriticos + " alerta(s) crítico(s)";
+  carregarKpiAlerta(
+    base + '/kpi-abertos/' + empresa + '?periodo=hoje',
+    'alertas_abertos',
+    'kpi-alertas-abertos',
+    'status-alertas-abertos',
+    function (valor) {
+      return valor === 0
+        ? ['Nenhum alerta criado hoje segue aberto', 'status_otimo']
+        : ['Alertas abertos criados hoje', ''];
+    }
+  );
+
+  carregarKpiAlerta(
+    base + '/kpi-criticos-abertos/' + empresa + '?periodo=hoje',
+    'criticos_abertos',
+    'kpi-alertas-criticos',
+    'status-alertas-criticos',
+    function (valor) {
+      return valor === 0
+        ? ['Nenhum crítico criado hoje segue aberto', 'status_otimo']
+        : ['Criados hoje · atenção prioritária', 'status_critico_texto'];
+    }
+  );
+
+  carregarKpiAlerta(
+    base + '/kpi-fora-sla/' + empresa + '?periodo=hoje',
+    'fora_sla',
+    'kpi-alertas-sla',
+    'status-alertas-sla',
+    function (valor) {
+      return valor === 0
+        ? ['Nenhum alerta de hoje excedeu o SLA', 'status_otimo']
+        : ['Alertas de hoje excederam o SLA', 'status_ruim'];
+    }
+  );
+}
+
+function carregarKpiAlerta(url, campo, idValor, idStatus, formatarStatus) {
+  fetch(url, {
+    cache: 'no-store',
+    credentials: 'same-origin'
   })
-  .catch(function (erro) {
-    console.error("Erro ao carregar métricas iniciais:", erro);
+    .then(function (resposta) {
+      if (resposta.status === 204) {
+        return 0;
+      }
+
+      if (!resposta.ok) {
+        throw new Error('Falha HTTP ' + resposta.status);
+      }
+
+      return resposta.json().then(function (dados) {
+        if (!Array.isArray(dados) || dados.length === 0) {
+          return 0;
+        }
+
+        var valor = Number(dados[0][campo]);
+        if (!Number.isFinite(valor)) {
+          throw new Error('A resposta não contém uma contagem válida para ' + campo);
+        }
+
+        return valor;
+      });
+    })
+    .then(function (valor) {
+      document.getElementById(idValor).textContent = valor.toLocaleString('pt-BR');
+
+      var status = formatarStatus(valor);
+      definirStatusKpi(document.getElementById(idStatus), status[0], status[1]);
+    })
+    .catch(function (erro) {
+      console.error('Falha ao carregar KPI da página inicial:', erro);
+      document.getElementById(idValor).textContent = '—';
+      definirStatusKpi(document.getElementById(idStatus), 'Dados indisponíveis', 'status_ruim');
+    });
+}
+
+function marcarKpisIndisponiveis() {
+  [
+    ['kpi-alertas-abertos', 'status-alertas-abertos'],
+    ['kpi-alertas-criticos', 'status-alertas-criticos'],
+    ['kpi-alertas-sla', 'status-alertas-sla']
+  ].forEach(function (ids) {
+    document.getElementById(ids[0]).textContent = '—';
+    definirStatusKpi(document.getElementById(ids[1]), 'Empresa não identificada', 'status_ruim');
   });
+}
+
+function definirStatusKpi(elemento, mensagem, classe) {
+  elemento.textContent = mensagem;
+  elemento.classList.remove('status_otimo', 'status_ruim', 'status_critico_texto');
+
+  if (classe) {
+    elemento.classList.add(classe);
+  }
 }
 
 function rolarParaSecao(idSecao) {
@@ -68,33 +137,7 @@ function rolarParaSecao(idSecao) {
     if (elemento.tagName === 'DETAILS') {
       elemento.open = true;
     }
+
     elemento.scrollIntoView({ behavior: 'smooth' });
   }
-}
-
-
-
-function carregarDashboardDinamico() {
-  var usuario = lerDadosSessao(); // Lê o usuário logado
-  if (!usuario) return;
-
-  // 1. Atualiza cabeçalho com os dados reais do usuário
-  document.getElementById('nome-usuario-dashboard').textContent = usuario.nome.toUpperCase();
-  document.getElementById('cargo-usuario-dashboard').textContent = usuario.nomeNivelAcesso || 'Colaborador';
-  document.getElementById('nome-empresa-dashboard').textContent = usuario.nomeEmpresa.toUpperCase();
-
-  // 2. Busca KPIs dinâmicos da empresa no banco de dados
-  fetch('/hardwares/metricas-dashboard/' + usuario.idEmpresa)
-    .then(res => res.json())
-    .then(data => {
-      // Atualiza Card: Disponibilidade Interna
-      document.getElementById('valor-disp-interna').textContent = data.disponibilidadeInterna + "%";
-      
-      // Atualiza Card: Alertas Ativos
-      document.getElementById('qtd-alertas-ativos').textContent = data.alertasAtivos;
-      document.getElementById('subtexto-alertas').textContent = data.alertasCriticos + " alerta(s) crítico(s)";
-      
-      // Atualiza Card: Disponibilidade Externa
-      document.getElementById('valor-disp-externa').textContent = data.disponibilidadeExterna + "%";
-    });
 }

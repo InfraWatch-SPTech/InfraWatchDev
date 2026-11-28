@@ -1,16 +1,20 @@
 @import url(global.css);
 
 body {
-    margin: 15vh 8vh;
+    margin: 0;
 }
 
-header {
+body.pagina_gestao_problemas > header:not(.header_principal) {
     display: flex;
     align-items: center;
     justify-content: space-between;
-    width: 100%;
+    width: calc(100% - 16vh);
     height: 5vh;
-    margin: 5vh 0px;
+    margin: 5vh 8vh;
+}
+
+body.pagina_gestao_problemas > main {
+    margin: 0 8vh 8vh;
 }
 
 .container-aba {

@@ -1,9 +1,10 @@
 var menuItens = [
     { rota: 'inicio', icone: 'fa-house', texto: 'Início' },
-    { rota: 'dashboard_empresa', icone: 'fa-chart-line', texto: 'Dashboard empresa' },
-    { rota: 'dashboard_analitica_padroes', icone: 'fa-chart-column', texto: 'Histórico e padrões', permissoes: ['DASHBOARD_PADROES_VISUALIZAR', 'DASHBOARD_SERVIDOR_VISUALIZAR', 'DASHBOARD_GERAL_VISUALIZAR'] },
+    { rota: 'dashboard_alertas', icone: 'fa-bell', texto: 'Dashboard de alertas', permissoes: ['ALERTAS_VISUALIZAR'] },
+    { rota: 'dashboard_padroes', icone: 'fa-chart-line', texto: 'Identificação de padrões', permissoes: ['DASHBOARD_PADROES_VISUALIZAR', 'DASHBOARD_SERVIDOR_VISUALIZAR', 'DASHBOARD_GERAL_VISUALIZAR'] },
+    { rota: 'dashboard_gestao_problemas', icone: 'fa-triangle-exclamation', texto: 'Gestão de problemas', permissoes: ['ALERTAS_VISUALIZAR'] },
+    { rota: 'dashboard_comportamento_servidor', icone: 'fa-wave-square', texto: 'Comportamento do servidor', permissoes: ['DASHBOARD_PADROES_VISUALIZAR', 'DASHBOARD_SERVIDOR_VISUALIZAR', 'DASHBOARD_GERAL_VISUALIZAR'] },
     { rota: 'dashboard_previsibilidade', icone: 'fa-chart-area', texto: 'Previsibilidade e capacidade', permissoes: ['DASHBOARD_SERVIDOR_VISUALIZAR', 'DASHBOARD_GERAL_VISUALIZAR'] },
-    // { rota: 'dashboard_servidor', icone: 'fa-server', texto: 'Dashboard servidor' },
     { rota: 'hardwares', icone: 'fa-gear', texto: 'Gerenciar servidores' },
     { rota: 'usuarios', icone: 'fa-users', texto: 'Gerenciar funcionários', restrito: true },
     // { rota: 'lista_relatorios', icone: 'fa-file-lines', texto: 'Visualizar relatórios' },
@@ -12,7 +13,6 @@ var menuItens = [
 
 var headerItens = [
     { rota: 'inicio', texto: 'Início' },
-    { rota: 'dashboard_empresa', texto: 'Dashboard' },
     { rota: 'hardwares', texto: 'Hardwares' },
     { rota: 'criar_relatorio', texto: 'Relatórios' }
 ];
