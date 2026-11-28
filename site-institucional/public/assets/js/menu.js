@@ -2,10 +2,10 @@ var menuItens = [
     { rota: 'inicio', icone: 'fa-house', texto: 'Início' },
     { rota: 'dashboard_empresa', icone: 'fa-chart-line', texto: 'Dashboard empresa' },
     { rota: 'dashboard_analitica_padroes', icone: 'fa-chart-column', texto: 'Histórico e padrões', permissoes: ['DASHBOARD_PADROES_VISUALIZAR', 'DASHBOARD_SERVIDOR_VISUALIZAR', 'DASHBOARD_GERAL_VISUALIZAR'] },
+    { rota: 'dashboard_previsibilidade', icone: 'fa-chart-area', texto: 'Previsibilidade e capacidade', permissoes: ['DASHBOARD_SERVIDOR_VISUALIZAR', 'DASHBOARD_GERAL_VISUALIZAR'] },
     // { rota: 'dashboard_servidor', icone: 'fa-server', texto: 'Dashboard servidor' },
     { rota: 'hardwares', icone: 'fa-gear', texto: 'Gerenciar servidores' },
     { rota: 'usuarios', icone: 'fa-users', texto: 'Gerenciar funcionários', restrito: true },
-    { rota: 'criar_relatorio', icone: 'fa-file-circle-plus', texto: 'Criar relatório' },
     // { rota: 'lista_relatorios', icone: 'fa-file-lines', texto: 'Visualizar relatórios' },
     { rota: 'plataformas_externas', icone: 'fa-plug', texto: 'Plataformas externas' }
 ];

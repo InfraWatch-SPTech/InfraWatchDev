@@ -72,27 +72,76 @@
 
             <!-- BOTÕES DE ACESSO RÁPIDO -->
             <div class="barra_botoes_rapidos">
-                <button class="btn_acao_rapida primario" onclick="redirecionar('dashboard_gestao_problemas')">
-                    ACESSAR DASHBOARD EMPRESA <i class="fa-solid fa-arrow-right"></i>
-                </button>
-                <button class="btn_acao_rapida secundario" onclick="redirecionar('dashboard_servidor')">
-                    ACESSAR SERVIDOR MAIS AFETADO
-                </button>
                 <button class="btn_acao_rapida secundario" onclick="redirecionar('plataformas_externas')">
                     CONECTAR PLATAFORMAS DE ALERTA
                 </button>
                 <button class="btn_acao_rapida secundario" onclick="rolarParaSecao('primeiros-passos')">
-                    MANUAL DE INSTRUÇÕES <i class="fa-solid fa-arrow-down"></i>
+                    VER PASSO A PASSO <i class="fa-solid fa-arrow-down"></i>
                 </button>
             </div>
         </section>
 
-        <!-- GUIA PRIMEIROS PASSOS -->
-        <section class="container_onboarding" id="primeiros-passos">
-            <div class="cabecalho_onboarding">
-                <span class="rotulo_secao">COMO CONFIGURAR SEU SISTEMA INFRAWATCH</span>
-                <h2>PRIMEIROS PASSOS</h2>
+        <section class="secao_dashboards" aria-labelledby="titulo-dashboards">
+            <div class="cabecalho_dashboards">
+                <div>
+                    <span class="titulo_bloco_secao">ACESSO DIRETO</span>
+                    <h2 id="titulo-dashboards">Dashboards</h2>
+                </div>
+                <p>Escolha uma visão para acompanhar sua infraestrutura.</p>
             </div>
+            <div class="grid_cards_dashboards">
+                <a class="card_dashboard" href="./dash-empresa.html">
+                    <span class="icone_dashboard"><i class="fa-solid fa-chart-line" aria-hidden="true"></i></span>
+                    <span class="conteudo_dashboard">
+                        <strong>Dashboard da empresa</strong>
+                        <span>Indicadores e visão geral da operação.</span>
+                    </span>
+                    <i class="fa-solid fa-arrow-right seta_dashboard" aria-hidden="true"></i>
+                </a>
+                <a class="card_dashboard" href="./dash-gestao-problemas.html">
+                    <span class="icone_dashboard"><i class="fa-solid fa-triangle-exclamation" aria-hidden="true"></i></span>
+                    <span class="conteudo_dashboard">
+                        <strong>Gestão de problemas</strong>
+                        <span>Veja servidores prioritários e alertas.</span>
+                    </span>
+                    <i class="fa-solid fa-arrow-right seta_dashboard" aria-hidden="true"></i>
+                </a>
+                <a class="card_dashboard" href="./dashboard-servidor.html">
+                    <span class="icone_dashboard"><i class="fa-solid fa-server" aria-hidden="true"></i></span>
+                    <span class="conteudo_dashboard">
+                        <strong>Dashboard do servidor</strong>
+                        <span>Métricas de uso e saúde do servidor.</span>
+                    </span>
+                    <i class="fa-solid fa-arrow-right seta_dashboard" aria-hidden="true"></i>
+                </a>
+                <a class="card_dashboard" href="./dashboard_analitica_padroes.html" data-permissoes="DASHBOARD_PADROES_VISUALIZAR,DASHBOARD_SERVIDOR_VISUALIZAR,DASHBOARD_GERAL_VISUALIZAR">
+                    <span class="icone_dashboard"><i class="fa-solid fa-chart-column" aria-hidden="true"></i></span>
+                    <span class="conteudo_dashboard">
+                        <strong>Histórico e padrões</strong>
+                        <span>Explore tendências e padrões de consumo.</span>
+                    </span>
+                    <i class="fa-solid fa-arrow-right seta_dashboard" aria-hidden="true"></i>
+                </a>
+                <a class="card_dashboard" href="./dashboard-previsibilidade.html" data-permissoes="DASHBOARD_SERVIDOR_VISUALIZAR,DASHBOARD_GERAL_VISUALIZAR">
+                    <span class="icone_dashboard"><i class="fa-solid fa-chart-area" aria-hidden="true"></i></span>
+                    <span class="conteudo_dashboard">
+                        <strong>Previsibilidade e capacidade</strong>
+                        <span>Acompanhe projeções e limites críticos.</span>
+                    </span>
+                    <i class="fa-solid fa-arrow-right seta_dashboard" aria-hidden="true"></i>
+                </a>
+            </div>
+        </section>
+
+        <!-- GUIA PRIMEIROS PASSOS -->
+        <details class="container_onboarding" id="primeiros-passos">
+            <summary class="cabecalho_onboarding">
+                <span class="cabecalho_manual_texto">
+                    <span class="rotulo_secao">MANUAL DE INSTRUÇÕES</span>
+                    <span class="titulo_manual">PRIMEIROS PASSOS</span>
+                </span>
+                <span class="controle_manual">Ver passo a passo <i class="fa-solid fa-chevron-down" aria-hidden="true"></i></span>
+            </summary>
 
             <div class="caixa_onboarding_principal">
                 
@@ -205,7 +254,7 @@
                 </div>
 
             </div>
-        </section>
+        </details>
 
     </main>
 

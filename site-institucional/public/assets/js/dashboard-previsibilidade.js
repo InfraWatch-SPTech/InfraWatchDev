@@ -9,6 +9,7 @@ const estadoDashboard = {
   dados: null,
   arquivo: null,
   atualizadoEm: null,
+  referenciaLocalRunway: null,
   servidor: null,
   usuario: null,
   limites: {},
@@ -58,6 +59,27 @@ function formatarRequisicoesEmMilhares(valor) {
 function formatarPercentual(valor) {
   const convertido = numero(valor);
   return convertido === null ? '—' : `${formatarNumero(convertido, 2)}%`;
+}
+
+function formatarContagemRunway(dias) {
+  if (dias === null) return { dial: '—', texto: 'Sem prazo estimado' };
+  if (!Number.isFinite(dias)) return { dial: '>999d', texto: 'Mais de 999 dias restantes' };
+  const minutos = Math.ceil(Math.max(0, dias) * 24 * 60);
+  if (minutos === 0) return { dial: '0d', texto: '0 dias restantes' };
+
+  const diasInteiros = Math.floor(minutos / 1440);
+  const horas = Math.floor((minutos % 1440) / 60);
+  const minutosRestantes = minutos % 60;
+  if (diasInteiros > 0) {
+    return {
+      dial: `${diasInteiros}d`,
+      texto: `~${diasInteiros} dias, ${horas}h ${String(minutosRestantes).padStart(2, '0')}m restantes`
+    };
+  }
+  if (horas > 0) {
+    return { dial: `${horas}h`, texto: `~${horas}h ${minutosRestantes}m restantes` };
+  }
+  return { dial: `${minutos}m`, texto: `~${minutos} min restantes` };
 }
 
 function converterData(valor) {
@@ -226,7 +248,7 @@ function previsaoDiaria(recurso, valorInicial) {
   return diarias;
 }
 
-function calcularRunwayDias(chave, recurso = recursoAtual(chave)) {
+function calcularPrazoBaseRunway(chave, recurso = recursoAtual(chave)) {
   if (!recurso) return null;
   const atual = valorAtual(chave, recurso);
   const critico = limiteRecurso(chave, 'critico', recurso);
@@ -252,6 +274,45 @@ function calcularRunwayDias(chave, recurso = recursoAtual(chave)) {
   return null;
 }
 
+function dataReferenciaRunway(valor) {
+  if (!valor) return null;
+  const texto = String(valor).trim();
+  const dataPtBr = texto.match(/^(\d{1,2})\/(\d{1,2})\/(\d{4})(?:[, T]+(\d{1,2}):(\d{2})(?::(\d{2}))?)?$/);
+  if (dataPtBr) {
+    const [, dia, mes, ano, hora = '0', minuto = '0', segundo = '0'] = dataPtBr;
+    const data = new Date(Number(ano), Number(mes) - 1, Number(dia), Number(hora), Number(minuto), Number(segundo));
+    return Number.isNaN(data.getTime()) ? null : data;
+  }
+  return dataValida(valor);
+}
+
+function instanteReferenciaRunway(recurso) {
+  const amostras = Array.isArray(recurso?.serie_10_minutos) ? recurso.serie_10_minutos : [];
+  const datasAmostras = amostras
+    .map(ponto => dataReferenciaRunway(ponto?.data_hora ?? ponto?.amostra?.data_hora))
+    .filter(Boolean)
+    .sort((a, b) => b.getTime() - a.getTime());
+  if (datasAmostras.length) return datasAmostras[0];
+
+  const datasAlternativas = [
+    recurso?.fim,
+    estadoDashboard.dados?.fim,
+    estadoDashboard.dados?.gerado_em_utc,
+    estadoDashboard.atualizadoEm
+  ].map(dataReferenciaRunway).filter(Boolean);
+  if (datasAlternativas.length) return datasAlternativas[0];
+  return estadoDashboard.referenciaLocalRunway ? new Date(estadoDashboard.referenciaLocalRunway) : null;
+}
+
+function calcularRunwayDias(chave, recurso = recursoAtual(chave)) {
+  const prazoBase = calcularPrazoBaseRunway(chave, recurso);
+  if (prazoBase === null || prazoBase <= 0) return prazoBase;
+  const referencia = instanteReferenciaRunway(recurso);
+  if (!referencia) return prazoBase;
+  const diasDecorridos = Math.max(0, Date.now() - referencia.getTime()) / 86_400_000;
+  return Math.max(0, prazoBase - diasDecorridos);
+}
+
 function estadoRunway(chave, recurso = recursoAtual(chave), dias = calcularRunwayDias(chave, recurso)) {
   const atual = valorAtual(chave, recurso);
   const atencao = limiteRecurso(chave, 'atencao', recurso);
@@ -263,6 +324,14 @@ function estadoRunway(chave, recurso = recursoAtual(chave), dias = calcularRunwa
       rotulo: 'CRÍTICO',
       mensagem: atual > critico ? 'Limite crítico ultrapassado' : 'Limite crítico atingido',
       cor: '#ff5c5c'
+    };
+  }
+  if (dias !== null && dias <= 0) {
+    return {
+      classe: 'atencao',
+      rotulo: 'VENCIDA',
+      mensagem: 'Prazo estimado atingido; valide a medição atual do recurso',
+      cor: '#f5c542'
     };
   }
   if (dias !== null && dias > 0) {
@@ -402,6 +471,9 @@ function atualizarResumoExecutivo() {
   } else if (estado.classe === 'alerta') {
     tituloTexto = 'Planeje capacidade antes do cruzamento estimado';
     textoConteudo = `${nome} está em ${formatarPercentual(atual)} e pode atingir o limite crítico de ${formatarPercentual(limiteCritico)} em aproximadamente ${formatarNumero(dias)} dias. Revise o plano de capacidade considerando essa estimativa.`;
+  } else if (estado.rotulo === 'VENCIDA') {
+    tituloTexto = 'Prazo previsto atingido; valide a medição atual';
+    textoConteudo = `${nome} está em ${formatarPercentual(atual)}. O prazo estimado já passou, mas a amostra mais recente ainda não confirma o limite crítico de ${formatarPercentual(limiteCritico)}. Atualize a medição e revise a previsão.`;
   } else if (estado.classe === 'atencao') {
     tituloTexto = 'Acompanhe o recurso em atenção';
     textoConteudo = `${nome} está em ${formatarPercentual(atual)}, acima do limite de atenção${limiteCritico === null ? '' : ` e ${formatarNumero(limiteCritico - atual)} p.p. abaixo do crítico (${formatarPercentual(limiteCritico)})`}. Acompanhe as próximas medições.`;
@@ -479,12 +551,12 @@ function atualizarKpis() {
     const limite = limiteRecurso(proximo.chave, 'critico', proximo.recurso);
     const estado = estadoRunway(proximo.chave, proximo.recurso, proximo.dias);
     const atual = valorAtual(proximo.chave, proximo.recurso);
-    const valor = proximo.dias === 0
-      ? atual > limite ? 'Ultrapassado' : 'No limite'
-      : `~${formatarNumero(proximo.dias)} dias`;
     const nivel = estado.classe === 'critico' ? 'vermelho' : 'amarelo';
+    const valorKpi = proximo.dias === 0
+      ? atual >= limite ? 'Ultrapassado' : 'Estimativa vencida'
+      : `~${formatarNumero(proximo.dias)} dias`;
     const detalhe = `${recursosDashboard[proximo.chave].nome} · ${estado.rotulo}${limite === null ? '' : ` · limite ${formatarPercentual(limite)}`}`;
-    definirKpi('kpi-proximo-limite', 'kpi-proximo-limite-descricao', valor, detalhe, nivel);
+    definirKpi('kpi-proximo-limite', 'kpi-proximo-limite-descricao', valorKpi, detalhe, nivel);
   } else {
     definirKpi('kpi-proximo-limite', 'kpi-proximo-limite-descricao', 'N/D', mensagemRunwayIndisponivel(), 'azul');
   }
@@ -507,10 +579,17 @@ function atualizarKpis() {
     definirKpi('kpi-requisicoes', 'kpi-requisicoes-descricao', 'N/D', requisicoes.motivo || 'O Gold não contém contagem de requisições.', 'azul');
   }
 
-  if (requisicoes.disponivel && totalRequisicoes > 0 && totalErros !== null) {
-    const taxaErros = (totalErros / totalRequisicoes) * 100;
+  const resultadosClassificados = totalSucessos !== null && totalErros !== null
+    ? totalSucessos + totalErros
+    : null;
+  const denominadorTaxaErros = resultadosClassificados ?? totalRequisicoes;
+  const denominadorExplicito = resultadosClassificados !== null
+    ? `${formatarNumero(resultadosClassificados, 0)} resultados classificados (sucessos + falhas)`
+    : `${formatarNumero(totalRequisicoes, 0)} requisições`;
+  if (requisicoes.disponivel && denominadorTaxaErros > 0 && totalErros !== null && totalErros >= 0 && totalErros <= denominadorTaxaErros) {
+    const taxaErros = (totalErros / denominadorTaxaErros) * 100;
     const janelaHttp = obterJanelaAmostras(serieRequisicoesGold);
-    const detalheTaxaErros = `${formatarNumero(totalErros, 0)} falhas em ${formatarNumero(totalRequisicoes, 0)} requisições${janelaHttp ? ` · ${janelaHttp}` : ''}`;
+    const detalheTaxaErros = `${formatarNumero(totalErros, 0)} falhas / ${denominadorExplicito}${janelaHttp ? ` · ${janelaHttp}` : ''}`;
     definirKpi('kpi-taxa-erros', 'kpi-taxa-erros-descricao', formatarPercentual(taxaErros), detalheTaxaErros, totalErros > 0 ? 'amarelo' : 'verde');
   } else {
     const motivoTaxaErros = requisicoes.motivo || (totalRequisicoes === 0
@@ -803,7 +882,14 @@ function atualizarGraficoRunway() {
   detalhes.replaceChildren();
   const runways = Object.keys(recursosDashboard).map(chave => {
     const recurso = recursoAtual(chave);
-    return { chave, recurso, dias: calcularRunwayDias(chave, recurso), atual: valorAtual(chave, recurso), limite: limiteRecurso(chave, 'critico', recurso) };
+    return {
+      chave,
+      recurso,
+      dias: calcularRunwayDias(chave, recurso),
+      prazoBase: calcularPrazoBaseRunway(chave, recurso),
+      atual: valorAtual(chave, recurso),
+      limite: limiteRecurso(chave, 'critico', recurso)
+    };
   }).filter(item => item.recurso && item.atual !== null);
   const prioridade = { critico: 0, alerta: 1, atencao: 2, normal: 3, indisponivel: 4 };
   runways.sort((a, b) => prioridade[estadoRunway(a.chave, a.recurso, a.dias).classe] - prioridade[estadoRunway(b.chave, b.recurso, b.dias).classe]);
@@ -834,6 +920,33 @@ function atualizarGraficoRunway() {
     sinal.title = estado.mensagem;
     cabecalho.append(nome, sinal);
 
+    const corpo = document.createElement('div');
+    corpo.className = 'runway-card-corpo';
+    const dial = document.createElement('div');
+    dial.className = `runway-dial${item.dias === null ? ' runway-dial--indisponivel' : ''}`;
+    dial.setAttribute('role', 'img');
+    const contagem = formatarContagemRunway(item.dias);
+    dial.setAttribute('aria-label', `${recursosDashboard[item.chave].nome}: ${contagem.texto}`);
+    const progresso = item.atual >= item.limite && item.limite !== null
+      ? 100
+      : item.prazoBase > 0 && item.dias !== null
+        ? Math.min(100, Math.max(0, item.dias / item.prazoBase * 100))
+        : item.dias === null ? 100 : 0;
+    dial.style.setProperty('--runway-progresso', `${progresso}%`);
+    const dialCentro = document.createElement('span');
+    dialCentro.className = 'runway-dial-centro';
+    dialCentro.textContent = contagem.dial;
+    dial.appendChild(dialCentro);
+
+    const textoTempo = document.createElement('div');
+    textoTempo.className = 'runway-tempo-texto';
+    const tempoRestante = document.createElement('strong');
+    tempoRestante.className = 'runway-contagem';
+    tempoRestante.textContent = contagem.texto;
+    const rotuloTempo = document.createElement('span');
+    rotuloTempo.textContent = item.dias === null || item.dias === 0 ? estado.mensagem : 'até o cruzamento estimado';
+    textoTempo.append(tempoRestante, rotuloTempo);
+
     const leitura = document.createElement('div');
     leitura.className = 'runway-leitura';
     const atual = document.createElement('strong');
@@ -855,13 +968,18 @@ function atualizarGraficoRunway() {
     marcador.hidden = item.limite === null;
     trilho.append(preenchimento, marcador);
 
+    const detalhesCartao = document.createElement('div');
+    detalhesCartao.className = 'runway-card-detalhes';
+    detalhesCartao.append(leitura, trilho, textoTempo);
+    corpo.append(dial, detalhesCartao);
+
     const descricao = document.createElement('span');
     descricao.className = 'runway-descricao';
     const origemLimite = origemLimiteRecurso(item.chave, 'critico', item.recurso);
     const detalheLimite = item.limite === null ? 'limite crítico não informado' : `limite crítico ${formatarPercentual(item.limite)}${origemLimite ? ` (${origemLimite})` : ''}`;
     descricao.textContent = `${detalheLimite} · ${estado.mensagem}`;
 
-    linha.append(cabecalho, leitura, trilho, descricao);
+    linha.append(cabecalho, corpo, descricao);
     detalhes.appendChild(linha);
   });
 }
@@ -886,16 +1004,19 @@ function atualizarResumoOperacional() {
 
   const quantidadeCritica = recursos.filter(item => item.estado.classe === 'critico').length;
   const quantidadePrevista = recursos.filter(item => item.estado.classe === 'alerta').length;
-  const quantidadeAtencao = recursos.filter(item => item.estado.classe === 'atencao').length;
+  const quantidadeEstimativaVencida = recursos.filter(item => item.estado.rotulo === 'VENCIDA').length;
+  const quantidadeAtencao = recursos.filter(item => item.estado.classe === 'atencao' && item.estado.rotulo !== 'VENCIDA').length;
   const quantidadeSemLimite = recursos.filter(item => item.limiteCritico === null).length;
   const quantidadeSemPrevisao = recursos.filter(item => item.limiteCritico !== null && !recursoTemProjecao(item.recurso)).length;
   const resumo = document.createElement('div');
-  resumo.className = `prioridades-resumo prioridades-resumo--${quantidadeCritica ? 'critico' : quantidadePrevista || quantidadeAtencao ? 'alerta' : quantidadeSemLimite || quantidadeSemPrevisao ? 'indisponivel' : 'normal'}`;
+  resumo.className = `prioridades-resumo prioridades-resumo--${quantidadeCritica ? 'critico' : quantidadePrevista || quantidadeAtencao || quantidadeEstimativaVencida ? 'alerta' : quantidadeSemLimite || quantidadeSemPrevisao ? 'indisponivel' : 'normal'}`;
   const resumoTitulo = document.createElement('strong');
   resumoTitulo.textContent = quantidadeCritica
     ? 'Ação imediata necessária'
     : quantidadePrevista
       ? 'Planejamento de capacidade necessário'
+        : quantidadeEstimativaVencida
+          ? 'Validar previsões que chegaram ao prazo'
       : quantidadeAtencao
         ? 'Acompanhar recursos em atenção'
         : quantidadeSemLimite || quantidadeSemPrevisao
@@ -905,6 +1026,7 @@ function atualizarResumoOperacional() {
   const contagens = [];
   if (quantidadeCritica) contagens.push(`${quantidadeCritica} acima do limite crítico`);
   if (quantidadePrevista) contagens.push(`${quantidadePrevista} com cruzamento previsto`);
+  if (quantidadeEstimativaVencida) contagens.push(`${quantidadeEstimativaVencida} com prazo estimado atingido; medir novamente`);
   if (quantidadeAtencao) contagens.push(`${quantidadeAtencao} acima do limite de atenção`);
   if (quantidadeSemLimite) contagens.push(`${quantidadeSemLimite} sem limite crítico`);
   if (quantidadeSemPrevisao) contagens.push(`${quantidadeSemPrevisao} sem tendência ou previsão`);
@@ -969,8 +1091,10 @@ function atualizarResumoOperacional() {
       diferenca.textContent = `${formatarNumero(atual - limiteCritico)} p.p. acima do limite crítico.`;
     } else if (atual === limiteCritico) {
       diferenca.textContent = 'No limite crítico.';
-    } else if (estado.classe === 'atencao') {
+    } else if (estado.classe === 'atencao' && estado.rotulo !== 'VENCIDA') {
       diferenca.textContent = `${formatarNumero(limiteCritico - atual)} p.p. abaixo do limite crítico; acima do limite de atenção.`;
+    } else if (estado.rotulo === 'VENCIDA') {
+      diferenca.textContent = 'O prazo estimado chegou ao fim; valide uma amostra atual.';
     } else {
       diferenca.textContent = `${formatarNumero(limiteCritico - atual)} p.p. disponíveis até o limite crítico.`;
     }
@@ -982,7 +1106,9 @@ function atualizarResumoOperacional() {
     } else if (estado.classe === 'alerta') {
       orientacao.textContent = `Limite crítico estimado em aproximadamente ${formatarNumero(dias)} dias.`;
     } else if (estado.classe === 'atencao') {
-      orientacao.textContent = 'Uso acima do limite de atenção. Acompanhe as próximas medições.';
+      orientacao.textContent = estado.rotulo === 'VENCIDA'
+        ? 'O prazo previsto passou sem cruzamento confirmado. Atualize a medição e recalcule a estimativa.'
+        : 'Uso acima do limite de atenção. Acompanhe as próximas medições.';
     } else if (estado.classe === 'normal') {
       orientacao.textContent = dias === null
         ? 'Abaixo do limite; sem data estimada de cruzamento com a tendência atual.'
@@ -1423,10 +1549,19 @@ function renderizarDashboard() {
   if (estadoDashboard.dados) atualizarContextoGold();
 }
 
+function atualizarContagemRegressivaRunway() {
+  if (!estadoDashboard.dados) return;
+  atualizarKpis();
+  atualizarResumoExecutivo();
+  atualizarEstadosSeletoresRunway();
+  atualizarGraficoRunway();
+}
+
 function limparDadosGold() {
   estadoDashboard.dados = null;
   estadoDashboard.arquivo = null;
   estadoDashboard.atualizadoEm = null;
+  estadoDashboard.referenciaLocalRunway = null;
   window.dadosPrevisibilidadeGold = null;
   renderizarDashboard();
 }
@@ -1460,8 +1595,12 @@ function buscarGoldMaisRecente(silencioso = false) {
       if (!resultado.dashboard || resultado.dashboard.tipo_arquivo !== 'dash-previsibilidade') {
         throw new Error('O arquivo encontrado no Gold não tem o formato dash-previsibilidade esperado.');
       }
+      const arquivoNovo = resultado.arquivo || null;
+      if (estadoDashboard.arquivo !== arquivoNovo || !estadoDashboard.referenciaLocalRunway) {
+        estadoDashboard.referenciaLocalRunway = Date.now();
+      }
       estadoDashboard.dados = resultado.dashboard;
-      estadoDashboard.arquivo = resultado.arquivo || null;
+      estadoDashboard.arquivo = arquivoNovo;
       estadoDashboard.atualizadoEm = resultado.atualizadoEm || resultado.dashboard.gerado_em_utc || null;
       estadoDashboard.status = 'ready';
       estadoDashboard.erro = null;
@@ -1702,4 +1841,5 @@ criarGraficos();
 instalarControles();
 instalarModoTv();
 renderizarDashboard();
+window.setInterval(atualizarContagemRegressivaRunway, 60_000);
 carregarServidoresDaEmpresa();

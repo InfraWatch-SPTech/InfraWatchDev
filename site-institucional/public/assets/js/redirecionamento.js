@@ -6,6 +6,7 @@ var rotas = {
     inicio: './pagina-inicial.html',
     dashboard_empresa: './dash-empresa.html',
     dashboard_analitica_padroes: './dashboard_analitica_padroes.html',
+    dashboard_previsibilidade: './dashboard-previsibilidade.html',
     dashboard_servidor: './dashboard-servidor.html',
     hardwares: './hardwares.html',
     usuarios: './usuarios.html',
