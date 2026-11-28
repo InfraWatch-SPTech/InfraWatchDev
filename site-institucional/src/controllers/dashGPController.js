@@ -28,6 +28,20 @@ function buscarMtbfSemanal(req, res) {
         });
 }
 
+function buscarMttr(req, res) {
+    let idEmpresa = req.params.idEmpresa;
+    
+    dashGPModel
+        .buscarMttr(idEmpresa)
+        .then(function (resultado) {
+            res.status(200).json(resultado);
+        })
+        .catch(function (erro) {
+            console.log(erro);
+            res.status(500).json(erro.sqlMessage || erro.message);
+        });
+}
+
 function atualizarMtbf(req, res) {
     let idEmpresa = req.body.idEmpresa;
     let mtbf = req.body.mtbf;
@@ -57,5 +71,6 @@ function atualizarMtbf(req, res) {
 module.exports = {
     buscarEquipeServidores,
     buscarMtbfSemanal,
-    atualizarMtbf
+    atualizarMtbf,
+    buscarMttr
 };

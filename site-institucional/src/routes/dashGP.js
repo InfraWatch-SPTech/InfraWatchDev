@@ -11,6 +11,10 @@ router.get("/buscarMtbfSemanal/:idEmpresa", function (req, res) {
     dashGPController.buscarMtbfSemanal(req, res);
 });
 
+router.get("/buscarMttr/:idEmpresa", function (req, res) {
+    dashGPController.buscarMttr(req, res);
+});
+
 router.post("/atualizarMtbf", function (req, res) {
     dashGPController.atualizarMtbf(req, res);
 });

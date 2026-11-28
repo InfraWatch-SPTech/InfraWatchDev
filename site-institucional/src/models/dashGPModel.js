@@ -26,6 +26,20 @@ function buscarMtbfSemanal(idEmpresa) {
     return database.executar(instrucaoSql);
 }
 
+function buscarMttr(idEmpresa) {
+    let instrucaoSql = `
+        SELECT 
+            ROUND(AVG(TIMESTAMPDIFF(MINUTE, a.criado_em, a.resolvido_em)), 0) AS tempo_medio
+        FROM alerta a
+        JOIN equipamento e
+        ON e.idEquipamento = a.fkEquipamento
+        WHERE e.fkEmpresa = ${idEmpresa}
+        AND a.resolvido_em IS NOT NULL;
+    `;
+
+    return database.executar(instrucaoSql);
+}
+
 function atualizarMtbf(idEmpresa, mtbf) {
     console.log("ACESSEI O AVISO MODEL \n \n\t\t >> Se aqui der erro de 'Error: connect ECONNREFUSED',\n \t\t >> verifique suas credenciais de acesso ao banco\n \t\t >> e se o servidor de seu BD está rodando corretamente. \n\n function publicar(): ", idEmpresa, mtbf);
     let instrucaoSql = `
@@ -38,5 +52,6 @@ function atualizarMtbf(idEmpresa, mtbf) {
 module.exports = {
     buscarEquipeServidores,
     buscarMtbfSemanal,
-    atualizarMtbf
+    atualizarMtbf,
+    buscarMttr
 };
