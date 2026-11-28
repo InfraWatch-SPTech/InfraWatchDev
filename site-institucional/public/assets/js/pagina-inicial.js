@@ -10,12 +10,23 @@ document.addEventListener('DOMContentLoaded', function () {
   document.getElementById('nome-usuario-dashboard').textContent = usuario.nome.toUpperCase();
   document.getElementById('cargo-usuario-dashboard').textContent = usuario.nomeNivelAcesso || 'Colaborador';
   document.getElementById('nome-empresa-dashboard').textContent = usuario.nomeEmpresa || 'MINHA EMPRESA';
+  filtrarDashboardsPorPermissao(usuario);
 
   // 3. Buscar dados de equipamentos para atualizar alertas dinamicamente
   if (usuario.idEmpresa && usuario.id) {
     buscarMétricasIniciais(usuario.idEmpresa, usuario.id);
   }
 });
+
+function filtrarDashboardsPorPermissao(usuario) {
+  document.querySelectorAll('.card_dashboard[data-permissoes]').forEach(function (card) {
+    var permissoes = card.dataset.permissoes.split(',');
+    var permitido = nivelUsuario(usuario) === 'Root' || permissoes.some(function (permissao) {
+      return usuarioPossuiPermissao(usuario, permissao);
+    });
+    card.hidden = !permitido;
+  });
+}
 
 function buscarMétricasIniciais(idEmpresa, idUsuario) {
   fetch('/hardwares/buscarEq/' + idEmpresa + '?idUsuario=' + idUsuario, {
@@ -54,6 +65,9 @@ function buscarMétricasIniciais(idEmpresa, idUsuario) {
 function rolarParaSecao(idSecao) {
   var elemento = document.getElementById(idSecao);
   if (elemento) {
+    if (elemento.tagName === 'DETAILS') {
+      elemento.open = true;
+    }
     elemento.scrollIntoView({ behavior: 'smooth' });
   }
 }

@@ -6,7 +6,6 @@ var menuItens = [
     // { rota: 'dashboard_servidor', icone: 'fa-server', texto: 'Dashboard servidor' },
     { rota: 'hardwares', icone: 'fa-gear', texto: 'Gerenciar servidores' },
     { rota: 'usuarios', icone: 'fa-users', texto: 'Gerenciar funcionários', restrito: true },
-    { rota: 'criar_relatorio', icone: 'fa-file-circle-plus', texto: 'Criar relatório' },
     // { rota: 'lista_relatorios', icone: 'fa-file-lines', texto: 'Visualizar relatórios' },
     { rota: 'plataformas_externas', icone: 'fa-plug', texto: 'Plataformas externas' }
 ];
